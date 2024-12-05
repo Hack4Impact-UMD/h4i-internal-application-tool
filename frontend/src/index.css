@@ -1,68 +1,101 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Karla", "Rubik", sans-serif;
+  text-decoration: none;
+}
+
+:root {
+  --custom-lightblue: rgb(194, 224, 251);
+  --custom-darkblue: rgb(41, 105, 196);
+  --custom-teal: rgb(203, 248, 243);
+  --custom-lightgray: rgb(232, 232, 232);
+  --custom-gray: rgb(217, 217, 217);
+  --custom-darkgray: rgb(131, 130, 130);
+  --custom-red: rgb(224, 41, 41);
+}
+
+/* NAVBAR */
+
+.navbar {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
+  width: 100%;
+  height: 9rem;
+  padding: 0 1rem;
+  justify-content: space-evenly;
+  background: linear-gradient(to right, var(--custom-lightblue), var(--custom-teal));
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.navbar .sign-out-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1.2rem 3rem;
+  text-align: center;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.navbar .sign-out-button p {
+  font-family: "Rubik", "Karla", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 350;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.navbar .sign-out-button p:hover {
+  text-decoration: underline;
+}
+
+.navbar .site-logo {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 23%;
+  min-width: 10rem;
+  pointer-events: none;
+}
+
+.navbar .tab-container {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.navbar .tab-container a {
+  display: flex;
+  width: 20%;
+  min-width: 10rem;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: 300;
+  border-radius: 10px 10px 0 0;
+  background: var(--custom-gray);
+  color: black;
+  user-select: none;
+  transition: background .1s;
+}
+
+.navbar .tab-container a:hover {
+  background: var(--custom-lightgray);
+}
+
+.navbar .tab-container a.active {
+  background: white;
+  pointer-events: none;
 }
