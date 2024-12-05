@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./LoginCard.css";
+import "./loginCard.css";
 
 import { FirebaseApp, FirebaseOptions, getApp, initializeApp } from "firebase/app";
 import {
