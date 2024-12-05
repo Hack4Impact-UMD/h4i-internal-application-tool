@@ -1,7 +1,6 @@
-
 .card {
-    display: flex;
-    align-self: center;
-    justify-self: center;
-    width: 100vh;
-  }
+  display: flex;
+  align-self: center;
+  justify-self: center;
+  width: 100vh;
+}
