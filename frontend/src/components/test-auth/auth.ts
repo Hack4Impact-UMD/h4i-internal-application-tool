@@ -1,5 +1,5 @@
 // learning how authentification works in firebase
-import { auth } from "../../../../backend/firebase";
+import { auth } from "../../../../backend/config/firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User } from "firebase/auth";
 
 export const registerWithEmailAndPassword = async (email: string, password: string) => {

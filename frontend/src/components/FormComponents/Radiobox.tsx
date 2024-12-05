@@ -53,9 +53,9 @@ const Radiobox: React.FC<RadioboxProps> = ({
         {required && <span className="red-text"> *</span>}
       </label>
 
-      {subHeading && <label className="form-label">{subHeading}</label>}
+      {subHeading && <label className="form-sublabel">{subHeading}</label>}
 
-      <div className={choiceName}>
+      <div className="form-options-container">
         {options.map((option, index) => (
           <div key={index}>
             <input

@@ -87,7 +87,7 @@ const OtherOption: React.FC<OtherOptionProps> = ({
   };
 
   return (
-    <div>
+    <div className="form-options-container">
       <input
         type={type}
         checked={checked !== undefined ? checked : isChecked}

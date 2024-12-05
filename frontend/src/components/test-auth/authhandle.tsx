@@ -1,6 +1,6 @@
 // authhandle.tsx
 import React, { useContext, useState, useEffect, ReactNode } from "react";
-import { authStateListener } from "./auth.ts"; 
+import { authStateListener, logout } from "./auth.ts"; 
 import { User } from "firebase/auth";
 
 // Define the shape of the context value
@@ -8,6 +8,7 @@ interface AuthContextType {
     isAuthenticated: boolean;
     user: User | null;
     setIsAuthenticated: (value: boolean) => void; // Add this line
+    signOut: () => void;
 }
 
 // Create the context with an undefined initial value
@@ -32,8 +33,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return () => unsubscribe();
     }, []);
 
+    // Sign-out function
+    const signOut = async () => {
+        try {
+            await logout(); // Call the logout function from auth.ts
+            setIsAuthenticated(false); // Update state
+            setUser(null); // Clear user data
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
+    };
+
     return (
-        <AuthContext.Provider value = {{ isAuthenticated, user, setIsAuthenticated }}>
+        <AuthContext.Provider value = {{ isAuthenticated, user, setIsAuthenticated, signOut }}>
             {children}
         </AuthContext.Provider>
     );

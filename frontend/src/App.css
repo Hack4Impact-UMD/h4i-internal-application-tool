@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Myanmar+Khyay&display=swap');
+
 /* General Styles */
 .red-text {
   color: red;
@@ -12,11 +15,205 @@
 
 .form-label {
   margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-size: 24px;
 }
 
 .form-input {
   padding: 0.5rem;
-  font-size: 1rem;
+  font-size: 18px;
   width: 50%;
+}
+
+.form-sublabel {
+  font-size: 20px;
+  margin-bottom: 0.5rem;
+}
+
+.form-options-container label{
+  color: #7B7B7B;
+}
+
+/* Forms */
+.form-body {
+  background-color: #C9E5FB;
+  font-family: 'Karla', sans-serif;
+  border-radius: 8px;
+  padding: 20px 2px;
+  margin: 20px 40px;
+}
+
+.form-body-submit {
+  background-color: #CBF9F3;
+}
+
+.form-heading {
+  text-align: center;
+  font-size: 40px;
+  margin: 20px;
+  padding-bottom: 20px;
+}
+
+.form-responsibilities-list {
+  text-align: left;
+  margin-left: 20px;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.form-questions {
+  padding: 20px;
+  background-color: #fff;
+  font-size: 18px;
+  margin: 20px;
+}
+
+.form-logo {
+  padding: 2px 20px;
+}
+
+.form-button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; 
+  width: 50%;
+  margin: 0 auto;
+}
+
+.form-btn {
+  flex: 1;
+  font-size: 18px;
+  font-family: 'Myanmar Khyay', sans-serif !important;
+  padding: 10px 20px;
+  margin: 10px 10px;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.form-btn-back {
+  background-color: white;
+  border: 3px solid #2969C4;
+}
+
+.form-btn-back:hover {
+  background-color: #C8E0F9;
+  border-color: transparent;
+  color: #71818F;
+}
+
+.form-btn-continue {
+  background-color: #2969C4;
+  color: white;
+  border: 2px solid #2969C4;
+}
+
+.form-btn-continue:hover {
+  background-color: #C8E0F9;
+  border-color: transparent;
+  color: #71818F;
+}
+
+.form-btn-back-submit {
+  background-color: white;
+  border: 3px solid #CBF9F3;
+}
+
+.form-btn-back-submit:hover {
+  background-color: #D4F8F3;
+  color: #71818F;
+}
+
+.form-btn-submit {
+  background-color: #CBF9F3;
+  border: 2px solid #CBF9F3;
+}
+
+.form-btn-submit:hover {
+  background-color: #D4F8F3;
+  color: #71818F;
+}
+
+.form-submit-heading {
+  font-size: 40px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.form-submit-sections {
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidebar-content {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 15.625rem;
+  background-color: #ECECEC; /* Ensure background color is set to grey */
+  flex-shrink: 0; /* Prevent the sidebar from shrinking */
+}
+
+.content-container {
+  flex-grow: 1; /* Allow the content container to take up the remaining space */
+  padding: 1rem; /* Apply padding */
+  overflow-y: auto;
+}
+
+/* General Header Styling */
+.app-header {
+  padding: 0px 20px;
+  padding-top: 10px;
+  background: linear-gradient(to right, #C2E0FB, #C6EBF7, #CBF9F3);
+}
+
+.header-logo {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.header-center {
+  display: flex;
+  gap: 15px;
+  margin-left: 14.4rem;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0px;
+  border-top-left-radius: 10px; /* Round top-left corner */
+  border-top-right-radius: 10px;
+  background-color: #ffffff;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #333333;
+}
+
+.tab-button.active {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.tab-button:not(.active) {
+  background-color: #D9D9D9;
+}
+
+.header-right {
+  display: flex;
+  justify-content: end;
+}
+
+.signout-button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #333333;
+  cursor: pointer;
 }

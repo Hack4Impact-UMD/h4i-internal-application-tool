@@ -1,0 +1,87 @@
+/* SideBar.css */
+/* importing karla! */
+@import url('https://fonts.googleapis.com/css2?family=Karla&display=swap');
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #ECECEC; /* Ensure background color is set to grey */
+    font-family: 'Karla', sans-serif; /* Apply the Karla font to the sidebar */
+}
+
+.nav-item-container {
+    display: flex; /* Use flexbox for the container */
+    align-items: center; /* Center items vertically */
+}
+
+/* styling for the navigation items (the different links available on the nav bar) */
+.nav-item {
+    color: #000;
+    text-align: left;
+    width: 90%; /* Ensure the link takes up the full width of the container */
+    text-decoration: none;
+    padding: 1rem 1rem 1rem 0.5rem; /* Adjust padding: top right bottom left */
+    font-size: 1.1rem; /* Increase font size */
+    transition: background-color 0.3s, color 0.3s;
+    position: relative; /* Ensure the pseudo-element is positioned relative to the link */
+    display: flex;
+    align-items: center;
+}
+
+.nav-item:hover {
+    background-color: #dcdcdc; /* Light grey on hover */
+}
+
+.nav-item:active {
+    background-color: #D9D9D9; /* Darker grey on click */
+}
+
+.nav-item.active {
+    background-color: #D9D9D9; /* Darker grey when active */
+    color: #000;
+    font-weight: bold; /* Make text bold when active */
+}
+
+/* styling for the active link indicator (this stuff creates the triangle) */
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    right: -1.7rem; /* Adjust position to align the polygon */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 1.7rem solid transparent;
+    border-bottom: 1.7rem solid transparent;
+    border-left: 1.7rem solid #D9D9D9; /* Match the background color of the active link */
+}
+
+/* Styling for the sub-items */
+.nav-link {
+    color: #000;
+    text-decoration: none;
+}
+
+.sub-links .nav-item {
+    justify-content: flex-start;
+}
+
+
+.sub-item {
+    margin-left: 4rem; 
+}
+
+/* styling the submit button (it's disabled until the form is complete) */
+.nav-item.disabled {
+    pointer-events: none; 
+}
+
+.nav-item.disabled .nav-link {
+    color: #7B7B7B; 
+}

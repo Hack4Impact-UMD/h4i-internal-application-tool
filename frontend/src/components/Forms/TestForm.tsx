@@ -2,17 +2,37 @@ import React, { useState } from "react";
 import { checkboxes } from "../../Options/checkboxes"; // Add or remove checkboxes from here as necessary.
 import {
   BootCampData,
+  DemographicData,
+  EngineerData,
+  GeneralInfoData,
   ProductManagerData,
+  SourcingData,
+  TechLeadData,
+  UXData,
 } from "../../interfaces/FormData/formDataInterfaces";
 
-//import BootCampForm from "./BootCampForm";
+import BootCampForm from "./BootCampForm";
 import ProductManagerForm from "./ProductManagerForm";
+import EngineerForm from "./EngineerForm";
+import TechLeadForm from "./TechLeadForm";
+import UXForm from "./UXForm";
+import SourcingForm from "./SourcingForm";
+import GeneralInfoForm from "./GeneralInfoForm";
+import DemographicsForm from "./DemographicForm";
+import DemographicForm from "./DemographicForm";
+
 
 // This interface maps each form section to its specific datatype which allows
 // TS to infer the correct type of data based on formSection.
 interface FormDataMap {
   bootCampData: BootCampData;
   productManagerData: ProductManagerData;
+  engineerData: EngineerData;
+  techLeadData: TechLeadData;
+  UXData: UXData;
+  sourcingData: SourcingData;
+  generalInfoData: GeneralInfoData;
+  demographicData: DemographicData;
   // Add more form types (engineer, sourcing, etc.) when nec,
   // and update "formDataInterfaces.ts" accordingly
 }
@@ -23,6 +43,12 @@ const TestForm = () => {
   const [formData, setFormData] = useState({
     bootCampData: {} as BootCampData,
     productManagerData: {} as ProductManagerData,
+    engineerData: {} as EngineerData,
+    techLeadData: {} as TechLeadData,
+    UXData: {} as UXData,
+    sourcingData: {} as SourcingData,
+    generalInfoData: {} as GeneralInfoData,
+    demographicData: {} as DemographicData
   });
 
   const handleFormDataChange = <Section extends FormSection>(
@@ -95,19 +121,68 @@ const TestForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* <BootCampForm
-        onFormDataChange={(field, value) =>
+      {/* 
+      <BootCampForm
+        onFormDataChange={(field, value, otherUnchecked) =>
           handleFormDataChange("bootCampData", field, value)
         }
         sectionFormData={formData.bootCampData}
       /> */}
 
-      {/* If form contains a checkbox component, must pass the otherUnchecked Param */}
+      {/* If form contains a checkbox component, must pass the otherUnchecked Param
       <ProductManagerForm
         onFormDataChange={(field, value, otherUnchecked) =>
           handleFormDataChange("productManagerData", field, value, otherUnchecked)
         }
         sectionFormData={formData.productManagerData}
+      /> */}
+
+      {/* 
+      <EngineerForm
+        onFormDataChange={(field, value, otherUnchecked) =>
+          handleFormDataChange("engineerData", field, value)
+        }
+        sectionFormData={formData.engineerData}
+      /> */}
+
+      {/* 
+      <TechLeadForm
+        onFormDataChange={(field, value, otherUnchecked) =>
+          handleFormDataChange("techLeadData", field, value)
+        }
+        sectionFormData={formData.techLeadData}
+      />*/}
+
+      {/* 
+      <UXForm
+        onFormDataChange={(field, value, otherUnchecked) =>
+          handleFormDataChange("UXData", field, value)
+        }
+        sectionFormData={formData.UXData}
+      />*/}
+
+      {/* 
+      <SourcingForm
+        onFormDataChange={(field, value, otherUnchecked) =>
+          handleFormDataChange("sourcingData", field, value)
+        }
+        sectionFormData={formData.sourcingData}
+      />*/}
+
+      {/* 
+      <GeneralInfoForm
+        onFormDataChange={(field, value, otherUnchecked) =>
+          handleFormDataChange("generalInfoData", field, value)
+        }
+        sectionFormData={formData.generalInfoData}
+      />*/}
+
+      {/* */}
+      <DemographicForm
+        onFormDataChange={(field, value, otherUnchecked) =>
+          handleFormDataChange("demographicData", field, value)
+        }
+        sectionFormData={formData.demographicData}
       />
 
       <button type="submit">Submit</button>

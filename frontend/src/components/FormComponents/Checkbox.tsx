@@ -14,6 +14,7 @@ import OtherOption from "./OtherOption";
 interface CheckboxProps {
   heading: string;
   subHeading?: string;
+  boldSubHeading?: string;
   options: string[];
   required?: boolean;
   onChange: (value: string, otherUnchecked?: boolean) => void;
@@ -24,12 +25,14 @@ interface CheckboxProps {
 const Checkbox: React.FC<CheckboxProps> = ({
   heading,
   subHeading,
+  boldSubHeading,
   options,
   required,
   onChange,
   choiceName,
   other,
 }) => {
+  
   // custom validation to ensure parent variable is not empty
   return (
     <div className="form-input-container">
@@ -38,9 +41,11 @@ const Checkbox: React.FC<CheckboxProps> = ({
         {required && <span className="red-text"> *</span>}
       </label>
 
-      {subHeading && <label className="form-label">{subHeading}</label>}
+      {subHeading && <label className="form-sublabel">{subHeading}</label>}
 
-      <div className={choiceName}>
+      {boldSubHeading && <strong className="form-sublabel">{boldSubHeading}</strong>}
+
+      <div className="form-options-container">
         {options.map((option, index) => (
           <div key={index}>
             <input

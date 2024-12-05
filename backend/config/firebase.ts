@@ -4,13 +4,13 @@ import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB7FYsjDJiszoQaUnFADEZxPPTQJ2px8W0",
-    authDomain: "h4i-applications.firebaseapp.com",
-    projectId: "h4i-applications",
-    storageBucket: "h4i-applications.appspot.com",
-    messagingSenderId: "361966602736",
-    appId: "1:361966602736:web:05a21adddb85e54eebf535",
-    measurementId: "G-FS170BH0BM"
+  apiKey: "AIzaSyB7FYsjDJiszoQaUnFADEZxPPTQJ2px8W0",
+  authDomain: "h4i-applications.firebaseapp.com",
+  projectId: "h4i-applications",
+  storageBucket: "h4i-applications.appspot.com",
+  messagingSenderId: "361966602736",
+  appId: "1:361966602736:web:05a21adddb85e54eebf535",
+  measurementId: "G-FS170BH0BM"
 };
 
 // Initialize Firebase
