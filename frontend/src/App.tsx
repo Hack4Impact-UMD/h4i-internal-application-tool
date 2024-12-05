@@ -1,25 +1,22 @@
-
+// src/App.tsx
+import React from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
-import { AuthProvider, useAuth } from "./components/test-auth/authhandle"; // Adjust the path as needed
-import Form from "./components/Forms/Form"; // add form components
-import TestForm from "./components/Forms/TestForm";
-import SignIn from "./components/test-auth/SignIn"; // signincomponent from other team
-
-const AppContent = () => {
-  const { isAuthenticated } = useAuth();
-
-  return (
-    <div>
-      {isAuthenticated ? <TestForm /> : <SignIn />}
-    </div>
-  );
-};
+import Login from "./pages/Login/Login.tsx";
+import Signup from "./pages/Login/Signup.tsx";
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <Router>
+      <div className="login-container">
+        <h1>Application Portal</h1>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          {/* Add additional routes here */}
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
