@@ -1,0 +1,22 @@
+/* General Styles */
+.red-text {
+  color: red;
+}
+
+/* Form Component */
+.form-input-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: 50%;
+}
