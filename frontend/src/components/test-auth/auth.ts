@@ -1,6 +1,6 @@
 // learning how authentification works in firebase
-import { auth } from "../../../../backend/config/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "../../../../h4i-internal/config/firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User} from "firebase/auth";
 
 export const registerWithEmailAndPassword = async (email: string, password: string) => {
   try {
@@ -28,9 +28,9 @@ export const loginWithEmailAndPassword = async (email: string, password: string)
 };
 
 export const signInWithGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-  const userCredential = await signInWithPopup(auth, provider);
-  return userCredential.user;
+    const provider = new GoogleAuthProvider();
+    const userCredential = await signInWithPopup(auth, provider);
+    return userCredential.user;
 }
 
 export const logout = async () => {
