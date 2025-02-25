@@ -32,7 +32,7 @@ interface NavLinkProps {
 }
 
 // A special link that includes whether it is currently active in its className
-function NavLink({ id, to, children, ...props }: NavLinkProps) {
+function NavLink({ to, children, ...props }: NavLinkProps) {
     const resolvedPath = useResolvedPath(to);
     const location = useLocation();
     const isActive = location.pathname.startsWith(resolvedPath.pathname);

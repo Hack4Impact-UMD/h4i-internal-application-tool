@@ -1,0 +1,208 @@
+.applicant-details {
+  font-family: Arial, sans-serif;
+}
+
+.applicant-name {
+  font-family: Karla;
+  font-weight: 700;
+  font-size: 34px;
+  text-align: left;
+  margin-right: 1100px;
+  margin-left: -70px;
+  margin-top: -10px;
+}
+
+.applicant-details h2 {
+  margin-bottom: -300px;
+}
+
+.applicant-details p {
+  margin: 10px 0;
+}
+
+.applicant-details button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.applicant-details button:hover {
+  background-color: #0056b3;
+}
+
+.bigger-header {
+  font-family: Karla;
+  color: #000000;
+  text-align: center;
+  font-size: 36px;
+  font-weight: 550;
+}
+
+.mini-header {
+  font-family: Karla;
+  color: #2969C4;
+  text-align: left;
+  font-size: 30px;
+  font-weight: 600;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.general-questions-box {
+  flex: 1;
+  border: 11px solid #CBF9F3;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #ffffff;
+  height: 555px;
+  min-width: 700px;
+  margin-left: -40px;
+  overflow-y: auto;
+}
+
+.tech-lead-scores-box {
+  flex: 1;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #ffffff;
+  height: 590px;
+  min-width: 550px;
+  overflow-y: auto;
+}
+
+.question-headers {
+  font-family: Karla;
+  font-weight: 600;
+  font-size: 20px;
+  text-align: left;
+  margin-left: 30px;
+  margin-top: 10px;
+}
+
+.question-answers {
+  font-family: Karla;
+  font-weight: 300;
+  font-size: 16px;
+  text-align: left;
+  margin-left: 30px;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.general-questions-box h2,
+.tech-lead-scores-box h2 {
+  margin-bottom: 15px;
+}
+
+.rubric-box {
+  margin-bottom: 30px; 
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.rubric-link {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: blue;
+  text-decoration: underline;
+  font-family: Karla;
+}
+
+.rubric-questions {
+  display: inline-block;
+  font-family: Karla;
+  text-align: left;
+  font-size: 20px;
+  padding: 20px;
+}
+
+.reviewer-input {
+  margin-bottom: 10px;
+  padding: 8px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* .radio-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  justify-content: center;
+  font-family: Karla;
+}
+
+.radio-buttons label {
+  cursor: pointer;
+}
+
+.radio-buttons input {
+  margin-right: 5px;
+} */
+
+.radio-buttons {
+  display: flex;
+  gap: 10px;  
+  margin-bottom: 10px;
+  justify-content: center;
+  font-family: Karla;
+  flex-wrap: wrap; 
+  align-items: center;
+}
+
+.radio-buttons .radio-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.radio-buttons .score-label {
+  font-family: Karla;
+  font-size: 16px;
+  margin-bottom: 5px;
+  text-align: center;
+  display: block;
+}
+
+
+.radio-buttons input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none; /* safari */
+  -moz-appearance: none; /* firefox */
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+}
+
+.radio-buttons input[type="radio"]:checked {
+  border-color: #2969C4;
+  background-color: #2969C4;
+}
+
+
+.radio-buttons input[type="radio"]:hover {
+  border-color: #0056b3;
+  background-color: #0056b3;
+}
+
+.radio-buttons input[type="radio"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 3px 2px rgba(0, 123, 255, 0.4);
+}
+
+
+.applicant-details-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin-top: 20px;
+}
