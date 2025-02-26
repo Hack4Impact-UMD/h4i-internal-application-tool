@@ -3,7 +3,7 @@ import ProgressBar from '../components/reviewer/ProgressBar';
 import FilterBar from '../components/reviewer/FilterBar';
 import DataTable from '../components/reviewer/DataTable';
 import './ReviewDashboard.css';
-import { collection, getDocs, Timestamp } from '@firebase/firestore';
+import { collection, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '../../../backend/config/firebase';
 
 

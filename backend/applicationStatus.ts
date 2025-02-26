@@ -1,9 +1,5 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, getDoc, doc, updateDoc } from 'firebase/firestore/lite';
-import { firebaseConfig } from './config/firebase';
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { getDoc, doc, updateDoc } from 'firebase/firestore/lite';
+import { db } from './config/firebase';
 
 export enum Status {
   INCOMPLETE = 0.0,
