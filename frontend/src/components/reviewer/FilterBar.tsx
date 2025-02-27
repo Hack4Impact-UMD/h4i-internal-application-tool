@@ -5,6 +5,8 @@ type Props = {
   selectedRole: string,
 }
 
+const buttonClasses = "bg-[#CBF9F3] border-none p-2 rounded-2xl ml-[25px] mt-[20px] font-karla h-11 text-center appearance-none cursor-pointer text-[#333333] text-xl font-normal";
+
 const FilterBar: React.FC<Props> = ({
   onSearch = () => { },
   onRoleFilter = () => { },
@@ -12,48 +14,20 @@ const FilterBar: React.FC<Props> = ({
   selectedRole = "" }: Props
 ) => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
+    <div className="flex flex-start mb-[16px]">
       <input
         type="text"
         placeholder="Search by name or email"
-        style={{
-          backgroundColor: 'white',
-          border: '1px solid #B4BBC3',
-          padding: '0.6rem 0.6rem',
-          borderRadius: '5px',
-          width: '17%',
-          marginTop: '20px',
-          marginLeft: '-80px',
-          fontFamily: 'Karla',
-          fontSize: '16px',
-          color: 'black',
-          height: '1.4rem',
-        }}
+        className="bg-white border border-[#B4BBC3] p-[0.6rem] rounded-md w-[17%] ml-[-80px] mt-[20px] font-karla text-black text-base h-[2.75rem]"
         onChange={(e) => onSearch(e.target.value)}
       />
-
 
       <select
         /*value={selectedRole}
         onChange={(e) => onRoleFilter(e.target.value)}*/
         value={selectedRole}
         onChange={(e) => onRoleFilter(e.target.value)}
-        style={{
-          backgroundColor: '#CBF9F3',
-          border: '2px solid #CBF9F3',
-          padding: '0.6rem 0.6rem',
-          height: '2.75rem',
-          borderRadius: '15px',
-          marginTop: '20px',
-          marginLeft: '25px',
-          color: '#333333',
-          cursor: 'pointer',
-          fontFamily: 'Karla',
-          fontSize: '20px',
-          width: '8%',
-          appearance: 'none',
-          textAlign: 'center',
-        }}
+        className={buttonClasses}
       >
         <option value="">Filter</option>
         <option value="TL">Tech Lead (TL)</option>
@@ -66,19 +40,7 @@ const FilterBar: React.FC<Props> = ({
 
       <button
         onClick={onSortByDate}
-        style={{
-          backgroundColor: '#CBF9F3',
-          color: '#333333',
-          padding: '0.6rem 1rem',
-          border: 'none',
-          borderRadius: '15px',
-          cursor: 'pointer',
-          fontFamily: 'Karla',
-          fontSize: '20px',
-          marginTop: '20px',
-          marginLeft: '20px',
-          height: '2.75rem',
-        }}
+        className={buttonClasses}
       >
         Sort By: Date
       </button>
