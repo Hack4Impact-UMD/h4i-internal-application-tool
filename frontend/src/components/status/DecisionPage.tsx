@@ -48,25 +48,25 @@ function DecisionPage() {
     }
 
     return (
-        <>
+        <div className='w-full flex items-center'>
             <Navbar />
-            <div className="decision-page">
-                <div className="back-button">
+            <div className="w-full flex flex-col gap-9 px-10 min-h-[45rem] mt-36 items-center justify-start bg-cover bg-no-repeat bg-[url(/blue-bg.png)]">
+                <div className="self-start p-2 text-center">
                     <p onClick={() => openStatusPage()}>
                         ←Back to Status Page
                     </p>
                 </div>
 
-                <div className="content">
-                    <div className="message-container">
-                        <h1 className="header">
+                <div className="flex flex-row w-full gap-10">
+                    <div className="grow justify-start bg-white p-12 rounded-xl shadow-darkgray shadow-md border-lightblue border-8">
+                        <h1 className="text-center text-[40px] mb-10">
                             {status >= 5 &&
                                 `${dateStr} Hack4Impact-UMD Acceptance`}
                             {status === 4 &&
                                 `${dateStr} Hack4Impact-UMD Decision`}
                         </h1>
 
-                        <div className="message">
+                        <div className="text-lg">
                             {status >= 5 &&
                                 acceptanceMessage}
                             {status === 4 &&
@@ -80,7 +80,7 @@ function DecisionPage() {
                             setStatus={setStatus} />}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

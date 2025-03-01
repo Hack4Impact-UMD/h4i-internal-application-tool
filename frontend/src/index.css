@@ -3,12 +3,27 @@
 
 @import "tailwindcss";
 
+@theme {
+  --color-lightblue: rgb(194, 224, 251);
+  --color-darkblue: rgb(41, 105, 196);
+  --color-teal: rgb(203, 248, 243);
+  --color-lightgray: rgb(232, 232, 232);
+  --color-gray: rgb(217, 217, 217);
+  --color-darkgray: rgb(131, 130, 130);
+  --color-red: rgb(224, 41, 41);
+}
+
 * {
-  margin: 0;
-  padding: 0;
+  /* margin: 0; */
+  /* padding: 0; */
   box-sizing: border-box;
   font-family: "Karla", "Rubik", sans-serif;
   text-decoration: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
 }
 
 :root {
@@ -34,9 +49,11 @@
   height: 9rem;
   padding: 0 1rem;
   justify-content: space-evenly;
-  background: linear-gradient(to right,
-      var(--custom-lightblue),
-      var(--custom-teal));
+  background: linear-gradient(
+    to right,
+    var(--custom-lightblue),
+    var(--custom-teal)
+  );
 }
 
 .navbar .sign-out-button {
@@ -229,17 +246,6 @@ body {
   margin-top: 10px;
 }
 
-h1 {
-  font-size: 3em;
-  line-height: 1.1;
-  color: #333333;
-  font-family: Karla;
-  margin-top: 110px;
-  font-weight: 600;
-  align-items: center;
-  margin-left: -40px;
-}
-
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -399,17 +405,6 @@ body {
   font-size: 1rem;
   color: #4b5563;
   margin-top: 10px;
-}
-
-h1 {
-  font-size: 3em;
-  line-height: 1.1;
-  color: #333333;
-  font-family: Karla;
-  margin-top: 110px;
-  font-weight: 600;
-  align-items: center;
-  margin-left: -40px;
 }
 
 button {

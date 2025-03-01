@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Status, setApplicationStatus } from '../../../../backend/applicationStatus';
+import { Status } from '../../../../backend/applicationStatus';
 
 interface AcceptanceBoxProps {
     status: Status;
@@ -24,44 +24,46 @@ function AcceptanceBox({ status, setStatus }: AcceptanceBoxProps) {
     };
 
     return (
-        <div className="acceptance-box">
+        <div className="self-start text-center rounded-xl text-3xl relative flex flex-col gap-6 max-w-xs max-h-[490px] w-full p-6 items-center justify-start border-8 border-lightblue shadow-darkgray shadow-md bg-white">
             {status > 5 &&
                 <>
-                    <div className="header submitted">
+                    <div className="text-darkblue font-bold">
                         <p>
                             Decision Submitted!
                         </p>
                     </div>
 
-                    <div className="description">
+                    <div className="text-lg">
                         Check your email for further updates.
                     </div>
                 </>}
 
             {status <= 5 &&
-                <>
-                    <div className="header unsubmitted">
+                <div className="flex flex-col h-full">
+                    <div>
                         <p>
                             Acceptance Confirmation
                         </p>
                     </div>
 
-                    <form className="confirmation-form" onSubmit={handleSubmit}>
-                        <label className="question" htmlFor="confirmation-dropdown">
+                    <form className="flex grow h-full min-h-80 flex-col mt-8 gap-2 items-center justify-start" onSubmit={handleSubmit}>
+                        <label className="text-xl text-left" htmlFor="confirmation-dropdown">
                             <p>
                                 Would you like to confirm your position for {dateStr}?
                             </p>
                         </label>
 
-                        <select id="confirmation-dropdown" name="confirmation-dropdown" value={confirmation}
+                        <select className="w-full p-3 border border-darkgray rounded-lg text-lg font-light color-darkgray" name="confirmation-dropdown" value={confirmation}
                             onChange={(e) => setConfirmation(e.target.value)}>
                             <option value="yes">Yes, I confirm.</option>
                             <option value="no">No, I decline.</option>
                         </select>
 
-                        <input className="submit" type="submit" value="Submit" />
+                        <div className="grow" />
+
+                        <input className="rounded-4xl w-48 text-xl bg-darkblue cursor-pointer text-white p-3 h-14" type="submit" value="Submit" />
                     </form>
-                </>}
+                </div>}
         </div>
     )
 }

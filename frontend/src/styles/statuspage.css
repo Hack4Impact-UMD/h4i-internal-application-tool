@@ -1,414 +1,418 @@
 .status-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 9rem;
-    padding: 0 8rem 2rem;
-    align-items: center;
-    justify-content: center;
-    background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 9rem;
+  padding: 0 8rem 2rem;
+  align-items: center;
+  justify-content: center;
+  background: white;
 }
 
 .status-page .header {
-    padding: 2rem 0 .7rem;
+  padding: 2rem 0 0.7rem;
 }
 
 .status-page .header h1 {
-    font-size: 2.4rem;
-    font-weight: 500;
+  font-size: 2.4rem;
+  font-weight: 500;
 }
 
 .incomplete-application-error {
-    width: 23rem;
-    padding: 1rem 0;
-    text-align: center;
-    font-size: 1.4rem;
-    color: var(--custom-red);
+  width: 23rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 1.4rem;
+  color: var(--custom-red);
 }
 
 /* PROGRESS BAR */
 
 .progress-bar-container {
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-    width: 70%;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 70%;
+  align-items: center;
+  justify-content: center;
 }
 
 .progress-bar-container .bar {
-    display: flex;
-    width: 100%;
-    min-width: 20rem;
-    height: 2.5rem;
-    align-items: center;
-    border: solid 1px var(--custom-darkgray);
-    border-radius: 20px;
-    box-shadow: 0 .2rem .5rem var(--custom-gray);
-    box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  min-width: 20rem;
+  height: 2.5rem;
+  align-items: center;
+  border: solid 1px var(--custom-darkgray);
+  border-radius: 20px;
+  box-shadow: 0 0.2rem 0.5rem var(--custom-gray);
+  box-sizing: border-box;
 }
 
 .progress-bar-container .bar .fill {
-    height: 2.5rem;
-    border: solid 1px var(--custom-darkgray);
-    border-radius: 20px;
-    background: linear-gradient(to right, var(--custom-lightblue), var(--custom-teal));
+  height: 2.5rem;
+  border: solid 1px var(--custom-darkgray);
+  border-radius: 20px;
+  background: linear-gradient(
+    to right,
+    var(--custom-lightblue),
+    var(--custom-teal)
+  );
 }
 
 .progress-bar-container .labels {
-    display: grid;
-    grid-template-columns: 20% 30% 30% 20%;
-    width: 100%;
-    min-width: 20rem;
-    padding: 1.5rem 0 2.5rem;
+  display: grid;
+  grid-template-columns: 20% 30% 30% 20%;
+  width: 100%;
+  min-width: 20rem;
+  padding: 1.5rem 0 2.5rem;
 }
 
 .progress-bar-container .labels p {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 300;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 300;
 }
 
 .progress-bar-container .labels p.passed {
-    color: var(--custom-darkblue);
+  color: var(--custom-darkblue);
 }
 
 /* STATUS BOX */
 
 .status-box {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
-    min-width: 20rem;
-    height: 11rem;
-    padding: 1rem;
-    border: solid 8px var(--custom-lightblue);
-    border-radius: 15px;
-    box-shadow: .2rem .2rem .5rem var(--custom-darkgray);
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  min-width: 20rem;
+  height: 11rem;
+  padding: 1rem;
+  border: solid 8px var(--custom-lightblue);
+  border-radius: 15px;
+  box-shadow: 0.2rem 0.2rem 0.5rem var(--custom-darkgray);
 }
 
 .status-box .button {
-    position: absolute;
-    bottom: 1.3rem;
-    display: flex;
-    padding: .5rem 2.2rem;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border-radius: 20px;
-    font-size: 1.3rem;
-    background: var(--custom-darkblue);
-    color: white;
-    cursor: pointer;
-    user-select: none;
-    transition: box-shadow .2s;
+  position: absolute;
+  bottom: 1.3rem;
+  display: flex;
+  padding: 0.5rem 2.2rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 20px;
+  font-size: 1.3rem;
+  background: var(--custom-darkblue);
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow 0.2s;
 }
 
 .status-box .button:hover {
-    box-shadow: 0 0 .4rem var(--custom-darkblue);
+  box-shadow: 0 0 0.4rem var(--custom-darkblue);
 }
 
 .status-box .title-col {
-    width: 70%;
+  width: 70%;
 }
 
 .status-box .title-col p {
-    font-size: 1.6rem;
-    font-weight: 500;
+  font-size: 1.6rem;
+  font-weight: 500;
 }
 
 .status-box .status-col {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-    justify-content: start;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-content: start;
 }
 
 .status-box .status-col-header {
-    font-size: 1.3rem;
-    font-weight: 500;
+  font-size: 1.3rem;
+  font-weight: 500;
 }
 
 .status-box .status-col .status {
-    font-size: 1.2rem;
-    font-weight: 300;
+  font-size: 1.2rem;
+  font-weight: 300;
 }
 
 .status-box .status-col .interview-instructions {
-    font-size: .9rem;
-    font-weight: 300;
+  font-size: 0.9rem;
+  font-weight: 300;
 }
 
 .status-box .download-col {
-    display: flex;
-    flex-direction: column;
-    gap: 3.5rem;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+  align-items: center;
 }
 
 .status-box .download-col .download-col-header {
-    font-size: 1.3rem;
-    font-weight: 500;
+  font-size: 1.3rem;
+  font-weight: 500;
 }
 
 /* DECISION PAGE */
 
 .decision-page {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    min-height: 45rem;
-    margin-top: 9rem;
-    align-items: center;
-    justify-content: start;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position-y: 5rem;
-    background-image: url("/blue-bg.png");
-    background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 45rem;
+  margin-top: 9rem;
+  align-items: center;
+  justify-content: start;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position-y: 5rem;
+  background-image: url("/blue-bg.png");
+  background-color: white;
 }
 
 .decision-page .back-button {
-    align-self: start;
-    padding: .5rem 1rem;
-    text-align: center;
+  align-self: start;
+  padding: 0.5rem 1rem;
+  text-align: center;
 }
 
 .decision-page .back-button p {
-    font-size: 1.2rem;
-    font-weight: 350;
-    font-family: "Rubik", "Karla", sans-serif;
-    color: var(--custom-darkgray);
-    cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 350;
+  font-family: "Rubik", "Karla", sans-serif;
+  color: var(--custom-darkgray);
+  cursor: pointer;
 }
 
 .decision-page .back-button p:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .decision-page .content {
-    display: flex;
-    gap: 3rem;
-    padding: 0 4rem;
-    align-items: start;
-    justify-content: center;
+  display: flex;
+  gap: 3rem;
+  padding: 0 4rem;
+  align-items: start;
+  justify-content: center;
 }
 
 .decision-page .message-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    width: 90%;
-    padding: 2rem 3rem;
-    align-items: center;
-    justify-content: center;
-    border: solid 8px var(--custom-lightblue);
-    border-radius: 10px;
-    box-shadow: .2rem .2rem .5rem var(--custom-darkgray);
-    background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 90%;
+  padding: 2rem 3rem;
+  align-items: center;
+  justify-content: center;
+  border: solid 8px var(--custom-lightblue);
+  border-radius: 10px;
+  box-shadow: 0.2rem 0.2rem 0.5rem var(--custom-darkgray);
+  background: white;
 }
 
 .decision-page .message-container .header {
-    width: 70%;
-    text-align: center;
-    font-size: 2.6rem;
-    font-weight: 350;
+  width: 70%;
+  text-align: center;
+  font-size: 2.6rem;
+  font-weight: 350;
 }
 
 .decision-page .message-container .message {
-    font-size: 1.2rem;
-    font-weight: 350;
+  font-size: 1.2rem;
+  font-weight: 350;
 }
 
 /* ACCEPTANCE BOX */
 
 .decision-page .acceptance-box {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 30%;
-    margin-top: 1rem;
-    padding: 2rem 1rem 10rem;
-    align-items: center;
-    justify-content: start;
-    border: solid 8px var(--custom-lightblue);
-    border-radius: 10px;
-    box-shadow: .2rem .2rem .5rem var(--custom-darkgray);
-    background: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 30%;
+  margin-top: 1rem;
+  padding: 2rem 1rem 10rem;
+  align-items: center;
+  justify-content: start;
+  border: solid 8px var(--custom-lightblue);
+  border-radius: 10px;
+  box-shadow: 0.2rem 0.2rem 0.5rem var(--custom-darkgray);
+  background: white;
 }
 
 .acceptance-box .header {
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: 500;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 500;
 }
 
 .acceptance-box .header.submitted {
-    color: var(--custom-darkblue);
+  color: var(--custom-darkblue);
 }
 
 .acceptance-box .description {
-    width: 70%;
-    text-align: center;
-    font-size: 1.1rem;
+  width: 70%;
+  text-align: center;
+  font-size: 1.1rem;
 }
 
 .acceptance-box .confirmation-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
 }
 
 .acceptance-box .confirmation-form .question {
-    padding: 1rem;
-    font-size: 1.2rem;
-    font-weight: 300;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: 300;
 }
 
 .acceptance-box .confirmation-form #confirmation-dropdown {
-    width: 100%;
-    padding: .7rem;
-    border: solid 1px var(--custom-darkgray);
-    border-radius: 10px;
-    font-size: 1.1rem;
-    font-weight: 350;
-    color: var(--custom-darkgray);
+  width: 100%;
+  padding: 0.7rem;
+  border: solid 1px var(--custom-darkgray);
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 350;
+  color: var(--custom-darkgray);
 }
 
 .acceptance-box .confirmation-form .submit {
-    position: absolute;
-    bottom: 1.3rem;
-    display: flex;
-    padding: .9rem 3rem;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border: none;
-    border-radius: 30px;
-    font-size: 1.3rem;
-    background: var(--custom-darkblue);
-    color: white;
-    cursor: pointer;
-    user-select: none;
-    transition: box-shadow .2s;
+  position: absolute;
+  bottom: 1.3rem;
+  display: flex;
+  padding: 0.9rem 3rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.3rem;
+  background: var(--custom-darkblue);
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  transition: box-shadow 0.2s;
 }
 
 .acceptance-box .confirmation-form .submit:hover {
-    box-shadow: 0 0 .4rem var(--custom-darkblue);
+  box-shadow: 0 0 0.4rem var(--custom-darkblue);
 }
 
 @media screen and (max-width: 1050px) {
-    .progress-bar-container .labels {
-        width: 125%;
-    }
+  .progress-bar-container .labels {
+    width: 125%;
+  }
 }
 
 @media screen and (max-width: 900px) {
-    .progress-bar-container .bar {
-        display: flex;
-        width: 180%;
-        height: 2.5rem;
-        align-items: center;
-        border: solid 1px var(--custom-darkgray);
-        border-radius: 20px;
-        box-shadow: 0 .2rem .5rem var(--custom-gray);
-        box-sizing: border-box;
-    }
+  .progress-bar-container .bar {
+    display: flex;
+    width: 180%;
+    height: 2.5rem;
+    align-items: center;
+    border: solid 1px var(--custom-darkgray);
+    border-radius: 20px;
+    box-shadow: 0 0.2rem 0.5rem var(--custom-gray);
+    box-sizing: border-box;
+  }
 
-    .progress-bar-container .labels {
-        grid-template-columns: 30% 20% 20% 30%;
-        width: 200%;
-    }
+  .progress-bar-container .labels {
+    grid-template-columns: 30% 20% 20% 30%;
+    width: 200%;
+  }
 
-    .status-box {
-        grid-template-columns: none;
-        grid-template-rows: 20% 40% 40%;
-        height: 30rem;
-        padding: 1rem;
-        align-items: start;
-    }
+  .status-box {
+    grid-template-columns: none;
+    grid-template-rows: 20% 40% 40%;
+    height: 30rem;
+    padding: 1rem;
+    align-items: start;
+  }
 
-    .status-box .button {
-        bottom: 0;
-        padding: .5rem 2.5rem;
-    }
-    
-    .status-box .title-col {
-        width: 100%;
-        text-align: center;
-    }
-    
-    .status-box .status-col {
-        position: relative;
-        width: 100%;
-        padding-bottom: 5rem;
-        justify-self: start;
-    }
-    
-    .status-box .download-col {
-        position: relative;
-        margin-top: 2rem;
-        padding-bottom: 5rem;
-    }
+  .status-box .button {
+    bottom: 0;
+    padding: 0.5rem 2.5rem;
+  }
+
+  .status-box .title-col {
+    width: 100%;
+    text-align: center;
+  }
+
+  .status-box .status-col {
+    position: relative;
+    width: 100%;
+    padding-bottom: 5rem;
+    justify-self: start;
+  }
+
+  .status-box .download-col {
+    position: relative;
+    margin-top: 2rem;
+    padding-bottom: 5rem;
+  }
 }
 
 @media screen and (max-width: 650px) {
-    .decision-page .content {
-        flex-direction: column;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        align-items: center;
-        justify-content: start;
-    }
+  .decision-page .content {
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: center;
+    justify-content: start;
+  }
 
-    .decision-page .acceptance-box {
-        padding: 2rem 10rem 10rem;
-    }
+  .decision-page .acceptance-box {
+    padding: 2rem 10rem 10rem;
+  }
 
-    .acceptance-box .confirmation-form {
-        width: 10rem;
-    }
+  .acceptance-box .confirmation-form {
+    width: 10rem;
+  }
 }
 
 @media screen and (max-width: 580px) {
-    .progress-bar-container .bar {
-        width: 250%;
-    }
+  .progress-bar-container .bar {
+    width: 250%;
+  }
 
-    .progress-bar-container .labels {
-        width: 280%;
-    }
+  .progress-bar-container .labels {
+    width: 280%;
+  }
 
-    .progress-bar-container .labels p {
-        font-size: 1.3rem;
-    }
+  .progress-bar-container .labels p {
+    font-size: 1.3rem;
+  }
 }
 
 @media screen and (max-width: 460px) {
-    .progress-bar-container .bar {
-        width: 330%;
-    }
+  .progress-bar-container .bar {
+    width: 330%;
+  }
 
-    .progress-bar-container .labels {
-        width: 330%;
-    }
+  .progress-bar-container .labels {
+    width: 330%;
+  }
 
-    .progress-bar-container .labels p {
-        font-size: 1.1rem;
-    }
+  .progress-bar-container .labels p {
+    font-size: 1.1rem;
+  }
 
-    .decision-page .message-container {
-        width: 65%;
-    }
+  .decision-page .message-container {
+    width: 65%;
+  }
 
-    .decision-page .message-container .header {
-        text-align: center;
-        font-size: 2rem;
-        font-weight: 350;
-    }
+  .decision-page .message-container .header {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 350;
+  }
 }
