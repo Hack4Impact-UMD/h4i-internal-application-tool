@@ -49,14 +49,12 @@
   height: 9rem;
   padding: 0 1rem;
   justify-content: space-evenly;
-  background: linear-gradient(
-    to right,
-    var(--custom-lightblue),
-    var(--custom-teal)
-  );
+  background: linear-gradient(to right,
+      var(--custom-lightblue),
+      var(--custom-teal));
 }
 
-.navbar .sign-out-button {
+.sign-out-button {
   position: absolute;
   top: 0;
   right: 0;
@@ -64,18 +62,18 @@
   text-align: center;
 }
 
-.navbar .sign-out-button p {
+.sign-out-button p {
   font-family: "Rubik", "Karla", sans-serif;
   font-size: 1.1rem;
   font-weight: 350;
   cursor: pointer;
 }
 
-.navbar .sign-out-button p:hover {
+.sign-out-button p:hover {
   text-decoration: underline;
 }
 
-.navbar .site-logo {
+.site-logo {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -85,7 +83,7 @@
   pointer-events: none;
 }
 
-.navbar .tab-container {
+.tab-container {
   position: absolute;
   bottom: 0;
   display: flex;
@@ -95,7 +93,7 @@
   width: 100%;
 }
 
-.navbar .tab-container a {
+.tab-container a {
   display: flex;
   width: 20%;
   min-width: 10rem;
@@ -112,11 +110,11 @@
   transition: background 0.1s;
 }
 
-.navbar .tab-container a:hover {
+.tab-container a:hover {
   background: var(--custom-lightgray);
 }
 
-.navbar .tab-container a.active {
+.tab-container a.active {
   background: white;
   pointer-events: none;
 }
@@ -134,16 +132,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
 }
 
 body {
@@ -295,16 +283,6 @@ button:focus-visible {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
 }
 
 body {
