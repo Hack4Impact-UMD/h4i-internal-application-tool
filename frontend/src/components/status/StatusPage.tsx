@@ -1,4 +1,4 @@
-import { Status } from '../../../../backend/applicationStatus';
+import { Status } from '../../services/applicationStatus';
 import '../../styles/statuspage.css';
 
 import Navbar from './Navbar';

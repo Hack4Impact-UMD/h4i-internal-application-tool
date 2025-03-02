@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Status, } from '../../../../backend/applicationStatus';
+import { Status } from '../../services/applicationStatus';
 
 import Navbar from './Navbar';
 import AcceptanceBox from './AcceptanceBox';

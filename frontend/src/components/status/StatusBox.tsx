@@ -1,4 +1,4 @@
-import { Status } from '../../../../backend/applicationStatus';
+import { Status } from '../../services/applicationStatus';
 
 interface StatusBoxProps {
     status: Status;

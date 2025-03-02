@@ -1,5 +1,5 @@
 import { getDoc, doc, updateDoc } from 'firebase/firestore/lite';
-import { db } from './config/firebase';
+import { db } from '../config/firebase';
 
 export enum Status {
   INCOMPLETE = 0.0,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { db } from '../../../backend/config/firebase';
+import { db } from '../config/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import './ApplicantDetails.css';
 import { Applicant } from './ReviewDashboard';

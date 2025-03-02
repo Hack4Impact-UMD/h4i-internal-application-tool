@@ -4,7 +4,7 @@ import FilterBar from '../components/reviewer/FilterBar';
 import DataTable from '../components/reviewer/DataTable';
 import './ReviewDashboard.css';
 import { collection, getDocs, Timestamp } from 'firebase/firestore';
-import { db } from '../../../backend/config/firebase';
+import { db } from '../config/firebase';
 
 
 export type Applicant = {
