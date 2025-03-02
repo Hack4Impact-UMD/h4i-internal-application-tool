@@ -37,7 +37,7 @@
   justify-content: center;
 }
 
-.progress-bar-container .bar {
+.bar {
   display: flex;
   width: 100%;
   min-width: 20rem;
@@ -49,18 +49,16 @@
   box-sizing: border-box;
 }
 
-.progress-bar-container .bar .fill {
+.bar .fill {
   height: 2.5rem;
   border: solid 1px var(--custom-darkgray);
   border-radius: 20px;
-  background: linear-gradient(
-    to right,
-    var(--custom-lightblue),
-    var(--custom-teal)
-  );
+  background: linear-gradient(to right,
+      var(--custom-lightblue),
+      var(--custom-teal));
 }
 
-.progress-bar-container .labels {
+.labels {
   display: grid;
   grid-template-columns: 20% 30% 30% 20%;
   width: 100%;
@@ -68,13 +66,13 @@
   padding: 1.5rem 0 2.5rem;
 }
 
-.progress-bar-container .labels p {
+.labels p {
   text-align: center;
   font-size: 1.5rem;
   font-weight: 300;
 }
 
-.progress-bar-container .labels p.passed {
+.labels p.passed {
   color: var(--custom-darkblue);
 }
 

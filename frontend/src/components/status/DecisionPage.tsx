@@ -48,9 +48,9 @@ function DecisionPage() {
     }
 
     return (
-        <div className='w-full flex items-center'>
+        <div className='w-full flex flex-col items-center'>
             <Navbar />
-            <div className="w-full flex flex-col gap-9 px-10 min-h-[45rem] mt-36 items-center justify-start bg-cover bg-no-repeat bg-[url(/blue-bg.png)]">
+            <div className="w-full flex flex-col gap-9 px-10 min-h-[45rem] items-center justify-start bg-cover bg-no-repeat bg-[url(/blue-bg.png)]">
                 <div className="self-start p-2 text-center">
                     <p onClick={() => openStatusPage()}>
                         ←Back to Status Page

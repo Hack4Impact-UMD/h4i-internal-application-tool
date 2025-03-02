@@ -15,27 +15,28 @@ function StatusPage() {
     return (
         <>
             <Navbar />
-            <div className="status-page">
-                <div className="header">
-                    <h1>
+            <div className="flex flex-col w-full items-center p-8">
+                <div className="flex flex-col w-full gap-5 font-bold max-w-5xl items-center">
+                    <h1 className="text-4xl">
                         Current Application Status
                     </h1>
+
+                    <ProgressBar
+                        fillLevel={status} />
+
+                    {status === 0 &&
+                        <div className="max-w-96 px-4 text-center text-[1.4rem] text-red">
+                            <p>
+                                {incompleteApplicationError}
+                            </p>
+                        </div>}
+
+                    {status > 0 &&
+                        <StatusBox
+                            status={status}
+                            applicationUrl={applicationUrl} />}
+
                 </div>
-
-                <ProgressBar
-                    fillLevel={status} />
-
-                {status === 0 &&
-                    <div className="incomplete-application-error">
-                        <p>
-                            {incompleteApplicationError}
-                        </p>
-                    </div>}
-
-                {status > 0 &&
-                    <StatusBox
-                        status={status}
-                        applicationUrl={applicationUrl} />}
             </div>
         </>
     )
