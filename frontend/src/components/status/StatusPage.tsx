@@ -1,5 +1,4 @@
 import { Status } from '../../services/applicationStatus';
-import '../../styles/statuspage.css';
 
 import Navbar from './Navbar';
 import ProgressBar from './ProgressBar';
