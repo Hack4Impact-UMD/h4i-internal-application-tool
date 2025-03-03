@@ -9,17 +9,17 @@ function Navbar() {
 
     return (
         <div className="z-50 flex flex-col w-full pt-4 px-4 justify-start bg-gradient-to-r from-lightblue to-teal">
-            <div className="font-['Rubik'] text-right text-lg font-light cursor-pointer">
+            <div className="font-['Rubik'] text-right text-xl font-medium cursor-pointer -translate-x-5">
                 <p className="hover:underline" onClick={() => handleSignout()}>
                     Sign Out
                 </p>
             </div>
 
-            <img className="w-1/4 min-w-40" src="/h4i_umd_logo.png" alt="hack4impact-UMD" />
+            <img className="w-1/5 min-w-80" src="/h4i_umd_logo.png" alt="hack4impact-UMD" />
 
             <div className="flex gap-4 items-center justify-center w-full">
-                <NavLink id="dashboard-link" className="hover:bg-lightgray active:bg-white font-['Karla'] font-light flex w-1/5 min-w-40 h-14 items-center justify-center text-center text-3xl rounded-t-xl bg-gray text-black select-none transition" to="/application">Application</NavLink>
-                <NavLink id="dashboard-link" className="hover:bg-lightgray active:bg-white font-['Karla'] font-light flex w-1/5 min-w-40 h-14 items-center justify-center text-center text-3xl rounded-t-xl bg-gray text-black select-none transition" to="/status">Status</NavLink>
+                <NavLink id="dashboard-link" className="hover:bg-lightgray active:bg-white font-['Karla'] font-normal flex w-1/5 min-w-40 h-14 items-center justify-center text-center text-[1.6rem] tracking-[0.02em] rounded-t-xl bg-gray text-black select-none transition" to="/application">Application</NavLink>
+                <NavLink id="dashboard-link" className="hover:bg-lightgray active:bg-white font-['Karla'] font-normal flex w-1/5 min-w-40 h-14 items-center justify-center text-center text-[1.6rem] tracking-[0.02em] rounded-t-xl bg-gray text-black select-none transition" to="/status">Status</NavLink>
             </div>
         </div>
     )
