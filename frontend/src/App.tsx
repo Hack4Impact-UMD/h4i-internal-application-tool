@@ -4,7 +4,7 @@ import StatusPage from './components/status/StatusPage';
 import DecisionPage from './components/status/DecisionPage';
 import ReviewDashboard from './pages/ReviewDashboard';
 import ApplicantDetails from "./pages/ApplicantDetails"
-import CreateAccount from './pages/CreateAccount';
+import SignUp from './pages/SignUp';
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
       <Route path="/status/decision" element={<DecisionPage />}></Route>
       <Route path="/admin" element={<ReviewDashboard />}></Route>
       <Route path="/admin/applicant/:id" element={<ApplicantDetails />} />
-      <Route path="/createaccount" element={<CreateAccount />}></Route>
+      <Route path="/signup" element={<SignUp />}></Route>
     </Routes>
   )
 }
