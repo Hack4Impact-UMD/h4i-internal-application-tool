@@ -8,6 +8,10 @@ Note: This guide may not be perfect. If you experience any issues let us know!
 npm install -g firebase-tools
 ```
 
+The install location for the firebase CLI might not be automatically added to your
+`PATH`. If this is the case, just make sure you find where the CLI executable was
+installed and add it to your `PATH`.
+
 2. Login to your google account that has access to the firebase project.
    This should open up a browser window for you to login and grant permissions
    to the CLI tool.
