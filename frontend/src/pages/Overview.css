@@ -1,0 +1,77 @@
+.overview-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.overview-container h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.title-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.title-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.organization-title {
+    font-size: 24px;
+    color: #317FD0;
+    margin-bottom: -5px;
+}
+
+.application-title {
+    font-size: 24px;
+    color: #317FD0;
+}
+
+.apply-button {
+    width: 116px;
+        height: 39px;
+        border-radius: 26px;
+        padding: 10px;
+        /* You can keep this for vertical alignment */
+        gap: 10px;
+        /* This works if you add icons or inline elements */
+    
+        background-color: black;
+        color: white;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+.apply-button:hover {
+    background-color: #333;
+}
+
+.content-text {
+    font-family: 'Karla', sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.6;
+        /* Adjusted line height for readability */
+        letter-spacing: -2%;
+        text-align: justify;
+        text-justify: inter-word;
+        width: 750px;
+        /* Set the width to match the container max-width */
+        margin: 0 auto;
+        /* Center the text horizontally */
+        overflow: hidden;
+        margin-top: 20px;
+}
