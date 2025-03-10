@@ -10,7 +10,7 @@ interface TextBoxProps {
 export default function TextBox({ inputType, width, height, label, invalidLabel, onChange }: TextBoxProps ) {
     const borderColor = invalidLabel ? "border-red-500" : "border-transparent";
     const hover = invalidLabel ? "" : "hover:border-black";
-    var labelClassName = `flex flex-col justify-around bg-gray-100 m-1 p-3 border-1 ${borderColor} rounded-sm ${hover}`;
+    var labelClassName = `flex flex-col justify-around bg-[#F3F3F3] m-1 p-3 border-1 ${borderColor} rounded-sm ${hover}`;
     
     return (
         // Had to use inline styling to apply dynamic values for width and height as TailWind does not process these values inside square brackets at runtime
