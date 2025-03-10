@@ -1,0 +1,57 @@
+.overview-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.overview-container h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.title-button-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.title-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.organization-title {
+    font-size: 24px;
+    color: #317FD0;
+    margin-bottom: 5px;
+}
+
+.application-title {
+    font-size: 24px;
+    color: #317FD0;
+}
+
+.apply-button {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.apply-button:hover {
+    background-color: #333;
+}
+
+.content-text {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #666;
+}
