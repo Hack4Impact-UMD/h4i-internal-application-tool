@@ -13,7 +13,7 @@ const DropdownMenu = ({ optionsArray, changeFunction }: { optionsArray: string[]
     const [visible, setVisible] = useState(false);
 
     return (
-        <div className='flex flex-col w-[10%]'>
+        <div className='w-[15%] text-left bg-white z-10 relative'>
             <div className={`flex flex-row border-[1.3px] justify-between align-center px-[4px] py-[5px] cursor-pointer
                 ${visible ? 'border-[#0099EB] rounded-t-[5px]' : 'border-[#B8BBC2] rounded-[5px]'}
                 `} onClick={() => setVisible(!visible)}>
@@ -26,7 +26,7 @@ const DropdownMenu = ({ optionsArray, changeFunction }: { optionsArray: string[]
                 </svg>
             </div>
             {visible && (
-                <div className='text-left border-x-[1.3px] border-b-[1.3px] border-[#B8BBC2] rounded-b-[5px]'>
+                <div className='w-full text-left border-x-[1.3px] border-b-[1.3px] border-[#B8BBC2] rounded-b-[5px] absolute z-[10] bg-white'>
                     {options.map((option) => (
                         <div key={option}
                             onClick={() => {
