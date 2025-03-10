@@ -1,7 +1,7 @@
 import { useState, } from 'react';
 
-const DropdownMenu = () => {
-    const options = [
+const DropdownMenu = ({ optionsArray, changeFunction }: { optionsArray: string[], changeFunction: (option: string) => void }) => {
+    const options = optionsArray || [
         'Interview Offered',
         'Accepted',
         'Denied',
@@ -13,7 +13,7 @@ const DropdownMenu = () => {
     const [visible, setVisible] = useState(false);
 
     return (
-        <div className='flex flex-col w-[211px]'>
+        <div className='flex flex-col w-[10%]'>
             <div className={`flex flex-row border-[1.3px] justify-between align-center px-[4px] py-[5px] cursor-pointer
                 ${visible ? 'border-[#0099EB] rounded-t-[5px]' : 'border-[#B8BBC2] rounded-[5px]'}
                 `} onClick={() => setVisible(!visible)}>
@@ -32,6 +32,7 @@ const DropdownMenu = () => {
                             onClick={() => {
                                 setSelectedOption(option);
                                 setVisible(false);
+                                changeFunction(option);
                             }}
                             className={`cursor-pointer px-[24px] py-[11px] ${selectedOption === option ? 'bg-[#C4CBDF]' : ''}`}
                         >
