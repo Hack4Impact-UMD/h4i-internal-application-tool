@@ -43,9 +43,11 @@ export default function ForgotPassCard() {
         let valid = true;
         let errors = {...formErrors };
 
-        if (formData.email.length < 6) {
+        const terpmailRegex = /^[a-zA-Z0-9]+@terpmail\.umd\.edu$/;
+        console.log(terpmailRegex.test(formData.email.trim()))
+        if (terpmailRegex.test(formData.email.trim()) == false) {
             valid = false;
-            errors.email = "Invalid Email"
+            errors.email = "Enter a valid terpmail address"
         }
 
         setFormErrors(errors)

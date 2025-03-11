@@ -5,13 +5,13 @@ import Button from "../../components/Button";
 
 export default function ResetPassCard() {
     const [formData, setFormData] = useState({
-        email: "",
+        code: "",
         password: "",
         confirmPassword: ""
     });
 
     const [formErrors, setFormErrors] = useState({
-        email: "",
+        code: "",
         password: "",
         confirmPassword: ""
     });
@@ -19,7 +19,7 @@ export default function ResetPassCard() {
 
     // check if all fields are filled
     const isFormValid = (
-       formData.email.trim() !== "" &&
+       formData.code.trim() !== "" &&
        formData.password.trim() !== "" &&
        formData.confirmPassword.trim() !== ""
     );
@@ -45,18 +45,25 @@ export default function ResetPassCard() {
     const handleSubmit = () => {
         let valid = true;
         let errors = {...formErrors };
+        
+        const codeRegex = /^[A-Z1-9]{6}$/;
+        if (!codeRegex.test(formData.code.trim())) {
+            valid = false;
+            errors.code = "Invalid Code"
+        }
 
-        if (formData.email.length < 6) {
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+        if (passwordRegex.test(formData.password.trim()) == false) {
             valid = false;
-            errors.email = "Invalid Email"
+            errors.password = `Please ensure your password meets the following requirements:
+            At least 8 characters long, At least one uppercase letter (A-Z), At least one lower
+            case letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#)`;
         }
-        if (formData.password.length < 6) {
+        if (errors.password !== "") {
+            errors.confirmPassword = "Invalid Password"
+        } else if (formData.password !== formData.confirmPassword) {
             valid = false;
-            errors.password = "Invalid Password"
-        }
-        if (formData.confirmPassword.length < 6) {
-            valid = false;
-            errors.confirmPassword = "Invalid Confirmation Password"
+            errors.confirmPassword = "Passwords don't match"
         }
 
         setFormErrors(errors)
@@ -79,8 +86,8 @@ export default function ResetPassCard() {
                     width="421"
                     height="73"
                     label="CODE"
-                    invalidLabel={formErrors.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    invalidLabel={formErrors.code}
+                    onChange={(e) => handleInputChange("code", e.target.value)}
                 />
                 <TextBox 
                     inputType="password"

@@ -49,21 +49,29 @@ export default function SignUpCard() {
         let valid = true;
         let errors = {...formErrors };
 
-        if (formData.firstname.length < 6) {
+        // if (formData.firstname.length === 0) {
+        //     valid = false;
+        //     errors.firstname = "Invalid First Name"
+        // }
+
+        // if (formData.lastname.length === 0) {
+        //     valid = false;
+        //     errors.lastname = "Invalid Last Name"
+        // }
+
+        const terpmailRegex = /^[a-zA-Z0-9]+@terpmail\.umd\.edu$/;
+        console.log(terpmailRegex.test(formData.email.trim()))
+        if (terpmailRegex.test(formData.email.trim()) == false) {
             valid = false;
-            errors.firstname = "Invalid First Name"
+            errors.email = "Enter a valid terpmail address"
         }
-        if (formData.lastname.length < 6) {
+
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+        if (passwordRegex.test(formData.password.trim()) == false) {
             valid = false;
-            errors.lastname = "Invalid Last Name"
-        }
-        if (formData.email.length < 6) {
-            valid = false;
-            errors.email = "Invalid Email"
-        }
-        if (formData.password.length < 6) {
-            valid = false;
-            errors.password = "Invalid Password"
+            errors.password = `Please ensure your password meets the following requirements:
+            At least 8 characters long, At least one uppercase letter (A-Z), At least one lower
+            case letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#)`;
         }
 
         setFormErrors(errors)
