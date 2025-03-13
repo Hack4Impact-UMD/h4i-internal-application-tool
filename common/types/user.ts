@@ -1,6 +1,6 @@
 type Role = "applicant" | "reviewer" | "super-reviewer"
 
-interface User {
+export interface User {
   id: string;
   firstName: string;
   lastName: string;
@@ -8,6 +8,6 @@ interface User {
   role: Role;
 }
 
-interface Applicant extends User {
+export interface Applicant extends User {
 
 }
