@@ -4,10 +4,15 @@ import authRouter from "./routes/auth";
 import bodyParser from "body-parser";
 
 const app = express();
-app.use(bodyParser);
+app.use(bodyParser.json());
 
 app.use("/hello", helloRouter);
 app.use("/auth", authRouter);
+app.get("/", (_, res) => {
+  res.send(200).json({
+    status: "OK"
+  })
+})
 
 export default app;
 
