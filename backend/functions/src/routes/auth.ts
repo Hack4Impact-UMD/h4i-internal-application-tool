@@ -10,12 +10,13 @@ const router = Router();
 router.post("/register", [validateAuth, validateSchema(userRegisterFormSchema)], async (req: Request, res: Response) => {
   const registerForm = req.body as UserRegisterForm;
 
-  // make sure that the user requesting to register is logged in and is requesting to register with the same id
+  // make sure that the user requesting to register is logged in and is requesting to register with their actual id
   if (req.token == undefined || req.token.uid != registerForm.id) res.status(401).send("Unauthorized!")
 
   const collection = db.collection("users") as CollectionReference<User>
 
   const user: User = {
+    id: registerForm.id,
     email: registerForm.email,
     firstName: registerForm.firstName,
     lastName: registerForm.lastName,
@@ -26,10 +27,7 @@ router.post("/register", [validateAuth, validateSchema(userRegisterFormSchema)],
 
   await collection.doc(registerForm.id).create(user)
 
-  res.send({
-    id: registerForm.id,
-    ...user
-  });
+  res.send(user);
 });
 
 export default router;

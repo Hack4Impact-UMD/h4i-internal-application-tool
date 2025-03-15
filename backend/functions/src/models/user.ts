@@ -4,6 +4,7 @@ import { z } from "zod";
 export type UserRole = "applicant" | "reviewer" | "super-reviewer"
 
 export type User = {
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
