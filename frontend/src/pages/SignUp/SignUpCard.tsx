@@ -1,28 +1,32 @@
 import { useState } from "react"
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
+import { registerUser } from "../../services/userService";
+import { AxiosError } from "axios";
+import { validEmail } from "../../utils/verification";
 
 
 export default function SignUpCard() {
     const [formData, setFormData] = useState({
-        firstname: "",
-        lastname: "",
+        firstName: "",
+        lastName: "",
         email: "",
         password: ""
     });
 
     const [formErrors, setFormErrors] = useState({
-        firstname: "",
-        lastname: "",
+        firstName: "",
+        lastName: "",
         email: "",
         password: "",
+        genericError: "",
     });
 
 
     // check if all fields are filled
     const isFormValid = (
-        formData.firstname.trim() !== "" &&
-        formData.lastname.trim() !== "" &&
+        formData.firstName.trim() !== "" &&
+        formData.lastName.trim() !== "" &&
         formData.email.trim() !== "" &&
         formData.password.trim() !== ""
     );
@@ -45,19 +49,19 @@ export default function SignUpCard() {
     };
 
     // using dummy conditionals for now
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let valid = true;
         const errors = { ...formErrors };
 
-        if (formData.firstname.length < 6) {
+        if (formData.firstName.length == 0) {
             valid = false;
-            errors.firstname = "Invalid First Name"
+            errors.firstName = "Invalid First Name"
         }
-        if (formData.lastname.length < 6) {
+        if (formData.lastName.length == 0) {
             valid = false;
-            errors.lastname = "Invalid Last Name"
+            errors.lastName = "Invalid Last Name"
         }
-        if (formData.email.length < 6) {
+        if (!validEmail(formData.email)) {
             valid = false;
             errors.email = "Invalid Email"
         }
@@ -69,7 +73,39 @@ export default function SignUpCard() {
         setFormErrors(errors)
 
         if (valid) {
-            // create an account
+            try {
+                await registerUser(formData.email, formData.firstName, formData.lastName, formData.password)
+                setFormErrors({
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    password: "",
+                    genericError: ""
+                })
+            } catch (error) {
+                const serverErrors = {
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    password: "",
+                    genericError: ""
+                };
+                if (error instanceof AxiosError) {
+                    if (error.response?.data.error == "Invalid Data") {
+                        error.response?.data.details.map(
+                            (issue: { field: "firstName" | "lastName" | "email"; message: string }) => {
+                                console.log(`[Server validation error] ${issue.field}: ${issue.message}`)
+                                serverErrors[issue.field] = issue.message
+                            }
+                        )
+                    }
+                } else if (error instanceof Error) {
+                    serverErrors.genericError = error.message
+                } else {
+                    serverErrors.genericError = "Failed to register. You should contact us."
+                }
+                setFormErrors(serverErrors)
+            }
         }
     }
 
@@ -86,15 +122,15 @@ export default function SignUpCard() {
                     className="sm:max-w-1/2"
                     inputType="text"
                     label="FIRST NAME"
-                    invalidLabel={formErrors.firstname}
-                    onChange={(e) => handleInputChange("firstname", e.target.value)}
+                    invalidLabel={formErrors.firstName}
+                    onChange={(e) => handleInputChange("firstName", e.target.value)}
                 />
                 <TextBox
                     className="sm:max-w-1/2"
                     inputType="text"
                     label="LAST NAME"
-                    invalidLabel={formErrors.lastname}
-                    onChange={(e) => handleInputChange("lastname", e.target.value)}
+                    invalidLabel={formErrors.lastName}
+                    onChange={(e) => handleInputChange("lastName", e.target.value)}
                 />
             </div>
             <TextBox
@@ -112,10 +148,13 @@ export default function SignUpCard() {
                 onChange={(e) => handleInputChange("password", e.target.value)}
             />
             <div className="w-full">
+                {formErrors.genericError != "" && <p className="text-sm m-1 w-full text-red">{formErrors.genericError}</p>}
+            </div>
+            <div className="w-full">
                 <Button
                     className="w-full h-[73px]"
                     label="Create account"
-                    validForm={isFormValid}
+                    enabled={isFormValid}
                     onClick={handleSubmit}
                 />
             </div>

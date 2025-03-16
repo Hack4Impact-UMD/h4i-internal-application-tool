@@ -9,7 +9,7 @@ function StatusBox({ status, applicationUrl }: StatusBoxProps) {
     const dateStr = "Spring 2025";
 
     function openDecision() {
-        window.open("/status/decision", "_self");
+        window.open("/decision", "_self");
     }
 
     function openInterviewSchedule() {

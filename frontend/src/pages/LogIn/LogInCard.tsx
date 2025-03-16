@@ -1,9 +1,13 @@
 import { useState } from "react"
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
+import { useAuth } from "../../components/providers/AuthProvider";
+import { validEmail } from "../../utils/verification";
 
 
 export default function LogInCard() {
+    const { login } = useAuth()
+
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -39,11 +43,11 @@ export default function LogInCard() {
     };
 
     // using dummy conditionals for now
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let valid = true;
         const errors = { ...formErrors };
 
-        if (formData.email.length < 6) {
+        if (!validEmail(formData.email)) {
             valid = false;
             errors.email = "Invalid Email"
         }
@@ -55,7 +59,16 @@ export default function LogInCard() {
         setFormErrors(errors)
 
         if (valid) {
-            // create an account
+            try {
+                await login(formData.email, formData.password)
+            } catch (error) {
+                console.log("Failed to login!")
+                console.log(error);
+                setFormErrors({
+                    email: "Failed to login, check your email and password",
+                    password: ""
+                })
+            }
         }
     }
 
@@ -90,7 +103,7 @@ export default function LogInCard() {
                 <Button
                     className="w-full h-[73px]"
                     label="Log In"
-                    validForm={isFormValid}
+                    enabled={isFormValid}
                     onClick={handleSubmit}
                 />
             </div>

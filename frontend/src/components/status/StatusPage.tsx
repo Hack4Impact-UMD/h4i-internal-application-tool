@@ -1,6 +1,5 @@
 import { Status } from '../../services/applicationStatus';
 
-import Navbar from './Navbar';
 import ProgressBar from './ProgressBar';
 import StatusBox from './StatusBox';
 
@@ -13,7 +12,6 @@ function StatusPage() {
 
     return (
         <>
-            <Navbar isSignedIn={false} />
             <div className="flex flex-col w-full items-center p-8">
                 <div className="flex flex-col w-full gap-5 font-bold max-w-5xl items-center">
                     <h1 className="text-4xl">

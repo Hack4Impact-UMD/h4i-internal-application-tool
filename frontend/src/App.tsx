@@ -8,21 +8,54 @@ import SignUp from './pages/SignUp/SignUp';
 import LogIn from './pages/LogIn/LogIn';
 import ForgotPass from "./pages/ForgotPass/ForgotPass"
 import ResetPassCard from './pages/ResetPass/ResetPassCard';
+import AuthProvider from './components/providers/AuthProvider';
+import RequireAuth from './components/auth/RequireAuth';
+import Layout from './pages/Layout';
+import RequireNoAuth from './components/auth/RequireNoAuth';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<StatusPage />}></Route>
-      <Route path="/application" element={<StatusPage />}></Route>
-      <Route path="/status" element={<StatusPage />}></Route>
-      <Route path="/status/decision" element={<DecisionPage />}></Route>
-      <Route path="/admin" element={<ReviewDashboard />}></Route>
-      <Route path="/admin/applicant/:id" element={<ApplicantDetails />} />
-      <Route path="/signup" element={<SignUp />}></Route>
-      <Route path="/login" element={<LogIn />}></Route>
-      <Route path="/forgotpassword" element={<ForgotPass />}></Route>
-      <Route path="/resetpassword" element={<ResetPassCard />}></Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/" element={
+            <RequireAuth>
+              <StatusPage />
+            </RequireAuth>
+          } />
+          <Route path="/decision" element={
+            <RequireAuth>
+              <DecisionPage />
+            </RequireAuth>
+          }></Route>
+
+          <Route path="/admin">
+            <Route index element={
+              <RequireAuth requireRoles={["reviewer", "super-reviewer"]}>
+                <ReviewDashboard />
+              </RequireAuth>
+            } />
+            <Route path="/admin/applicant/:id" element={
+              <RequireAuth requireRoles={["reviewer", "super-reviewer"]}>
+                <ApplicantDetails />
+              </RequireAuth>
+            } />
+          </Route>
+        </Route>
+        <Route path="/signup" element={
+          <RequireNoAuth redirect='/'>
+            <SignUp />
+          </RequireNoAuth>
+        } />
+        <Route path="/login" element={
+          <RequireNoAuth redirect='/'>
+            <LogIn />
+          </RequireNoAuth>
+        } />
+        <Route path="/forgotpassword" element={<ForgotPass />}></Route>
+        <Route path="/resetpassword" element={<ResetPassCard />}></Route>
+      </Routes>
+    </AuthProvider>
   )
 }
 

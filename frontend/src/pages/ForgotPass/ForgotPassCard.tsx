@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
 
-
 export default function ForgotPassCard() {
     const navigate = useNavigate();
 
@@ -73,7 +72,7 @@ export default function ForgotPassCard() {
                 <Button
                     className="w-full h-[73px]"
                     label="Send code"
-                    validForm={isFormValid}
+                    enabled={isFormValid}
                     onClick={handleSubmit}
                 />
             </div>

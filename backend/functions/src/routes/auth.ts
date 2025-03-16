@@ -1,13 +1,15 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
-import { validateSchema, validateAuth } from "../middleware/validation";
+import { validateSchema } from "../middleware/validation";
+import { isAuthenticated } from "../middleware/authentication"
 import { User, UserRegisterForm, userRegisterFormSchema } from "../models/user";
 import { CollectionReference } from "firebase-admin/firestore";
+import { logger } from "firebase-functions";
 
 /* eslint new-cap: 0 */
 const router = Router();
 
-router.post("/register", [validateAuth, validateSchema(userRegisterFormSchema)], async (req: Request, res: Response) => {
+router.post("/register", [isAuthenticated, validateSchema(userRegisterFormSchema)], async (req: Request, res: Response) => {
   const registerForm = req.body as UserRegisterForm;
 
   // make sure that the user requesting to register is logged in and is requesting to register with their actual id
@@ -26,6 +28,8 @@ router.post("/register", [validateAuth, validateSchema(userRegisterFormSchema)],
   }
 
   await collection.doc(registerForm.id).create(user)
+
+  logger.info(`Successfully registered user ${user.firstName} ${user.lastName} (${user.email}) with ID: ${user.id}!`)
 
   res.send(user);
 });

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, UserInfo } from "firebase/auth";
 import { apiUrl, auth, db } from "../config/firebase";
 import axios from "axios";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
@@ -15,16 +15,27 @@ export type User = {
 
 export async function registerUser(email: string, firstName: string, lastName: string, password: string): Promise<User> {
   const user = await createUserWithEmailAndPassword(auth, email, password);
-  return await axios.post(apiUrl + "/register", {
+  return await axios.post(apiUrl + "/auth/register", {
     id: user.user.uid,
     email: email,
     firstName: firstName,
     lastName: lastName
+  }, {
+    headers: {
+      "Authorization": `Bearer ${await user.user.getIdToken()}`
+    }
   }) as User
 }
 
 export async function loginUser(email: string, password: string) {
-  await signInWithEmailAndPassword(auth, email, password)
+  const res = await signInWithEmailAndPassword(auth, email, password)
+
+  if (res.user) return true
+  else return false
+}
+
+export async function logoutUser() {
+  await signOut(auth)
 }
 
 export async function getUserById(id: string): Promise<User> {
@@ -53,3 +64,8 @@ export async function getUserByEmail(email: string): Promise<User | undefined> {
   }
 }
 
+export function onAuthStateChange(handler: (userInfo: UserInfo | null) => void) {
+  return auth.onAuthStateChanged((userInfo) => {
+    handler(userInfo)
+  })
+}

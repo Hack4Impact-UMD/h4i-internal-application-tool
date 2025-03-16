@@ -13,16 +13,11 @@ export type User = {
   inactiveApplications?: DocumentReference[]
 }
 
-export type UserRegisterForm = {
-  id: string; // firebase auth generated uid
-  email: string;
-  firstName: string;
-  lastName: string;
-}
-
 export const userRegisterFormSchema = z.object({
-  id: z.string().nonempty(),
-  email: z.string().email(),
-  firstName: z.string().nonempty(),
-  lastName: z.string().nonempty()
+  id: z.string().nonempty("Must provide a user ID"),
+  email: z.string().email("Must provide a valid email"),
+  firstName: z.string().nonempty("First name can't be empty"),
+  lastName: z.string().nonempty("Last name can't be empty")
 })
+
+export type UserRegisterForm = z.infer<typeof userRegisterFormSchema>
