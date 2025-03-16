@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import StatusPage from './components/status/StatusPage';
 import DecisionPage from './components/status/DecisionPage';
@@ -18,16 +18,25 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={
-            <RequireAuth>
-              <StatusPage />
-            </RequireAuth>
-          } />
-          <Route path="/decision" element={
-            <RequireAuth>
-              <DecisionPage />
-            </RequireAuth>
-          }></Route>
+          <Route index element={<Navigate to="/login" />} />
+
+          <Route path="/apply">
+            <Route index element={
+              <RequireAuth>
+                <p>Overview page goes here</p>
+              </RequireAuth>
+            }></Route>
+            <Route path="/apply/status" element={
+              <RequireAuth>
+                <StatusPage />
+              </RequireAuth>
+            } />
+            <Route path="/apply/decision" element={
+              <RequireAuth>
+                <DecisionPage />
+              </RequireAuth>
+            }></Route>
+          </Route>
 
           <Route path="/admin">
             <Route index element={
@@ -43,12 +52,24 @@ function App() {
           </Route>
         </Route>
         <Route path="/signup" element={
-          <RequireNoAuth redirect='/'>
+          <RequireNoAuth redirect={
+            {
+              applicant: "/apply",
+              reviewer: "/admin",
+              "super-reviewer": "/admin"
+            }
+          }>
             <SignUp />
           </RequireNoAuth>
         } />
         <Route path="/login" element={
-          <RequireNoAuth redirect='/'>
+          <RequireNoAuth redirect={
+            {
+              applicant: "/apply",
+              reviewer: "/admin",
+              "super-reviewer": "/admin"
+            }
+          }>
             <LogIn />
           </RequireNoAuth>
         } />

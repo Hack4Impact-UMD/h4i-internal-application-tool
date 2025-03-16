@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { UserRole } from "../../services/userService";
-import { useAuth } from "../providers/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 interface RequireAuthProps {
   requireRoles?: UserRole[]
@@ -10,6 +10,7 @@ interface RequireAuthProps {
 
 export default function RequireAuth({ requireRoles, children }: RequireAuthProps) {
   const { isLoading, isAuthed, user } = useAuth()
+  const location = useLocation()
 
   // check if auth state has been loaded
   if (isLoading) return <p>Loading...</p>
@@ -20,13 +21,13 @@ export default function RequireAuth({ requireRoles, children }: RequireAuthProps
       if (requireRoles.includes(user!.role)) {
         return children;
       } else {
-        return <Navigate to={"/login"} replace />
+        return <Navigate to={"/login"} replace state={{ path: location.pathname }} />
       }
     } else { // no role restrictions, show children
       return children
     }
   } else {
     // not logged in, redirect to login page
-    return <Navigate to={"/login"} replace />
+    return <Navigate to={"/login"} replace state={{ path: location.pathname }} />
   }
 }

@@ -4,9 +4,12 @@ import Button from "../../components/Button";
 import { registerUser } from "../../services/userService";
 import { AxiosError } from "axios";
 import { validEmail } from "../../utils/verification";
+import { useNavigate } from "react-router-dom";
 
 
 export default function SignUpCard() {
+    const navigate = useNavigate()
+
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -82,6 +85,7 @@ export default function SignUpCard() {
                     password: "",
                     genericError: ""
                 })
+                navigate("/apply")
             } catch (error) {
                 const serverErrors = {
                     firstName: "",

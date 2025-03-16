@@ -27,11 +27,9 @@ export async function registerUser(email: string, firstName: string, lastName: s
   }) as User
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(email: string, password: string): Promise<User> {
   const res = await signInWithEmailAndPassword(auth, email, password)
-
-  if (res.user) return true
-  else return false
+  return await getUserById(res.user.uid)
 }
 
 export async function logoutUser() {

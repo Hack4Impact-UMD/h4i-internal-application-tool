@@ -29,7 +29,7 @@ router.post("/register", [isAuthenticated, validateSchema(userRegisterFormSchema
 
   await collection.doc(registerForm.id).create(user)
 
-  logger.info(`Successfully registered user ${user.firstName} ${user.lastName} (${user.email}) with ID: ${user.id}!`)
+  logger.info(`Successfully registered user ${user.firstName} ${user.lastName} (${user.email}) with ID: ${user.id}`)
 
   res.send(user);
 });

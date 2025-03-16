@@ -1,12 +1,15 @@
 import { useState } from "react"
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
-import { useAuth } from "../../components/providers/AuthProvider";
+import { useAuth } from "../../hooks/useAuth";
 import { validEmail } from "../../utils/verification";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 export default function LogInCard() {
     const { login } = useAuth()
+    const { state } = useLocation()
+    const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
         email: "",
@@ -60,7 +63,16 @@ export default function LogInCard() {
 
         if (valid) {
             try {
-                await login(formData.email, formData.password)
+                const user = await login(formData.email, formData.password)
+                if (state.path) {
+                    navigate(state.path)
+                } else {
+                    if (user.role == "applicant") {
+                        navigate("/apply")
+                    } else {
+                        navigate("/admin")
+                    }
+                }
             } catch (error) {
                 console.log("Failed to login!")
                 console.log(error);

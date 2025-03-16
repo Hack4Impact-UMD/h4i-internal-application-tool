@@ -1,4 +1,4 @@
-import { useAuth } from "./providers/AuthProvider";
+import { useAuth } from "../hooks/useAuth";
 
 function Navbar() {
     const { isLoading, isAuthed, logout } = useAuth()
