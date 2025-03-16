@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use("/hello", helloRouter);
 app.use("/auth", authRouter);
 app.get("/", (_, res) => {
-  res.send(200).json({
+  res.status(200).json({
     status: "OK"
   })
 })
