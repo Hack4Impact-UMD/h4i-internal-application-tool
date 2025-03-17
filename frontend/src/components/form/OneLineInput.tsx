@@ -9,7 +9,7 @@ interface OneLineInputProps {
 const OneLineInput: React.FC<OneLineInputProps> = ({question, label, isRequired, value, onChange}) => {
     return(
         <>
-            <main className="flex flex-col min-h-[7vh] w-[27vh] bg-white">
+            <main className="flex flex-col min-h-[7vh] w-[27vh]">
 
                 <span className="text-xl font-normal">
                     {question} {!isRequired && <span className="font-light text-xs"> (Optional)</span>}

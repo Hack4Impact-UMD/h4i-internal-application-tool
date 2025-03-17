@@ -9,9 +9,8 @@ interface LongFormInputProps {
 
 const LongFormInput: React.FC<LongFormInputProps> = ({question, label, isRequired, value, onChange}) => {
     return(
-        
         <>
-            <main className="flex flex-col min-h-[7vh] w-[65vh] bg-white">
+            <main className="flex flex-col min-h-[7vh] w-[65vh]">
 
                 <span className="text-xl font-normal">
                     {question} {!isRequired && <span className="font-light text-xs"> (Optional)</span>}

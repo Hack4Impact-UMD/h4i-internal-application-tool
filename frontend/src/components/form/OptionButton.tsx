@@ -17,45 +17,43 @@ const OptionButton: React.FC<OptionButtonProps> = ({optionName, buttonType, isSe
     }, [isSelected, buttonType]);
     
     const handleClick = () => {
-      if (buttonType === "multiSelect") {
-        setClicked(!clicked);
-      } else {
-        onClick();
-      }
+      setClicked(!clicked)
+      onClick();
     };
     
       return (
         <button
           onClick={handleClick}
-          className="flex items-center shadow-md"
+          className="flex items-center shadow-md mb-2 min-w-[10vw]"
           style={{
+            padding: "0.3em 0.8em",
             backgroundColor: clicked ? '#2969C4' : '#ffffff',
             color: clicked ? '#ffffff' : '#202020B2'
           }}
         >
           <div className="relative flex items-center justify-center">
             <div
-              className="absolute rounded-full bg-white outline outline-black h-8 w-8 flex items-center justify-center"
+              className="absolute rounded-full bg-white outline outline-black h-4 w-4 flex items-center justify-center"
             ></div>
             {buttonType === 'choice' ? (
-                    <div className={`rounded-full ${clicked ? 'bg-[#2969C4]' : 'bg-transparent'} h-4 w-4 z-10`} />
+                    <div className={`rounded-full ${clicked ? 'bg-[#2969C4]' : 'bg-transparent'} h-2 w-2 z-10`} />
                 ) : (
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className={`${clicked ? '' : 'invisible'} h-6 w-6 text-blue-600 z-10`}
+                        className={`${clicked ? '' : 'invisible'} h-3 w-3 text-blue-600 z-10`}
                         fill="none"
                         stroke="currentColor"
                     >
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
+                            strokeWidth={1.5}
+                            d="M2.5 6.5l2 2L9.5 3.5"
                         />
                     </svg>
                 )}
           </div>
-          <span className="text-lg ml-4">{optionName}</span>
+          <span className="text-md ml-3">{optionName}</span>
         </button>
       );
 };
