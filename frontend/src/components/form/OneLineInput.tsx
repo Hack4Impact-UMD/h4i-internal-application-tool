@@ -1,14 +1,12 @@
-import { useState } from "react";
-
 interface OneLineInputProps {
     question: string;
     label?: string;
-    isRequired: boolean;
+    isRequired?: boolean;
+    value: string;
+    onChange : (value: string) => void;
 }
-  
-const [value, setValue] = useState("");
 
-const OneLineInput: React.FC<OneLineInputProps> = ({question, label, isRequired }) => {
+const OneLineInput: React.FC<OneLineInputProps> = ({question, label, isRequired, value, onChange}) => {
     return(
         <>
             <main className="flex flex-col min-h-[7vh] w-[27vh] bg-white">
@@ -18,11 +16,11 @@ const OneLineInput: React.FC<OneLineInputProps> = ({question, label, isRequired 
                 </span>
 
                 <span className="mb-2.5 text-xs font-light">{label}</span>
-                <input className="mt-auto p-1 w-full bg-white rounded-md outline outline-black" required={isRequired} onChange={(e) => setValue(e.target.value)}></input>
-                
+                <input className="mt-auto p-1 w-full bg-white rounded-md outline outline-black" required={isRequired} value={value} onChange={(e) => onChange(e.target.value)}></input>
+
             </main>
         </>
     );
 };
 
-export default {OneLineInput, value};
+export default OneLineInput;

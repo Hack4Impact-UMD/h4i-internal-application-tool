@@ -1,15 +1,15 @@
-import { useState } from "react";
-
 interface LongFormInputProps {
     question: string;
     label?: string;
-    isRequired: boolean;
+    isRequired?: boolean;
+    value: string;
+    onChange : (value: string) => void;
 }
 
-const [value, setValue] = useState("");
 
-const LongFormInput: React.FC<LongFormInputProps> = ({question, label, isRequired }) => {
+const LongFormInput: React.FC<LongFormInputProps> = ({question, label, isRequired, value, onChange}) => {
     return(
+        
         <>
             <main className="flex flex-col min-h-[7vh] w-[65vh] bg-white">
 
@@ -18,11 +18,11 @@ const LongFormInput: React.FC<LongFormInputProps> = ({question, label, isRequire
                 </span>
 
                 <span className="mb-2.5 text-xs font-light">{label}</span>
-                <textarea className="p-2 h-32 w-full bg-white rounded-md outline outline-black" required={isRequired}  onChange={(e) => setValue(e.target.value)}></textarea>
-                
+                <textarea className="p-2 h-32 w-full bg-white rounded-md outline outline-black" required={isRequired} value={value} onChange={(e) => onChange(e.target.value)}></textarea>
+
             </main>
         </>
     );
 };
 
-export default {LongFormInput, value};
+export default LongFormInput;

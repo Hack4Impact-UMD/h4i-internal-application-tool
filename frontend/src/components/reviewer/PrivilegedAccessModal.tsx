@@ -26,7 +26,7 @@ const PrivilegedAccessModal: React.FC = () => {
                     <span className="text-xl font-medium mt-4">If you do not have the necessary credentials, please contact your supervisor for assistance.</span>
                     <form onSubmit={handleSubmit} className="flex flex-col items-center w-full items-center">
                         <input className="w-full mt-7 p-1.5 bg-white rounded-md outline outline-black" type="password" placeholder="Enter password"/>
-                        <button className="mt-8 text-white w-[60%]" type="submit">Continue</button>
+                        <button className="mt-8 text-white w-[60%] bg-[#2969C4]" type="submit">Continue</button>
                     </form>
                     </div>
                 </div>
