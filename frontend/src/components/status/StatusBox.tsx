@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import { Status } from '../../services/applicationStatus';
 
 interface StatusBoxProps {
@@ -7,10 +8,6 @@ interface StatusBoxProps {
 
 function StatusBox({ status, applicationUrl }: StatusBoxProps) {
     const dateStr = "Spring 2025";
-
-    function openDecision() {
-        window.open("/decision", "_self");
-    }
 
     function openInterviewSchedule() {
         // TODO: Link to Google Calendar interview schedule
@@ -55,11 +52,14 @@ function StatusBox({ status, applicationUrl }: StatusBoxProps) {
                         Check email for instructions
                     </p>}
                 {status >= 4 &&
-                    <div className="w-44 flex p-1 items-center justify-center rounded-full text-[18px] bg-darkblue text-white cursor-pointer select-none transition-shadow" onClick={() => openDecision()}>
+                    <NavLink
+                        to="/apply/decision"
+                        className="w-44 flex p-1 items-center justify-center rounded-full text-[18px] bg-darkblue text-white cursor-pointer select-none transition-shadow"
+                    >
                         <p>
                             View Decision
                         </p>
-                    </div>}
+                    </NavLink>}
             </div>
 
             <div className="flex flex-col gap-14 md:items-end">

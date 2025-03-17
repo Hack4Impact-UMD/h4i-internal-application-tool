@@ -114,7 +114,13 @@ export default function SignUpCard() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-around w-full max-w-[430px] max-h-[700px] p-4">
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleSubmit()
+            }}
+            className="flex flex-col items-center justify-around w-full max-w-[430px] max-h-[700px] p-4">
             <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
             <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
                 <h1 className="text-3xl font-bold">Create an Account</h1>
@@ -160,12 +166,13 @@ export default function SignUpCard() {
                     label="Create account"
                     enabled={isFormValid}
                     onClick={handleSubmit}
+                    type="submit"
                 />
             </div>
             <div className="w-full">
                 <hr className="w-full text-gray-500 m-0"></hr>
                 <p className="text-gray-500 mt-1">Already have an account? <a href="/login" className="text-[#317FD0]">Log In</a></p>
             </div>
-        </div>
+        </form>
     );
 };

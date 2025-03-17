@@ -55,7 +55,13 @@ export default function ForgotPassCard() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-around p-4 w-full max-w-[430px] h-[500px]">
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleSubmit()
+            }}
+            className="flex flex-col items-center justify-around p-4 w-full max-w-[430px] h-[500px]">
             <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
             <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
                 <h1 className="text-3xl font-bold">Forgot Password?</h1>
@@ -74,11 +80,12 @@ export default function ForgotPassCard() {
                     label="Send code"
                     enabled={isFormValid}
                     onClick={handleSubmit}
+                    type="submit"
                 />
             </div>
             <div className="w-full">
                 <hr className="w-full text-gray-500 m-0"></hr>
             </div>
-        </div>
+        </form>
     );
 };

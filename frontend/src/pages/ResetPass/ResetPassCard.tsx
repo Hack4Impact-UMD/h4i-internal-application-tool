@@ -67,7 +67,13 @@ export default function ResetPassCard() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-white">
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleSubmit()
+            }}
+            className="flex items-center justify-center min-h-screen bg-white">
             <div className="flex flex-col items-center justify-around w-full p-4 max-w-[430px] h-[700px]">
                 <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
                 <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
@@ -102,10 +108,11 @@ export default function ResetPassCard() {
                         label="Reset"
                         enabled={isFormValid}
                         onClick={handleSubmit}
+                        type="submit"
                     />
                 </div>
                 <hr className="w-full text-gray-500 m-0"></hr>
             </div>
-        </div>
+        </form>
     );
 };

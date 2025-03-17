@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 
 import StatusPage from './components/status/StatusPage';
 import DecisionPage from './components/status/DecisionPage';
@@ -23,7 +23,13 @@ function App() {
           <Route path="/apply">
             <Route index element={
               <RequireAuth>
-                <p>Overview page goes here</p>
+                <p>Overview page goes here.
+                  <NavLink to="/apply/status">
+                    <p className="text-darkblue">
+                      Go to /apply/status
+                    </p>
+                  </NavLink>
+                </p>
               </RequireAuth>
             }></Route>
             <Route path="/apply/status" element={
