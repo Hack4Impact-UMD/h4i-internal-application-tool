@@ -1,7 +1,7 @@
 export enum PermissionRole {
-    SuperReviewer = 'super-reviewer',
-    Reviewer = 'reviewer',
-    Applicant = 'applicant',
+    SuperReviewer = "super-reviewer",
+    Reviewer = "reviewer",
+    Applicant = "applicant"
 }
 
 export enum ApplicantRole {
@@ -35,13 +35,13 @@ export enum QuestionType {
     FileUpload = 'file-upload',
 }
 
-export interface UserProfile {
+export type UserProfile = {
+    id: string;
+    email: string;
     firstName: string;
     lastName: string;
-    email: string;
-    userId: string;
     role: PermissionRole;
-}
+};
 
 export interface ApplicantUserProfile extends UserProfile {
     role: PermissionRole.Applicant;
@@ -57,7 +57,9 @@ export interface ReviewerUserProfile extends UserProfile {
     };
 }
 
+// stores the actual user submitted application responses
 export interface ApplicationResponse {
+    id: string;
     userId: string;
     applicationFormId: string;
     applicationResponseId: string;
@@ -68,7 +70,9 @@ export interface ApplicationResponse {
     decisionLetterId: string;
 }
 
+// stores data about the content of the application forms
 export interface ApplicationForm {
+    id: string;
     isActive: boolean;
     applicationFormId: string;
     dueDate: Date;
@@ -78,6 +82,7 @@ export interface ApplicationForm {
 }
 
 export interface ApplicationReviewData {
+    id: string;
     applicationFormId: string;
     applicationResponseId: string;
     applicationUserId: string;
@@ -108,7 +113,7 @@ export interface SingleResponse extends QuestionResponse {
     response: string;
 }
 
-export interface ListResponse extends QuestionResponse { 
+export interface ListResponse extends QuestionResponse {
     questionType: QuestionType.MultipleSelect;
     response: string[];
 }

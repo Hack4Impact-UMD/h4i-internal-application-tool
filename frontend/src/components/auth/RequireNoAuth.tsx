@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import { PermissionRole } from "../../services/userService";
 import { useAuth } from "../../hooks/useAuth";
+import { PermissionRole } from "../../types/types";
 
 
 interface RequireNoAuthProps {
