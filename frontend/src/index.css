@@ -234,6 +234,15 @@ body {
   margin-top: 10px;
 }
 
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -364,7 +373,6 @@ body {
   margin-top: 10px;
 }
 
-/* <<<<<<< HEAD */
 /* button { */
 /*   border-radius: 28px; */
 /*   border: 1px solid transparent; */
@@ -386,7 +394,28 @@ body {
 /*   outline: 4px auto -webkit-focus-ring-color; */
 /* } */
 /* ======= */
-/* >>>>>>> origin/login-password-pages */
+
+/* button { */
+/*   border-radius: 28px; */
+/*   border: 1px solid transparent; */
+/*   padding: 0.6em 1.2em; */
+/*   font-size: 1em; */
+/*   font-weight: 500; */
+/*   font-family: Karla; */
+/*   background-color: #2969C4; */
+/*   color: #202020B2; */
+/*   cursor: pointer; */
+/*   transition: border-color 0.25s; */
+/* } */
+/**/
+/* button:hover { */
+/*   border-color: #646cff; */
+/* } */
+/**/
+/* button:focus, */
+/* button:focus-visible { */
+/*   outline: 4px auto -webkit-focus-ring-color; */
+/* } */
 
 @media (prefers-color-scheme: light) {
   :root {
