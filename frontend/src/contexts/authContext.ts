@@ -1,5 +1,6 @@
 import { createContext } from "react";
-import { loginUser, logoutUser, UserProfile } from "../services/userService";
+import { loginUser, logoutUser } from "../services/userService";
+import { UserProfile } from "../types/types";
 
 export type AuthProviderContext = {
   user?: UserProfile;

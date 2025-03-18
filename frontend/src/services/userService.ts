@@ -2,20 +2,7 @@ import { signInWithEmailAndPassword, signOut, UserInfo } from "firebase/auth";
 import { apiUrl, auth, db } from "../config/firebase";
 import axios from "axios";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-
-export enum PermissionRole {
-  SuperReviewer = "super-reviewer",
-  Reviewer = "reviewer",
-  Applicant = "applicant"
-}
-
-export type UserProfile = {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: PermissionRole;
-}
+import { PermissionRole, UserProfile } from "../types/types";
 
 export async function registerUser(email: string, firstName: string, lastName: string, password: string): Promise<UserProfile> {
   const createdUser = await axios.post(apiUrl + "/auth/register", {
