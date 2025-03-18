@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Status } from '../../services/applicationStatus';
 
-import Navbar from './Navbar';
 import AcceptanceBox from './AcceptanceBox';
+import { NavLink } from 'react-router-dom';
 
 function DecisionPage() {
     // TODO: Get this field from the centralized state
@@ -43,19 +43,13 @@ function DecisionPage() {
             Director of Recruitment | Hack4Impact-UMD
         </p>;
 
-    function openStatusPage() {
-        window.open("/status", "_self");
-    }
 
     return (
         <div className='w-full flex flex-col items-center'>
-            <Navbar />
             <div className="w-full flex flex-col gap-9 px-10 min-h-[45rem] items-center justify-start bg-cover bg-no-repeat bg-[url(/blue-bg.png)]">
-                <div className="self-start p-2 text-center">
-                    <p onClick={() => openStatusPage()}>
-                        ←Back to Status Page
-                    </p>
-                </div>
+                <NavLink to="/apply/status" className="self-start p-2 text-center">
+                    ←Back to Status Page
+                </NavLink>
 
                 <div className="flex flex-row w-full gap-10">
                     <div className="grow justify-start bg-white p-12 rounded-xl shadow-darkgray shadow-md border-lightblue border-8">
