@@ -1,3 +1,5 @@
+import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import { Status } from '../../services/applicationStatus';
 
 import ProgressBar from './ProgressBar';
@@ -8,6 +10,7 @@ function StatusPage() {
     const status = Status.ACCEPTED;
     const applicationUrl = "/";
 
+
     const incompleteApplicationError = "Looks like you haven't submitted your application yet. Please submit when you're ready.";
 
     return (
@@ -17,7 +20,6 @@ function StatusPage() {
                     <h1 className="text-4xl">
                         Current Application Status
                     </h1>
-
                     <ProgressBar
                         fillLevel={status} />
 

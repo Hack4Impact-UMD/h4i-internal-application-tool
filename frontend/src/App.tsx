@@ -13,75 +13,81 @@ import RequireAuth from './components/auth/RequireAuth';
 import Layout from './pages/Layout';
 import RequireNoAuth from './components/auth/RequireNoAuth';
 import { PermissionRole } from './services/userService';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import AdminPlaceholderPage from './components/reviewer/AdminPlaceholderPage';
+
+const queryClient = new QueryClient()
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/login" />} />
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Navigate to="/login" />} />
 
-          <Route path="/apply">
-            <Route index element={
-              <RequireAuth>
-                <p>Overview page goes here.
-                  <NavLink className="text-darkblue" to="/apply/status">
-                    Go to /apply/status
-                  </NavLink>
-                </p>
-              </RequireAuth>
-            }></Route>
-            <Route path="/apply/status" element={
-              <RequireAuth>
-                <StatusPage />
-              </RequireAuth>
-            } />
-            <Route path="/apply/decision" element={
-              <RequireAuth>
-                <DecisionPage />
-              </RequireAuth>
-            }></Route>
-          </Route>
+            <Route path="/apply">
+              <Route index element={
+                <RequireAuth>
+                  <p>Overview page goes here.
+                    <NavLink className="text-darkblue" to="/apply/status">
+                      Go to /apply/status
+                    </NavLink>
+                  </p>
+                </RequireAuth>
+              }></Route>
+              <Route path="/apply/status" element={
+                <RequireAuth>
+                  <StatusPage />
+                </RequireAuth>
+              } />
+              <Route path="/apply/decision" element={
+                <RequireAuth>
+                  <DecisionPage />
+                </RequireAuth>
+              }></Route>
+            </Route>
 
-          <Route path="/admin">
-            <Route index element={
-              <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
-                <ReviewDashboard />
-              </RequireAuth>
-            } />
-            <Route path="/admin/applicant/:id" element={
-              <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
-                <ApplicantDetails />
-              </RequireAuth>
-            } />
+            <Route path="/admin">
+              <Route index element={
+                <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
+                  <AdminPlaceholderPage />
+                </RequireAuth>
+              } />
+              <Route path="/admin/applicant/:id" element={
+                <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
+                  <ApplicantDetails />
+                </RequireAuth>
+              } />
+            </Route>
           </Route>
-        </Route>
-        <Route path="/signup" element={
-          <RequireNoAuth redirect={
-            {
-              applicant: "/apply",
-              reviewer: "/admin",
-              "super-reviewer": "/admin"
-            }
-          }>
-            <SignUp />
-          </RequireNoAuth>
-        } />
-        <Route path="/login" element={
-          <RequireNoAuth redirect={
-            {
-              applicant: "/apply",
-              reviewer: "/admin",
-              "super-reviewer": "/admin"
-            }
-          }>
-            <LogIn />
-          </RequireNoAuth>
-        } />
-        <Route path="/forgotpassword" element={<ForgotPass />}></Route>
-        <Route path="/resetpassword" element={<ResetPassCard />}></Route>
-      </Routes>
-    </AuthProvider>
+          <Route path="/signup" element={
+            <RequireNoAuth redirect={
+              {
+                applicant: "/apply",
+                reviewer: "/admin",
+                "super-reviewer": "/admin"
+              }
+            }>
+              <SignUp />
+            </RequireNoAuth>
+          } />
+          <Route path="/login" element={
+            <RequireNoAuth redirect={
+              {
+                applicant: "/apply",
+                reviewer: "/admin",
+                "super-reviewer": "/admin"
+              }
+            }>
+              <LogIn />
+            </RequireNoAuth>
+          } />
+          <Route path="/forgotpassword" element={<ForgotPass />}></Route>
+          <Route path="/resetpassword" element={<ResetPassCard />}></Route>
+        </Routes>
+      </AuthProvider>
+    </QueryClientProvider>
   )
 }
 
