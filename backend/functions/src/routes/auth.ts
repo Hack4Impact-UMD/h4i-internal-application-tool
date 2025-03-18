@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
-import { User, UserRegisterForm, userRegisterFormSchema } from "../models/user";
+import { UserProfile, UserRegisterForm, userRegisterFormSchema } from "../models/user";
 import { CollectionReference } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import * as admin from "firebase-admin"
@@ -23,9 +23,9 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
 
   logger.info(`Auth user created with UID ${userRecord.uid}`)
 
-  const collection = db.collection("users") as CollectionReference<User>
+  const collection = db.collection("users") as CollectionReference<UserProfile>
 
-  const user: User = {
+  const user: UserProfile = {
     id: userRecord.uid,
     email: registerForm.email,
     firstName: registerForm.firstName,
@@ -53,7 +53,7 @@ router.post("/update", [isAuthenticated, validateSchema(userRegisterFormSchema)]
     emailVerified: false
   })
 
-  const collection = db.collection("users") as CollectionReference<User>
+  const collection = db.collection("users") as CollectionReference<UserProfile>
   await collection.doc(updatedUserRecord.uid).update({
     email: registerForm.email,
     firstName: registerForm.firstName,

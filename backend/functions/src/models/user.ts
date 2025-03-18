@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export type UserRole = "applicant" | "reviewer" | "super-reviewer"
 
-export type User = {
+export type UserProfile = {
   id: string;
   email: string;
   firstName: string;
