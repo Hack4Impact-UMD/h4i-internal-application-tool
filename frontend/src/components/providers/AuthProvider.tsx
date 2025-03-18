@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import { getUserById, loginUser, logoutUser, onAuthStateChange, User } from "../../services/userService";
+import { getUserById, loginUser, logoutUser, onAuthStateChange, UserProfile } from "../../services/userService";
 import { auth } from "../../config/firebase";
 import { AuthContext } from "../../contexts/authContext";
 
@@ -9,7 +9,7 @@ interface AuthProviderProps {
 
 
 interface AuthState {
-  user?: User,
+  user?: UserProfile,
   token?: string,
   isAuthed: boolean,
   isLoading: boolean
@@ -27,10 +27,12 @@ export default function AuthProvider(props: AuthProviderProps) {
     return onAuthStateChange(async (userInfo) => {
       console.log(`Auth state changed: ${userInfo?.email}`)
       if (userInfo != null) {
+        const user = await getUserById(userInfo.uid)
+        const token = await auth.currentUser?.getIdToken()
         setAuthState({
           isAuthed: true,
-          token: await auth.currentUser?.getIdToken(),
-          user: await getUserById(userInfo.uid),
+          token: token,
+          user: user,
           isLoading: false
         })
       } else {

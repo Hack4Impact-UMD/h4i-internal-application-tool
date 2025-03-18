@@ -107,7 +107,6 @@ export default function ResetPassCard() {
                         className="w-full h-[73px]"
                         label="Reset"
                         enabled={isFormValid}
-                        onClick={handleSubmit}
                         type="submit"
                     />
                 </div>

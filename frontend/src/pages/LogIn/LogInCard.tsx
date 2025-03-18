@@ -122,7 +122,6 @@ export default function LogInCard() {
                     className="w-full h-[73px]"
                     label="Log In"
                     enabled={isFormValid}
-                    onClick={handleSubmit}
                     type="submit"
                 />
             </div>

@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
-import { UserRole } from "../../services/userService";
+import { PermissionRole } from "../../services/userService";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 interface RequireAuthProps {
-  requireRoles?: UserRole[]
+  requireRoles?: PermissionRole[]
   children: ReactNode
 }
 

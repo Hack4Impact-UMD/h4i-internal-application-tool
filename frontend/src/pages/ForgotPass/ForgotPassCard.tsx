@@ -79,7 +79,6 @@ export default function ForgotPassCard() {
                     className="w-full h-[73px]"
                     label="Send code"
                     enabled={isFormValid}
-                    onClick={handleSubmit}
                     type="submit"
                 />
             </div>

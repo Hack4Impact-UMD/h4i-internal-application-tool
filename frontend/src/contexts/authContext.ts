@@ -1,14 +1,14 @@
 import { createContext } from "react";
-import { loginUser, logoutUser, User } from "../services/userService";
+import { loginUser, logoutUser, UserProfile } from "../services/userService";
 
 export type AuthProviderContext = {
-  user?: User;
+  user?: UserProfile;
   token?: string;
   isAuthed: boolean;
   isLoading: boolean
-  login: (username: string, password: string) => Promise<User>
+  login: (username: string, password: string) => Promise<UserProfile>
   logout: () => Promise<void>
-  setUser: (newUserData: User) => void
+  setUser: (newUserData: UserProfile) => void
 }
 
 export const AuthContext = createContext<AuthProviderContext>({

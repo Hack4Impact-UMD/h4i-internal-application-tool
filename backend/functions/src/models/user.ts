@@ -14,10 +14,10 @@ export type User = {
 }
 
 export const userRegisterFormSchema = z.object({
-  id: z.string().nonempty("Must provide a user ID"),
   email: z.string().email("Must provide a valid email"),
   firstName: z.string().nonempty("First name can't be empty"),
-  lastName: z.string().nonempty("Last name can't be empty")
+  lastName: z.string().nonempty("Last name can't be empty"),
+  password: z.string().min(6, "Password must be greater than 6 characters")
 })
 
 export type UserRegisterForm = z.infer<typeof userRegisterFormSchema>

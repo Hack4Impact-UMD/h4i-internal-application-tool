@@ -85,7 +85,6 @@ export default function SignUpCard() {
                     password: "",
                     genericError: ""
                 })
-                navigate("/apply")
             } catch (error) {
                 const serverErrors = {
                     firstName: "",
@@ -165,7 +164,6 @@ export default function SignUpCard() {
                     className="w-full h-[73px]"
                     label="Create account"
                     enabled={isFormValid}
-                    onClick={handleSubmit}
                     type="submit"
                 />
             </div>

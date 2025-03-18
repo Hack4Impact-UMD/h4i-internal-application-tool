@@ -12,6 +12,7 @@ import AuthProvider from './components/providers/AuthProvider';
 import RequireAuth from './components/auth/RequireAuth';
 import Layout from './pages/Layout';
 import RequireNoAuth from './components/auth/RequireNoAuth';
+import { PermissionRole } from './services/userService';
 
 function App() {
   return (
@@ -24,10 +25,8 @@ function App() {
             <Route index element={
               <RequireAuth>
                 <p>Overview page goes here.
-                  <NavLink to="/apply/status">
-                    <p className="text-darkblue">
-                      Go to /apply/status
-                    </p>
+                  <NavLink className="text-darkblue" to="/apply/status">
+                    Go to /apply/status
                   </NavLink>
                 </p>
               </RequireAuth>
@@ -46,12 +45,12 @@ function App() {
 
           <Route path="/admin">
             <Route index element={
-              <RequireAuth requireRoles={["reviewer", "super-reviewer"]}>
+              <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
                 <ReviewDashboard />
               </RequireAuth>
             } />
             <Route path="/admin/applicant/:id" element={
-              <RequireAuth requireRoles={["reviewer", "super-reviewer"]}>
+              <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
                 <ApplicantDetails />
               </RequireAuth>
             } />

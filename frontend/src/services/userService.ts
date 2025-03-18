@@ -3,31 +3,34 @@ import { apiUrl, auth, db } from "../config/firebase";
 import axios from "axios";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 
-export type UserRole = "applicant" | "reviewer" | "super-reviewer"
+export enum PermissionRole {
+  SuperReviewer = "super-reviewer",
+  Reviewer = "reviewer",
+  Applicant = "applicant"
+}
 
-export type User = {
+export type UserProfile = {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: UserRole;
+  role: PermissionRole;
 }
 
-export async function registerUser(email: string, firstName: string, lastName: string, password: string): Promise<User> {
-  const user = await createUserWithEmailAndPassword(auth, email, password);
-  return await axios.post(apiUrl + "/auth/register", {
-    id: user.user.uid,
+export async function registerUser(email: string, firstName: string, lastName: string, password: string): Promise<UserProfile> {
+  const createdUser = await axios.post(apiUrl + "/auth/register", {
     email: email,
+    password: password,
     firstName: firstName,
     lastName: lastName
-  }, {
-    headers: {
-      "Authorization": `Bearer ${await user.user.getIdToken()}`
-    }
-  }) as User
+  }) as UserProfile
+
+  await signInWithEmailAndPassword(auth, email, password)
+
+  return createdUser
 }
 
-export async function loginUser(email: string, password: string): Promise<User> {
+export async function loginUser(email: string, password: string): Promise<UserProfile> {
   const res = await signInWithEmailAndPassword(auth, email, password)
   return await getUserById(res.user.uid)
 }
@@ -36,18 +39,20 @@ export async function logoutUser() {
   await signOut(auth)
 }
 
-export async function getUserById(id: string): Promise<User> {
+export async function getUserById(id: string): Promise<UserProfile> {
   const users = collection(db, "users")
   const userDoc = doc(users, id)
   const userData = (await getDoc(userDoc)).data()
 
+  console.log(userData)
+
   return {
     id: userDoc.id,
     ...userData
-  } as User
+  } as UserProfile
 }
 
-export async function getUserByEmail(email: string): Promise<User | undefined> {
+export async function getUserByEmail(email: string): Promise<UserProfile | undefined> {
   const users = collection(db, "users")
   const q = query(users, where("email", "==", email))
 
@@ -56,7 +61,7 @@ export async function getUserByEmail(email: string): Promise<User | undefined> {
     return {
       id: results.docs.at(0)?.id,
       ...results.docs.at(0)?.data()
-    } as User
+    } as UserProfile
   } else {
     return undefined
   }
