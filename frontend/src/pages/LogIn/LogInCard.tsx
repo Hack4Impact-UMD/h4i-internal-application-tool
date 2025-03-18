@@ -4,12 +4,19 @@ import Button from "../../components/Button";
 import { useAuth } from "../../hooks/useAuth";
 import { validEmail } from "../../utils/verification";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 
 export default function LogInCard() {
     const { login } = useAuth()
     const { state } = useLocation()
     const navigate = useNavigate()
+
+    const loginMutation = useMutation({
+        mutationFn: async ({ email, password }: { email: string, password: string }) => {
+            return await login(email, password)
+        }
+    })
 
     const [formData, setFormData] = useState({
         email: "",
@@ -63,7 +70,7 @@ export default function LogInCard() {
 
         if (valid) {
             try {
-                const user = await login(formData.email, formData.password)
+                const user = await loginMutation.mutateAsync({ email: formData.email, password: formData.password })
                 if (state.path) {
                     navigate(state.path)
                 } else {
@@ -121,7 +128,7 @@ export default function LogInCard() {
                 <Button
                     className="w-full h-[73px]"
                     label="Log In"
-                    enabled={isFormValid}
+                    enabled={!loginMutation.isPending && isFormValid}
                     type="submit"
                 />
             </div>
