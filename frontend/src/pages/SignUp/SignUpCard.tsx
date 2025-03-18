@@ -4,11 +4,15 @@ import Button from "../../components/Button";
 import { registerUser } from "../../services/userService";
 import { AxiosError } from "axios";
 import { validEmail } from "../../utils/verification";
-import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 
 export default function SignUpCard() {
-    const navigate = useNavigate()
+    const signUpMutation = useMutation({
+        mutationFn: async (formData: { firstName: string, lastName: string, email: string, password: string }) => {
+            return await registerUser(formData.email, formData.firstName, formData.lastName, formData.password)
+        }
+    })
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -77,7 +81,8 @@ export default function SignUpCard() {
 
         if (valid) {
             try {
-                await registerUser(formData.email, formData.firstName, formData.lastName, formData.password)
+                await signUpMutation.mutateAsync(formData)
+
                 setFormErrors({
                     firstName: "",
                     lastName: "",
@@ -157,13 +162,13 @@ export default function SignUpCard() {
                 onChange={(e) => handleInputChange("password", e.target.value)}
             />
             <div className="w-full">
-                {formErrors.genericError != "" && <p className="text-sm m-1 w-full text-red">{formErrors.genericError}</p>}
+                {signUpMutation.error && <p className="text-sm m-1 w-full text-red">{signUpMutation.error.message}</p>}
             </div>
             <div className="w-full">
                 <Button
                     className="w-full h-[73px]"
-                    label="Create account"
-                    enabled={isFormValid}
+                    label={"Create account"}
+                    enabled={!signUpMutation.isPending && isFormValid}
                     type="submit"
                 />
             </div>
