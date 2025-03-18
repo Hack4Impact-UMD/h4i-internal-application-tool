@@ -9,7 +9,7 @@ export default function AdminPlaceholderPage() {
   return <div className="p-4">
     <h1>All Applicants: </h1>
     <ul>
-      {applicants?.map(applicant => <li>{applicant.firstName} (ID: {applicant.id})</li>)}
+      {applicants?.map(applicant => <li key={applicant.id}>{applicant.firstName} (ID: {applicant.id})</li>)}
     </ul>
   </div>
 }
