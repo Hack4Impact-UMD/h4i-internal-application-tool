@@ -94,7 +94,7 @@ our actual component content using the new data we received:
 ![Screenshot From 2025-03-18 02-45-17](https://github.com/user-attachments/assets/2d69198d-6e4c-4e49-99bb-c31d9daf7415)
 
 As you can see, Tanstack Query significantly simplifies your data fetching code allowing you to write more concise and 
-readable components that can handle the full range of possible states when fetching data.
+readable components.
 
 # Modifying Data with Mutations
 
