@@ -1,20 +1,28 @@
 import { signInWithEmailAndPassword, signOut, UserInfo } from "firebase/auth";
 import { apiUrl, auth, db } from "../config/firebase";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { PermissionRole, UserProfile } from "../types/types";
 
 export async function registerUser(email: string, firstName: string, lastName: string, password: string): Promise<UserProfile> {
-  const createdUser = await axios.post(apiUrl + "/auth/register", {
-    email: email,
-    password: password,
-    firstName: firstName,
-    lastName: lastName
-  }) as UserProfile
+  try {
+    const createdUser = await axios.post(apiUrl + "/auth/register", {
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName
+    }) as UserProfile
 
-  await signInWithEmailAndPassword(auth, email, password)
+    await signInWithEmailAndPassword(auth, email, password)
 
-  return createdUser
+    return createdUser
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new Error(`Failed to register: ${error.message} (${error.response?.data})`)
+    } else {
+      throw error
+    }
+  }
 }
 
 export async function loginUser(email: string, password: string): Promise<UserProfile> {
