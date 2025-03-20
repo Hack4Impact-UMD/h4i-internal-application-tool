@@ -4,13 +4,18 @@
 @import "tailwindcss";
 
 @theme {
+  --color-blue: #317FD0;
+  --color-white: #FFFFFF;
+  --color-red: #FD1FFF;
+  --color-gray: #F1F1F1;
+  --color-black: #202020;
+
+  /* theme colors from previous designs, left to not "ruin" prior work */
   --color-lightblue: rgb(194, 224, 251);
   --color-darkblue: rgb(41, 105, 196);
   --color-teal: rgb(203, 248, 243);
   --color-lightgray: rgb(232, 232, 232);
-  --color-gray: rgb(217, 217, 217);
   --color-darkgray: rgb(131, 130, 130);
-  --color-red: rgb(224, 41, 41);
 }
 
 * {
