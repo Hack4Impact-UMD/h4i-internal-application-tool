@@ -1,0 +1,47 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	function isAuthed() {
+    	return request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    
+    function getCurrentUser() {
+    	return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    
+    function hasID(id) {
+    	return request.auth.uid == id;
+    }
+    
+    function isApplicant() {
+    	return isAuthed() && getCurrentUser().data.role == "applicant";
+    }
+    
+    function isReviewer() {
+    	return isAuthed() && (getCurrentUser().data.role == "reviewer" || isSuperReviewer());
+    }
+
+    function isReviewerOnly() {
+      return isAuthed() && isReviewer() && !isSuperReviewer();
+    }
+    
+    function isSuperReviewer() {
+    	return isAuthed() && getCurrentUser().data.role == "super-reviewer";
+    }
+    
+    match /users/{user_id} {
+      // user documents can be read only by the user they represent or reviewers
+    	allow read: if isReviewer() || hasID(user_id);
+      // user documents can be written to only by the user they represent or super-reviewers
+      allow create: if hasID(user_id);
+      allow update: if hasID(user_id) || isSuperReviewer();
+    }
+    
+    // by default, all documents should be inaccessible to reads and writes
+    match /{document=**} {
+      allow read: if false;
+      allow write: if false;
+    }
+  }
+}
