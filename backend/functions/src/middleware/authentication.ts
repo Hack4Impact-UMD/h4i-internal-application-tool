@@ -3,6 +3,8 @@ import { logger } from "firebase-functions";
 import * as admin from "firebase-admin"
 
 // from the code sample here: https://github.com/firebase/functions-samples/blob/main/Node-1st-gen/authorized-https-endpoint/functions/index.js
+// NOTE: When a request is successfully authenticated, this middleware will set the `req.token` property
+// to the decoded authentication token (DecodedIdToken)
 export async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
   logger.log("Check if request is authorized with Firebase ID token");
 
