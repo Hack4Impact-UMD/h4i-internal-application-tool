@@ -1,9 +1,24 @@
 import { useState } from "react"
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
+import { useAuth } from "../../hooks/useAuth";
+import { validEmail } from "../../utils/verification";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import DropdownMenu from "../../components/reviewer/DropdownMenu";
 
 
 export default function LogInCard() {
+    const { login } = useAuth()
+    const { state } = useLocation()
+    const navigate = useNavigate()
+
+    const loginMutation = useMutation({
+        mutationFn: async ({ email, password }: { email: string, password: string }) => {
+            return await login(email, password)
+        }
+    })
+
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -13,19 +28,19 @@ export default function LogInCard() {
         email: "",
         password: "",
     });
-    
+
 
     // check if all fields are filled
     const isFormValid = (
-       formData.email.trim() !== "" &&
-       formData.password.trim() !== ""
+        formData.email.trim() !== "" &&
+        formData.password.trim() !== ""
     );
 
     // handle TextBox input changes
     const handleInputChange = (field: string, value: string) => {
         const updatedData = {
             ...formData,
-            [field]:value       //adding OR updating a specific field with new value
+            [field]: value       //adding OR updating a specific field with new value
         };
 
         setFormData(updatedData)
@@ -34,18 +49,16 @@ export default function LogInCard() {
             ...formErrors,
             [field]: ""
         }
-        
+
         setFormErrors(updatedErrors)
     };
 
     // using dummy conditionals for now
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let valid = true;
-        let errors = {...formErrors };
+        const errors = { ...formErrors };
 
-        const terpmailRegex = /^[a-zA-Z0-9]+@terpmail\.umd\.edu$/;
-        console.log(terpmailRegex.test(formData.email.trim()))
-        if (terpmailRegex.test(formData.email.trim()) == false) {
+        if (!validEmail(formData.email)) {
             valid = false;
             errors.email = "Enter a valid terpmail address"
         }
@@ -61,51 +74,73 @@ export default function LogInCard() {
         setFormErrors(errors)
 
         if (valid) {
-            // create an account
+            try {
+                const user = await loginMutation.mutateAsync({ email: formData.email, password: formData.password })
+                if (state.path) {
+                    navigate(state.path)
+                } else {
+                    if (user.role == "applicant") {
+                        navigate("/apply")
+                    } else {
+                        navigate("/admin")
+                    }
+                }
+            } catch (error) {
+                console.log("Failed to login!")
+                console.log(error);
+                setFormErrors({
+                    email: "Failed to login, check your email and password",
+                    password: ""
+                })
+            }
         }
     }
 
     return (
-
-        <div className="flex flex-col items-center justify-around w-[430px] h-[700px]">
+        <form
+            onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleSubmit()
+            }}
+            className="flex flex-col items-center justify-around w-full p-4 max-w-[430px] h-[700px]">
             <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
             <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
                 <h1 className="text-3xl font-bold">Log In</h1>
                 <h3 className="text-lg text-gray-500">Lets get started by filling out your information below</h3>
             </div>
-            <TextBox 
+            <TextBox
                 inputType="text"
-                width="421"
-                height="73"
+                className="w-full"
                 label="EMAIL"
                 invalidLabel={formErrors.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
             />
-            <div>
-                <TextBox 
+            <div className="w-full">
+                <TextBox
                     inputType="password"
-                    width="421"
-                    height="73"
+                    className="w-full"
                     label="PASSWORD"
                     invalidLabel={formErrors.password}
                     onChange={(e) => handleInputChange("password", e.target.value)}
                 />
-                <div className="w-[421px] flex justify-end">
+                <div className="w-full flex justify-end">
                     <a href="/forgotpassword" className="text-[#317FD0]">Forgot password?</a>
                 </div>
             </div>
-            
-            <Button
-                width="421"
-                height="73"
-                label="Log In"
-                validForm={isFormValid}
-                onClick={handleSubmit}
-            />
-            <div className="w-[421px]">
-                <hr className="w-[421px] text-gray-500 m-0"></hr>
+
+            <div className="w-full">
+                <Button
+                    className="w-full h-[73px]"
+                    label="Log In"
+                    enabled={!loginMutation.isPending && isFormValid}
+                    type="submit"
+                />
+            </div>
+            <div className="w-full">
+                <hr className="w-full text-gray-500 m-0"></hr>
                 <p className="text-gray-500 mt-1">Dont have an account? <a href="/signup" className="text-[#317FD0]">Create account</a></p>
             </div>
-        </div>
+        </form>
     );
 };
