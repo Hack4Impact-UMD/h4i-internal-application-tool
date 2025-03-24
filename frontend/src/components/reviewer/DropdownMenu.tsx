@@ -1,19 +1,19 @@
 import { useState, } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-const DropdownMenu = ({ optionsArray, changeFunction }: { optionsArray: string[], changeFunction: (option: string) => void }) => {
-    const options = optionsArray || [
-        'Interview Offered',
-        'Accepted',
-        'Denied',
-        'Waitlisted',
-        'Withdrawn',
-        'Confirmed Hire'
-    ]
-    const [selectedOption, setSelectedOption] = useState('');
+interface DropdownProps {
+    optionsArray: string[],
+    changeFunction?: (option: string) => void,
+    className: string
+}
+
+const DropdownMenu = ({ optionsArray, changeFunction = () => { }, className = "" }: DropdownProps) => {
+    const options = optionsArray
+    const [selectedOption, setSelectedOption] = useState<string>();
     const [visible, setVisible] = useState(false);
 
     return (
-        <div className='w-[15%] text-left bg-white z-10 relative'>
+        <div className={twMerge(className, 'w-32 text-left bg-white z-10 relative')}>
             <div className={`flex flex-row border-[1.3px] justify-between align-center px-[4px] py-[5px] cursor-pointer
                 ${visible ? 'border-[#0099EB] rounded-t-[5px]' : 'border-[#B8BBC2] rounded-[5px]'}
                 `} onClick={() => setVisible(!visible)}>
