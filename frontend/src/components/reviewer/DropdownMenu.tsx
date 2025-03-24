@@ -2,14 +2,13 @@ import { useState, } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface DropdownProps {
-    optionsArray: string[],
-    changeFunction?: (option: string) => void,
-    className: string
+    options: string[],
+    onChange?: (option: string) => void,
+    className?: string
 }
 
-const DropdownMenu = ({ optionsArray, changeFunction = () => { }, className = "" }: DropdownProps) => {
-    const options = optionsArray
-    const [selectedOption, setSelectedOption] = useState<string>();
+const DropdownMenu = ({ options, onChange = () => { }, className = "" }: DropdownProps) => {
+    const [selectedOption, setSelectedOption] = useState<string>(options[0] ?? "Select an option");
     const [visible, setVisible] = useState(false);
 
     return (
@@ -32,9 +31,9 @@ const DropdownMenu = ({ optionsArray, changeFunction = () => { }, className = ""
                             onClick={() => {
                                 setSelectedOption(option);
                                 setVisible(false);
-                                changeFunction(option);
+                                onChange(option);
                             }}
-                            className={`cursor-pointer px-[24px] py-[11px] ${selectedOption === option ? 'bg-[#C4CBDF]' : ''}`}
+                            className={`cursor-pointer p-2 hover:bg-lightgray ${selectedOption === option ? 'bg-[#C4CBDF]' : ''}`}
                         >
                             {option}
                         </div>
