@@ -1,19 +1,24 @@
 import { Status } from '../../services/applicationStatus';
+import ApplicationTimeline from './ApplicationTimeline';
 
 import Navbar from './Navbar';
 import ProgressBar from './ProgressBar';
 import StatusBox from './StatusBox';
+import StatusTimeline from './ApplicationTimeline.tsx';
 
 function StatusPage() {
     // TODO: Get these fields from the centralized state
     const status = Status.ACCEPTED;
     const applicationUrl = "/";
 
-    const incompleteApplicationError = "Looks like you haven't submitted your application yet. Please submit when you're ready.";
+    // const incompleteApplicationError = "Looks like you haven't submitted your application yet. Please submit when you're ready.";
 
     return (
         <>
-            <Navbar isSignedIn={false} />
+            <Navbar />
+            {/* <ApplicationTimeline/> */}
+            <StatusTimeline/>
+
             <div className="flex flex-col w-full items-center p-8">
                 <div className="flex flex-col w-full gap-5 font-bold max-w-5xl items-center">
                     <h1 className="text-4xl">
@@ -23,12 +28,12 @@ function StatusPage() {
                     <ProgressBar
                         fillLevel={status} />
 
-                    {status === 0 &&
+                    {/* {status === 0 &&
                         <div className="max-w-96 px-4 text-center text-[1.4rem] text-red">
                             <p>
                                 {incompleteApplicationError}
                             </p>
-                        </div>}
+                        </div>} */}
 
                     {status > 0 &&
                         <StatusBox
