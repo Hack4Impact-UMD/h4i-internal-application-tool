@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { validEmail } from "../../utils/verification";
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
 
@@ -42,7 +43,7 @@ export default function ForgotPassCard() {
         let valid = true;
         const errors = { ...formErrors };
 
-        if (formData.email.length < 6) {
+        if (!validEmail(formData.email)) {
             valid = false;
             errors.email = "Invalid Email"
         }

@@ -1,17 +1,18 @@
 import { useState } from "react"
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
+import { validPassword, validCode } from "../../utils/verification";
 
 
 export default function ResetPassCard() {
     const [formData, setFormData] = useState({
-        email: "",
+        code: "",
         password: "",
         confirmPassword: ""
     });
 
     const [formErrors, setFormErrors] = useState({
-        email: "",
+        code: "",
         password: "",
         confirmPassword: ""
     });
@@ -19,7 +20,7 @@ export default function ResetPassCard() {
 
     // check if all fields are filled
     const isFormValid = (
-        formData.email.trim() !== "" &&
+        formData.code.trim() !== "" &&
         formData.password.trim() !== "" &&
         formData.confirmPassword.trim() !== ""
     );
@@ -46,23 +47,24 @@ export default function ResetPassCard() {
         let valid = true;
         const errors = { ...formErrors };
 
-        if (formData.email.length < 6) {
+        if (!validCode(formData.code)) {
             valid = false;
-            errors.email = "Invalid Email"
+            errors.code = "Invalid Code"
         }
-        if (formData.password.length < 6) {
+        if (!validPassword(formData.password)) {
             valid = false;
-            errors.password = "Invalid Password"
+            errors.password = "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#)."
+            errors.confirmPassword = "Invalid Password"
         }
-        if (formData.confirmPassword.length < 6) {
+        if (formData.password != formData.confirmPassword) {
             valid = false;
-            errors.confirmPassword = "Invalid Confirmation Password"
-        }
+            errors.confirmPassword = "Passwords Don't Match"
+        } 
 
         setFormErrors(errors)
 
         if (valid) {
-            // create an account
+            // reset password
         }
     }
 
@@ -84,8 +86,8 @@ export default function ResetPassCard() {
                     inputType="text"
                     className="w-full"
                     label="CODE"
-                    invalidLabel={formErrors.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    invalidLabel={formErrors.code}
+                    onChange={(e) => handleInputChange("code", e.target.value)}
                 />
                 <TextBox
                     inputType="password"

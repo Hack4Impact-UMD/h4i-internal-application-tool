@@ -3,7 +3,7 @@ import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
 import { registerUser } from "../../services/userService";
 import { AxiosError } from "axios";
-import { validEmail } from "../../utils/verification";
+import { validEmail, validPassword } from "../../utils/verification";
 import { useMutation } from "@tanstack/react-query";
 
 
@@ -60,21 +60,14 @@ export default function SignUpCard() {
         let valid = true;
         const errors = { ...formErrors };
 
-        if (formData.firstName.length == 0) {
-            valid = false;
-            errors.firstName = "Invalid First Name"
-        }
-        if (formData.lastName.length == 0) {
-            valid = false;
-            errors.lastName = "Invalid Last Name"
-        }
         if (!validEmail(formData.email)) {
             valid = false;
             errors.email = "Invalid Email"
         }
-        if (formData.password.length < 6) {
+
+        if (!validPassword(formData.password)) {
             valid = false;
-            errors.password = "Invalid Password"
+            errors.password = "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#)."
         }
 
         setFormErrors(errors)
