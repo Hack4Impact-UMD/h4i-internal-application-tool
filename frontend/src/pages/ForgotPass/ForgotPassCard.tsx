@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { validEmail } from "../../utils/verification";
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
 
@@ -42,9 +43,7 @@ export default function ForgotPassCard() {
         let valid = true;
         const errors = { ...formErrors };
 
-        const terpmailRegex = /^[a-zA-Z0-9]+@terpmail\.umd\.edu$/;
-        console.log(terpmailRegex.test(formData.email.trim()))
-        if (terpmailRegex.test(formData.email.trim()) == false) {
+        if (!validEmail(formData.email)) {
             valid = false;
             errors.email = "Enter a valid terpmail address"
         }

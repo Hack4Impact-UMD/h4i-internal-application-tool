@@ -2,7 +2,7 @@ import { useState } from "react"
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
 import { useAuth } from "../../hooks/useAuth";
-import { validEmail } from "../../utils/verification";
+import { validEmail, validPassword } from "../../utils/verification";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import DropdownMenu from "../../components/reviewer/DropdownMenu";
@@ -62,13 +62,9 @@ export default function LogInCard() {
             valid = false;
             errors.email = "Enter a valid terpmail address"
         }
-
-        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
-        if (passwordRegex.test(formData.password.trim()) == false) {
+        if (!validPassword(formData.password)) {
             valid = false;
-            errors.password = `Please ensure your password meets the following requirements:
-            At least 8 characters long, At least one uppercase letter (A-Z), At least one lower
-            case letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#)`;
+            errors.password = "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#)."
         }
 
         setFormErrors(errors)

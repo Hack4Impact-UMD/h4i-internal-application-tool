@@ -1,6 +1,7 @@
 import { useState } from "react"
 import TextBox from "../../components/TextBox"
 import Button from "../../components/Button";
+import { validPassword, validCode } from "../../utils/verification";
 
 
 export default function ResetPassCard() {
@@ -19,9 +20,9 @@ export default function ResetPassCard() {
 
     // check if all fields are filled
     const isFormValid = (
-       formData.code.trim() !== "" &&
-       formData.password.trim() !== "" &&
-       formData.confirmPassword.trim() !== ""
+        formData.code.trim() !== "" &&
+        formData.password.trim() !== "" &&
+        formData.confirmPassword.trim() !== ""
     );
 
     // handle TextBox input changes
@@ -46,29 +47,24 @@ export default function ResetPassCard() {
         let valid = true;
         let errors = {...formErrors };
 
-        if (formData.email.length < 6) {
+        if (!validCode(formData.code)) {
             valid = false;
             errors.code = "Invalid Code"
         }
-
-        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
-        if (passwordRegex.test(formData.password.trim()) == false) {
+        if (!validPassword(formData.password)) {
             valid = false;
-            errors.password = `Please ensure your password meets the following requirements:
-            At least 8 characters long, At least one uppercase letter (A-Z), At least one lower
-            case letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#)`;
-        }
-        if (errors.password !== "") {
+            errors.password = "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#)."
             errors.confirmPassword = "Invalid Password"
-        } else if (formData.password !== formData.confirmPassword) {
-            valid = false;
-            errors.confirmPassword = "Passwords don't match"
         }
+        if (formData.password != formData.confirmPassword) {
+            valid = false;
+            errors.confirmPassword = "Passwords Don't Match"
+        } 
 
         setFormErrors(errors)
 
         if (valid) {
-            // create an account
+            // reset password
         }
     }
 
