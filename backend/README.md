@@ -20,7 +20,7 @@ installed and add it to your `PATH`.
 firebase login
 ```
 
-3. Go to the backend directory, run `npm install`. Go to the functions directory
+3. Go to the backend directory, then go to the functions directory
    and run `npm install` and `npm run build`.
 
 4. Go back to the backend directory, run `firebase emulators:start`. This might take
@@ -30,3 +30,8 @@ firebase login
    If everything is setup correctly, you should see the firebase emulator UI in your
    browser with the Authentication, Firestore, Realtime Database, Functions, Storage,
    Hosting, and Extensions Emulator with the green **On** status.
+
+   To run `firebase emulators:start` you may need to install Java. To do this, find the 
+   latest version of the Java installer through the Oracle website, run the installer, 
+   and finally add Java to your path variables. You may need to do this even if you have
+   Java through Eclipse.
