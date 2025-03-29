@@ -18,8 +18,6 @@ const ChoiceGroup: React.FC<ChoiceGroupProps> = ({ question, isRequired, label, 
         onOptionSelect(optionName);
     };
 
-
-    //TODO: Change sizing to not use vh and vw
     return (
         <main className={twMerge("flex flex-col min-w-52", className)}>
             <span className="text-xl font-normal">
