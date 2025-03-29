@@ -5,7 +5,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { validEmail } from "../../utils/verification";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import DropdownMenu from "../../components/reviewer/DropdownMenu";
 
 
 export default function LogInCard() {
