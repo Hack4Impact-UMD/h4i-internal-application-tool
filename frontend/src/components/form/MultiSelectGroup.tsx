@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import OptionButton from "./OptionButton";
+import { twMerge } from "tailwind-merge";
 
-interface MultiSelectGroupProps{
+interface MultiSelectGroupProps {
     question: string,
     isRequired?: boolean,
-    label?: string
+    label?: string,
     options: string[],
-    onOptionSelect: (selected: string[]) => void;
+    onOptionSelect: (selected: string[]) => void,
+    className?: string
 }
 
-const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({question, isRequired, label, options, onOptionSelect}) => {
+const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({ question, isRequired, label, options, onOptionSelect, className = "" }) => {
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
     const handleSelectClick = (optionName: string) => {
@@ -20,30 +22,28 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({question, isRequired
         setSelectedOptions(updatedSelections);
         onOptionSelect(updatedSelections);
     };
-  
+
     return (
-        <>
-             <main className="flex flex-col min-h-[7vh] w-[65vh]">
+        <main className={twMerge("flex flex-col min-w-60", className)}>
 
-                <span className="text-xl font-normal">
-                    {question} {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
-                </span>
+            <span className="text-xl font-normal">
+                {question} {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
+            </span>
 
-                <span className="mb-2.5 text-xs font-light">{label}</span>
+            <span className="mb-2.5 text-xs font-light">{label}</span>
 
-                <div className="flex flex-wrap gap-1 mt-2">
-                    {options.map((option) => (
-                        <OptionButton
+            <div className="flex flex-wrap gap-1 mt-2">
+                {options.map((option) => (
+                    <OptionButton
                         key={option}
                         optionName={option}
                         buttonType="multiSelect"
                         isSelected={selectedOptions.includes(option)}
                         onClick={() => handleSelectClick(option)}
-                        />
-                    ))}
-                </div>
-            </main>
-        </>
+                    />
+                ))}
+            </div>
+        </main>
     );
 }
 

@@ -45,8 +45,8 @@ export type UserProfile = {
 
 export interface ApplicantUserProfile extends UserProfile {
     role: PermissionRole.Applicant;
-    activeApplications: ApplicationResponse[];
-    inactiveApplications: ApplicationResponse[];
+    activeApplicationIds: string[];
+    inactiveApplicationIds: string[];
 }
 
 export interface ReviewerUserProfile extends UserProfile {
