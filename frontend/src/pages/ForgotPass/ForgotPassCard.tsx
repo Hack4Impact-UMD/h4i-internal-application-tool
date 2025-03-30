@@ -76,14 +76,12 @@ export default function ForgotPassCard() {
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />
-      <div className="w-full">
-        <Button
-          className="w-full h-[73px]"
-          label="Send code"
-          enabled={isFormValid}
-          type="submit"
-        />
-      </div>
+      <Button
+        className="w-full h-[73px]"
+        label="Send code"
+        enabled={isFormValid}
+        type="submit"
+      />
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
       </div>
