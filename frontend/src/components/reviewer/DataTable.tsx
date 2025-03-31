@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Applicant } from '../../pages/ReviewDashboard';
 
 type Props = {
-    applicants: Applicant[] //change
+    applicants: Applicant[]
 }
 
 const thClasses = "bg-white border border-[#69778780] p-[8px] text-left font-bold";
@@ -16,12 +16,17 @@ const DataTable: React.FC<Props> = ({ applicants }: Props) => {
         navigate(`/admin/applicant/${id}`);
     };
 
-    const formatDate = (timestamp: Timestamp) => {
+    const formatDate = (timestamp: any) => {
         if (timestamp && timestamp.toDate) {
             const date = timestamp.toDate();
             return date.toLocaleDateString();
         }
         return '-';
+    };
+
+    const formatScore = (score: number | null | undefined) => {
+        if (score === null || score === undefined) return '-';
+        return score.toFixed(2);
     };
 
     return (
@@ -33,8 +38,11 @@ const DataTable: React.FC<Props> = ({ applicants }: Props) => {
                     <th className={thClasses}>Status</th>
                     <th className={thClasses}>Date Applied</th>
                     <th className={thClasses}>Role(s)</th>
-                    <th className={thClasses}>Application Score</th>
-                    <th className={thClasses}>Interview Score</th>
+                    <th className={thClasses}>Interest in Club</th>
+                    <th className={thClasses}>Interest in Social Good</th>
+                    <th className={thClasses}>Technical Expertise</th>
+                    <th className={thClasses}>NPO Expertise</th>
+                    <th className={thClasses}>Communication</th>
                     <th className={thClasses}>Overall Score</th>
                 </tr>
             </thead>
@@ -49,9 +57,12 @@ const DataTable: React.FC<Props> = ({ applicants }: Props) => {
                         <td className={tableCellClasses}>{applicant.status}</td>
                         <td className={tableCellClasses}>{formatDate(applicant.dateApplied)}</td>
                         <td className={tableCellClasses}>{applicant.roles.join(', ')}</td>
-                        <td className={tableCellClasses}>{applicant.applicationScore || '-'}</td>
-                        <td className={tableCellClasses}>{applicant.interviewScore || '-'}</td>
-                        <td className={tableCellClasses}>{applicant.applicationScore ?? "-" + applicant.interviewScore}</td>
+                        <td className={tableCellClasses}>{formatScore(applicant.interestInClubScore)}</td>
+                        <td className={tableCellClasses}>{formatScore(applicant.interestInSocialGoodScore)}</td>
+                        <td className={tableCellClasses}>{formatScore(applicant.technicalExpertiseScore)}</td>
+                        <td className={tableCellClasses}>{formatScore(applicant.npoExpertiseScore)}</td>
+                        <td className={tableCellClasses}>{formatScore(applicant.communicationScore)}</td>
+                        <td className={tableCellClasses}>{formatScore(applicant.overallScore)}</td>
                     </tr>
                 ))}
             </tbody>
