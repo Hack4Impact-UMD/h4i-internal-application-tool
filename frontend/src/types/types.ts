@@ -9,6 +9,8 @@ export enum ApplicantRole {
     Engineer = "engineer",
     Designer = "designer",
     Product = "product",
+    Sourcing = "sourcing",
+    TechLead = "tech-lead"
 }
 
 export enum ApplicationStatus {
@@ -135,6 +137,8 @@ export interface TextQuestion extends ApplicationQuestion {
     questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer;
     longAnswer: boolean;
     placeholderText: string;
+    maximumWordCount?: number;
+    minimumWordCount?: number;
 }
 
 export interface OptionQuestion extends ApplicationQuestion {
