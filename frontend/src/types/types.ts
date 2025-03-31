@@ -81,12 +81,16 @@ export interface ApplicationForm {
     sections: ApplicationSection[];
 }
 
+//there should be one of this per reviewer!
 export interface ApplicationReviewData {
     id: string;
+    reviewerId: string;
     applicationFormId: string;
     applicationResponseId: string;
     applicationUserId: string;
-    applicantScores: { name: string, score: number };
+    applicantScores: {
+        [scoreCategory in string]: number
+    };
     interviewNotes?: string;
     reviewerNotes?: string[];
     reviewStatus: ReviewStatus;
