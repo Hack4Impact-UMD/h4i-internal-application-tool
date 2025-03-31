@@ -30,46 +30,46 @@ function ReviewDashboard() {
 
   const calculateOverallScore = (applicant: Applicant): number | null => {
     const role = applicant.roles[0]?.toLowerCase();
-    
+
     if (role === 'bootcamp') {
       if (applicant.interestInClubScore === null || applicant.interestInSocialGoodScore === null) {
         return null;
       }
       return (0.5 * applicant.interestInClubScore) + (0.5 * applicant.interestInSocialGoodScore);
     }
-    
+
     else if (role === 'sourcing') {
       if (
-        applicant.interestInClubScore === null || 
-        applicant.interestInSocialGoodScore === null || 
-        applicant.npoExpertiseScore === null || 
+        applicant.interestInClubScore === null ||
+        applicant.interestInSocialGoodScore === null ||
+        applicant.npoExpertiseScore === null ||
         applicant.communicationScore === null
       ) {
         return null;
       }
       return (
-        (0.3 * applicant.interestInClubScore) + 
-        (0.3 * applicant.interestInSocialGoodScore) + 
-        (0.3 * applicant.npoExpertiseScore) + 
+        (0.3 * applicant.interestInClubScore) +
+        (0.3 * applicant.interestInSocialGoodScore) +
+        (0.3 * applicant.npoExpertiseScore) +
         (0.1 * applicant.communicationScore)
       );
     }
-    
+
     else if (['engineer', 'tl', 'pm', 'designer', 'product'].includes(role)) {
       if (
-        applicant.interestInClubScore === null || 
-        applicant.interestInSocialGoodScore === null || 
+        applicant.interestInClubScore === null ||
+        applicant.interestInSocialGoodScore === null ||
         applicant.technicalExpertiseScore === null
       ) {
         return null;
       }
       return (
-        (0.25 * applicant.interestInClubScore) + 
-        (0.2 * applicant.interestInSocialGoodScore) + 
+        (0.25 * applicant.interestInClubScore) +
+        (0.2 * applicant.interestInSocialGoodScore) +
         (0.55 * applicant.technicalExpertiseScore)
       );
     }
-    
+
     return null;
   };
 
@@ -87,7 +87,7 @@ function ReviewDashboard() {
         technicalExpertiseScore: 4.7,
         npoExpertiseScore: 3.0,
         communicationScore: 4.2,
-        overallScore: null, 
+        overallScore: null,
       },
       {
         id: '2',
@@ -101,7 +101,7 @@ function ReviewDashboard() {
         technicalExpertiseScore: 3.9,
         npoExpertiseScore: 4.1,
         communicationScore: 4.3,
-        overallScore: null, 
+        overallScore: null,
       },
       {
         id: '3',
@@ -115,7 +115,7 @@ function ReviewDashboard() {
         technicalExpertiseScore: 3.9,
         npoExpertiseScore: 4.1,
         communicationScore: 4.3,
-        overallScore: null, 
+        overallScore: null,
       },
       {
         id: '4',
@@ -129,11 +129,11 @@ function ReviewDashboard() {
         technicalExpertiseScore: 3.9,
         npoExpertiseScore: 4.1,
         communicationScore: 4.3,
-        overallScore: null, 
+        overallScore: null,
       },
     ];
 
-    
+
     const applicantsWithScores = dummyApplicants.map(applicant => {
       const calculatedScore = calculateOverallScore(applicant);
       return {
@@ -176,11 +176,11 @@ function ReviewDashboard() {
   };
 
   const handleSortChange = (sortType: string) => {
-    let sortedApplicants = [...filteredApplicants];
-  
+    const sortedApplicants = [...filteredApplicants];
+
     switch (sortType) {
       case "date":
-        sortedApplicants.sort((a, b) => a.dateApplied.toDate().getTime() - b.dateApplied.toDate().getTime());
+        sortedApplicants.sort((a, b) => b.dateApplied.toDate().getTime() - a.dateApplied.toDate().getTime());
         break;
       case "name":
         sortedApplicants.sort((a, b) => a.name.localeCompare(b.name));
@@ -194,10 +194,10 @@ function ReviewDashboard() {
       default:
         return;
     }
-  
+
     setFilteredApplicants(sortedApplicants);
   };
-  
+
   return (
     <div className="App">
       <>
@@ -220,7 +220,7 @@ function ReviewDashboard() {
         <main className="container mx-auto p-4">
           <FilterBar
             onSearch={handleSearch}
-            onSortChange={handleSortChange}  
+            onSortChange={handleSortChange}
             onRoleFilter={handleRoleFilter}
             selectedRole={selectedRole}
           />
