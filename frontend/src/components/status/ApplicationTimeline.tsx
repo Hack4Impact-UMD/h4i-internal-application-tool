@@ -1,5 +1,5 @@
 const StatusTimeline = () => {
-    const currentStep = 1; // 1 = Submitted, 2 = Under Review, etc.
+    const currentStep = 2; // 1 = Submitted, 2 = Under Review, etc.
     const items = [
       { label: "Submitted" },
       { label: "Under Review" },

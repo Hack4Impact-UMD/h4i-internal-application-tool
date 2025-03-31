@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import ProgressBar from './ProgressBar';
 import StatusBox from './StatusBox';
 import StatusTimeline from './ApplicationTimeline.tsx';
+import ApplyingTimeline from './ApplyingTimeline.tsx';
 
 function StatusPage() {
     // TODO: Get these fields from the centralized state
@@ -15,9 +16,9 @@ function StatusPage() {
 
     return (
         <>
-            <Navbar />
+            {/* <Navbar/> */}
             {/* <ApplicationTimeline/> */}
-            <StatusTimeline/>
+            <ApplyingTimeline/>
 
             <div className="flex flex-col w-full items-center p-8">
                 <div className="flex flex-col w-full gap-5 font-bold max-w-5xl items-center">
