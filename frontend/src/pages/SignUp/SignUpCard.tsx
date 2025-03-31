@@ -131,7 +131,7 @@ export default function SignUpCard() {
         e.stopPropagation();
         handleSubmit();
       }}
-      className="flex flex-col items-center justify-around w-full max-w-[430px] max-h-[700px] p-4"
+      className="flex flex-col items-center justify-around w-full max-w-[430px] h-[700px] p-4"
     >
       <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
       <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
@@ -141,16 +141,16 @@ export default function SignUpCard() {
         </h3>
       </div>
 
-      <div className="max-w-full w-full flex flex-col sm:flex-row">
+      <div className="max-w-full w-full flex flex-col justify-between sm:flex-row ">
         <TextBox
-          className="sm:max-w-1/2"
+          className="mb-2 sm:w-[193px] sm:mb-0"
           inputType="text"
           label="FIRST NAME"
           invalidLabel={formErrors.firstName}
           onChange={(e) => handleInputChange("firstName", e.target.value)}
         />
         <TextBox
-          className="sm:max-w-1/2"
+          className="sm:w-[193px]"
           inputType="text"
           label="LAST NAME"
           invalidLabel={formErrors.lastName}
@@ -178,14 +178,12 @@ export default function SignUpCard() {
           </p>
         )}
       </div>
-      <div className="w-full">
-        <Button
-          className="w-full h-[73px]"
-          label={"Create account"}
-          enabled={!signUpMutation.isPending && isFormValid}
-          type="submit"
-        />
-      </div>
+      <Button
+        className="w-full h-[73px]"
+        label={"Create account"}
+        enabled={!signUpMutation.isPending && isFormValid}
+        type="submit"
+      />
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-darkgray mt-1">

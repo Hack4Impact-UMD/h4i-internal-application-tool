@@ -15,7 +15,7 @@ export default function TextBox({
 }: TextBoxProps) {
   const borderColor = invalidLabel ? "border-red" : "border-transparent";
   const hover = invalidLabel ? "" : "hover:border-black";
-  const labelClassName = `flex flex-col justify-around bg-lightgray m-1 p-3 border-1 ${borderColor} rounded-sm ${hover}`;
+  const labelClassName = `flex flex-col justify-around bg-lightgray m-0 p-3 border-1 ${borderColor} rounded-sm ${hover}`;
 
   return (
     <div className={className}>

@@ -108,15 +108,12 @@ export default function ResetPassCard() {
           invalidLabel={formErrors.confirmPassword}
           onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
         />
-
-        <div className="w-full">
-          <Button
-            className="w-full h-[73px]"
-            label="Reset"
-            enabled={isFormValid}
-            type="submit"
-          />
-        </div>
+        <Button
+          className="w-full h-[73px]"
+          label="Reset"
+          enabled={isFormValid}
+          type="submit"
+        />
         <hr className="w-full text-darkgray m-0"></hr>
       </div>
     </form>
