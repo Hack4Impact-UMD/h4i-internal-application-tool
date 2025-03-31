@@ -9,6 +9,8 @@ export enum ApplicantRole {
     Engineer = "engineer",
     Designer = "designer",
     Product = "product",
+    Sourcing = "sourcing",
+    TechLead = "tech-lead"
 }
 
 export enum ApplicationStatus {
@@ -81,12 +83,16 @@ export interface ApplicationForm {
     sections: ApplicationSection[];
 }
 
+//there should be one of this per reviewer!
 export interface ApplicationReviewData {
     id: string;
+    reviewerId: string;
     applicationFormId: string;
     applicationResponseId: string;
     applicationUserId: string;
-    applicantScores: { name: string, score: number };
+    applicantScores: {
+        [scoreCategory in string]: number
+    };
     interviewNotes?: string;
     reviewerNotes?: string[];
     reviewStatus: ReviewStatus;
@@ -131,6 +137,8 @@ export interface TextQuestion extends ApplicationQuestion {
     questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer;
     longAnswer: boolean;
     placeholderText: string;
+    maximumWordCount?: number;
+    minimumWordCount?: number;
 }
 
 export interface OptionQuestion extends ApplicationQuestion {
