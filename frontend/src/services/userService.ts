@@ -2,7 +2,7 @@ import { signInWithEmailAndPassword, signOut, UserInfo } from "firebase/auth";
 import { apiUrl, auth, db } from "../config/firebase";
 import axios, { AxiosError } from "axios";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { PermissionRole, UserProfile } from "../types/types";
+import { UserProfile } from "../types/types";
 
 export async function registerUser(email: string, firstName: string, lastName: string, password: string): Promise<UserProfile> {
   try {
@@ -52,14 +52,6 @@ export async function getUserByEmail(email: string): Promise<UserProfile> {
   } else {
     throw new Error(`User with email ${email} does not exist!`)
   }
-}
-
-export async function getAllApplicants(): Promise<UserProfile[]> {
-  const users = collection(db, "users")
-  const q = query(users, where("role", "==", PermissionRole.Applicant))
-
-  const results = await getDocs(q)
-  return results.docs.map(doc => doc.data() as UserProfile)
 }
 
 export function onAuthStateChange(handler: (userInfo: UserInfo | null) => void) {

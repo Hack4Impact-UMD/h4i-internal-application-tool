@@ -51,11 +51,16 @@ export interface ApplicantUserProfile extends UserProfile {
     inactiveApplicationIds: string[];
 }
 
+export type ReviewAssignment = {
+    applicantId: string, // the applicant that was assigned for review
+    applicationId: string // the submitted application that was assigned for review
+}
+
 export interface ReviewerUserProfile extends UserProfile {
     role: PermissionRole.Reviewer;
     reviewAssignments: {
-        reviewAssignmentIds: string[];
-        interviewAssignmentIds: string[];
+        applicationReviewAssignments: ReviewAssignment[];
+        interviewAssignmentIds: string[]; // user ids
     };
 }
 
