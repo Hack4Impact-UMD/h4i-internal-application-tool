@@ -10,3 +10,6 @@ export async function getReviewDataForApplicant(applicant: ApplicantUserProfile)
   //TODO: fetch the associated review data for this applicant
 }
 
+export async function updateReviewData(applicationId: string) {
+  //TODO: Implement! 
+}
