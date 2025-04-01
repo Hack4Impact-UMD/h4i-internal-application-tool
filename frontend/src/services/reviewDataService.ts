@@ -7,6 +7,6 @@ export async function getReviewDataForApplication(applicationId: string) {
 }
 
 export async function getReviewDataForApplicant(applicant: ApplicantUserProfile) {
-  //TODO: fetch the associated review data for this application
+  //TODO: fetch the associated review data for this applicant
 }
 
