@@ -4,6 +4,8 @@ import axios, { AxiosError } from "axios";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { UserProfile } from "../types/types";
 
+export const USER_COLLECTION = "users";
+
 export async function registerUser(email: string, firstName: string, lastName: string, password: string): Promise<UserProfile> {
   try {
     const createdUser = await axios.post(apiUrl + "/auth/register", {
@@ -35,7 +37,7 @@ export async function logoutUser() {
 }
 
 export async function getUserById(id: string): Promise<UserProfile> {
-  const users = collection(db, "users")
+  const users = collection(db, USER_COLLECTION)
   const userDoc = doc(users, id)
   const userData = (await getDoc(userDoc)).data()
 
@@ -43,7 +45,7 @@ export async function getUserById(id: string): Promise<UserProfile> {
 }
 
 export async function getUserByEmail(email: string): Promise<UserProfile> {
-  const users = collection(db, "users")
+  const users = collection(db, USER_COLLECTION)
   const q = query(users, where("email", "==", email))
 
   const results = await getDocs(q)
