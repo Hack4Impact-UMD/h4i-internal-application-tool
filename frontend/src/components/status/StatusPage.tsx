@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Navbar from './Navbar';
 import ProgressBar from './ProgressBar';
 import StatusBox from './StatusBox';
+import StatusTimeline from './ApplicationTimeline.tsx';
+import ApplyingTimeline from './ApplyingTimeline.tsx';
 
 function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
@@ -56,37 +58,36 @@ function StatusPage() {
                         </div>
                     </div>
 
-                    {/* <ProgressBar
-                        fillLevel={4} /> */}
+                    {activeTab === 'active' && <ApplyingTimeline />}
 
                     <div>
                         <table className="w-full">
                             <thead>
                                 <tr className="border-t border-gray-300">
-                                    <th className="pb-4 pt-4 text-left font-normal">Job Title</th>
-                                    <th className="pb-4 pt-4 text-center font-normal">Application Status</th>
-                                    <th className="pb-4 pt-4 text-center font-normal">Date Submitted</th>
-                                    <th className="pb-4 pt-4 text-center font-normal">Action</th>
+                                    <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                    <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
+                                    <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
+                                    <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {activeTab === 'active' ? (
                                     <tr className="border-t border-gray-300">
-                                        <td className="py-4 text-blue-500">Hack4Impact Spring 2025 Application</td>
-                                        <td className="text-center"><span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">Under review</span></td>
+                                        <td className="py-4 text-blue-500 font-bold">Hack4Impact Spring 2025 Application</td>
+                                        <td className="text-center"><span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">Under review</span></td>
                                         <td className="text-center">Mar 10, 2025</td>
                                         <td className="text-center">-</td>
                                     </tr>
                                 ) : (
                                     <>
                                         <tr className="border-t border-gray-300">
-                                            <td className="py-4">Hack4Impact Spring 2024 Application</td>
+                                            <td className="py-4 font-bold">Hack4Impact Spring 2024 Application</td>
                                             <td className="text-center"><span className="bg-gray-100 px-3 py-1 rounded-full">Ended</span></td>
                                             <td className="text-center">Feb 10, 2024</td>
                                             <td className="text-center text-blue-500">View Decision</td>
                                         </tr>
                                         <tr className="border-t border-gray-300">
-                                            <td className="py-4">Hack4Impact Spring 2023 Application</td>
+                                            <td className="py-4 font-bold">Hack4Impact Spring 2023 Application</td>
                                             <td className="text-center"><span className="bg-gray-100 px-3 py-1 rounded-full">Accept</span></td>
                                             <td className="text-center">Mar 21, 2023</td>
                                             <td className="text-center">-</td>
