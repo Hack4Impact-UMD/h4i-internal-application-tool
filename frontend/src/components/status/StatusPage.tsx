@@ -1,5 +1,7 @@
 import { Status } from '../../services/applicationStatus';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { collection, getDocs, Timestamp, query, where } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 
 import Navbar from './Navbar';
 import ProgressBar from './ProgressBar';
@@ -7,12 +9,74 @@ import StatusBox from './StatusBox';
 import StatusTimeline from './ApplicationTimeline.tsx';
 import ApplyingTimeline from './ApplyingTimeline.tsx';
 
+interface Application {
+    id: string;
+    title: string;
+    status: Status;
+    dateSubmitted: Timestamp;
+    applicationUrl: string;
+}
+
 function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
-    
-    // TODO: Get these fields from the centralized state
-    const status = Status.ACCEPTED;
-    const applicationUrl = "/";
+    const [applications, setApplications] = useState<Application[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchApplications = async () => {
+            try {
+                const applicationsCollection = collection(db, 'applications');
+                const applicationsSnapshot = await getDocs(applicationsCollection);
+                const applicationsList = applicationsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as Application[];
+                setApplications(applicationsList);
+            } catch (error) {
+                console.error('Error fetching applications:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchApplications();
+    }, []);
+
+    const getStatusDisplay = (status: Status) => {
+        switch (status) {
+            case Status.UNDER_REVIEW:
+                return { text: 'Under review', className: 'bg-blue-100 text-blue-700' };
+            case Status.ACCEPTED:
+                return { text: 'Accept', className: 'bg-green-100 text-green-700' };
+            case Status.REJECTED:
+                return { text: 'Reject', className: 'bg-red-100 text-red-700' };
+            case Status.SUBMITTED:
+                return { text: 'Submitted', className: 'bg-yellow-100 text-yellow-700' };
+            default:
+                return { text: 'Ended', className: 'bg-gray-100 text-gray-700' };
+        }
+    };
+
+    const formatDate = (timestamp: Timestamp) => {
+        if (timestamp && timestamp.toDate) {
+            return timestamp.toDate().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        return '-';
+    };
+
+    const activeApplications = applications.filter(app => 
+        [Status.SUBMITTED, Status.UNDER_REVIEW, Status.INTERVIEW_TBD, 
+         Status.INTERVIEW_SCHEDULED, Status.INTERVIEW_COMPLETE].includes(app.status)
+    );
+
+    const inactiveApplications = applications.filter(app => 
+        [Status.REJECTED, Status.ACCEPTED, Status.CONFIRMED, Status.DECLINED].includes(app.status)
+    );
+
 
     const incompleteApplicationError = "Looks like you haven't submitted your application yet. Please submit when you're ready.";
 
@@ -36,7 +100,7 @@ function StatusPage() {
                                 }`}
                                 style={{ background: 'none', border: 'none', outline: 'none' }}
                             >
-                                Active (1)
+                                Active ({activeApplications.length})
                                 {activeTab === 'active' && (
                                     <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                                 )}
@@ -50,7 +114,7 @@ function StatusPage() {
                                 }`}
                                 style={{ background: 'none', border: 'none', outline: 'none' }}
                             >
-                                Inactive (3)
+                                Inactive ({inactiveApplications.length})
                                 {activeTab === 'inactive' && (
                                     <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                                 )}
@@ -71,29 +135,25 @@ function StatusPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {activeTab === 'active' ? (
-                                    <tr className="border-t border-gray-300">
-                                        <td className="py-4 text-blue-500 font-bold">Hack4Impact Spring 2025 Application</td>
-                                        <td className="text-center"><span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">Under review</span></td>
-                                        <td className="text-center">Mar 10, 2025</td>
-                                        <td className="text-center">-</td>
+                                {(activeTab === 'active' ? activeApplications : inactiveApplications).map(application => (
+                                    <tr key={application.id} className="border-t border-gray-300">
+                                        <td className="py-4 text-blue-500 font-bold">{application.title}</td>
+                                        <td className="text-center">
+                                            <span className={`px-3 py-1 rounded-full ${getStatusDisplay(application.status).className}`}>
+                                                {getStatusDisplay(application.status).text}
+                                            </span>
+                                        </td>
+                                        <td className="text-center">{formatDate(application.dateSubmitted)}</td>
+                                        <td className="text-center">
+                                            {application.status >= Status.REJECTED ? (
+                                                <span className="text-blue-500 cursor-pointer" 
+                                                      onClick={() => window.open("/status/decision", "_self")}>
+                                                    View Decision
+                                                </span>
+                                            ) : '-'}
+                                        </td>
                                     </tr>
-                                ) : (
-                                    <>
-                                        <tr className="border-t border-gray-300">
-                                            <td className="py-4 font-bold">Hack4Impact Spring 2024 Application</td>
-                                            <td className="text-center"><span className="bg-gray-100 px-3 py-1 rounded-full">Ended</span></td>
-                                            <td className="text-center">Feb 10, 2024</td>
-                                            <td className="text-center text-blue-500">View Decision</td>
-                                        </tr>
-                                        <tr className="border-t border-gray-300">
-                                            <td className="py-4 font-bold">Hack4Impact Spring 2023 Application</td>
-                                            <td className="text-center"><span className="bg-gray-100 px-3 py-1 rounded-full">Accept</span></td>
-                                            <td className="text-center">Mar 21, 2023</td>
-                                            <td className="text-center">-</td>
-                                        </tr>
-                                    </>
-                                )}
+                                ))}
                             </tbody>
                         </table>
                     </div>
