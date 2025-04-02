@@ -1,13 +1,11 @@
-import { useAuth } from '../../hooks/useAuth';
-import { useProfile } from '../../hooks/useProfile';
-import { Status } from '../../services/applicationStatus';
 
+import { ApplicationStatus } from '../../types/types';
 import ProgressBar from './ProgressBar';
 import StatusBox from './StatusBox';
 
 function StatusPage() {
     // TODO: Get these fields from the centralized state
-    const status = Status.ACCEPTED;
+    const status = ApplicationStatus.Decided;
     const applicationUrl = "/";
 
 
@@ -21,20 +19,11 @@ function StatusPage() {
                         Current Application Status
                     </h1>
                     <ProgressBar
-                        fillLevel={status} />
+                        fillLevel={4} />
 
-                    {status === 0 &&
-                        <div className="max-w-96 px-4 text-center text-[1.4rem] text-red">
-                            <p>
-                                {incompleteApplicationError}
-                            </p>
-                        </div>}
-
-                    {status > 0 &&
-                        <StatusBox
-                            status={status}
-                            applicationUrl={applicationUrl} />}
-
+                    <StatusBox
+                        status={status}
+                        applicationUrl={applicationUrl} />
                 </div>
             </div>
         </>

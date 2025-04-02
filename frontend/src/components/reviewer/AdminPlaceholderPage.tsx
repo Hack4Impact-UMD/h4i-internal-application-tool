@@ -1,11 +1,11 @@
-import { useApplicants } from "../../hooks/useApplicants";
+import { useAssignedReviewApplicants } from "../../hooks/useApplicants";
 import ChoiceGroup from "../form/ChoiceGroup";
 import LongFormInput from "../form/LongFormInput";
 import MultiSelectGroup from "../form/MultiSelectGroup";
 import OneLineInput from "../form/OneLineInput";
 
 export default function AdminPlaceholderPage() {
-  const { data: applicants, isLoading, error } = useApplicants()
+  const { data: applicants, isLoading, error } = useAssignedReviewApplicants()
 
   if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error: {error.message}</p>
@@ -31,7 +31,7 @@ export default function AdminPlaceholderPage() {
 
     <OneLineInput question="Sample question" value="some text" onChange={s => console.log(s)}></OneLineInput>
 
-    <h1>All Applicants: </h1>
+    <h1>Assigned Applicants: </h1>
     <ul>
       {applicants?.map(applicant => <li key={applicant.id}>{applicant.firstName} (ID: {applicant.id})</li>)}
     </ul>
