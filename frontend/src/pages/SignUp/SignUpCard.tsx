@@ -1,181 +1,198 @@
-import { useState } from "react"
-import TextBox from "../../components/TextBox"
+import { useState } from "react";
+import TextBox from "../../components/TextBox";
 import Button from "../../components/Button";
 import { registerUser } from "../../services/userService";
 import { AxiosError } from "axios";
-import { validEmail } from "../../utils/verification";
+import { validEmail, validPassword } from "../../utils/verification";
 import { useMutation } from "@tanstack/react-query";
 
-
 export default function SignUpCard() {
-    const signUpMutation = useMutation({
-        mutationFn: async (formData: { firstName: string, lastName: string, email: string, password: string }) => {
-            return await registerUser(formData.email, formData.firstName, formData.lastName, formData.password)
-        }
-    })
+  const signUpMutation = useMutation({
+    mutationFn: async (formData: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+    }) => {
+      return await registerUser(
+        formData.email,
+        formData.firstName,
+        formData.lastName,
+        formData.password
+      );
+    },
+  });
 
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: ""
-    });
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
 
-    const [formErrors, setFormErrors] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        genericError: "",
-    });
+  const [formErrors, setFormErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    genericError: "",
+  });
 
+  // check if all fields are filled
+  const isFormValid =
+    formData.firstName.trim() !== "" &&
+    formData.lastName.trim() !== "" &&
+    formData.email.trim() !== "" &&
+    formData.password.trim() !== "";
 
-    // check if all fields are filled
-    const isFormValid = (
-        formData.firstName.trim() !== "" &&
-        formData.lastName.trim() !== "" &&
-        formData.email.trim() !== "" &&
-        formData.password.trim() !== ""
-    );
-
-    // handle TextBox input changes
-    const handleInputChange = (field: string, value: string) => {
-        const updatedData = {
-            ...formData,
-            [field]: value       //adding OR updating a specific field with new value
-        };
-
-        setFormData(updatedData)
-
-        const updatedErrors = {
-            ...formErrors,
-            [field]: ""
-        }
-
-        setFormErrors(updatedErrors)
+  // handle TextBox input changes
+  const handleInputChange = (field: string, value: string) => {
+    const updatedData = {
+      ...formData,
+      [field]: value, //adding OR updating a specific field with new value
     };
 
-    // using dummy conditionals for now
-    const handleSubmit = async () => {
-        let valid = true;
-        const errors = { ...formErrors };
+    setFormData(updatedData);
 
-        if (formData.firstName.length == 0) {
-            valid = false;
-            errors.firstName = "Invalid First Name"
-        }
-        if (formData.lastName.length == 0) {
-            valid = false;
-            errors.lastName = "Invalid Last Name"
-        }
-        if (!validEmail(formData.email)) {
-            valid = false;
-            errors.email = "Invalid Email"
-        }
-        if (formData.password.length < 6) {
-            valid = false;
-            errors.password = "Invalid Password"
-        }
+    const updatedErrors = {
+      ...formErrors,
+      [field]: "",
+    };
 
-        setFormErrors(errors)
+    setFormErrors(updatedErrors);
+  };
 
-        if (valid) {
-            try {
-                await signUpMutation.mutateAsync(formData)
+  // using dummy conditionals for now
+  const handleSubmit = async () => {
+    let valid = true;
+    const errors = { ...formErrors };
 
-                setFormErrors({
-                    firstName: "",
-                    lastName: "",
-                    email: "",
-                    password: "",
-                    genericError: ""
-                })
-            } catch (error) {
-                const serverErrors = {
-                    firstName: "",
-                    lastName: "",
-                    email: "",
-                    password: "",
-                    genericError: ""
-                };
-                if (error instanceof AxiosError) {
-                    if (error.response?.data.error == "Invalid Data") {
-                        error.response?.data.details.map(
-                            (issue: { field: "firstName" | "lastName" | "email"; message: string }) => {
-                                console.log(`[Server validation error] ${issue.field}: ${issue.message}`)
-                                serverErrors[issue.field] = issue.message
-                            }
-                        )
-                    }
-                } else if (error instanceof Error) {
-                    serverErrors.genericError = error.message
-                } else {
-                    serverErrors.genericError = "Failed to register. You should contact us."
-                }
-                setFormErrors(serverErrors)
-            }
-        }
+    if (!validEmail(formData.email)) {
+      valid = false;
+      errors.email = "Invalid Email";
     }
 
-    return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                handleSubmit()
-            }}
-            className="flex flex-col items-center justify-around w-full max-w-[430px] max-h-[700px] p-4">
-            <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
-            <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
-                <h1 className="text-3xl font-bold">Create an Account</h1>
-                <h3 className="text-lg text-gray-500">Lets get started by filling out your information below</h3>
-            </div>
+    if (!validPassword(formData.password)) {
+      valid = false;
+      errors.password =
+        "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#).";
+    }
 
-            <div className="max-w-full w-full flex flex-col sm:flex-row">
-                <TextBox
-                    className="sm:max-w-1/2"
-                    inputType="text"
-                    label="FIRST NAME"
-                    invalidLabel={formErrors.firstName}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
-                />
-                <TextBox
-                    className="sm:max-w-1/2"
-                    inputType="text"
-                    label="LAST NAME"
-                    invalidLabel={formErrors.lastName}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
-                />
-            </div>
-            <TextBox
-                inputType="text"
-                className="w-full"
-                label="EMAIL"
-                invalidLabel={formErrors.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-            />
-            <TextBox
-                inputType="password"
-                className="w-full"
-                label="PASSWORD"
-                invalidLabel={formErrors.password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
-            />
-            <div className="w-full">
-                {signUpMutation.error && <p className="text-sm m-1 w-full text-red">{signUpMutation.error.message}</p>}
-            </div>
-            <div className="w-full">
-                <Button
-                    className="w-full h-[73px]"
-                    label={"Create account"}
-                    enabled={!signUpMutation.isPending && isFormValid}
-                    type="submit"
-                />
-            </div>
-            <div className="w-full">
-                <hr className="w-full text-gray-500 m-0"></hr>
-                <p className="text-gray-500 mt-1">Already have an account? <a href="/login" className="text-[#317FD0]">Log In</a></p>
-            </div>
-        </form>
-    );
-};
+    setFormErrors(errors);
+
+    if (valid) {
+      try {
+        await signUpMutation.mutateAsync(formData);
+
+        setFormErrors({
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          genericError: "",
+        });
+      } catch (error) {
+        const serverErrors = {
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          genericError: "",
+        };
+        if (error instanceof AxiosError) {
+          if (error.response?.data.error == "Invalid Data") {
+            error.response?.data.details.map(
+              (issue: {
+                field: "firstName" | "lastName" | "email";
+                message: string;
+              }) => {
+                console.log(
+                  `[Server validation error] ${issue.field}: ${issue.message}`
+                );
+                serverErrors[issue.field] = issue.message;
+              }
+            );
+          }
+        } else if (error instanceof Error) {
+          serverErrors.genericError = error.message;
+        } else {
+          serverErrors.genericError =
+            "Failed to register. You should contact us.";
+        }
+        setFormErrors(serverErrors);
+      }
+    }
+  };
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSubmit();
+      }}
+      className="flex flex-col items-center justify-around w-full max-w-[430px] h-[700px] p-4"
+    >
+      <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
+      <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
+        <h1 className="text-3xl font-bold">Create an Account</h1>
+        <h3 className="text-lg text-darkgray">
+          Lets get started by filling out your information below
+        </h3>
+      </div>
+
+      <div className="max-w-full w-full flex flex-col justify-between sm:flex-row ">
+        <TextBox
+          className="mb-2 sm:w-[193px] sm:mb-0"
+          inputType="text"
+          label="FIRST NAME"
+          invalidLabel={formErrors.firstName}
+          onChange={(e) => handleInputChange("firstName", e.target.value)}
+        />
+        <TextBox
+          className="sm:w-[193px]"
+          inputType="text"
+          label="LAST NAME"
+          invalidLabel={formErrors.lastName}
+          onChange={(e) => handleInputChange("lastName", e.target.value)}
+        />
+      </div>
+      <TextBox
+        inputType="text"
+        className="w-full"
+        label="EMAIL"
+        invalidLabel={formErrors.email}
+        onChange={(e) => handleInputChange("email", e.target.value)}
+      />
+      <TextBox
+        inputType="password"
+        className="w-full"
+        label="PASSWORD"
+        invalidLabel={formErrors.password}
+        onChange={(e) => handleInputChange("password", e.target.value)}
+      />
+      <div className="w-full">
+        {signUpMutation.error && (
+          <p className="text-sm m-1 w-full text-red">
+            {signUpMutation.error.message}
+          </p>
+        )}
+      </div>
+      <Button
+        className="w-full h-[73px]"
+        label={"Create account"}
+        enabled={!signUpMutation.isPending && isFormValid}
+        type="submit"
+      />
+      <div className="w-full">
+        <hr className="w-full text-darkgray m-0"></hr>
+        <p className="text-darkgray mt-1">
+          Already have an account?{" "}
+          <a href="/login" className="text-blue">
+            Log In
+          </a>
+        </p>
+      </div>
+    </form>
+  );
+}

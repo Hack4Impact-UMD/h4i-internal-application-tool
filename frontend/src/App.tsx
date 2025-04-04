@@ -1,4 +1,4 @@
-import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes } from "react-router-dom";
 
 import StatusPage from './components/status/StatusPage';
 import DecisionPage from './components/status/DecisionPage';
@@ -16,7 +16,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AdminPlaceholderPage from './components/reviewer/AdminPlaceholderPage';
 import { PermissionRole } from './types/types';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 function App() {
   return (
@@ -27,25 +27,35 @@ function App() {
             <Route index element={<Navigate to="/login" />} />
 
             <Route path="/apply">
-              <Route index element={
-                <RequireAuth>
-                  <p>Overview page goes here.
-                    <NavLink className="text-darkblue" to="/apply/status">
-                      Go to /apply/status
-                    </NavLink>
-                  </p>
-                </RequireAuth>
-              }></Route>
-              <Route path="/apply/status" element={
-                <RequireAuth>
-                  <StatusPage />
-                </RequireAuth>
-              } />
-              <Route path="/apply/decision" element={
-                <RequireAuth>
-                  <DecisionPage />
-                </RequireAuth>
-              }></Route>
+              <Route
+                index
+                element={
+                  <RequireAuth>
+                    <p>
+                      Overview page goes here.
+                      <NavLink className="text-darkblue" to="/apply/status">
+                        Go to /apply/status
+                      </NavLink>
+                    </p>
+                  </RequireAuth>
+                }
+              ></Route>
+              <Route
+                path="/apply/status"
+                element={
+                  <RequireAuth>
+                    <StatusPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/apply/decision"
+                element={
+                  <RequireAuth>
+                    <DecisionPage />
+                  </RequireAuth>
+                }
+              ></Route>
             </Route>
 
             <Route path="/admin">
@@ -61,34 +71,40 @@ function App() {
               } />
             </Route>
           </Route>
-          <Route path="/signup" element={
-            <RequireNoAuth redirect={
-              {
-                applicant: "/apply",
-                reviewer: "/admin",
-                "super-reviewer": "/admin"
-              }
-            }>
-              <SignUp />
-            </RequireNoAuth>
-          } />
-          <Route path="/login" element={
-            <RequireNoAuth redirect={
-              {
-                applicant: "/apply",
-                reviewer: "/admin",
-                "super-reviewer": "/admin"
-              }
-            }>
-              <LogIn />
-            </RequireNoAuth>
-          } />
+          <Route
+            path="/signup"
+            element={
+              <RequireNoAuth
+                redirect={{
+                  applicant: "/apply",
+                  reviewer: "/admin",
+                  "super-reviewer": "/admin",
+                }}
+              >
+                <SignUp />
+              </RequireNoAuth>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <RequireNoAuth
+                redirect={{
+                  applicant: "/apply",
+                  reviewer: "/admin",
+                  "super-reviewer": "/admin",
+                }}
+              >
+                <LogIn />
+              </RequireNoAuth>
+            }
+          />
           <Route path="/forgotpassword" element={<ForgotPass />}></Route>
           <Route path="/resetpassword" element={<ResetPassCard />}></Route>
         </Routes>
       </AuthProvider>
     </QueryClientProvider>
-  )
+  );
 }
 
 export default App;
