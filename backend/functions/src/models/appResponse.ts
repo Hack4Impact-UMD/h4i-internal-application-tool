@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// specific application
 export enum ApplicantRole {
   Bootcamp = "bootcamp",
   Engineer = "engineer",
@@ -35,8 +36,6 @@ export enum ApplicationStatus {
   Interview = "interview",
   Decided = "decided",
 }
-
-// stores the actual user submitted application responses
 export interface ApplicationResponse {
   id: string;
   userId: string;
@@ -49,8 +48,19 @@ export interface ApplicationResponse {
   decisionLetterId: string;
 }
 
+// application form
+export interface ApplicationForm {
+  id: string;
+  isActive: boolean;
+  applicationFormId: string;
+  dueDate: Date;
+  semester: string;
+}
+
 export const appResponseFormSchema = z.object({
-  id: z.string().nonempty("Cant have empty id"),
+  applicationFormId: z.string().nonempty("Cant have empty applicationFormId"),
+  applicationResponseId: z.string().nonempty("Cant have empty id"),
+  userId: z.string().nonempty("Cant have empty userId"),
   rolesApplied: z
     .array(z.nativeEnum(ApplicantRole))
     .nonempty("Have to apply to atleast one role"),
