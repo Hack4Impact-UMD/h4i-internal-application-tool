@@ -1,13 +1,13 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
-import { ApplicationResponse, AppResponseForm, appResponseFormSchema, ApplicationForm } from "../models/appResponse";
+import { ApplicationResponse, AppResponseForm, appResponseFormSchema } from "../models/appResponse";
 import { CollectionReference } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 
 const router = Router();
 
-// should i add isAuthenticated here?
+// add isAuthenticated here?
 router.post("/submit", [validateSchema(appResponseFormSchema)], async (req: Request, res: Response) => {
   try {
     const applicationResponse = req.body as AppResponseForm;
@@ -15,7 +15,7 @@ router.post("/submit", [validateSchema(appResponseFormSchema)], async (req: Requ
     // initialize connections to collections
     // NOTE: THESE COLLECTION NAMES MAY NOT BE THE ONES USED IN FINAL PRODUCTION
     const applicationCollection = db.collection("applications") as CollectionReference<ApplicationResponse>;
-    const applicationFormCollection = db.collection("applicationForms") as CollectionReference<ApplicationForm>;
+    const applicationFormCollection = db.collection("applicationForms");
 
     // check that the correct user is updating the application
     const applicationDoc = await applicationCollection.doc(applicationResponse.applicationResponseId).get();
@@ -26,11 +26,13 @@ router.post("/submit", [validateSchema(appResponseFormSchema)], async (req: Requ
 
     // Check that the response is submitted before the due date specified by the application form
     const applicationFormDoc = await applicationFormCollection.doc(applicationResponse.applicationFormId).get();
-    const formattedApplicationFormDoc = applicationFormDoc.data() as ApplicationForm;
+    const applicationFormDocData = applicationFormDoc.data();
+
     const currentTime = new Date();
-    const dueDate = formattedApplicationFormDoc.dueDate;
-    // this comparison may be incorrect
-    if (currentTime.getMilliseconds > dueDate.getMilliseconds) {
+    const dueDate = applicationFormDocData!!.dueDate as FirebaseFirestore.Timestamp;
+    logger.info(`Current Time: ${currentTime}, Due Date: ${dueDate.toDate()}`)
+    logger.info(`Current Time toString: ${currentTime.toString()}, Due Date toString: ${dueDate.toDate().toString()}`)
+    if (currentTime > dueDate.toDate()) {
       return res.status(400).send("Submission deadline has passed");
     }
 

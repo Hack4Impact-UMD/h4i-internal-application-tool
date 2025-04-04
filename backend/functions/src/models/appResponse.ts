@@ -48,15 +48,6 @@ export interface ApplicationResponse {
   decisionLetterId: string;
 }
 
-// application form
-export interface ApplicationForm {
-  id: string;
-  isActive: boolean;
-  applicationFormId: string;
-  dueDate: Date;
-  semester: string;
-}
-
 export const appResponseFormSchema = z.object({
   applicationFormId: z.string().nonempty("Cant have empty applicationFormId"),
   applicationResponseId: z.string().nonempty("Cant have empty id"),
