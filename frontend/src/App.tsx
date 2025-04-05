@@ -2,7 +2,7 @@ import { Navigate, NavLink, Route, Routes } from 'react-router-dom';
 
 import StatusPage from './components/status/StatusPage';
 import DecisionPage from './components/status/DecisionPage';
-// import ReviewDashboard from './pages/ReviewDashboard';
+import ReviewDashboard from './pages/ReviewDashboard';
 import ApplicantDetails from "./pages/ApplicantDetails"
 import SignUp from './pages/SignUp/SignUp';
 import LogIn from './pages/LogIn/LogIn';
@@ -51,7 +51,7 @@ function App() {
             <Route path="/admin">
               <Route index element={
                 <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
-                  <AdminPlaceholderPage />
+                  <ReviewDashboard></ReviewDashboard>
                 </RequireAuth>
               } />
               <Route path="/admin/applicant/:id" element={
