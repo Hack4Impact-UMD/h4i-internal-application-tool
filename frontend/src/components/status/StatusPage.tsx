@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { collection, getDocs, Timestamp, query, where } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 
-import ApplyingTimeline from './ApplyingTimeline.tsx';
+import Timeline from "./Timeline.tsx";
 
 interface Application {
     id: string;
@@ -12,6 +12,13 @@ interface Application {
     dateSubmitted: Timestamp;
     applicationUrl: string;
 }
+
+const timelineItems = [
+    { label: "About Yourself"},
+    { label: "Resume" },
+    { label: "More questions " },
+    { label: "Review" },
+  ];
 
 function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
@@ -76,8 +83,8 @@ function StatusPage() {
     const incompleteApplicationError = "Looks like you haven't submitted your application yet. Please submit when you're ready.";
 
     return (
-        <>
-            <div className="min-h-screen bg-gray-100">
+        <div className="flex flex-col">
+            <div className="h-screen bg-gray">
                 <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8">
                     <h1 className="text-xl mt-10 mb-10 font-semibold">
                         My Applications
@@ -116,7 +123,7 @@ function StatusPage() {
                         </div>
                     </div>
 
-                    {activeTab === 'active' && <ApplyingTimeline />}
+                    {activeTab === 'active' && <Timeline currentStep={2} items={timelineItems} maxStepReached={2} />}
 
                     <div>
                         <table className="w-full">
@@ -153,7 +160,7 @@ function StatusPage() {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 
