@@ -1,4 +1,9 @@
+import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import { Status } from '../../services/applicationStatus';
+import { useState, useEffect } from 'react';
+import { collection, getDocs, Timestamp, query, where } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 import { useState, useEffect } from 'react';
 import { collection, getDocs, Timestamp, query, where } from 'firebase/firestore';
 import { db } from '../../config/firebase';
@@ -16,8 +21,74 @@ interface Application {
     applicationUrl: string;
 }
 
+interface Application {
+    id: string;
+    title: string;
+    status: Status;
+    dateSubmitted: Timestamp;
+    applicationUrl: string;
+}
+
 function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
+    const [applications, setApplications] = useState<Application[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchApplications = async () => {
+            try {
+                const applicationsCollection = collection(db, 'applications');
+                const applicationsSnapshot = await getDocs(applicationsCollection);
+                const applicationsList = applicationsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as Application[];
+                setApplications(applicationsList);
+            } catch (error) {
+                console.error('Error fetching applications:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchApplications();
+    }, []);
+
+    const getStatusDisplay = (status: Status) => {
+        switch (status) {
+            case Status.UNDER_REVIEW:
+                return { text: 'Under review', className: 'bg-blue-100 text-blue-700' };
+            case Status.ACCEPTED:
+                return { text: 'Accept', className: 'bg-green-100 text-green-700' };
+            case Status.REJECTED:
+                return { text: 'Reject', className: 'bg-red-100 text-red-700' };
+            case Status.SUBMITTED:
+                return { text: 'Submitted', className: 'bg-yellow-100 text-yellow-700' };
+            default:
+                return { text: 'Ended', className: 'bg-gray-100 text-gray-700' };
+        }
+    };
+
+    const formatDate = (timestamp: Timestamp) => {
+        if (timestamp && timestamp.toDate) {
+            return timestamp.toDate().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        return '-';
+    };
+
+    const activeApplications = applications.filter(app => 
+        [Status.SUBMITTED, Status.UNDER_REVIEW, Status.INTERVIEW_TBD, 
+         Status.INTERVIEW_SCHEDULED, Status.INTERVIEW_COMPLETE].includes(app.status)
+    );
+
+    const inactiveApplications = applications.filter(app => 
+        [Status.REJECTED, Status.ACCEPTED, Status.CONFIRMED, Status.DECLINED].includes(app.status)
+    );
+
     const [applications, setApplications] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
 
