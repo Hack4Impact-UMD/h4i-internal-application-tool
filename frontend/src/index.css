@@ -4,13 +4,17 @@
 @import "tailwindcss";
 
 @theme {
+  --color-blue: #317FD0;
+  --color-white: #FFFFFF;
+  --color-red: #FD1FFF;
+  --color-lightgray: #F1F1F1;
+  --color-darkgray: #636363;
+  --color-black: #202020;
+
+  /* theme colors from previous designs, left to not "ruin" prior work */
   --color-lightblue: rgb(194, 224, 251);
   --color-darkblue: rgb(41, 105, 196);
   --color-teal: rgb(203, 248, 243);
-  --color-lightgray: rgb(232, 232, 232);
-  --color-gray: rgb(217, 217, 217);
-  --color-darkgray: rgb(131, 130, 130);
-  --color-red: rgb(224, 41, 41);
 }
 
 * {
@@ -234,18 +238,6 @@ body {
   margin-top: 10px;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: Karla;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
 button:hover {
   border-color: #646cff;
 }
@@ -385,26 +377,49 @@ body {
   margin-top: 10px;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: Karla;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
+/* button { */
+/*   border-radius: 28px; */
+/*   border: 1px solid transparent; */
+/*   padding: 0.6em 1.2em; */
+/*   font-size: 1em; */
+/*   font-weight: 500; */
+/*   font-family: Karla; */
+/*   background-color: #2969C4; */
+/*   cursor: pointer; */
+/*   transition: border-color 0.25s; */
+/* } */
+/**/
+/* button:hover { */
+/*   border-color: #646cff; */
+/* } */
+/**/
+/* button:focus, */
+/* button:focus-visible { */
+/*   outline: 4px auto -webkit-focus-ring-color; */
+/* } */
+/* ======= */
 
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+/* button { */
+/*   border-radius: 28px; */
+/*   border: 1px solid transparent; */
+/*   padding: 0.6em 1.2em; */
+/*   font-size: 1em; */
+/*   font-weight: 500; */
+/*   font-family: Karla; */
+/*   background-color: #2969C4; */
+/*   color: #202020B2; */
+/*   cursor: pointer; */
+/*   transition: border-color 0.25s; */
+/* } */
+/**/
+/* button:hover { */
+/*   border-color: #646cff; */
+/* } */
+/**/
+/* button:focus, */
+/* button:focus-visible { */
+/*   outline: 4px auto -webkit-focus-ring-color; */
+/* } */
 
 @media (prefers-color-scheme: light) {
   :root {
