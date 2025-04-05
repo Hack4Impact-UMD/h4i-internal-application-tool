@@ -1,102 +1,110 @@
+import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import { Status } from '../../services/applicationStatus';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { collection, getDocs, Timestamp, query, where } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 
-import Navbar from './Navbar';
 import ProgressBar from './ProgressBar';
 import StatusBox from './StatusBox';
 import StatusTimeline from './ApplicationTimeline.tsx';
 import ApplyingTimeline from './ApplyingTimeline.tsx';
 
+interface Application {
+    id: string;
+    title: string;
+    status: Status;
+    dateSubmitted: Timestamp;
+    applicationUrl: string;
+}
+
 function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
-    
-    // TODO: Get these fields from the centralized state
-    const status = Status.ACCEPTED;
-    const applicationUrl = "/";
+    const [applications, setApplications] = useState<Application[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchApplications = async () => {
+            try {
+                const applicationsCollection = collection(db, 'applications');
+                const applicationsSnapshot = await getDocs(applicationsCollection);
+                const applicationsList = applicationsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as Application[];
+                setApplications(applicationsList);
+            } catch (error) {
+                console.error('Error fetching applications:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchApplications();
+    }, []);
+
+    const getStatusDisplay = (status: Status) => {
+        switch (status) {
+            case Status.UNDER_REVIEW:
+                return { text: 'Under review', className: 'bg-blue-100 text-blue-700' };
+            case Status.ACCEPTED:
+                return { text: 'Accept', className: 'bg-green-100 text-green-700' };
+            case Status.REJECTED:
+                return { text: 'Reject', className: 'bg-red-100 text-red-700' };
+            case Status.SUBMITTED:
+                return { text: 'Submitted', className: 'bg-yellow-100 text-yellow-700' };
+            default:
+                return { text: 'Ended', className: 'bg-gray-100 text-gray-700' };
+        }
+    };
+
+    const formatDate = (timestamp: Timestamp) => {
+        if (timestamp && timestamp.toDate) {
+            return timestamp.toDate().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        return '-';
+    };
+
+    const activeApplications = applications.filter(app => 
+        [Status.SUBMITTED, Status.UNDER_REVIEW, Status.INTERVIEW_TBD, 
+         Status.INTERVIEW_SCHEDULED, Status.INTERVIEW_COMPLETE].includes(app.status)
+    );
+
+    const inactiveApplications = applications.filter(app => 
+        [Status.REJECTED, Status.ACCEPTED, Status.CONFIRMED, Status.DECLINED].includes(app.status)
+    );
+
 
     const incompleteApplicationError = "Looks like you haven't submitted your application yet. Please submit when you're ready.";
 
     return (
         <>
-            <div className="min-h-screen bg-gray-100">
-                <Navbar isSignedIn={false} />
-                <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8">
-                    <h1 className="text-xl mt-10 mb-10 font-semibold">
-                        My Applications
+            <Navbar isSignedIn={false} />
+            <div className="flex flex-col w-full items-center p-8">
+                <div className="flex flex-col w-full gap-5 font-bold max-w-5xl items-center">
+                    <h1 className="text-4xl">
+                        Current Application Status
                     </h1>
 
-                    <div className="border-b border-gray-300">
-                        <div className="flex gap-8">
-                            <button
-                                onClick={() => setActiveTab('active')}
-                                className={`relative pb-4 px-1 ${
-                                    activeTab === 'active'
-                                        ? 'text-blue-500'
-                                        : 'text-gray-500'
-                                }`}
-                                style={{ background: 'none', border: 'none', outline: 'none' }}
-                            >
-                                Active (1)
-                                {activeTab === 'active' && (
-                                    <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
-                                )}
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('inactive')}
-                                className={`relative pb-4 px-1 ${
-                                    activeTab === 'inactive'
-                                        ? 'text-blue-500'
-                                        : 'text-gray-500'
-                                }`}
-                                style={{ background: 'none', border: 'none', outline: 'none' }}
-                            >
-                                Inactive (3)
-                                {activeTab === 'inactive' && (
-                                    <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
-                                )}
-                            </button>
-                        </div>
-                    </div>
+                    <ProgressBar
+                        fillLevel={status} />
 
-                    {activeTab === 'active' && <ApplyingTimeline />}
+                    {status === 0 &&
+                        <div className="max-w-96 px-4 text-center text-[1.4rem] text-red">
+                            <p>
+                                {incompleteApplicationError}
+                            </p>
+                        </div>}
 
-                    <div>
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-t border-gray-300">
-                                    <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {activeTab === 'active' ? (
-                                    <tr className="border-t border-gray-300">
-                                        <td className="py-4 text-blue-500 font-bold">Hack4Impact Spring 2025 Application</td>
-                                        <td className="text-center"><span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">Under review</span></td>
-                                        <td className="text-center">Mar 10, 2025</td>
-                                        <td className="text-center">-</td>
-                                    </tr>
-                                ) : (
-                                    <>
-                                        <tr className="border-t border-gray-300">
-                                            <td className="py-4 font-bold">Hack4Impact Spring 2024 Application</td>
-                                            <td className="text-center"><span className="bg-gray-100 px-3 py-1 rounded-full">Ended</span></td>
-                                            <td className="text-center">Feb 10, 2024</td>
-                                            <td className="text-center text-blue-500">View Decision</td>
-                                        </tr>
-                                        <tr className="border-t border-gray-300">
-                                            <td className="py-4 font-bold">Hack4Impact Spring 2023 Application</td>
-                                            <td className="text-center"><span className="bg-gray-100 px-3 py-1 rounded-full">Accept</span></td>
-                                            <td className="text-center">Mar 21, 2023</td>
-                                            <td className="text-center">-</td>
-                                        </tr>
-                                    </>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                    {status > 0 &&
+                        <StatusBox
+                            status={status}
+                            applicationUrl={applicationUrl} />}
+
                 </div>
             </div>
         </>

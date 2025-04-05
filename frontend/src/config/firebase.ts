@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore"
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore"
+import { connectAuthEmulator, getAuth } from "firebase/auth";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyB7FYsjDJiszoQaUnFADEZxPPTQJ2px8W0",
@@ -12,7 +13,19 @@ export const firebaseConfig = {
   measurementId: "G-FS170BH0BM"
 };
 
+export const apiUrl = import.meta.env.MODE == "development" ? "http://127.0.0.1:5001/h4i-applications/us-central1/api" : "THE PROD URL"
+
+console.log(`CURRENTLY RUNNING IN ${import.meta.env.MODE} MODE!`)
+console.log(`Using base API URL at: ${apiUrl}`)
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
+export const auth = getAuth(app);
+
+if (import.meta.env.MODE == "development") {
+  console.log(`CONNECTING TO LOCAL FIREBASE EMULATORS!`)
+  connectAuthEmulator(auth, "http://127.0.0.1:9099")
+  connectFirestoreEmulator(db, "127.0.0.1", 8080)
+}

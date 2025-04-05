@@ -1,5 +1,8 @@
 # H4I-InternalTools
 
+> [!Tip]
+> For data fetching best practices using React/Tanstack Query, see [DataFetching.md](DataFetching.md)
+
 ## Getting Started
 
 Prerequisites
@@ -40,4 +43,5 @@ then navigate to the generated URL
 
 ### Backend
 
-# TODO
+> [!Tip]
+> For Firebase emulator setup, see the backend [README](backend/README.md)
