@@ -1,9 +1,10 @@
+import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import { Status } from '../../services/applicationStatus';
 import { useState, useEffect } from 'react';
 import { collection, getDocs, Timestamp, query, where } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 
-import Navbar from './Navbar';
 import ProgressBar from './ProgressBar';
 import StatusBox from './StatusBox';
 import StatusTimeline from './ApplicationTimeline.tsx';
@@ -82,81 +83,28 @@ function StatusPage() {
 
     return (
         <>
-            <div className="min-h-screen bg-gray-100">
-                <Navbar isSignedIn={false} />
-                <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8">
-                    <h1 className="text-xl mt-10 mb-10 font-semibold">
-                        My Applications
+            <Navbar isSignedIn={false} />
+            <div className="flex flex-col w-full items-center p-8">
+                <div className="flex flex-col w-full gap-5 font-bold max-w-5xl items-center">
+                    <h1 className="text-4xl">
+                        Current Application Status
                     </h1>
 
-                    <div className="border-b border-gray-300">
-                        <div className="flex gap-8">
-                            <button
-                                onClick={() => setActiveTab('active')}
-                                className={`relative pb-4 px-1 ${
-                                    activeTab === 'active'
-                                        ? 'text-blue-500'
-                                        : 'text-gray-500'
-                                }`}
-                                style={{ background: 'none', border: 'none', outline: 'none' }}
-                            >
-                                Active ({activeApplications.length})
-                                {activeTab === 'active' && (
-                                    <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
-                                )}
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('inactive')}
-                                className={`relative pb-4 px-1 ${
-                                    activeTab === 'inactive'
-                                        ? 'text-blue-500'
-                                        : 'text-gray-500'
-                                }`}
-                                style={{ background: 'none', border: 'none', outline: 'none' }}
-                            >
-                                Inactive ({inactiveApplications.length})
-                                {activeTab === 'inactive' && (
-                                    <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
-                                )}
-                            </button>
-                        </div>
-                    </div>
+                    <ProgressBar
+                        fillLevel={status} />
 
-                    {activeTab === 'active' && <ApplyingTimeline />}
+                    {status === 0 &&
+                        <div className="max-w-96 px-4 text-center text-[1.4rem] text-red">
+                            <p>
+                                {incompleteApplicationError}
+                            </p>
+                        </div>}
 
-                    <div>
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-t border-gray-300">
-                                    <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {(activeTab === 'active' ? activeApplications : inactiveApplications).map(application => (
-                                    <tr key={application.id} className="border-t border-gray-300">
-                                        <td className="py-4 text-blue-500 font-bold">{application.title}</td>
-                                        <td className="text-center">
-                                            <span className={`px-3 py-1 rounded-full ${getStatusDisplay(application.status).className}`}>
-                                                {getStatusDisplay(application.status).text}
-                                            </span>
-                                        </td>
-                                        <td className="text-center">{formatDate(application.dateSubmitted)}</td>
-                                        <td className="text-center">
-                                            {application.status >= Status.REJECTED ? (
-                                                <span className="text-blue-500 cursor-pointer" 
-                                                      onClick={() => window.open("/status/decision", "_self")}>
-                                                    View Decision
-                                                </span>
-                                            ) : '-'}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    {status > 0 &&
+                        <StatusBox
+                            status={status}
+                            applicationUrl={applicationUrl} />}
+
                 </div>
             </div>
         </>
