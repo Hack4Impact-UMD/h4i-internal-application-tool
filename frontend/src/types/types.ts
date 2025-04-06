@@ -88,7 +88,7 @@ export interface ApplicationForm {
     sections: ApplicationSection[];
 }
 
-//there should be one of this per reviewer!
+//there should be one of this per reviewer! The id should be the same as reviewer ID
 export interface ApplicationReviewData {
     id: string;
     reviewerId: string;

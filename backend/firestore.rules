@@ -30,12 +30,31 @@ service cloud.firestore {
     	return isAuthed() && getCurrentUser().data.role == "super-reviewer";
     }
     
+    function isAssigned(reviewerId, responseId) {
+      return exists(/databases/$(database)/documents/$(reviewerId)) 
+             && get(/databases/$(database)/documents/$(reviewerId)).data.applicationResponseId == responseId;
+    }
+    
     match /users/{user_id} {
       // user documents can be read only by the user they represent or reviewers
     	allow read: if isReviewer() || hasID(user_id);
       // user documents can be written to only by the user they represent or super-reviewers
       allow create: if hasID(user_id);
       allow update: if hasID(user_id) || isSuperReviewer();
+    }
+
+    match /application-forms/{form_id} {
+      allow read: if isAuthed();
+      allow create: if isSuperReviewer();
+      allow update: if isSuperReviewer();
+      allow delete: if isSuperReviewer();
+    }
+
+    match /application-responses/{response_id} {
+      allow read: if isSuperReviewer() || (isReviewer() && isAssigned(request.auth.uid, response_id)) || hasID(resource.data.userId);
+      allow create: if isApplicant();
+      allow update: if isApplicant() && hasID(resource.data.userId);
+      allow delete: if (isApplicant() && hasID(resource.data.userId)) || isSuperReviewer();
     }
     
     // by default, all documents should be inaccessible to reads and writes
