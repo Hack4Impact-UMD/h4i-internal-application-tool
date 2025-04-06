@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { PermissionRole } from "../../types/types";
+import Loading from "../Loading";
 
 interface RequireAuthProps {
   requireRoles?: PermissionRole[]
@@ -13,7 +14,7 @@ export default function RequireAuth({ requireRoles, children }: RequireAuthProps
   const location = useLocation()
 
   // check if auth state has been loaded
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) return <Loading />
 
   if (isAuthed) { // user is logged in, check if there are role restrictions
     if (requireRoles) {
