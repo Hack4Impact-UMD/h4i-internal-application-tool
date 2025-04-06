@@ -30,11 +30,6 @@ service cloud.firestore {
     	return isAuthed() && getCurrentUser().data.role == "super-reviewer";
     }
     
-    function isAssigned(reviewerId, responseId) {
-      return exists(/databases/$(database)/documents/$(reviewerId)) 
-             && get(/databases/$(database)/documents/$(reviewerId)).data.applicationResponseId == responseId;
-    }
-    
     match /users/{user_id} {
       // user documents can be read only by the user they represent or reviewers
     	allow read: if isReviewer() || hasID(user_id);
@@ -51,7 +46,7 @@ service cloud.firestore {
     }
 
     match /application-responses/{response_id} {
-      allow read: if isSuperReviewer() || (isReviewer() && isAssigned(request.auth.uid, response_id)) || hasID(resource.data.userId);
+      allow read: if isReviewer() || hasID(resource.data.userId); // currently all reviewers can read all apps
       allow create: if isApplicant();
       allow update: if isApplicant() && hasID(resource.data.userId);
       allow delete: if (isApplicant() && hasID(resource.data.userId)) || isSuperReviewer();
