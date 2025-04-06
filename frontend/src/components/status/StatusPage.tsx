@@ -1,60 +1,43 @@
-import { Status } from '../../services/applicationStatus';
-import { useState, useEffect } from 'react';
-import { collection, getDocs, Timestamp, query, where } from 'firebase/firestore';
-import { db } from '../../config/firebase';
+import { useState } from 'react';
+import { Timestamp } from 'firebase/firestore';
 
 import Timeline from "./Timeline.tsx";
+import { useApplicationResponses } from '../../hooks/useApplicationResponses.ts';
+import { ApplicationResponse, ApplicationStatus } from '../../types/types.ts';
+import { useApplicationForm } from '../../hooks/useApplicationForm.ts';
 
-interface Application {
-    id: string;
-    title: string;
-    status: Status;
-    dateSubmitted: Timestamp;
-    applicationUrl: string;
-}
 
 const timelineItems = [
-    { label: "About Yourself"},
+    { label: "About Yourself" },
     { label: "Resume" },
     { label: "More questions " },
     { label: "Review" },
-  ];
+];
 
-function StatusPage() {
-    const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
-    const [applications, setApplications] = useState<Application[]>([]);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchApplications = async () => {
-            try {
-                const applicationsCollection = collection(db, 'applications');
-                const applicationsSnapshot = await getDocs(applicationsCollection);
-                const applicationsList = applicationsSnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                })) as Application[];
-                setApplications(applicationsList);
-            } catch (error) {
-                console.error('Error fetching applications:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+function ApplicationResponseRow({ response }: { response: ApplicationResponse }) {
+    const { data: form, isLoading, error } = useApplicationForm(response.applicationFormId)
 
-        fetchApplications();
-    }, []);
+    if (isLoading) {
+        return <tr className="w-full border-t border-gray-300">
+            <p>Loading...</p>
+        </tr>
+    }
 
-    const getStatusDisplay = (status: Status) => {
+    if (error) {
+        return <tr className="w-full border-t border-gray-300">
+            <p className="text-red-600">Failed to fetch application form: {error.message}</p>
+        </tr>
+    }
+
+    const getStatusDisplay = (status: ApplicationStatus) => {
         switch (status) {
-            case Status.UNDER_REVIEW:
+            case ApplicationStatus.UnderReview:
                 return { text: 'Under review', className: 'bg-blue-100 text-blue-700' };
-            case Status.ACCEPTED:
-                return { text: 'Accept', className: 'bg-green-100 text-green-700' };
-            case Status.REJECTED:
-                return { text: 'Reject', className: 'bg-red-100 text-red-700' };
-            case Status.SUBMITTED:
-                return { text: 'Submitted', className: 'bg-yellow-100 text-yellow-700' };
+            case ApplicationStatus.Decided:
+                return { text: 'Decided', className: 'bg-green-100 text-green-700' };
+            case ApplicationStatus.Interview:
+                return { text: 'Interview', className: 'bg-yellow-100 text-yellow-700' };
             default:
                 return { text: 'Ended', className: 'bg-gray-100 text-gray-700' };
         }
@@ -71,16 +54,36 @@ function StatusPage() {
         return '-';
     };
 
-    const activeApplications = applications.filter(app => 
-        [Status.SUBMITTED, Status.UNDER_REVIEW, Status.INTERVIEW_TBD, 
-         Status.INTERVIEW_SCHEDULED, Status.INTERVIEW_COMPLETE].includes(app.status)
+    return <tr className="border-t border-gray-300">
+        <td className="py-4 text-blue-500 font-bold">{form!.semester}</td>
+        <td className="text-center">
+            <span className={`px-3 py-1 rounded-full ${getStatusDisplay(response.status).className}`}>
+                {getStatusDisplay(response.status).text}
+            </span>
+        </td>
+        <td className="text-center">{formatDate(response!.dateSubmitted)}</td>
+        <td className="text-center">
+            {response.status == ApplicationStatus.Decided ? (
+                <span className="text-blue-500 cursor-pointer"
+                    onClick={() => window.open("/status/decision", "_self")}>
+                    View Decision
+                </span>
+            ) : '-'}
+        </td>
+    </tr>
+}
+
+function StatusPage() {
+    const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
+    const { data: applications, isLoading, error } = useApplicationResponses()
+
+    const activeApplications = applications.filter(app =>
+        [ApplicationStatus.UnderReview, ApplicationStatus.Interview].includes(app.status)
     );
 
-    const inactiveApplications = applications.filter(app => 
-        [Status.REJECTED, Status.ACCEPTED, Status.CONFIRMED, Status.DECLINED].includes(app.status)
+    const inactiveApplications = applications.filter(app =>
+        [ApplicationStatus.InActive].includes(app.status)
     );
-
-    const incompleteApplicationError = "Looks like you haven't submitted your application yet. Please submit when you're ready.";
 
     return (
         <div className="flex flex-col">
@@ -94,11 +97,10 @@ function StatusPage() {
                         <div className="flex gap-8">
                             <button
                                 onClick={() => setActiveTab('active')}
-                                className={`relative pb-4 px-1 ${
-                                    activeTab === 'active'
-                                        ? 'text-blue-500'
-                                        : 'text-gray-500'
-                                }`}
+                                className={`relative pb-4 px-1 cursor-pointer ${activeTab === 'active'
+                                    ? 'text-blue-500'
+                                    : 'text-gray-500'
+                                    }`}
                                 style={{ background: 'none', border: 'none', outline: 'none' }}
                             >
                                 Active ({activeApplications.length})
@@ -108,11 +110,10 @@ function StatusPage() {
                             </button>
                             <button
                                 onClick={() => setActiveTab('inactive')}
-                                className={`relative pb-4 px-1 ${
-                                    activeTab === 'inactive'
-                                        ? 'text-blue-500'
-                                        : 'text-gray-500'
-                                }`}
+                                className={`relative pb-4 px-1 cursor-pointer ${activeTab === 'inactive'
+                                    ? 'text-blue-500'
+                                    : 'text-gray-500'
+                                    }`}
                                 style={{ background: 'none', border: 'none', outline: 'none' }}
                             >
                                 Inactive ({inactiveApplications.length})
@@ -136,25 +137,13 @@ function StatusPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {(activeTab === 'active' ? activeApplications : inactiveApplications).map(application => (
-                                    <tr key={application.id} className="border-t border-gray-300">
-                                        <td className="py-4 text-blue-500 font-bold">{application.title}</td>
-                                        <td className="text-center">
-                                            <span className={`px-3 py-1 rounded-full ${getStatusDisplay(application.status).className}`}>
-                                                {getStatusDisplay(application.status).text}
-                                            </span>
-                                        </td>
-                                        <td className="text-center">{formatDate(application.dateSubmitted)}</td>
-                                        <td className="text-center">
-                                            {application.status >= Status.REJECTED ? (
-                                                <span className="text-blue-500 cursor-pointer" 
-                                                      onClick={() => window.open("/status/decision", "_self")}>
-                                                    View Decision
-                                                </span>
-                                            ) : '-'}
-                                        </td>
-                                    </tr>
-                                ))}
+                                {isLoading ?
+                                    <p>Loading...</p> :
+                                    error ? <p>Error fetching applications: {error.message}</p> :
+                                        (activeTab === 'active' ? activeApplications : inactiveApplications).map(application => (
+                                            <ApplicationResponseRow key={application.id} response={application} />
+                                        ))
+                                }
                             </tbody>
                         </table>
                     </div>

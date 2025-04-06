@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export enum PermissionRole {
     SuperReviewer = "super-reviewer",
     Reviewer = "reviewer",
@@ -19,14 +21,17 @@ export enum ApplicationStatus {
     UnderReview = "in-review",
     Interview = "interview",
     Decided = "decided",
+    InActive = "inactive"
 }
 
 export enum ReviewStatus {
     NotReviewed = 'not-reviewed',
     Reviewed = "reviewed",
-    interview = "interview",
-    decided = "decided",
-    released = "released"
+    Interview = "interview",
+    Accepted = "accepted",
+    Denied = "denied",
+    Waitlisted = "waitlist",
+    // Released = "released"
 }
 
 export enum QuestionType {
@@ -73,7 +78,7 @@ export interface ApplicationResponse {
     rolesApplied: ApplicantRole[];
     sectionResponses: SectionResponse[];
     status: ApplicationStatus;
-    dateSubmitted: string;
+    dateSubmitted: Timestamp;
     decisionLetterId: string;
 }
 
@@ -81,7 +86,7 @@ export interface ApplicationResponse {
 export interface ApplicationForm {
     id: string;
     isActive: boolean;
-    dueDate: Date;
+    dueDate: Timestamp;
     semester: string;
     description: string;
     // metadata: {};
