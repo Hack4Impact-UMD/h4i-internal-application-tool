@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { PermissionRole } from "../../types/types";
+import Loading from "../Loading";
 
 
 interface RequireNoAuthProps {
@@ -14,7 +15,7 @@ interface RequireNoAuthProps {
 export default function RequireNoAuth({ children, redirect }: RequireNoAuthProps) {
   const { isLoading, isAuthed, user } = useAuth()
 
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) return <Loading />
 
   console.log("role: " + user?.role)
 

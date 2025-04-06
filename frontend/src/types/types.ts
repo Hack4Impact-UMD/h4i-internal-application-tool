@@ -81,9 +81,9 @@ export interface ApplicationResponse {
 export interface ApplicationForm {
     id: string;
     isActive: boolean;
-    applicationFormId: string;
     dueDate: Date;
     semester: string;
+    description: string;
     // metadata: {};
     sections: ApplicationSection[];
 }
@@ -130,7 +130,6 @@ export interface ListResponse extends QuestionResponse {
 }
 
 export interface ApplicationQuestion {
-    applicationFormId: string;
     questionId: string;
     questionType: QuestionType;
     optional: boolean;
@@ -140,7 +139,6 @@ export interface ApplicationQuestion {
 
 export interface TextQuestion extends ApplicationQuestion {
     questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer;
-    longAnswer: boolean;
     placeholderText: string;
     maximumWordCount?: number;
     minimumWordCount?: number;
@@ -156,3 +154,54 @@ export interface FileUploadQuestion extends ApplicationQuestion {
     questionType: QuestionType.FileUpload;
     fileId: string;
 }
+
+// type MockData = {
+//     applicationForms: [ApplicationForm]
+// }
+//
+//
+// const data: MockData = {
+//     applicationForms: [
+//         {
+//             id: "",
+//             description: "A sample form for testing",
+//             dueDate: new Date(2026, 1, 1, 0, 0, 0, 0),
+//             isActive: true,
+//             semester: "Fall 2025",
+//             sections: [
+//                 {
+//                     questions: [
+//                         {
+//                             questionType: QuestionType.ShortAnswer,
+//                             optional: false,
+//                             questionId: "q1",
+//                             questionText: "A simple question",
+//                             secondaryText: "Secondary text...",
+//                         } as TextQuestion,
+//                         {
+//                             questionType: QuestionType.LongAnswer,
+//                             optional: true,
+//                             questionId: "q2",
+//                             questionText: "Another simple question",
+//                             placeholderText: "foo",
+//                             minimumWordCount: 100,
+//                             maximumWordCount: 500,
+//                         } as TextQuestion,
+//                         {
+//                             multipleSelect: true,
+//                             optional: false,
+//                             questionId: "q3",
+//                             questionText: "Multiple Selection",
+//                             questionOptions: ["Option 1", "Option 2", "Option 3"],
+//                             questionType: QuestionType.MultipleSelect,
+//                             secondaryText: "Some secondary text..."
+//                         } as OptionQuestion
+//                     ],
+//                     sectionName: "Section 1"
+//                 }
+//             ]
+//         }
+//     ]
+// }
+//
+// console.log(JSON.stringify(data))
