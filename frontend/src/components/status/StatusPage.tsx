@@ -85,6 +85,8 @@ function StatusPage() {
         [ApplicationStatus.InActive].includes(app.status)
     );
 
+    const activeList = (activeTab == "active") ? activeApplications : inactiveApplications
+
     return (
         <div className="flex flex-col">
             <div className="h-screen bg-gray">
@@ -126,30 +128,31 @@ function StatusPage() {
 
                     {activeTab === 'active' && <Timeline currentStep={2} items={timelineItems} maxStepReached={2} />}
 
-                    <div>
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-t border-gray-300">
-                                    <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
-                                    <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {isLoading ?
-                                    <p>Loading...</p> :
-                                    error ? <p>Error fetching applications: {error.message}</p> :
-                                        (activeTab === 'active' ? activeApplications : inactiveApplications).map(application => (
-                                            <ApplicationResponseRow key={application.id} response={application} />
-                                        ))
-                                }
-                            </tbody>
-                        </table>
+                    <div className="mt-3">
+                        {isLoading ?
+                            <p className="w-full">Loading...</p> :
+                            error ? <p className="w-full">Error fetching applications: {error.message}</p> :
+                                activeList.length == 0 ? <p className="w-full">You don't have any {activeTab} applications. Go apply!</p> :
+                                    (<table className="w-full">
+                                        <thead>
+                                            <tr className="border-t border-gray-300">
+                                                <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                                <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
+                                                <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
+                                                <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {activeList.map(application => (
+                                                <ApplicationResponseRow key={application.id} response={application} />
+                                            ))}
+                                        </tbody>
+                                    </table>)
+                        }
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 
