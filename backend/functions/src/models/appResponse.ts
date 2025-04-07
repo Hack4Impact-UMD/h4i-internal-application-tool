@@ -9,11 +9,10 @@ export type ApplicationResponse = {
   status: ApplicationStatus;
 };
 
-export const applicationResponseSchema = z.object({
+export const newApplicationResponseSchema = z.object({
   id: z.string().nonempty(),
   app_formId: z.string().nonempty(),
   user_id: z.string().nonempty(),
-  status: z.enum(["in-progress", "submitted", "reviewed"]),
 });
 
-export type ApplicationResponseInput = z.infer<typeof applicationResponseSchema>;
+export type ApplicationResponseInput = z.infer<typeof newApplicationResponseSchema>;
