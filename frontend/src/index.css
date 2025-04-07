@@ -8,6 +8,7 @@
   --color-white: #FFFFFF;
   --color-red: #FD1FFF;
   --color-lightgray: #F1F1F1;
+  --color-gray: #fafafa;
   --color-darkgray: #636363;
   --color-black: #202020;
 
@@ -25,7 +26,7 @@
   text-decoration: none;
 }
 
-#root {
+html, body, #root {
   width: 100%;
   height: 100%;
 }

@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export enum PermissionRole {
     SuperReviewer = "super-reviewer",
     Reviewer = "reviewer",
@@ -19,14 +21,17 @@ export enum ApplicationStatus {
     UnderReview = "in-review",
     Interview = "interview",
     Decided = "decided",
+    InActive = "inactive"
 }
 
 export enum ReviewStatus {
     NotReviewed = 'not-reviewed',
     Reviewed = "reviewed",
-    interview = "interview",
-    decided = "decided",
-    released = "released"
+    Interview = "interview",
+    Accepted = "accepted",
+    Denied = "denied",
+    Waitlisted = "waitlist",
+    // Released = "released"
 }
 
 export enum QuestionType {
@@ -73,7 +78,7 @@ export interface ApplicationResponse {
     rolesApplied: ApplicantRole[];
     sectionResponses: SectionResponse[];
     status: ApplicationStatus;
-    dateSubmitted: string;
+    dateSubmitted: Timestamp;
     decisionLetterId: string;
 }
 
@@ -81,14 +86,14 @@ export interface ApplicationResponse {
 export interface ApplicationForm {
     id: string;
     isActive: boolean;
-    applicationFormId: string;
-    dueDate: Date;
+    dueDate: Timestamp;
     semester: string;
+    description: string;
     // metadata: {};
     sections: ApplicationSection[];
 }
 
-//there should be one of this per reviewer!
+//there should be one of this per reviewer! The id should be the same as reviewer ID
 export interface ApplicationReviewData {
     id: string;
     reviewerId: string;
@@ -130,7 +135,6 @@ export interface ListResponse extends QuestionResponse {
 }
 
 export interface ApplicationQuestion {
-    applicationFormId: string;
     questionId: string;
     questionType: QuestionType;
     optional: boolean;
@@ -140,7 +144,6 @@ export interface ApplicationQuestion {
 
 export interface TextQuestion extends ApplicationQuestion {
     questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer;
-    longAnswer: boolean;
     placeholderText: string;
     maximumWordCount?: number;
     minimumWordCount?: number;
@@ -156,3 +159,54 @@ export interface FileUploadQuestion extends ApplicationQuestion {
     questionType: QuestionType.FileUpload;
     fileId: string;
 }
+
+// type MockData = {
+//     applicationForms: [ApplicationForm]
+// }
+//
+//
+// const data: MockData = {
+//     applicationForms: [
+//         {
+//             id: "",
+//             description: "A sample form for testing",
+//             dueDate: new Date(2026, 1, 1, 0, 0, 0, 0),
+//             isActive: true,
+//             semester: "Fall 2025",
+//             sections: [
+//                 {
+//                     questions: [
+//                         {
+//                             questionType: QuestionType.ShortAnswer,
+//                             optional: false,
+//                             questionId: "q1",
+//                             questionText: "A simple question",
+//                             secondaryText: "Secondary text...",
+//                         } as TextQuestion,
+//                         {
+//                             questionType: QuestionType.LongAnswer,
+//                             optional: true,
+//                             questionId: "q2",
+//                             questionText: "Another simple question",
+//                             placeholderText: "foo",
+//                             minimumWordCount: 100,
+//                             maximumWordCount: 500,
+//                         } as TextQuestion,
+//                         {
+//                             multipleSelect: true,
+//                             optional: false,
+//                             questionId: "q3",
+//                             questionText: "Multiple Selection",
+//                             questionOptions: ["Option 1", "Option 2", "Option 3"],
+//                             questionType: QuestionType.MultipleSelect,
+//                             secondaryText: "Some secondary text..."
+//                         } as OptionQuestion
+//                     ],
+//                     sectionName: "Section 1"
+//                 }
+//             ]
+//         }
+//     ]
+// }
+//
+// console.log(JSON.stringify(data))

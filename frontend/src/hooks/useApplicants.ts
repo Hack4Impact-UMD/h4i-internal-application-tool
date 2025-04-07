@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllApplicants, getApplicantsAssignedForReview } from "../services/applicants";
+import { getAllApplicants, getApplicantsAssignedForReview } from "../services/applicantService.ts";
 import { ApplicantUserProfile, PermissionRole, ReviewerUserProfile } from "../types/types";
 import { useAuth } from "./useAuth";
 
