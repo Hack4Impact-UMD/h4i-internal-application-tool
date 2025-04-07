@@ -81,7 +81,7 @@ function ReviewDashboard() {
         email: 'america@example.com',
         status: 'submitted',
         dateApplied: Timestamp.fromDate(new Date('2024-03-01')),
-        roles: ['engineer'],
+        roles: ['designer'],
         interestInClubScore: 4.5,
         interestInSocialGoodScore: 3.8,
         technicalExpertiseScore: 4.7,
@@ -95,7 +95,7 @@ function ReviewDashboard() {
         email: 'bob@example.com',
         status: 'in-review',
         dateApplied: Timestamp.fromDate(new Date('2024-02-15')),
-        roles: ['designer'],
+        roles: ['technical lead'],
         interestInClubScore: 4.0,
         interestInSocialGoodScore: 4.5,
         technicalExpertiseScore: 3.9,
@@ -132,7 +132,6 @@ function ReviewDashboard() {
         overallScore: null,
       },
     ];
-
 
     const applicantsWithScores = dummyApplicants.map(applicant => {
       const calculatedScore = calculateOverallScore(applicant);
@@ -199,39 +198,37 @@ function ReviewDashboard() {
   };
 
   return (
-    <div className="App">
-      <>
-        <img src="Header.jpg" alt="Header" className="navbar-header-image" />
-        <header>
-          <div className="banner"></div>
-          <h1>Applicant Review Portal</h1>
-        </header>
-        <div className="styled-box">
-          <div className="box-header">
-            <h2 className="box-title">Number of Applicants:</h2>
-            <h2 className="box-title">Applicants Finalized</h2>
-          </div>
-          <ProgressBar finalized={finalizedApplicants.length} total={allApplicants.length} />
-          <div className="numbers">
-            <span className="applicants-count">{allApplicants.length}</span>
-            <span className="finalized-count">{finalizedApplicants.length}</span>
-          </div>
-        </div>
-        <main className="container mx-auto p-4">
-          <FilterBar
-            onSearch={handleSearch}
-            onSortChange={handleSortChange}
-            onRoleFilter={handleRoleFilter}
-            selectedRole={selectedRole}
-          />
+    <div className="bg-[#F7F7F7] min-h-screen p-8 font-karla">
 
-          {loading ? (
-            <p>Loading applicants...</p>
-          ) : (
-            <DataTable applicants={filteredApplicants} />
-          )}
-        </main>
-      </>
+      <h1 className="text-2xl font-bold text-[#333333] mb-6">Applicant Reviewer Portal</h1>
+
+      <div className="flex gap-4 mb-6">
+        <div className="flex-1 bg-[#D9F3FF] p-4 rounded-xl">
+          <p className="text-[#1B3C59] text-sm font-medium">Number of Applicants</p>
+          <p className="text-[#1B3C59] text-2xl font-bold">{allApplicants.length}</p>
+        </div>
+        <div className="flex-1 bg-[#D9FFEC] p-4 rounded-xl">
+          <p className="text-[#1B3C59] text-sm font-medium">Applicants Reviewed</p>
+          <p className="text-[#1B3C59] text-2xl font-bold">{finalizedApplicants.length}</p>
+        </div>
+        <div className="flex-1 bg-[#FFE5DA] p-4 rounded-xl">
+          <p className="text-[#1B3C59] text-sm font-medium">Applicants Pending</p>
+          <p className="text-[#1B3C59] text-2xl font-bold">{allApplicants.length - finalizedApplicants.length}</p>
+        </div>
+      </div>
+
+      <FilterBar
+        onSearch={handleSearch}
+        onSortChange={handleSortChange}
+        onRoleFilter={handleRoleFilter}
+        selectedRole={selectedRole}
+      />
+
+      {loading ? (
+        <p>Loading applicants...</p>
+      ) : (
+        <DataTable applicants={filteredApplicants} />
+      )}
     </div>
   );
 }
