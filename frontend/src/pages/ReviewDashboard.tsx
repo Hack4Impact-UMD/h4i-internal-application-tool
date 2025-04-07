@@ -18,6 +18,11 @@ export type Applicant = {
   npoExpertiseScore: number | null;
   communicationScore: number | null;
   overallScore: number | null;
+  reviewer1: string;
+  reviewerScore1: number | null; 
+  reviewer2: string;
+  reviewerScore2: number | null;
+  totalScore: number | null;
 };
 
 function ReviewDashboard() {
@@ -55,7 +60,7 @@ function ReviewDashboard() {
       );
     }
 
-    else if (['engineer', 'tl', 'pm', 'designer', 'product'].includes(role)) {
+    else if (['engineer', 'tl', 'pm', 'technical lead', 'designer', 'product'].includes(role)) {
       if (
         applicant.interestInClubScore === null ||
         applicant.interestInSocialGoodScore === null ||

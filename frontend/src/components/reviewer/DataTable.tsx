@@ -15,7 +15,7 @@ const DataTable: React.FC<{ applicants: Applicant[] }> = ({ applicants }) => {
 
   const formatScore = (score: number | null | undefined) => {
     if (score === null || score === undefined) return '-';
-    return `${score.toFixed(0)}/12`;
+    return `${score}/12`;
   };
 
   const getRoleBadge = (role: string) => {
