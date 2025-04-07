@@ -119,19 +119,10 @@ export interface SectionResponse {
 }
 
 export interface QuestionResponse {
+    questionType: QuestionType;
     applicationFormId: string;
     questionId: string;
-    questionType: QuestionType;
-}
-
-export interface SingleResponse extends QuestionResponse {
-    questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer | QuestionType.MultipleChoice;
-    response: string;
-}
-
-export interface ListResponse extends QuestionResponse {
-    questionType: QuestionType.MultipleSelect;
-    response: string[];
+    response: string | string[]
 }
 
 export interface ApplicationQuestion {

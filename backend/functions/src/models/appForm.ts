@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const ApplicationQuestion = z.object({
+  questionId: z.string().nonempty(),
   questionType: z.string().nonempty(),
   optional: z.boolean(),
   questionText: z.string(),
@@ -19,8 +20,9 @@ export const ApplicationFormSchema = z.object({
   dueDate: z.date(),
   semester: z.string(),
   description: z.string(),
-  sections: ApplicationSectionSchema
+  sections: z.array(ApplicationSectionSchema)
 })
 
 export type ApplicationSection = z.infer<typeof ApplicationSectionSchema>;
 export type ApplicationForm = z.infer<typeof ApplicationFormSchema>
+export type ApplicationQuestion = z.infer<typeof ApplicationQuestion>
