@@ -73,6 +73,11 @@ router.put("/application/:id", [isAuthenticated, validateSchema(newApplicationRe
       return res.status(400).send("Cannot update a submitted application response");
     }
 
+    if (existingResponse.status === "reviewed") {
+      logger.warn(`Attempt to update reviewed response ${applicationId}`);
+      return res.status(400).send("Cannot update a reviewed application response");
+    }
+
     const updatedFields = req.body as Partial<ApplicationResponse>;
 
     delete updatedFields.id;
