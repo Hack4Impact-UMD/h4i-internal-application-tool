@@ -99,7 +99,7 @@ export interface ApplicationReviewData {
     reviewerId: string;
     applicationFormId: string;
     applicationResponseId: string;
-    applicationUserId: string;
+    applicantId: string;
     applicantScores: {
         [scoreCategory in string]: number
     };
