@@ -103,7 +103,6 @@ export interface ApplicationReviewData {
     applicantScores: {
         [scoreCategory in string]: number
     };
-    interviewNotes?: string;
     reviewerNotes?: string[];
     reviewStatus: ReviewStatus;
 }
