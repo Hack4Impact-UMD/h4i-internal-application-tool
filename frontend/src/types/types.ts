@@ -108,6 +108,16 @@ export interface ApplicationReviewData {
     reviewStatus: ReviewStatus;
 }
 
+export interface ApplicationInterviewData {
+    id: string;
+    interviewerId: string; // user id for the interviewer
+    applicationFormId: string;
+    applicationResponseId: string;
+    applicantId: string;
+    interviewNotes: string;
+    interviewComplete: boolean;
+}
+
 export interface ApplicationSection {
     sectionName: string;
     questions: ApplicationQuestion[];
