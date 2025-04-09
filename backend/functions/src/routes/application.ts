@@ -12,10 +12,46 @@ const router = Router();
 const APPLICATION_RESPONSE_COLLECTION = "application-responses"
 const APPLICATION_FORMS_COLLECTION = "application-forms"
 
+interface QuestionMetadata {
+  optional: boolean;
+  minimumWordCount?: number;
+  maximumWordCount?: number;
+}
+
+function validateResponses(applicationResponse: ApplicationResponse, applicationForm) {
+  const errors: string[] = [];
+
+  // fill formQuestion map
+  let formQuestions = new Map<String, QuestionMetadata>();
+  for (const section of applicationForm.sections) {
+    for (const question of section.questions) {
+      formQuestions.set(question.questionId, {
+        optional: question.optional,
+        minimumWordCount: question.minimumWordCount,
+        maximumWordCount: question.maximumWordCount
+      })
+    }
+  }
+
+  // validate each response
+  for (const section of applicationResponse.sectionResponses) {
+    for (const question of section.questions) {
+      const metaData = formQuestions.get(question.questionId);
+      if (!metaData) {
+        errors.push(`Question ${question.questionId} has no metadata`)
+      }
+
+      if (metaData?.optional === true && question.response.length == 0) {
+        errors.push(`Question `)
+      }
+    }
+  }
+}
+
 // add isAuthenticated here?
 router.post("/submit", [isAuthenticated, validateSchema(appResponseFormSchema)], async (req: Request, res: Response) => {
   try {
-    const applicationResponse = req.body as AppResponseForm;
+    const applicationResponse = req.body as ApplicationResponse;
 
     logger.info(`${req.token?.email} is submitting an application!`)
 
@@ -46,6 +82,7 @@ router.post("/submit", [isAuthenticated, validateSchema(appResponseFormSchema)],
     //Others also have word count restrictions. Those should also be checked here before finalizing
     //the submission! You can just iterate through all the question responses, find the corresponding
     //question in the form based on the question id and validate any requirements that it has.
+    validateResponses(applicationResponse, applicationFormDocData)
 
     // Proceed with updating submission status
     await applicationResponseCollection.doc(applicationResponse.applicationResponseId).update({

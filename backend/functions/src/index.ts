@@ -11,7 +11,7 @@ import { onRequest } from "firebase-functions/v2/https";
 // import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin"
 import app from "./app";
-// import { uploadMockData } from "./utils/mockData";
+import { uploadMockData } from "./utils/mockData";
 
 admin.initializeApp()
 export const db = admin.firestore()
@@ -24,6 +24,6 @@ export const db = admin.firestore()
 //   response.send("Hello from Firebase!");
 // });
 //
-// uploadMockData();
+uploadMockData();
 
 exports.api = onRequest(app);
