@@ -65,7 +65,7 @@ export interface ReviewerUserProfile extends UserProfile {
     role: PermissionRole.Reviewer;
     reviewAssignments: {
         applicationReviewAssignments: ReviewAssignment[];
-        interviewAssignmentIds: string[]; // user ids
+        interviewAssignmentIds: ReviewAssignment[]; 
     };
 }
 
