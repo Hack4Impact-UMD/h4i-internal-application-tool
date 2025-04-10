@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
-import { ApplicationResponse, AppResponseForm, appResponseFormSchema } from "../models/appResponse";
+import { ApplicationResponse, appResponseFormSchema } from "../models/appResponse";
 import { CollectionReference } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { isAuthenticated } from "../middleware/authentication";
@@ -18,7 +18,7 @@ interface QuestionMetadata {
   maximumWordCount?: number;
 }
 
-function validateResponses(applicationResponse: ApplicationResponse, applicationForm) {
+function validateResponses(applicationResponse: ApplicationResponse, applicationForm: ApplicationForm) {
   const errors: string[] = [];
 
   // fill formQuestion map
@@ -41,11 +41,19 @@ function validateResponses(applicationResponse: ApplicationResponse, application
         errors.push(`Question ${question.questionId} has no metadata`)
       }
 
-      if (metaData?.optional === true && question.response.length == 0) {
-        errors.push(`Question `)
+      if (metaData?.optional === false && question.response.length == 0) {
+        errors.push(`Question ${question.questionId} is required`)
+      }
+
+      if (metaData?.maximumWordCount && question.response.length > metaData?.maximumWordCount ||
+        metaData?.minimumWordCount && question.response.length < metaData?.minimumWordCount
+      ) {
+        errors.push(`Question ${question.questionId} falls outside the word count range`)
       }
     }
   }
+
+  return errors
 }
 
 // add isAuthenticated here?
@@ -82,8 +90,10 @@ router.post("/submit", [isAuthenticated, validateSchema(appResponseFormSchema)],
     //Others also have word count restrictions. Those should also be checked here before finalizing
     //the submission! You can just iterate through all the question responses, find the corresponding
     //question in the form based on the question id and validate any requirements that it has.
-    validateResponses(applicationResponse, applicationFormDocData)
-
+    const errors = validateResponses(applicationResponse, applicationFormDocData!)
+    if (errors) {
+      return res.status(400).send(errors.join(", "))
+    }
     // Proceed with updating submission status
     await applicationResponseCollection.doc(applicationResponse.applicationResponseId).update({
       status: "submitted",

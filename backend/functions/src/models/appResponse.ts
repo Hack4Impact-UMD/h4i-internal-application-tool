@@ -66,7 +66,7 @@ export const appResponseFormSchema = z.object({
               applicationFormId: z.string(),
               questionId: z.string(),
               questionType: z.nativeEnum(QuestionType),
-              response: z.string().min(1, "Response cannot be empty").or(z.array(z.string())), // Ensure response is provided
+              response: z.string(),
             })
           )
           .nonempty("There should be at least one question per section"),
