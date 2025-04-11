@@ -1,6 +1,8 @@
 import { useState } from "react";
 import OptionButton from "./OptionButton";
 import { twMerge } from "tailwind-merge";
+import RequireAuth from "../auth/RequireAuth";
+import { PermissionRole } from "../../types/types";
 
 interface ChoiceGroupProps {
     question: string,
@@ -23,7 +25,6 @@ const ChoiceGroup: React.FC<ChoiceGroupProps> = ({ question, isRequired, label, 
             <span className="text-xl font-normal">
                 {question} {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
             </span>
-
             <span className="mb-2.5 text-xs font-light">{label}</span>
             <div>
                 {options.map((option) => (

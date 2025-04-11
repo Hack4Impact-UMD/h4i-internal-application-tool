@@ -26,7 +26,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({ optionName, buttonType, isS
     return (
         <button
             onClick={handleClick}
-            className={twMerge("flex items-center shadow-md mb-2 min-w-40 cursor-pointer", className)}
+            className={twMerge("flex items-center shadow-md mb-2 min-w-40 cursor-pointer rounded-lg", className)}
             style={{
                 padding: "0.3em 0.8em",
                 backgroundColor: clicked ? '#2969C4' : '#ffffff',
