@@ -65,7 +65,7 @@ export interface ReviewerUserProfile extends UserProfile {
     role: PermissionRole.Reviewer;
     reviewAssignments: {
         applicationReviewAssignments: ReviewAssignment[];
-        interviewAssignmentIds: ReviewAssignment[]; 
+        interviewAssignmentIds: ReviewAssignment[];
     };
 }
 
@@ -119,7 +119,7 @@ export interface ApplicationInterviewData {
 }
 
 export interface ApplicationSection {
-    id: string;
+    sectionId: string, //no spaces, alphanumeric, unique (used as a route param)
     sectionName: string;
     questions: ApplicationQuestion[];
 }
