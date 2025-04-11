@@ -11,3 +11,7 @@ export async function getApplicationResponses(userId: string): Promise<Applicati
 
   return results.docs.map(d => d.data() as ApplicationResponse)
 }
+
+// export async function getApplicationResponseById(responseId: string): Promise<ApplicationResponse> {
+//
+// }
