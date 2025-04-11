@@ -37,6 +37,20 @@ service cloud.firestore {
       allow create: if hasID(user_id);
       allow update: if hasID(user_id) || isSuperReviewer();
     }
+
+    match /application-forms/{form_id} {
+      allow read: if isAuthed();
+      allow create: if isSuperReviewer();
+      allow update: if isSuperReviewer();
+      allow delete: if isSuperReviewer();
+    }
+
+    match /application-responses/{response_id} {
+      allow read: if isReviewer() || hasID(resource.data.userId); // currently all reviewers can read all apps
+      allow create: if isApplicant();
+      allow update: if isApplicant() && hasID(resource.data.userId);
+      allow delete: if (isApplicant() && hasID(resource.data.userId)) || isSuperReviewer();
+    }
     
     // by default, all documents should be inaccessible to reads and writes
     match /{document=**} {

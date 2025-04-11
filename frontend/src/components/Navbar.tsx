@@ -13,7 +13,7 @@ function Navbar() {
             <div className="flex flex-row h-full max-w-5xl w-full">
                 <div className="flex flex-2 items-center">
                     <NavLink to="/">
-                        <img className="w-36" src="/h4i_logo.png" alt="hack4impact-UMD" />
+                        <img className="w-52" src="/h4i_umd_logo.png" alt="hack4impact-UMD" />
                     </NavLink>
                 </div>
                 {!isLoading && isAuthed && (

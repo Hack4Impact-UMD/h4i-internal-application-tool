@@ -1,4 +1,3 @@
-import { DocumentReference } from "firebase-admin/firestore";
 import { z } from "zod";
 
 export type UserRole = "applicant" | "reviewer" | "super-reviewer"
@@ -9,8 +8,8 @@ export type UserProfile = {
   firstName: string;
   lastName: string;
   role: UserRole;
-  activeApplications?: DocumentReference[];
-  inactiveApplications?: DocumentReference[]
+  activeApplications?: string[];
+  inactiveApplications?: string[]
 }
 
 export const userRegisterFormSchema = z.object({

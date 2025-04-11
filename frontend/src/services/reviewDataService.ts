@@ -1,12 +1,25 @@
-import { ApplicantUserProfile } from "../types/types";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { ApplicationReviewData } from "../types/types";
+import { db } from "../config/firebase";
 
 export const REVIEW_DATA_COLLECTION = "review-data"
 
-export async function getReviewDataForApplication(applicationId: string) {
-  //TODO: fetch the associated review data for this application
+export async function getReviewDataForApplication(applicationResponseId: string) {
+  const reviewData = collection(db, REVIEW_DATA_COLLECTION)
+  const q = query(reviewData, where("applicationResponseId", "==", applicationResponseId))
+  const result = await getDocs(q)
+
+  return result.docs.map(doc => doc.data() as ApplicationReviewData)
 }
 
-export async function getReviewDataForApplicant(applicant: ApplicantUserProfile) {
-  //TODO: fetch the associated review data for this applicant
+export async function getReviewDataForApplicant(applicantId: string) {
+  const reviewData = collection(db, REVIEW_DATA_COLLECTION)
+  const q = query(reviewData, where("applicantId", "==", applicantId))
+  const result = await getDocs(q)
+
+  return result.docs.map(doc => doc.data() as ApplicationReviewData)
 }
 
+export async function updateReviewData(applicationId: string) {
+  //TODO: Implement! 
+}
