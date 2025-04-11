@@ -21,7 +21,7 @@ const Section: React.FC<SectionProps> = ({ section, responses, onChangeResponse}
                 question={question.questionText}
                 isRequired={!question.optional}
                 label={question.secondaryText}
-                value={responses[section.id]?.[question.id] ?? ''}
+                value={responses[section.sectionId]?.[question.id] ?? ''}
                 onChange={(value) => onChangeResponse(question.id, value)}
               />
             ) : question.questionType === QuestionType.LongAnswer ? (
@@ -29,7 +29,7 @@ const Section: React.FC<SectionProps> = ({ section, responses, onChangeResponse}
                 question={question.questionText}
                 isRequired={!question.optional}
                 label={question.secondaryText}
-                value={responses[section.id]?.[question.id] ?? ''}
+                value={responses[section.sectionId]?.[question.id] ?? ''}
                 onChange={(value) => onChangeResponse(question.id, value)}
               />
             ) : (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleChoice ? (
