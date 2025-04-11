@@ -1,16 +1,16 @@
 import Button from "../Button";
 import Navbar from "../Navbar";
-import { ApplicationForm} from "../../types/types";
+import { ApplicationForm } from "../../types/types";
 
 interface ApplicationPreviewProps {
     form: ApplicationForm;
 }
 
-const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({form}) => {
+const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ form }) => {
     return (
         <>
-            <Navbar/>
-            <div className="flex flex-col m-8 w-3/4 justify-self-center max-h-[83vh] p-6">
+            <Navbar />
+            <div className="flex flex-col m-8 w-3/4 justify-self-center max-h-180 p-6">
                 <span className="text-4xl">Overview</span>
                 <div className="mt-4 flex flex-row justify-between items-center">
                     <div className="w-2/5">
@@ -27,11 +27,15 @@ const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({form}) => {
                         />
                     </div>
                 </div>
-                <div className="flex flex-col gap-2.5 mt-7 text-sm overflow-auto">
-                   {form.description}
+
+                <div className="mt-4 text-sm text-gray-600">
+                    Due Date: {form.dueDate.toDate().toLocaleDateString()}
+                </div>
+
+                <div className="flex flex-col gap-2.5 mt-8 text-sm overflow-auto">
+                    {form.description}
                 </div>
             </div>
-            
         </>
     );
 };

@@ -12,10 +12,10 @@ interface SectionProps {
 
 const Section: React.FC<SectionProps> = ({ section, responses, onChangeResponse}) => {
   return (
-    <div className="flex flex-col justify-self-center w-3/5 m-3 p-5 rounded-xl shadow-sm border border-gray-200 bg-white">
-      <div className='m-7'>
+    <div className="flex flex-col justify-self-center w-[57%] m-3 p-5 rounded-xl shadow-sm border border-gray-200 bg-white">
+      <div className='m-7 mt-2 mb-2'>
         {section.questions.map((question) => (
-          <div key={question.id} className="m-7">
+          <div key={question.id} className="m-8">
             {question.questionType === QuestionType.ShortAnswer ? (
               <OneLineInput
                 question={question.questionText}
