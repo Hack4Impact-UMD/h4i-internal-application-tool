@@ -43,7 +43,7 @@ function App() {
               <Route
                 path="/apply/status"
                 element={
-                  <RequireAuth>
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                     <StatusPage />
                   </RequireAuth>
                 }
@@ -51,7 +51,7 @@ function App() {
               <Route
                 path="/apply/decision"
                 element={
-                  <RequireAuth>
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                     <DecisionPage />
                   </RequireAuth>
                 }
