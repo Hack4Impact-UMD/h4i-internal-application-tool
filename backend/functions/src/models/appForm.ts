@@ -5,7 +5,9 @@ export const ApplicationQuestion = z.object({
   questionType: z.string().nonempty(),
   optional: z.boolean(),
   questionText: z.string(),
-  secondaryText: z.string().optional()
+  secondaryText: z.string().optional(),
+  minimumWordCount: z.number().optional(),
+  maximumWordCount: z.number().optional(),
 })
 
 export const ApplicationSectionSchema = z.object({
