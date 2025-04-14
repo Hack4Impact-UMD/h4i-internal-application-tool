@@ -1,18 +1,19 @@
 type Props = {
-  onSearch?: (query: string) => void,
-  onSortByDate?: () => void,
-  onRoleFilter?: (filterBy: string) => void,
-  selectedRole: string,
-}
+  onSearch?: (query: string) => void;
+  onSortChange?: (sortType: string) => void;
+  onRoleFilter?: (filterBy: string) => void;
+  selectedRole: string;
+};
 
-const buttonClasses = "bg-[#CBF9F3] border-none p-2 rounded-2xl ml-[25px] mt-[20px] font-karla h-11 text-center appearance-none cursor-pointer text-[#333333] text-xl font-normal";
+const buttonClasses =
+  "bg-[#CBF9F3] border-none p-2 rounded-2xl ml-[25px] mt-[20px] font-karla h-11 text-center appearance-none cursor-pointer text-[#333333] text-xl font-normal";
 
 const FilterBar: React.FC<Props> = ({
-  onSearch = () => { },
-  onRoleFilter = () => { },
-  onSortByDate = () => { },
-  selectedRole = "" }: Props
-) => {
+  onSearch = () => {},
+  onRoleFilter = () => {},
+  onSortChange = () => {},
+  selectedRole = "",
+}: Props) => {
   return (
     <div className="flex flex-start mb-[16px]">
       <input
@@ -23,8 +24,6 @@ const FilterBar: React.FC<Props> = ({
       />
 
       <select
-        /*value={selectedRole}
-        onChange={(e) => onRoleFilter(e.target.value)}*/
         value={selectedRole}
         onChange={(e) => onRoleFilter(e.target.value)}
         className={buttonClasses}
@@ -38,12 +37,13 @@ const FilterBar: React.FC<Props> = ({
         <option value="Bp">Bootcamp Program (BP)</option>
       </select>
 
-      <button
-        onClick={onSortByDate}
-        className={buttonClasses}
-      >
-        Sort By: Date
-      </button>
+      <select onChange={(e) => onSortChange(e.target.value)} className={buttonClasses}>
+        <option value="">Sort By</option>
+        <option value="date">Date</option>
+        <option value="name">Alphabetical</option>
+        <option value="score_high">Highest Overall Score</option>
+        <option value="score_low">Lowest Overall Score</option>
+      </select>
     </div>
   );
 };
