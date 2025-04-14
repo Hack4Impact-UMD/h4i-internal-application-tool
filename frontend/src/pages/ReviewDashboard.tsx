@@ -26,11 +26,11 @@ export type Applicant = {
 function ReviewDashboard() {
   const [selectedRole, setSelectedRole] = useState('');
   const [search, setSearch] = useState('');
-
+  const [currentTab,setCurrentTab] = useState('all');
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([]);
 
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   useEffect(() => {
     const dummyApplicants: Applicant[] = [
       {
@@ -305,21 +305,34 @@ function ReviewDashboard() {
   ];
 
   return (
-    <div className="bg-[#F7F7F7] min-h-screen p-8 font-karla">
-      {/* Centered heading with search bar */}
-      <div className="flex flex-wrap items-center justify-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-[#333333] text-center">
+<div className="bg-[#F7F7F7] min-h-screen p-8 font-karla">
+  <div className="flex justify-between items-center flex-wrap mb-6 gap-4">
+    <div className="flex gap-4">
+      <button className={`px-4 py-2 rounded-lg text-sm font-semibold ${ currentTab === 'all' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-200'}`}
+        onClick={() => setCurrentTab('all')}>
+        All Applications
+      </button>
+      <button className={`px-4 py-2 rounded-lg text-sm font-semibold ${ currentTab === 'interviewers' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-200'}`}
+        onClick={() => setCurrentTab('interviewers')}>
+        Interviewers
+      </button>
+      <button className={`px-4 py-2 rounded-lg text-sm font-semibold ${ currentTab === 'reviewers' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-200'}`}
+        onClick={() => setCurrentTab('reviewers')}>
+        Reviewers
+      </button>
+    </div>
+    <h1 className="text-2xl font-bold text-[#333333]">
           Director of Recruitment Dashboard
         </h1>
         <input
           type="text"
-          placeholder="Search by name"
+          placeholder="Search"
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+          className="w-[400px] border border-gray-300 rounded-full px-2  py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
         />
       </div>
-      <div className="flex flex-wrap gap-4 mb-6 justify-center">
+      <div className="flex flex-wrap gap-6 mb-6 justify-center">
         {topBoxes.map((box, index) => {
           const isSelected =
             selectedRole.toLowerCase() === box.roleKey.toLowerCase();
