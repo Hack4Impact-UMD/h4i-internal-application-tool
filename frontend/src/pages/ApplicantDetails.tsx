@@ -9,6 +9,9 @@ const ApplicantDetails = () => {
   const { id } = useParams();
   const [applicant, setApplicant] = useState<Applicant | null>(null);
   const [loading, setLoading] = useState(true);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   useEffect(() => {
     const fetchApplicant = async () => {
@@ -39,6 +42,35 @@ const ApplicantDetails = () => {
       fetchApplicant();
     }
   }, [id]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setResumeFile(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!resumeFile || !id) return;
+
+    setUploading(true);
+    
+    try {
+      // Part 1: Front-end simulation only
+      // This will be replaced with actual Firebase upload in Part 2
+      const fakeResumeUrl = `https://example.com/resumes/${id}/${resumeFile.name}`;
+      
+      // Update local state
+      setApplicant(prev => prev ? { ...prev, resume: fakeResumeUrl } : null);
+      
+      // Show success message
+      setUploadSuccess(true);
+      setTimeout(() => setUploadSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -299,8 +331,32 @@ const ApplicantDetails = () => {
           </div>
           <div className='question-headers'>Aside from tech related things, do you have other cool skills? (photography, video editing, social media, marketing, nonprofit sourcing, teaching, etc.)</div>
           <div className='question-answers'>{applicant.otherskills || '-'}</div>
-          <div className='question-headers'>Resume link</div>
-          <div className='question-answers'>{applicant.resume || '-'}</div>
+          <div className='question-headers'>Resume</div>
+          <div className='question-answers'>
+            {applicant.resume ? (
+              <a href={applicant.resume} target="_blank" rel="noopener noreferrer">
+                View Resume
+              </a>
+            ) : (
+              <div className="resume-upload-container">
+                <input 
+                  type="file" 
+                  id="resume-upload"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileChange}
+                  disabled={uploading}
+                />
+                <button 
+                  onClick={handleUpload}
+                  disabled={!resumeFile || uploading}
+                  className="upload-button"
+                >
+                  {uploading ? 'Uploading...' : 'Upload Resume'}
+                </button>
+                {uploadSuccess && <span className="upload-success">Resume uploaded successfully!</span>}
+              </div>
+            )}
+          </div>
           <div className='question-headers'>Why do you want to join Hack4Impact-UMD?</div>
           <div className='question-answers'>{applicant.whyh4i || '-'}</div>
           <div className='question-headers'>In your opinion, what differentiates Hack4Impact-UMD from other student clubs / opportunities on campus?</div>

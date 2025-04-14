@@ -13,6 +13,7 @@ const Overview: React.FC = () => {
                 <button className="apply-button">Apply</button>
             </div>
             <div className="content-text">
+            
             <p>
                 Lorem ipsum dolor sit amet consectetur. Laoreet tempus dui diam a vestibulum dapibus aliquam egestas. Id amet laoreet in ullamcorper. Sociis dictum eget orci at ornare. Id condimentum dui condimentum in pharetra. Interdum at in augue eget est. Condimentum orci tellus lectus urna arcu non. Hac sed lectus parturient curabitur aliquet amet consectetur purus. Tincidunt mauris imperdiet enim ut id pellentesque. Enim sociis arcu aliquam bibendum. Viverra proin eu mi lacinia vel. Facilisi sit scelerisque amet ornare. Interdum odio dignissim ac massa diam vel aliquet at nec. Vitae dui malesuada id amet sit ultricies malesuada sagittis velit.
             </p>
@@ -37,7 +38,8 @@ const Overview: React.FC = () => {
             <p>
                 Dictumst donec elementum scelerisque ipsum eget mus sed iaculis ultrices. Venenatis dolor vitae integer et sapien donec nulla.
             </p>
-</div>
+
+        </div>
         </div>
     );
 };

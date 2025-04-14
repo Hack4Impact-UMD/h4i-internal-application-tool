@@ -206,3 +206,41 @@
   gap: 40px;
   margin-top: 20px;
 }
+
+.resume-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.upload-button {
+  background-color: #2969C4;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: Karla;
+  font-size: 14px;
+  width: fit-content;
+}
+
+.upload-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.upload-button:hover:not(:disabled) {
+  background-color: #1d4e8c;
+}
+
+.upload-success {
+  color: green;
+  font-family: Karla;
+  margin-left: 10px;
+}
+
+#resume-upload {
+  font-family: Karla;
+}
