@@ -55,7 +55,7 @@ function ApplicationResponseRow({ response }: { response: ApplicationResponse })
     };
 
     return <tr className="border-t border-gray-300">
-        <td className="py-4 text-blue-500 font-bold">{form!.semester}</td>
+        <td className="py-4 text-blue-500 font-bold">{response.rolesApplied.map(role => role.charAt(0).toUpperCase() + role.slice(1)).join(", ")}</td>
         <td className="text-center">
             <span className={`px-3 py-1 rounded-full ${getStatusDisplay(response.status).className}`}>
                 {getStatusDisplay(response.status).text}
@@ -86,6 +86,27 @@ function StatusPage() {
     );
 
     const activeList = (activeTab == "active") ? activeApplications : inactiveApplications
+    const semesterGrouping = activeList.reduce((map, application) => {
+        // May need to mess around with the submmited month number here to get correct application submission.
+        const applicationDate = application.dateSubmitted.toDate()
+        const submittedMonth = applicationDate.getMonth()
+        var semester = ""
+
+        if ( 4 <= submittedMonth && submittedMonth <= 7) {
+            semester = "Fall " + applicationDate.getFullYear()
+        } else if ( 8 <= submittedMonth && submittedMonth <= 11) {
+            semester = "Spring " + (applicationDate.getFullYear() + 1)
+        } else if ( 0 <= submittedMonth && submittedMonth <= 3) {
+            semester = "Summer " + applicationDate.getFullYear()
+        } 
+
+        if (!map.has(semester)) {
+            map.set(semester, []);
+        }
+        
+        map.get(semester)!.push(application);
+        return map;
+      }, new Map<string, ApplicationResponse[]>());
 
     return (
         <div className="flex flex-col">
@@ -133,22 +154,27 @@ function StatusPage() {
                             <p className="w-full">Loading...</p> :
                             error ? <p className="w-full">Error fetching applications: {error.message}</p> :
                                 activeList.length == 0 ? <p className="w-full">You don't have any {activeTab} applications. Go apply!</p> :
-                                    (<table className="w-full">
-                                        <thead>
+                                (Array.from(semesterGrouping.entries()).map(([semester, apps]) => (
+                                      <div>
+                                        <h2 className="text-lg font-semibold mt-6 mb-2">Hack4Impact {semester} Application</h2>
+                                        <table className="w-full">
+                                          <thead>
                                             <tr className="border-t border-gray-300">
-                                                <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
-                                                <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
-                                                <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
-                                                <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
+                                              <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                              <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
+                                              <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
+                                              <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            {activeList.map(application => (
-                                                <ApplicationResponseRow key={application.id} response={application} />
+                                          </thead>
+                                          <tbody>
+                                            {apps.map((application) => (
+                                              <ApplicationResponseRow key={application.id} response={application} />
                                             ))}
-                                        </tbody>
-                                    </table>)
-                        }
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    ))
+                                )}
                     </div>
                 </div>
             </div>

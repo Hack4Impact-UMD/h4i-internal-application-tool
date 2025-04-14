@@ -21,28 +21,54 @@ export async function uploadMockData() {
           "sectionName": "Section 2"
         },
       ]
+    }, {
+      "id": "sample-form2", "description": "A sample form for testing", "dueDate": Timestamp.fromDate(new Date()), "isActive": true, "semester": "Spring 2025", "sections": [
+        {
+          "sectionId": "section-1",
+          "questions": [{ "questionType": "short-answer", "optional": false, "questionId": "q1", "questionText": "A simple question", "secondaryText": "Secondary text..." }, { "questionType": "long-answer", "optional": true, "questionId": "q2", "questionText": "Another simple question", "placeholderText": "foo", "minimumWordCount": 100, "maximumWordCount": 500 }, { "multipleSelect": true, "optional": false, "questionId": "q3", "questionText": "Multiple Selection", "questionOptions": ["Option 1", "Option 2", "Option 3"], "questionType": "multiple-select", "secondaryText": "Some secondary text..." }],
+          "sectionName": "Section 1"
+        },
+        {
+          "sectionId": "section-2",
+          "questions": [{ "questionType": "short-answer", "optional": true, "questionId": "s2q1", "questionText": "A simple question", "secondaryText": "Secondary text..." }],
+          "sectionName": "Section 2"
+        },
+      ]
     }],
-    
-    "applicationResponses": [{ 
-        "id": "response-sample-001", "userId": "SXzRpAtLlgCngTmvfaYCXlZYgyDn", "applicationFormId": "sample-form", "applicationResponseId": "response-sample-001", 
-        "rolesApplied": ["engineer", "designer"], "sectionResponses": [
-          { "sectionName": "Section 1", 
-            "questions": [{ "questionType": "short-answer", "applicationFormId": "sample-form", "questionId": "q1", "response": "This is my answer to the short question." }, { "questionType": "long-answer", "applicationFormId": "sample-form", "questionId": "q2", "response": "This is a long-form response that has more than one hundred words. Imagine this goes on and meets the minimum and maximum word count requirements." }, { "questionType": "multiple-select", "applicationFormId": "sample-form", "questionId": "q3", "response": ["Option 1", "Option 3"] }] 
-          }], 
-        "status": "inactive", 
-        "dateSubmitted": "", 
-        "decisionLetterId": "" 
-      },
-      { 
-        "id": "response-sample-002", "userId": "SXzRpAtLlgCngTmvfaYCXlZYgyDn", "applicationFormId": "sample-form", "applicationResponseId": "response-sample-001", 
-        "rolesApplied": ["engineer", "designer"], "sectionResponses": [
-          { "sectionName": "Section 1", 
-            "questions": [{ "questionType": "short-answer", "applicationFormId": "sample-form", "questionId": "q1", "response": "This is my answer to the short question." }, { "questionType": "long-answer", "applicationFormId": "sample-form", "questionId": "q2", "response": "This is a long-form response that has more than one hundred words. Imagine this goes on and meets the minimum and maximum word count requirements." }, { "questionType": "multiple-select", "applicationFormId": "sample-form", "questionId": "q3", "response": ["Option 1", "Option 3"] }] 
-          }], 
-        "status": "inactive", 
-        "dateSubmitted": "", 
-        "decisionLetterId": "" 
-      }
+
+    "applicationResponses": [{
+      "id": "response-sample-001", "userId": "SXzRpAtLlgCngTmvfaYCXlZYgyDn", "applicationFormId": "sample-form", "applicationResponseId": "response-sample-001",
+      "rolesApplied": ["engineer", "designer"], "sectionResponses": [
+        {
+          "sectionName": "Section 1",
+          "questions": [{ "questionType": "short-answer", "applicationFormId": "sample-form", "questionId": "q1", "response": "This is my answer to the short question." }, { "questionType": "long-answer", "applicationFormId": "sample-form", "questionId": "q2", "response": "This is a long-form response that has more than one hundred words. Imagine this goes on and meets the minimum and maximum word count requirements." }, { "questionType": "multiple-select", "applicationFormId": "sample-form", "questionId": "q3", "response": ["Option 1", "Option 3"] }]
+        }],
+      "status": "inactive",
+      "dateSubmitted": "",
+      "decisionLetterId": ""
+    },
+    {
+      "id": "response-sample-002", "userId": "SXzRpAtLlgCngTmvfaYCXlZYgyDn", "applicationFormId": "sample-form", "applicationResponseId": "response-sample-001",
+      "rolesApplied": ["engineer", "designer"], "sectionResponses": [
+        {
+          "sectionName": "Section 1",
+          "questions": [{ "questionType": "short-answer", "applicationFormId": "sample-form", "questionId": "q1", "response": "This is my answer to the short question." }, { "questionType": "long-answer", "applicationFormId": "sample-form", "questionId": "q2", "response": "This is a long-form response that has more than one hundred words. Imagine this goes on and meets the minimum and maximum word count requirements." }, { "questionType": "multiple-select", "applicationFormId": "sample-form", "questionId": "q3", "response": ["Option 1", "Option 3"] }]
+        }],
+      "status": "inactive",
+      "dateSubmitted": "",
+      "decisionLetterId": ""
+    },
+    {
+      "id": "response-sample-003", "userId": "SXzRpAtLlgCngTmvfaYCXlZYgyDn", "applicationFormId": "sample-form2", "applicationResponseId": "response-sample-001",
+      "rolesApplied": ["engineer", "designer"], "sectionResponses": [
+        {
+          "sectionName": "Section 1",
+          "questions": [{ "questionType": "short-answer", "applicationFormId": "sample-form", "questionId": "q1", "response": "This is my answer to the short question." }, { "questionType": "long-answer", "applicationFormId": "sample-form", "questionId": "q2", "response": "This is a long-form response that has more than one hundred words. Imagine this goes on and meets the minimum and maximum word count requirements." }, { "questionType": "multiple-select", "applicationFormId": "sample-form", "questionId": "q3", "response": ["Option 1", "Option 3"] }]
+        }],
+      "status": "inactive",
+      "dateSubmitted": "",
+      "decisionLetterId": ""
+    }
     ],
   }
 
