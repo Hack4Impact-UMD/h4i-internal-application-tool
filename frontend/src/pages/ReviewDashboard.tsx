@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
-// import FilterBar from '../components/reviewer/FilterBar'; // <-- Commented out per your instructions
+// import FilterBar from '../components/reviewer/FilterBar'; 
 import DataTable from '../components/reviewer/DataTable';
 import './ReviewDashboard.css';
 
@@ -17,7 +17,6 @@ export type Applicant = {
   npoExpertiseScore: number | null;
   communicationScore: number | null;
   overallScore: number | null;
-  // Reviewer information
   reviewer1: string;
   reviewer2: string;
   reviewerScore1: number | null;
@@ -25,19 +24,13 @@ export type Applicant = {
 };
 
 function ReviewDashboard() {
-  // State for the selected role and name search
   const [selectedRole, setSelectedRole] = useState('');
   const [search, setSearch] = useState('');
 
-  // List of all applicants and filtered ones
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([]);
 
   const [loading, setLoading] = useState(false);
-
-  // ------------------------------------------------------------------
-  // Dummy Data with reviewer details
-  // ------------------------------------------------------------------
   useEffect(() => {
     const dummyApplicants: Applicant[] = [
       {
@@ -150,7 +143,6 @@ function ReviewDashboard() {
       },
     ];
 
-    // Calculate overall scores for each applicant
     const applicantsWithScores = dummyApplicants.map(applicant => ({
       ...applicant,
       overallScore: calculateOverallScore(applicant),
@@ -160,9 +152,6 @@ function ReviewDashboard() {
     setFilteredApplicants(applicantsWithScores);
   }, []);
 
-  // ------------------------------------------------------------------
-  // Overall score calculation logic
-  // ------------------------------------------------------------------
   const calculateOverallScore = (applicant: Applicant): number | null => {
     const role = applicant.roles[0]?.toLowerCase();
     if (role === 'bootcamp') {
@@ -212,9 +201,6 @@ function ReviewDashboard() {
     return null;
   };
 
-  // ------------------------------------------------------------------
-  // Unified filter logic (filter by role and by search query)
-  // ------------------------------------------------------------------
   const filterApplicants = (role: string, query: string) => {
     const filtered = applicants.filter(app => {
       const matchesRole = role
@@ -236,9 +222,6 @@ function ReviewDashboard() {
     filterApplicants(selectedRole, query);
   };
 
-  // ------------------------------------------------------------------
-  // Role-based counts for top filter boxes
-  // ------------------------------------------------------------------
   const roleCounts: Record<string, number> = {
     'product manager': 0,
     designer: 0,
@@ -255,7 +238,6 @@ function ReviewDashboard() {
   });
   const totalApplicantsCount = applicants.length;
 
-  // Update the top boxes data structure so that each box renders as a card
   const topBoxes = [
     {
       category: 'Total Applicants',
@@ -337,8 +319,6 @@ function ReviewDashboard() {
           className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
         />
       </div>
-
-      {/* Top role filter boxes rendered as cards */}
       <div className="flex flex-wrap gap-4 mb-6 justify-center">
         {topBoxes.map((box, index) => {
           const isSelected =
