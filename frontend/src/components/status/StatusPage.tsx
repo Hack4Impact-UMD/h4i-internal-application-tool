@@ -88,16 +88,16 @@ function StatusPage() {
 
     const activeList = (activeTab == "active") ? activeApplications : inactiveApplications
     const semesterGrouping = activeList.reduce((map, application) => {
-        // May need to mess around with the submmited month number here to get correct application submission.
-        const semester = application.semester
+            const semester = application.semester
 
-        if (!map.has(semester)) {
-            map.set(semester, []);
-        }
-        
-        map.get(semester)!.push(application);
-        return map;
-      }, new Map<string, ApplicationResponse[]>());
+            if (!map.has(semester)) {
+                map.set(semester, []);
+            }
+            
+            map.get(semester)!.push(application);
+            return map;
+        }, new Map<string, ApplicationResponse[]>()
+    );
 
     return (
         <div className="flex flex-col">
@@ -145,7 +145,7 @@ function StatusPage() {
                             <p className="w-full">Loading...</p> :
                             error ? <p className="w-full">Error fetching applications: {error.message}</p> :
                                 activeList.length == 0 ? <p className="w-full">You don't have any {activeTab} applications. Go apply!</p> :
-                                (Array.from(semesterGrouping.entries()).map(([semester, apps]) => (
+                                (activeTab == "inactive") ? (Array.from(semesterGrouping.entries()).map(([semester, apps]) => (
                                       <div>
                                         <h2 className="text-lg font-semibold mt-6 mb-2">Hack4Impact {semester} Application</h2>
                                         <table className="w-full">
@@ -165,7 +165,21 @@ function StatusPage() {
                                         </table>
                                       </div>
                                     ))
-                                )}
+                                ) : (<table className="w-full">
+                                    <thead>
+                                        <tr className="border-t border-gray-300">
+                                            <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                            <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
+                                            <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
+                                            <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {activeList.map(application => (
+                                            <ApplicationResponseRow key={application.id} response={application} />
+                                        ))}
+                                    </tbody>
+                                </table>)}
                     </div>
                 </div>
             </div>
