@@ -105,6 +105,7 @@ export interface ApplicationReviewData {
     };
     reviewerNotes?: string[];
     reviewStatus: ReviewStatus;
+    forRole: ApplicantRole;
 }
 
 export interface ApplicationInterviewData {
