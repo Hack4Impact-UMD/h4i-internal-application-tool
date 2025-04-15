@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
 
 import Timeline from "./Timeline.tsx";
-import { useApplicationResponses } from '../../hooks/useApplicationResponses.ts';
 import { ApplicationResponse, ApplicationStatus } from '../../types/types.ts';
 import { useApplicationForm } from '../../hooks/useApplicationForm.ts';
+import { useApplicationResponsesAndSemesters } from '../../hooks/useApplicationResponseAndSemesters.tsx';
 
 
 const timelineItems = [
@@ -75,8 +75,9 @@ function ApplicationResponseRow({ response }: { response: ApplicationResponse })
 
 function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
-    const { data: applications, isLoading, error } = useApplicationResponses()
-
+    // replace this hook call with new call
+    const { data: applications, isLoading, error } = useApplicationResponsesAndSemesters()
+    
     const activeApplications = applications.filter(app =>
         [ApplicationStatus.UnderReview, ApplicationStatus.Interview].includes(app.status)
     );
@@ -88,17 +89,7 @@ function StatusPage() {
     const activeList = (activeTab == "active") ? activeApplications : inactiveApplications
     const semesterGrouping = activeList.reduce((map, application) => {
         // May need to mess around with the submmited month number here to get correct application submission.
-        const applicationDate = application.dateSubmitted.toDate()
-        const submittedMonth = applicationDate.getMonth()
-        var semester = ""
-
-        if ( 4 <= submittedMonth && submittedMonth <= 7) {
-            semester = "Fall " + applicationDate.getFullYear()
-        } else if ( 8 <= submittedMonth && submittedMonth <= 11) {
-            semester = "Spring " + (applicationDate.getFullYear() + 1)
-        } else if ( 0 <= submittedMonth && submittedMonth <= 3) {
-            semester = "Summer " + applicationDate.getFullYear()
-        } 
+        const semester = application.semester
 
         if (!map.has(semester)) {
             map.set(semester, []);
