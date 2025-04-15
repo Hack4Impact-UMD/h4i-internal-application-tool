@@ -12,7 +12,7 @@ export async function getReviewDataForApplication(applicationResponseId: string)
   return result.docs.map(doc => doc.data() as ApplicationReviewData)
 }
 
-export async function getREviewDataForApplicant(applicantId: string) {
+export async function getReviewDataForApplicant(applicantId: string) {
   const reviewData = collection(db, REVIEW_DATA_COLLECTION)
   const q = query(reviewData, where("applicantId", "==", applicantId))
   const result = await getDocs(q)
