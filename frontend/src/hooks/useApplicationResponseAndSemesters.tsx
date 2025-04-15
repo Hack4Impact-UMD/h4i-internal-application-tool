@@ -11,7 +11,7 @@ export function useApplicationResponsesAndSemesters() {
   const { user, isAuthed, isLoading } = useAuth()
 
   return useQuery<ApplicationResponseWithSemester[]>({
-    queryKey: ["responses", user?.id],
+    queryKey: ["responses-and-semester",  user?.id],
     enabled: !isLoading && isAuthed,
     queryFn: () => {
       return getApplicationResponseAndSemester(user!.id)
