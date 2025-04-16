@@ -93,7 +93,7 @@ export interface ApplicationForm {
     sections: ApplicationSection[];
 }
 
-//there should be one of this per reviewer! The id should be the same as reviewer ID
+// One of these per review. Reviews tie together an application, role, and reviewer.
 export interface ApplicationReviewData {
     id: string;
     reviewerId: string;
@@ -101,10 +101,11 @@ export interface ApplicationReviewData {
     applicationResponseId: string;
     applicantId: string;
     applicantScores: {
-        [scoreCategory in string]: number
+        [scoreCategory in string]: number // between 0-4, each review category in the rubric will have a value here
     };
     reviewerNotes?: string[];
     reviewStatus: ReviewStatus;
+    forRole: ApplicantRole; // what role is this review for
 }
 
 export interface ApplicationInterviewData {
