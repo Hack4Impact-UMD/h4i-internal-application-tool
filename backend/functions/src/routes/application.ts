@@ -4,7 +4,7 @@ import { validateSchema } from "../middleware/validation";
 import { ApplicationResponse, appResponseFormSchema } from "../models/appResponse";
 import { CollectionReference } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
-import { isAuthenticated } from "../middleware/authentication";
+import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { ApplicationForm } from "../models/appForm";
 // import * as admin from "firebase-admin"
 
@@ -44,7 +44,7 @@ function validateResponses(applicationResponse: ApplicationResponse, application
         errors.push(`Question ${question.questionId} has no metadata`)
         continue;
       }
-      
+
       if (metaData?.optional === false && question.response.length == 0) {
         errors.push(`Question ${question.questionId} is required`)
       }
@@ -61,7 +61,7 @@ function validateResponses(applicationResponse: ApplicationResponse, application
   return errors
 }
 
-router.post("/submit", [isAuthenticated, validateSchema(appResponseFormSchema)], async (req: Request, res: Response) => {
+router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema(appResponseFormSchema)], async (req: Request, res: Response) => {
   try {
     const applicationResponse = req.body as ApplicationResponse;
 
@@ -87,11 +87,6 @@ router.post("/submit", [isAuthenticated, validateSchema(appResponseFormSchema)],
     if (currentTime > dueDate) {
       return res.status(400).send("Submission deadline has passed");
     }
-
-    //TODO: some of the questions in the application form are optional, while some are not.
-    //Others also have word count restrictions. Those should also be checked here before finalizing
-    //the submission! You can just iterate through all the question responses, find the corresponding
-    //question in the form based on the question id and validate any requirements that it has.
 
     const errors = validateResponses(applicationResponse, applicationFormDocData!)
     if (errors.length != 0) {
