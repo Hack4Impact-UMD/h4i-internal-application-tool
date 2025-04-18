@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { logger } from "firebase-functions";
-import { isAuthenticated } from "../middleware/authentication";
+import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { validateSchema } from "../middleware/validation";
 import { CollectionReference } from "firebase-admin/firestore";
 import { InterviewData, interviewSchema, updateInterviewSchema } from "../models/appInterview";
@@ -10,7 +10,7 @@ const router = Router();
 const INTERVIEW_COLLECTION = db.collection("interview-data") as CollectionReference<InterviewData>;
 
 // Create a new interview
-router.post("/", [isAuthenticated, validateSchema(interviewSchema)], async (req: Request, res: Response) => {
+router.post("/", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(interviewSchema)], async (req: Request, res: Response) => {
     const input = req.body;
     const timestamp = new Date().toISOString();
 
@@ -42,7 +42,7 @@ router.post("/", [isAuthenticated, validateSchema(interviewSchema)], async (req:
 });
 
 // Update an existing interview
-router.put("/:id", [isAuthenticated, validateSchema(updateInterviewSchema)], async (req: Request, res: Response) => {
+router.put("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(updateInterviewSchema)], async (req: Request, res: Response) => {
     const interviewId = req.params.id;
     const updates = req.body;
 
@@ -72,7 +72,7 @@ router.put("/:id", [isAuthenticated, validateSchema(updateInterviewSchema)], asy
 });
 
 // Delete an interview
-router.delete("/:id", [isAuthenticated], async (req: Request, res: Response) => {
+router.delete("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"])], async (req: Request, res: Response) => {
     const interviewId = req.params.id;
 
     try {

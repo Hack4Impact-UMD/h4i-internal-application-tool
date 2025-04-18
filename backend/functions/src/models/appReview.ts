@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ApplicantRole } from "./appResponse";
 
 export enum PermissionRole {
     SuperReviewer = "super-reviewer",
@@ -37,6 +38,7 @@ export interface ReviewerUserProfile extends UserProfile {
     };
 }
 
+// One of these per review. Reviews tie together an application, role, and reviewer.
 export interface ApplicationReviewData {
     id: string;
     reviewerId: string;
@@ -44,10 +46,11 @@ export interface ApplicationReviewData {
     applicationResponseId: string;
     applicantId: string;
     applicantScores: {
-        [scoreCategory in string]: number
+        [scoreCategory in string]: number // between 0-4, each review category in the rubric will have a value here
     };
     reviewerNotes?: string[];
     reviewStatus: ReviewStatus;
+    forRole: ApplicantRole; // what role is this review for
 }
 
 export const reviewSchema = z.object({
@@ -58,6 +61,7 @@ export const reviewSchema = z.object({
     applicantScores: z.record(z.string(), z.number().min(0).max(10)),
     reviewerNotes: z.array(z.string()).optional(),
     reviewStatus: z.nativeEnum(ReviewStatus),
+    forRole: z.nativeEnum(ApplicantRole)
 });
 
 export const updateReviewSchema = reviewSchema.partial();
