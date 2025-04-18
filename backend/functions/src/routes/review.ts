@@ -15,7 +15,8 @@ router.post("/review", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]
   const input = req.body as ApplicationReviewForm;
 
   try {
-    const reviewId = `${input.reviewerId}_${input.applicationResponseId}`;
+    //probably better to replace this with uuid, we'll see
+    const reviewId = `${input.reviewerId}_${input.applicationResponseId}_${input.forRole.toString()}`;
     const newReview: ApplicationReviewData = {
       ...input,
       id: reviewId,
