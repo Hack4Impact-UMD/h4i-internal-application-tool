@@ -102,7 +102,7 @@ const ApplicationPage: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center p-8">
+    <div className="flex flex-col items-center justify-center p-3">
       <Timeline
         items={timelineItems}
         currentStep={currentStep}
