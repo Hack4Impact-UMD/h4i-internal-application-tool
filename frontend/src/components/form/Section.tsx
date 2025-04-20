@@ -74,16 +74,16 @@ const Section: React.FC<SectionProps> = ({
 
       <div className="flex ml-7 gap-1 mt-4">
         <Button
-          className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-          label="Next >"
-          enabled={!isNextDisabled}
-          onClick={onNext}
-        />
-        <Button
           className="border border-gray-400 text-black bg-white hover:bg-gray-100 px-8 rounded-full"
           label="Back"
           enabled={!isPreviousDisabled}
           onClick={onPrevious}
+        />
+        <Button
+          className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
+          label="Next >"
+          enabled={!isNextDisabled}
+          onClick={onNext}
         />
       </div>
     </div>
