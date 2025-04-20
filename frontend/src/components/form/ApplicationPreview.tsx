@@ -44,6 +44,11 @@ const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ form }) => {
     return <div>Form not found for ID: {params.formId}</div>;
   }
 
+  const formattedDueDate = finalForm.dueDate.toDate().toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
   return (
     <>
       <div className="flex flex-col m-8 w-3/4 justify-self-center max-h-180 p-6">
@@ -64,7 +69,7 @@ const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ form }) => {
         </div>
 
         <div className="mt-4 text-sm text-gray-600">
-          Due Date: {"Date"}
+          Due Date: {formattedDueDate}
         </div>
 
         <div className="flex flex-col gap-2.5 mt-8 text-sm overflow-auto">
