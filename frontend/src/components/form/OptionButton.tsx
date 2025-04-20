@@ -10,7 +10,11 @@ interface OptionButtonProps {
 }
 
 const OptionButton: React.FC<OptionButtonProps> = ({ optionName, buttonType, isSelected, onClick, className = "" }) => {
-    const [clicked, setClicked] = useState(false);
+    const [clicked, setClicked] = useState(isSelected);
+
+    useEffect(() => {
+        setClicked(isSelected);
+    });
 
     useEffect(() => {
         if (buttonType === "choice") {

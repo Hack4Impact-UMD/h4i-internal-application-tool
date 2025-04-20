@@ -1,19 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OptionButton from "./OptionButton";
 import { twMerge } from "tailwind-merge";
-import RequireAuth from "../auth/RequireAuth";
-import { PermissionRole } from "../../types/types";
 
 interface ChoiceGroupProps {
     question: string,
     isRequired?: boolean,
-    label?: string
+    label?: string,
+    value: string,
     options: string[],
     onOptionSelect: (selected: string | null) => void,
     className?: string
 }
-const ChoiceGroup: React.FC<ChoiceGroupProps> = ({ question, isRequired, label, options, onOptionSelect, className = "" }) => {
-    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+const ChoiceGroup: React.FC<ChoiceGroupProps> = ({ question, isRequired, label, value, options, onOptionSelect, className = "" }) => {
+    const [selectedOption, setSelectedOption] = useState<string | null>(value);
+
+     useEffect(() => {
+            setSelectedOption(value);
+     });
 
     const handleSelectClick = (optionName: string) => {
         setSelectedOption(optionName);

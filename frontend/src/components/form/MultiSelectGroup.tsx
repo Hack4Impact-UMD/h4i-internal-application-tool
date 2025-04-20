@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OptionButton from "./OptionButton";
 import { twMerge } from "tailwind-merge";
 
@@ -6,13 +6,18 @@ interface MultiSelectGroupProps {
     question: string,
     isRequired?: boolean,
     label?: string,
+    value?: string[],
     options: string[],
     onOptionSelect: (selected: string[]) => void,
     className?: string
 }
 
-const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({ question, isRequired, label, options, onOptionSelect, className = "" }) => {
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({ question, isRequired, label, value, options, onOptionSelect, className = "" }) => {
+    const [selectedOptions, setSelectedOptions] = useState<string[]>(value || []);
+
+    useEffect(() => {
+        setSelectedOptions(value || []);
+    });
 
     const handleSelectClick = (optionName: string) => {
         const updatedSelections = selectedOptions.includes(optionName)

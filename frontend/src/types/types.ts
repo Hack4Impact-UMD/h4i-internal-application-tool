@@ -85,7 +85,6 @@ export interface ApplicationResponse {
 // stores data about the content of the application forms
 export interface ApplicationForm {
     id: string;
-    title: string;
     isActive: boolean;
     dueDate: Timestamp;
     semester: string;
@@ -137,7 +136,7 @@ export interface QuestionResponse {
 }
 
 export interface ApplicationQuestion {
-    id: string;
+    questionId: string;
     questionType: QuestionType;
     optional: boolean;
     questionText: string;

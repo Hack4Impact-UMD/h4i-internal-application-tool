@@ -1,57 +1,90 @@
-import {ApplicationSection, QuestionType, OptionQuestion } from '../../types/types';
+import { ApplicationSection, QuestionType, OptionQuestion, QuestionResponse } from '../../types/types';
 import OneLineInput from './OneLineInput';
 import LongFormInput from './LongFormInput';
 import ChoiceGroup from './ChoiceGroup';
 import MultiSelectGroup from './MultiSelectGroup';
+import Button from '../Button';
 
 interface SectionProps {
   section: ApplicationSection;
-  responses: Record<string, Record<string, any>>
+  responses: QuestionResponse[];
   onChangeResponse: (questionId: string, value: any) => void;
+  onNext: () => void;
+  onPrevious: () => void;
+  isNextDisabled: boolean;
+  isPreviousDisabled: boolean;
 }
 
-const Section: React.FC<SectionProps> = ({ section, responses, onChangeResponse}) => {
+const Section: React.FC<SectionProps> = ({
+  section,
+  responses,
+  onChangeResponse,
+  onNext,
+  onPrevious,
+  isNextDisabled,
+  isPreviousDisabled,
+}) => {
   return (
     <div className="flex flex-col justify-self-center w-[57%] m-3 p-5 rounded-xl shadow-sm border border-gray-200 bg-white">
-      <div className='m-7 mt-2 mb-2'>
-        {section.questions.map((question) => (
-          <div key={question.id} className="m-8">
-            {question.questionType === QuestionType.ShortAnswer ? (
-              <OneLineInput
-                question={question.questionText}
-                isRequired={!question.optional}
-                label={question.secondaryText}
-                value={responses[section.sectionId]?.[question.id] ?? ''}
-                onChange={(value) => onChangeResponse(question.id, value)}
-              />
-            ) : question.questionType === QuestionType.LongAnswer ? (
-              <LongFormInput
-                question={question.questionText}
-                isRequired={!question.optional}
-                label={question.secondaryText}
-                value={responses[section.sectionId]?.[question.id] ?? ''}
-                onChange={(value) => onChangeResponse(question.id, value)}
-              />
-            ) : (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleChoice ? (
-              <ChoiceGroup
-                question={question.questionText}
-                isRequired={!question.optional}
-                label={question.secondaryText}
-                options={(question as OptionQuestion).questionOptions ?? []}
-                onOptionSelect={(value) => onChangeResponse(question.id, value ?? '')}
-              />
-            ) :
-             (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleSelect ? (
-              <MultiSelectGroup
-                question={question.questionText}
-                isRequired={!question.optional}
-                label={question.secondaryText}
-                options={(question as OptionQuestion).questionOptions ?? []}
-                onOptionSelect={(value) => onChangeResponse(question.id, value ?? [])}
-              />
-            ) : null}
-          </div>
-        ))}
+      <div className="m-7 mt-2 mb-2">
+        {section.questions.map((question) => {
+          const response = responses.find((r) => r.questionId === question.questionId)?.response || '';
+
+          return (
+            <div key={question.questionId} className="m-8">
+              {question.questionType === QuestionType.ShortAnswer ? (
+                <OneLineInput
+                  question={question.questionText}
+                  isRequired={!question.optional}
+                  label={question.secondaryText}
+                  value={typeof response === 'string' ? response : ''}
+                  onChange={(value) => onChangeResponse(question.questionId, value)}
+                />
+              ) : question.questionType === QuestionType.LongAnswer ? (
+                <LongFormInput
+                  question={question.questionText}
+                  isRequired={!question.optional}
+                  label={question.secondaryText}
+                  value={typeof response === 'string' ? response : ''}
+                  onChange={(value) => onChangeResponse(question.questionId, value)}
+                />
+              ) : (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleChoice ? (
+                <ChoiceGroup
+                  question={question.questionText}
+                  isRequired={!question.optional}
+                  label={question.secondaryText}
+                  value={typeof response === 'string' ? response : ""}
+                  options={(question as OptionQuestion).questionOptions ?? []}
+                  onOptionSelect={(value) => onChangeResponse(question.questionId, value ?? '')}
+                />
+              ) : (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleSelect ? (
+                <MultiSelectGroup
+                  question={question.questionText}
+                  isRequired={!question.optional}
+                  label={question.secondaryText}
+                  value={Array.isArray(response) ? response : []}
+                  options={(question as OptionQuestion).questionOptions ?? []}
+                  onOptionSelect={(value) => onChangeResponse(question.questionId, value ?? [])}
+                />
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex ml-7 gap-1 mt-4">
+        <Button
+          className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
+          label="Next >"
+          enabled={!isNextDisabled}
+          onClick={onNext}
+        />
+        <Button
+          className="border border-gray-400 text-black bg-white hover:bg-gray-100 px-8 rounded-full"
+          label="Back"
+          enabled={!isPreviousDisabled}
+          onClick={onPrevious}
+        />
       </div>
     </div>
   );
