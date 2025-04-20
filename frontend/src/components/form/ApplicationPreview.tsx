@@ -1,10 +1,8 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { collection, addDoc, doc, updateDoc, arrayUnion} from "firebase/firestore";
-import { db } from "../../config/firebase"; 
 import { useAuth } from "../../hooks/useAuth";
 import Button from "../Button";
-import { ApplicationForm, QuestionType, SectionResponse } from "../../types/types";
-import { fetchOrCreateApplicationResponse, getApplicationResponseByFormId } from "../../services/applicationResponsesService";
+import { ApplicationForm} from "../../types/types";
+import { fetchOrCreateApplicationResponse} from "../../services/applicationResponsesService";
 
 interface ApplicationPreviewProps {
   form?: ApplicationForm;

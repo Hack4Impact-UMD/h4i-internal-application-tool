@@ -1,11 +1,9 @@
 import React from "react";
 import Button from "../Button";
-import { ApplicationForm, QuestionType, SectionResponse } from "../../types/types";
-import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../config/firebase";
 import { useAuth } from "../../hooks/useAuth";
-import { fetchOrCreateApplicationResponse, getApplicationResponseByFormId } from "../../services/applicationResponsesService";
+import { fetchOrCreateApplicationResponse} from "../../services/applicationResponsesService";
+import { ApplicationForm } from "../../types/types";
 
 type ApplicationCardProps = {
   form: ApplicationForm
