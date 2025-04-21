@@ -1,4 +1,4 @@
-// src/pages/ReviewDashboard.tsx
+
 import { useEffect, useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
 // import FilterBar from '../components/reviewer/FilterBar'; 
@@ -231,11 +231,17 @@ function ReviewDashboard() {
 
   const topBoxStyles = [
     {
-           category: 'Total Applicants',
-           count: totalApplicantsCount,
-           roleKey: '',
-           defaultStyle: { backgroundColor: '#F5DEB3', color: '#8B4513' },
-           selectedStyle: { backgroundColor: '#8B4513', color: 'white' },
+      category: 'Total Applicants',
+      count: totalApplicantsCount,
+      roleKey: '',
+      defaultStyle: {
+        backgroundColor: '#C4A484', 
+        color: 'white'
+      },
+      selectedStyle: {
+        backgroundColor: '#8B4513',
+        color: 'white'
+      }
     },
     {
       category: 'Product Managers',
