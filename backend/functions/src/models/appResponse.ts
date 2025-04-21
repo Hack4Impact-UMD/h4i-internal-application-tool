@@ -1,5 +1,5 @@
 import { z } from "zod";
-// import { Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase-admin/firestore";
 
 export type ApplicationStatus = "in-progress" | "submitted" | "reviewed";
 
@@ -48,7 +48,7 @@ export interface ApplicationResponse {
   rolesApplied: ApplicantRole[];
   sectionResponses: SectionResponse[];
   status: ApplicationStatus;
-  dateSubmitted: string;
+  dateSubmitted: Timestamp;
   decisionLetterId: string;
 }
 
