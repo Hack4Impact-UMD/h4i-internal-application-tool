@@ -65,7 +65,7 @@ export interface ReviewerUserProfile extends UserProfile {
     role: PermissionRole.Reviewer;
     reviewAssignments: {
         applicationReviewAssignments: ReviewAssignment[];
-        interviewAssignmentIds: string[]; // user ids
+        interviewAssignmentIds: ReviewAssignment[];
     };
 }
 
@@ -93,22 +93,33 @@ export interface ApplicationForm {
     sections: ApplicationSection[];
 }
 
-//there should be one of this per reviewer! The id should be the same as reviewer ID
+// One of these per review. Reviews tie together an application, role, and reviewer.
 export interface ApplicationReviewData {
     id: string;
     reviewerId: string;
     applicationFormId: string;
     applicationResponseId: string;
-    applicationUserId: string;
+    applicantId: string;
     applicantScores: {
-        [scoreCategory in string]: number
+        [scoreCategory in string]: number // between 0-4, each review category in the rubric will have a value here
     };
-    interviewNotes?: string;
     reviewerNotes?: string[];
     reviewStatus: ReviewStatus;
+    forRole: ApplicantRole; // what role is this review for
+}
+
+export interface ApplicationInterviewData {
+    id: string;
+    interviewerId: string; // user id for the interviewer
+    applicationFormId: string;
+    applicationResponseId: string;
+    applicantId: string;
+    interviewNotes: string;
+    interviewComplete: boolean;
 }
 
 export interface ApplicationSection {
+    sectionId: string, //no spaces, alphanumeric, unique (used as a route param)
     sectionName: string;
     questions: ApplicationQuestion[];
 }
@@ -119,19 +130,10 @@ export interface SectionResponse {
 }
 
 export interface QuestionResponse {
+    questionType: QuestionType;
     applicationFormId: string;
     questionId: string;
-    questionType: QuestionType;
-}
-
-export interface SingleResponse extends QuestionResponse {
-    questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer | QuestionType.MultipleChoice;
-    response: string;
-}
-
-export interface ListResponse extends QuestionResponse {
-    questionType: QuestionType.MultipleSelect;
-    response: string[];
+    response: string | string[]
 }
 
 export interface ApplicationQuestion {

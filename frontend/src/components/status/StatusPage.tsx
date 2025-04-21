@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
 
 import Timeline from "./Timeline.tsx";
-import { useApplicationResponses } from '../../hooks/useApplicationResponses.ts';
 import { ApplicationResponse, ApplicationStatus } from '../../types/types.ts';
 import { useApplicationForm } from '../../hooks/useApplicationForm.ts';
+import { useApplicationResponsesAndSemesters } from '../../hooks/useApplicationResponseAndSemesters.tsx';
 
 
 const timelineItems = [
@@ -55,7 +55,7 @@ function ApplicationResponseRow({ response }: { response: ApplicationResponse })
     };
 
     return <tr className="border-t border-gray-300">
-        <td className="py-4 text-blue-500 font-bold">{form!.semester}</td>
+        <td className="py-4 text-blue-500 font-bold">{response.rolesApplied.map(role => role.charAt(0).toUpperCase() + role.slice(1)).join(", ")}</td>
         <td className="text-center">
             <span className={`px-3 py-1 rounded-full ${getStatusDisplay(response.status).className}`}>
                 {getStatusDisplay(response.status).text}
@@ -75,8 +75,9 @@ function ApplicationResponseRow({ response }: { response: ApplicationResponse })
 
 function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
-    const { data: applications, isLoading, error } = useApplicationResponses()
-
+    // replace this hook call with new call
+    const { data: applications, isLoading, error } = useApplicationResponsesAndSemesters()
+    
     const activeApplications = applications.filter(app =>
         [ApplicationStatus.UnderReview, ApplicationStatus.Interview].includes(app.status)
     );
@@ -86,6 +87,17 @@ function StatusPage() {
     );
 
     const activeList = (activeTab == "active") ? activeApplications : inactiveApplications
+    const semesterGrouping = activeList.reduce((map, application) => {
+            const semester = application.semester
+
+            if (!map.has(semester)) {
+                map.set(semester, []);
+            }
+            
+            map.get(semester)!.push(application);
+            return map;
+        }, new Map<string, ApplicationResponse[]>()
+    );
 
     return (
         <div className="flex flex-col">
@@ -133,22 +145,41 @@ function StatusPage() {
                             <p className="w-full">Loading...</p> :
                             error ? <p className="w-full">Error fetching applications: {error.message}</p> :
                                 activeList.length == 0 ? <p className="w-full">You don't have any {activeTab} applications. Go apply!</p> :
-                                    (<table className="w-full">
-                                        <thead>
+                                (activeTab == "inactive") ? (Array.from(semesterGrouping.entries()).map(([semester, apps]) => (
+                                      <div>
+                                        <h2 className="text-lg font-semibold mt-6 mb-2">Hack4Impact {semester} Application</h2>
+                                        <table className="w-full">
+                                          <thead>
                                             <tr className="border-t border-gray-300">
-                                                <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
-                                                <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
-                                                <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
-                                                <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
+                                              <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                              <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
+                                              <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
+                                              <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            {activeList.map(application => (
-                                                <ApplicationResponseRow key={application.id} response={application} />
+                                          </thead>
+                                          <tbody>
+                                            {apps.map((application) => (
+                                              <ApplicationResponseRow key={application.id} response={application} />
                                             ))}
-                                        </tbody>
-                                    </table>)
-                        }
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    ))
+                                ) : (<table className="w-full">
+                                    <thead>
+                                        <tr className="border-t border-gray-300">
+                                            <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                            <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
+                                            <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
+                                            <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {activeList.map(application => (
+                                            <ApplicationResponseRow key={application.id} response={application} />
+                                        ))}
+                                    </tbody>
+                                </table>)}
                     </div>
                 </div>
             </div>
