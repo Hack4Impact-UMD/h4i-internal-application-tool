@@ -1,7 +1,16 @@
 import { z } from "zod";
 
+export interface ApplicationInterviewData {
+  id: string;
+  interviewerId: string; // user id for the interviewer
+  applicationFormId: string;
+  applicationResponseId: string;
+  applicantId: string;
+  interviewNotes: string;
+  interviewComplete: boolean;
+}
+
 export const ApplicationInterviewDataSchema = z.object({
-  id: z.string().nonempty(),
   interviewerId: z.string().nonempty(),
   applicationFormId: z.string().nonempty(),
   applicationResponseId: z.string().nonempty(),
@@ -9,5 +18,3 @@ export const ApplicationInterviewDataSchema = z.object({
   interviewNotes: z.string().nonempty(),
   interviewComplete: z.boolean()
 });
-
-export type ApplicationInterviewData = z.infer<typeof ApplicationInterviewDataSchema>;

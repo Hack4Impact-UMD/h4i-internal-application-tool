@@ -17,7 +17,7 @@ router.post("/submit", [isAuthenticated, validateSchema(ApplicationReviewDataSch
   try {
     const reviewResponse = req.body as ApplicationReviewData;
 
-    logger.info(`${req.token?.email} is submitting a review!`)
+    logger.info(`${req.token?.email} is submitting review data`)
 
     // make connections to database
     const reviewDataCollection = db.collection(REVIEW_DATA_COLLECTION) as CollectionReference<ApplicationReviewData>
@@ -33,20 +33,22 @@ router.post("/submit", [isAuthenticated, validateSchema(ApplicationReviewDataSch
     // verify that the reviewer had role of reviewer or super-reviewer
     const reviewerDocData = reviewerDoc.data() as UserProfile
     if (reviewerDocData.role !== "reviewer" && reviewerDocData.role !== "super-reviewer") {
-      res.status(403).send("User is not a reviewer or super reviewer")
+      res.status(403).send("User is not a reviewer or super-reviewer")
       return
     }
 
-    const user: UserProfile = {
-      ...reviewResponse,
-      id:
-    }
+    const docRef = reviewDataCollection.doc();
 
-    await reviewDataCollection.doc().create(reviewResponse)
+    const reviewWithId: ApplicationReviewData = {
+      ...reviewResponse,
+      id: docRef.id,
+    };
+
+    await docRef.create(reviewWithId);
 
     logger.info(`Successfully created reviewData doc for applicant:${reviewResponse.applicantId}`)
 
-    res.status(200).send(reviewResponse);
+    res.status(200).send(reviewWithId);
   } catch (error) {
     if (error instanceof FirebaseAuthError) {
       res.status(500).send(error.message)
@@ -70,7 +72,7 @@ router.get("/:id", [isAuthenticated], async (req: Request, res: Response) => {
     const userDoc = await userCollection.doc(req.token?.uid!).get()
     const userDocData = userDoc.data() as UserProfile
     if (userDocData.role !== "reviewer" && userDocData.role !== "super-reviewer") {
-      res.status(403).send("User is not a reviewer or super reviewer")
+      res.status(403).send("User is not a reviewer or super-reviewer")
       return
     }
 
