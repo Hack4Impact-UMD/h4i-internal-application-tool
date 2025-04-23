@@ -25,13 +25,14 @@ const Section: React.FC<SectionProps> = ({
   isPreviousDisabled,
 }) => {
   return (
-    <div className="flex flex-col justify-self-center w-[57%] m-3 p-5 rounded-xl shadow-sm border border-gray-200 bg-white">
-      <div className="m-7 mt-2 mb-2">
+    <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
+      <div className="mt-2 mb-2 flex flex-col gap-5">
+        <h1 className="font-bold text-xl">{section.sectionName}</h1>
         {section.questions.map((question) => {
           const response = responses.find((r) => r.questionId === question.questionId)?.response || '';
 
           return (
-            <div key={question.questionId} className="m-8">
+            <div key={question.questionId}>
               {question.questionType === QuestionType.ShortAnswer ? (
                 <OneLineInput
                   question={question.questionText}
@@ -72,7 +73,7 @@ const Section: React.FC<SectionProps> = ({
         })}
       </div>
 
-      <div className="flex ml-7 gap-1 mt-4">
+      <div className="flex gap-1 mt-4">
         <Button
           className="border border-gray-400 text-black bg-white hover:bg-gray-100 px-8 rounded-full"
           label="Back"

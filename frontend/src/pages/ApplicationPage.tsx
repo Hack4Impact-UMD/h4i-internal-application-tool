@@ -35,7 +35,7 @@ const ApplicationPage: React.FC = () => {
       );
       setResponses(
         (existingApplicationResponse?.sectionResponses as SectionResponse[]) ||
-          responses
+        responses
       );
     };
 
@@ -53,17 +53,18 @@ const ApplicationPage: React.FC = () => {
   }
 
   const handleResponseChange = (questionId: string, value: any) => {
+    console.log(`Response change ${questionId}: ${value}`)
     setResponses((prev) =>
       prev.map((sectionResponse) =>
         sectionResponse.sectionName === currentSection.sectionName
           ? {
-              ...sectionResponse,
-              questions: sectionResponse.questions.map((questionResponse) =>
-                questionResponse.questionId === questionId
-                  ? { ...questionResponse, response: value }
-                  : questionResponse
-              ),
-            }
+            ...sectionResponse,
+            questions: sectionResponse.questions.map((questionResponse) =>
+              questionResponse.questionId === questionId
+                ? { ...questionResponse, response: value }
+                : questionResponse
+            ),
+          }
           : sectionResponse
       )
     );

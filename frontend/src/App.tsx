@@ -34,7 +34,7 @@ const queryClient = new QueryClient();
 function App() {
   const [forms, setForms] = useState<ApplicationForm[]>([]);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     async function fetchForms() {
       try {
@@ -61,25 +61,20 @@ function App() {
                 index
                 element={
                   <RequireAuth>
-                    <p>
+                    <div>
                       <div className="flex justify-center overflow-x-auto gap-4 p-4">
                         {forms &&
                           forms.map((form) => (
                             <ApplicationCard
                               key={form.id}
                               form={form}
-                              onClick={() =>
-                                navigate(`/apply/${form.id}`, {
-                                  state: { form },
-                                })
-                              }
                             />
                           ))}
                       </div>
                       <NavLink className="text-darkblue" to="/apply/status">
                         Go to /apply/status
                       </NavLink>
-                    </p>
+                    </div>
                   </RequireAuth>
                 }
               ></Route>
@@ -95,7 +90,7 @@ function App() {
                 path="/apply/:applicationResponseId/:sectionId"
                 element={
                   <RequireAuth>
-                   <ApplicationPage/>
+                    <ApplicationPage />
                   </RequireAuth>
                 }
               />
