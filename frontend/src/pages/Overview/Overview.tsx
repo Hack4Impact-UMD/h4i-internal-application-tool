@@ -1,18 +1,21 @@
 import React from 'react';
-import './Overview.css';
 
 const Overview: React.FC = () => {
     return (
-        <div className="overview-container">
-            <h1>Overview</h1>
-            <div className="title-button-container">
-                <div className="title-text">
-                    <h2 className="organization-title">Hack4Impact-UMD New Member</h2>
-                    <h3 className="application-title">Application Fall 2024</h3>
+        <div className="mt-5 mx-auto max-w-[1000px] px-5 py-5 font-sans leading-relaxed">
+            <h1 className='mb-3 text-5xl text-black'>Overview</h1>
+            <div className="flex items-start justify-between mb-5">
+                <div className="flex flex-col">
+                    <h2 className="text-blue text-2xl">Hack4Impact-UMD New Member</h2>
+                    <h3 className="text-blue text-2xl">Application Fall 2024</h3>
                 </div>
-                <button className="apply-button">Apply</button>
+                <button
+  className="cursor-pointer inline-flex items-center justify-center px-10 py-2 rounded-full bg-black 
+           text-white transition-colors hover:bg-darkgray">
+                Apply
+                </button>
             </div>
-            <div className="content-text">
+            <div className="font-[Karla] text-sm font-normal leading-tight text-justify [text-justify:inter-word]">
             
             <p>
                 Lorem ipsum dolor sit amet consectetur. Laoreet tempus dui diam a vestibulum dapibus aliquam egestas. Id amet laoreet in ullamcorper. Sociis dictum eget orci at ornare. Id condimentum dui condimentum in pharetra. Interdum at in augue eget est. Condimentum orci tellus lectus urna arcu non. Hac sed lectus parturient curabitur aliquet amet consectetur purus. Tincidunt mauris imperdiet enim ut id pellentesque. Enim sociis arcu aliquam bibendum. Viverra proin eu mi lacinia vel. Facilisi sit scelerisque amet ornare. Interdum odio dignissim ac massa diam vel aliquet at nec. Vitae dui malesuada id amet sit ultricies malesuada sagittis velit.

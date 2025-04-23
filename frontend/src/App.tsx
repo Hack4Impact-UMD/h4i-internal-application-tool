@@ -15,6 +15,7 @@ import RequireNoAuth from './components/auth/RequireNoAuth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AdminPlaceholderPage from './components/reviewer/AdminPlaceholderPage';
 import { PermissionRole } from './types/types';
+import Overview from "./pages/Overview/Overview";
 
 const queryClient = new QueryClient();
 
@@ -32,10 +33,10 @@ function App() {
                 element={
                   <RequireAuth>
                     <p>
-                      Overview page goes here.
                       <NavLink className="text-darkblue" to="/apply/status">
                         Go to /apply/status
                       </NavLink>
+                      <Overview />
                     </p>
                   </RequireAuth>
                 }
