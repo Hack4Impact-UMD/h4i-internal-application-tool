@@ -3,7 +3,6 @@ import {
   NavLink,
   Route,
   Routes,
-  useNavigate,
 } from "react-router-dom";
 
 import StatusPage from "./components/status/StatusPage";
@@ -28,12 +27,12 @@ import { useEffect, useState } from "react";
 import { getAllForms } from "./services/applicationFormsService";
 import ApplicationCard from "./components/form/ApplicationCard";
 import ApplicationPage from "./pages/ApplicationPage";
+import Overview from "./pages/Overview/Overview";
 
 const queryClient = new QueryClient();
 
 function App() {
   const [forms, setForms] = useState<ApplicationForm[]>([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchForms() {
@@ -74,6 +73,12 @@ function App() {
                       <NavLink className="text-darkblue" to="/apply/status">
                         Go to /apply/status
                       </NavLink>
+                    </div>
+                    <div>
+                      <NavLink className="text-darkblue" to="/apply/status">
+                        Go to /apply/status
+                      </NavLink>
+                      <Overview />
                     </div>
                   </RequireAuth>
                 }
