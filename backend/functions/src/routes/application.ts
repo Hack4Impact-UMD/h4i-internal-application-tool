@@ -1,21 +1,69 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
-import { ApplicationResponse, AppResponseForm, appResponseFormSchema } from "../models/appResponse";
+import { ApplicationResponse, appResponseFormSchema } from "../models/appResponse";
 import { CollectionReference } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { isAuthenticated } from "../middleware/authentication";
 import { ApplicationForm } from "../models/appForm";
+// import * as admin from "firebase-admin"
 
 const router = Router();
 
 const APPLICATION_RESPONSE_COLLECTION = "application-responses"
 const APPLICATION_FORMS_COLLECTION = "application-forms"
 
-// add isAuthenticated here?
+interface QuestionMetadata {
+  optional: boolean;
+  minimumWordCount?: number;
+  maximumWordCount?: number;
+}
+
+function validateResponses(applicationResponse: ApplicationResponse, applicationForm: ApplicationForm) {
+  const errors: string[] = [];
+
+  // fill formQuestions map
+  const formQuestions = new Map<string, QuestionMetadata>(
+    applicationForm.sections.flatMap(section =>
+      section.questions.map(q => [
+        q.questionId,
+        {
+          optional: q.optional,
+          minimumWordCount: q.minimumWordCount,
+          maximumWordCount: q.maximumWordCount
+        }
+      ])
+    )
+  );
+
+  // validate each response
+  for (const section of applicationResponse.sectionResponses) {
+    for (const question of section.questions) {
+      const metaData = formQuestions.get(question.questionId);
+      if (!metaData) {
+        errors.push(`Question ${question.questionId} has no metadata`)
+        continue;
+      }
+      
+      if (metaData?.optional === false && question.response.length == 0) {
+        errors.push(`Question ${question.questionId} is required`)
+      }
+
+      const responseWordsArr = question.response.toString().split(" ")
+      if (metaData?.maximumWordCount && responseWordsArr.length > metaData?.maximumWordCount ||
+        metaData?.minimumWordCount && responseWordsArr.length < metaData?.minimumWordCount
+      ) {
+        errors.push(`Question ${question.questionId}: word count (${responseWordsArr.length}) is out of range [${metaData.minimumWordCount || 0}, ${metaData.maximumWordCount || "∞"}]`);
+      }
+    }
+  }
+
+  return errors
+}
+
 router.post("/submit", [isAuthenticated, validateSchema(appResponseFormSchema)], async (req: Request, res: Response) => {
   try {
-    const applicationResponse = req.body as AppResponseForm;
+    const applicationResponse = req.body as ApplicationResponse;
 
     logger.info(`${req.token?.email} is submitting an application!`)
 
@@ -35,17 +83,20 @@ router.post("/submit", [isAuthenticated, validateSchema(appResponseFormSchema)],
     const applicationFormDocData = applicationFormDoc.data();
 
     const currentTime = new Date();
-    const dueDate = FirebaseFirestore.Timestamp.fromDate(applicationFormDocData!.dueDate);
-    logger.info(`Current Time: ${currentTime}, Due Date: ${dueDate.toDate()}`)
-    logger.info(`Current Time toString: ${currentTime.toString()}, Due Date toString: ${dueDate.toDate().toString()}`)
-    if (currentTime > dueDate.toDate()) {
-      return res.status(400).send("Submission deadline has passed!");
+    const dueDate = new Date(applicationFormDocData!.dueDate);
+    if (currentTime > dueDate) {
+      return res.status(400).send("Submission deadline has passed");
     }
 
     //TODO: some of the questions in the application form are optional, while some are not.
     //Others also have word count restrictions. Those should also be checked here before finalizing
     //the submission! You can just iterate through all the question responses, find the corresponding
     //question in the form based on the question id and validate any requirements that it has.
+
+    const errors = validateResponses(applicationResponse, applicationFormDocData!)
+    if (errors.length != 0) {
+      return res.status(400).send(errors.join(", "))
+    }
 
     // Proceed with updating submission status
     await applicationResponseCollection.doc(applicationResponse.applicationResponseId).update({
