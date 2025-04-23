@@ -61,36 +61,19 @@ function App() {
                 element={
                   <RequireAuth>
                     <div>
-                      <div className="flex justify-center overflow-x-auto gap-4 p-4">
-                        {forms &&
-                          forms.map((form) => (
-                            <ApplicationCard
-                              key={form.id}
-                              form={form}
-                            />
-                          ))}
-                      </div>
-                      <NavLink className="text-darkblue" to="/apply/status">
-                        Go to /apply/status
-                      </NavLink>
-                    </div>
-                    <div>
-                      <NavLink className="text-darkblue" to="/apply/status">
-                        Go to /apply/status
-                      </NavLink>
                       <Overview />
                     </div>
                   </RequireAuth>
                 }
               ></Route>
-              <Route
-                path="/apply/:formId"
-                element={
-                  <RequireAuth>
-                    <ApplicationPreview />
-                  </RequireAuth>
-                }
-              />
+              {/* <Route */}
+              {/*   path="/apply/:formId" */}
+              {/*   element={ */}
+              {/*     <RequireAuth> */}
+              {/*       <ApplicationPreview /> */}
+              {/*     </RequireAuth> */}
+              {/*   } */}
+              {/* /> */}
               <Route
                 path="/apply/:applicationResponseId/:sectionId"
                 element={
