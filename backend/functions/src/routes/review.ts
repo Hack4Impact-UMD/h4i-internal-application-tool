@@ -5,11 +5,13 @@ import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { validateSchema } from "../middleware/validation";
 import { CollectionReference } from "firebase-admin/firestore";
+import { FirebaseAuthError } from "firebase-admin/auth";
 import { ApplicationReviewData, reviewSchema, updateReviewSchema, ApplicationReviewForm } from "../models/appReview";
 
 /* eslint new-cap: 0 */
 const router = Router();
 const APPLICATION_REVIEW_COLLECTION = db.collection("review-data") as CollectionReference<ApplicationReviewData>;
+const REVIEW_DATA_COLLECTION = "application-reviews"
 
 router.post("/review", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(reviewSchema)], async (req: Request, res: Response) => {
   const input = req.body as ApplicationReviewForm;
@@ -91,5 +93,66 @@ router.delete("/review/:id", [isAuthenticated, hasRoles(["reviewer", "super-revi
   }
 }
 );
+
+// Create reviewData
+router.post("/submit", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(reviewSchema)], async (req: Request, res: Response) => {
+    try {
+        const reviewResponse = req.body as ApplicationReviewData;
+
+        logger.info(`${req.token?.email} is submitting review data`)
+
+        // make connections to database
+        const reviewDataCollection = db.collection(REVIEW_DATA_COLLECTION) as CollectionReference<ApplicationReviewData>
+
+        const docRef = reviewDataCollection.doc();
+
+        const reviewWithId: ApplicationReviewData = {
+            ...reviewResponse,
+            id: docRef.id,
+        };
+
+        await docRef.create(reviewWithId);
+
+        logger.info(`Successfully created reviewData doc for applicant:${reviewResponse.applicantId}`)
+
+        res.status(200).send(reviewWithId);
+    } catch (error) {
+        if (error instanceof FirebaseAuthError) {
+            res.status(500).send(error.message)
+        } else {
+            res.status(500).send()
+        }
+    }
+});
+
+// Get existing reviewData
+router.get("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"])], async (req: Request, res: Response) => {
+    try {
+        const reviewId = req.params.id as string
+
+        logger.info(`${req.token?.email} is getting review data for ${reviewId}`)
+
+        // make connections to database
+        const reviewDataCollection = db.collection(REVIEW_DATA_COLLECTION) as CollectionReference<ApplicationReviewData>
+
+        const reviewDoc = await reviewDataCollection.doc(reviewId).get()
+
+        // verify that the review exists
+        if (!reviewDoc.exists) {
+            res.status(400).send("Review does not exist")
+            return
+        }
+
+        const reviewDocData = reviewDoc.data() as ApplicationReviewData
+        res.status(200).send(reviewDocData)
+    } catch (error) {
+
+        if (error instanceof FirebaseAuthError) {
+            res.status(500).send(error.message)
+        } else {
+            res.status(500).send()
+        }
+    }
+});
 
 export default router;
