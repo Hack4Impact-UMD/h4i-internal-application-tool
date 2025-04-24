@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { logger } from "firebase-functions";
 import * as admin from "firebase-admin"
+import { db } from "..";
+import { UserProfile, UserRole } from "../models/user";
+import { CollectionReference } from "firebase-admin/firestore";
 
 // from the code sample here: https://github.com/firebase/functions-samples/blob/main/Node-1st-gen/authorized-https-endpoint/functions/index.js
 // NOTE: When a request is successfully authenticated, this middleware will set the `req.token` property
@@ -46,4 +49,39 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
     res.status(403).send("Unauthorized");
     return;
   }
+}
+
+export function hasRoles(roles: UserRole[]) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("Checking if user has roles:", roles)
+    if (!req.token) {
+      logger.warn("hasRoles middleware: request is not authenticated. This middleware must be used after isAuthenticated!")
+      res.status(403).send("Unauthorized")
+      return;
+    }
+
+    const user = await getUserById(req.token.uid)
+
+    if (!user) {
+      logger.error(`hasRoles middleware: User with id ${req.token.uid} not found!`)
+      res.status(403).send("Unauthorized")
+      return
+    }
+
+    if (roles.includes(user.role)) {
+      next();
+    } else {
+      logger.warn(`hasRoles middleware: User has role ${user.role}, but needed roles ${roles} for route!`)
+      res.status(403).send("Unauthorized")
+      return
+    }
+  }
+}
+
+export async function getUserById(id: string): Promise<UserProfile | undefined> {
+  const users = db.collection("users") as CollectionReference<UserProfile>
+  const userDoc = users.doc(id)
+  const res = await userDoc.get()
+
+  return res.data() as UserProfile
 }

@@ -1,99 +1,97 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
-import { validateSchema } from "../middleware/validation";
 import { logger } from "firebase-functions";
-import { isAuthenticated } from "../middleware/authentication";
-import { FirebaseAuthError } from "firebase-admin/auth";
-import { ApplicationInterviewData, ApplicationInterviewDataSchema } from "../models/appInterview";
-import { UserProfile } from "../models/user";
+import { hasRoles, isAuthenticated } from "../middleware/authentication";
+import { validateSchema } from "../middleware/validation";
 import { CollectionReference } from "firebase-admin/firestore";
+import { InterviewData, interviewSchema, updateInterviewSchema } from "../models/appInterview";
 
 const router = Router();
+const INTERVIEW_COLLECTION = db.collection("interview-data") as CollectionReference<InterviewData>;
 
-const INTERVIEW_DATA_COLLECTION = "application-interviews"
-const USER_COLLECTION = "users"
+// Create a new interview
+router.post("/", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(interviewSchema)], async (req: Request, res: Response) => {
+    const input = req.body;
+    const timestamp = new Date().toISOString();
 
-router.post("/submit", [isAuthenticated, validateSchema(ApplicationInterviewDataSchema)], async (req: Request, res: Response) => {
     try {
-        const interviewResponse = req.body as ApplicationInterviewData;
-
-        logger.info(`${req.token?.email} is submitting interview data`)
-
-        // make connections to database
-        const interviewDataCollection = db.collection(INTERVIEW_DATA_COLLECTION) as CollectionReference<ApplicationInterviewData>
-        const userCollection = db.collection(USER_COLLECTION) as CollectionReference<UserProfile>
-
-        // verify that the reviewer exists
-        const interviewerDoc = await userCollection.doc(interviewResponse.interviewerId).get()
-        if (!interviewerDoc.exists) {
-            res.status(400).send("Interviewer does not exist")
-            return
-        }
-
-        // verify that the reviewer had role of reviewer or super-reviewer
-        const interviewerDocData = interviewerDoc.data() as UserProfile
-        if (interviewerDocData.role !== "reviewer" && interviewerDocData.role !== "super-reviewer") {
-            res.status(403).send("User is not a reviewer or super-reviewer")
-            return
-        }
-
-        const docRef = interviewDataCollection.doc();
-
-        const interviewWithId: ApplicationInterviewData = {
-            ...interviewResponse,
-            id: docRef.id,
+        const interviewId = `${input.reviewerId}_${input.applicationId}`;
+        const newInterview: InterviewData = {
+            ...input,
+            id: interviewId,
+            createdAt: timestamp,
+            updatedAt: timestamp
         };
 
-        await docRef.create(interviewWithId);
+        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const existing = await docRef.get();
 
-        logger.info(`Successfully created interviewData doc for applicant:${interviewResponse.applicantId}`)
-
-        res.status(200).send(interviewWithId);
-    } catch (error) {
-        if (error instanceof FirebaseAuthError) {
-            res.status(500).send(error.message)
-        } else {
-            res.status(500).send()
+        if (existing.exists) {
+            logger.warn(`Interview already exists for ID: ${interviewId}`);
+            return res.status(400).send("Interview already exists for this reviewer-application pair.");
         }
+
+        await docRef.set(newInterview);
+        logger.info(`Created Interview with ID: ${interviewId}`);
+
+        return res.status(201).send(newInterview);
+    } catch (error) {
+        logger.error("Failed to create interview:", error);
+        return res.status(500).send(error instanceof Error ? error.message : "Unknown error");
     }
 });
 
-router.get("/:id", [isAuthenticated], async (req: Request, res: Response) => {
+// Update an existing interview
+router.put("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(updateInterviewSchema)], async (req: Request, res: Response) => {
+    const interviewId = req.params.id;
+    const updates = req.body;
+
     try {
-        const interviewId = req.params.id as string
+        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const existing = await docRef.get();
 
-        logger.info(`${req.token?.email} is getting interview data for ${interviewId}`)
-
-        // make connections to database
-        const interviewDataCollection = db.collection(INTERVIEW_DATA_COLLECTION) as CollectionReference<ApplicationInterviewData>
-        const userCollection = db.collection(USER_COLLECTION) as CollectionReference<UserProfile>
-
-        // verify that the user has role of reviewer or super-reviewer
-        const userDoc = await userCollection.doc(req.token?.uid!).get()
-        const userDocData = userDoc.data() as UserProfile
-        if (userDocData.role !== "reviewer" && userDocData.role !== "super-reviewer") {
-            res.status(403).send("User is not a reviewer or super-reviewer")
-            return
+        if (!existing.exists) {
+            logger.warn(`Interview not found for ID: ${interviewId}`);
+            return res.status(404).send("Interview not found.");
         }
 
-        const interviewDoc = await interviewDataCollection.doc(interviewId).get()
+        const updatedInterview = {
+            ...existing.data(),
+            ...updates,
+            updatedAt: new Date().toISOString()
+        };
 
-        // verify that the review exists
-        if (!interviewDoc.exists) {
-            res.status(400).send("Review does not exist")
-            return
-        }
+        await docRef.update(updatedInterview);
+        logger.info(`Updated Interview with ID: ${interviewId}`);
 
-        const interviewDocData = interviewDoc.data() as ApplicationInterviewData
-        res.status(200).send(interviewDocData)
+        return res.status(200).send(updatedInterview);
     } catch (error) {
-
-        if (error instanceof FirebaseAuthError) {
-            res.status(500).send(error.message)
-        } else {
-            res.status(500).send()
-        }
+        logger.error("Failed to update interview:", error);
+        return res.status(500).send(error instanceof Error ? error.message : "Unknown error");
     }
 });
 
-export default router;
+// Delete an interview
+router.delete("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"])], async (req: Request, res: Response) => {
+    const interviewId = req.params.id;
+
+    try {
+        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const existing = await docRef.get();
+
+        if (!existing.exists) {
+            logger.warn(`Interview not found for ID: ${interviewId}`);
+            return res.status(404).send("Interview not found.");
+        }
+
+        await docRef.delete();
+        logger.info(`Deleted Interview with ID: ${interviewId}`);
+
+        return res.status(200).send({ message: "Interview deleted successfully" });
+    } catch (error) {
+        logger.error("Failed to delete interview:", error);
+        return res.status(500).send(error instanceof Error ? error.message : "Unknown error");
+    }
+});
+
+export default router; 

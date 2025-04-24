@@ -1,99 +1,95 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
-import { validateSchema } from "../middleware/validation";
 import { logger } from "firebase-functions";
-import { isAuthenticated } from "../middleware/authentication";
-import { FirebaseAuthError } from "firebase-admin/auth";
-import { ApplicationReviewData, ApplicationReviewDataSchema } from "../models/appReview";
-import { UserProfile } from "../models/user";
+// import * as admin from "firebase-admin";
+import { hasRoles, isAuthenticated } from "../middleware/authentication";
+import { validateSchema } from "../middleware/validation";
 import { CollectionReference } from "firebase-admin/firestore";
+import { ApplicationReviewData, reviewSchema, updateReviewSchema, ApplicationReviewForm } from "../models/appReview";
 
+/* eslint new-cap: 0 */
 const router = Router();
+const APPLICATION_REVIEW_COLLECTION = db.collection("review-data") as CollectionReference<ApplicationReviewData>;
 
-const REVIEW_DATA_COLLECTION = "application-reviews"
-const USER_COLLECTION = "users"
+router.post("/review", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(reviewSchema)], async (req: Request, res: Response) => {
+  const input = req.body as ApplicationReviewForm;
 
-router.post("/submit", [isAuthenticated, validateSchema(ApplicationReviewDataSchema)], async (req: Request, res: Response) => {
-    try {
-        const reviewResponse = req.body as ApplicationReviewData;
+  try {
+    //probably better to replace this with uuid, we'll see
+    const reviewId = `${input.reviewerId}_${input.applicationResponseId}_${input.forRole.toString()}`;
+    const newReview: ApplicationReviewData = {
+      ...input,
+      id: reviewId,
+    };
 
-        logger.info(`${req.token?.email} is submitting review data`)
+    const docRef = APPLICATION_REVIEW_COLLECTION.doc(reviewId);
+    const existing = await docRef.get();
 
-        // make connections to database
-        const reviewDataCollection = db.collection(REVIEW_DATA_COLLECTION) as CollectionReference<ApplicationReviewData>
-        const userCollection = db.collection(USER_COLLECTION) as CollectionReference<UserProfile>
-
-        // verify that the reviewer exists
-        const reviewerDoc = await userCollection.doc(reviewResponse.reviewerId).get()
-        if (!reviewerDoc.exists) {
-            res.status(400).send("Reviewer does not exist")
-            return
-        }
-
-        // verify that the reviewer had role of reviewer or super-reviewer
-        const reviewerDocData = reviewerDoc.data() as UserProfile
-        if (reviewerDocData.role !== "reviewer" && reviewerDocData.role !== "super-reviewer") {
-            res.status(403).send("User is not a reviewer or super-reviewer")
-            return
-        }
-
-        const docRef = reviewDataCollection.doc();
-
-        const reviewWithId: ApplicationReviewData = {
-            ...reviewResponse,
-            id: docRef.id,
-        };
-
-        await docRef.create(reviewWithId);
-
-        logger.info(`Successfully created reviewData doc for applicant:${reviewResponse.applicantId}`)
-
-        res.status(200).send(reviewWithId);
-    } catch (error) {
-        if (error instanceof FirebaseAuthError) {
-            res.status(500).send(error.message)
-        } else {
-            res.status(500).send()
-        }
+    if (existing.exists) {
+      logger.warn(`Review already exists for ID: ${reviewId}`);
+      return res.status(400).send("Review already exists for this reviewer-application pair.");
     }
-});
 
-router.get("/:id", [isAuthenticated], async (req: Request, res: Response) => {
-    try {
-        const reviewId = req.params.id as string
+    await docRef.set(newReview);
+    logger.info(`Created Review with ID: ${reviewId}`);
 
-        logger.info(`${req.token?.email} is getting review data for ${reviewId}`)
+    return res.status(201).send(newReview);
+  } catch (error) {
+    logger.error("Failed to create review:", error);
+    return res.status(500).send(error instanceof Error ? error.message : "Unknown error");
+  }
+}
+);
 
-        // make connections to database
-        const reviewDataCollection = db.collection(REVIEW_DATA_COLLECTION) as CollectionReference<ApplicationReviewData>
-        const userCollection = db.collection(USER_COLLECTION) as CollectionReference<UserProfile>
+router.put("/review/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(updateReviewSchema)], async (req: Request, res: Response) => {
+  const reviewId = req.params.id;
+  const updates = req.body as Partial<ApplicationReviewData>;
 
-        // verify that the user has role of reviewer or super-reviewer
-        const userDoc = await userCollection.doc(req.token?.uid!).get()
-        const userDocData = userDoc.data() as UserProfile
-        if (userDocData.role !== "reviewer" && userDocData.role !== "super-reviewer") {
-            res.status(403).send("User is not a reviewer or super-reviewer")
-            return
-        }
+  try {
+    const docRef = APPLICATION_REVIEW_COLLECTION.doc(reviewId);
+    const docSnap = await docRef.get();
 
-        const reviewDoc = await reviewDataCollection.doc(reviewId).get()
-
-        // verify that the review exists
-        if (!reviewDoc.exists) {
-            res.status(400).send("Review does not exist")
-            return
-        }
-
-        const reviewDocData = reviewDoc.data() as ApplicationReviewData
-        res.status(200).send(reviewDocData)
-    } catch (error) {
-
-        if (error instanceof FirebaseAuthError) {
-            res.status(500).send(error.message)
-        } else {
-            res.status(500).send()
-        }
+    if (!docSnap.exists) {
+      logger.warn(`Review ${reviewId} not found`);
+      return res.status(404).send("Review not found");
     }
-});
+
+    delete updates.id;
+    delete updates.reviewerId;
+    delete updates.applicationResponseId;
+
+    await docRef.update(updates);
+    logger.info(`Updated Review ${reviewId}`);
+
+    return res.status(200).send({ message: "Review updated successfully" });
+  } catch (error) {
+    logger.error("Failed to update review:", error);
+    return res.status(500).send(error instanceof Error ? error.message : "Unknown error");
+  }
+}
+);
+
+router.delete("/review/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"])], async (req: Request, res: Response) => {
+  const reviewId = req.params.id;
+
+  try {
+    const docRef = APPLICATION_REVIEW_COLLECTION.doc(reviewId);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+      logger.warn(`Review ${reviewId} not found`);
+      return res.status(404).send("Review not found");
+    }
+
+    await docRef.delete();
+    logger.info(`Deleted Review ${reviewId}`);
+
+    return res.status(200).send({ message: "Review deleted successfully" });
+  } catch (error) {
+    logger.error("Failed to delete review:", error);
+    return res.status(500).send(error instanceof Error ? error.message : "Unknown error");
+  }
+}
+);
 
 export default router;
