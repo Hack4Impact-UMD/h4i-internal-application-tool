@@ -99,7 +99,7 @@
 }
 
 .rubric-box {
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
   padding: 20px;
   margin-top: 10px;
 }
@@ -146,11 +146,11 @@
 
 .radio-buttons {
   display: flex;
-  gap: 10px;  
+  gap: 10px;
   margin-bottom: 10px;
   justify-content: center;
   font-family: Karla;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   align-items: center;
 }
 
@@ -171,8 +171,10 @@
 
 .radio-buttons input[type="radio"] {
   appearance: none;
-  -webkit-appearance: none; /* safari */
-  -moz-appearance: none; /* firefox */
+  -webkit-appearance: none;
+  /* safari */
+  -moz-appearance: none;
+  /* firefox */
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -206,41 +208,94 @@
   gap: 40px;
   margin-top: 20px;
 }
-
-.resume-upload-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
+.resume-upload-section {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
 }
 
-.upload-button {
+.resume-upload-section .question-headers {
+  margin-left: 0;
+  /* Resetting left margin for consistency */
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.resume-upload-section input[type="file"] {
+  font-family: Karla;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.resume-upload-section p {
+  margin-left: 0;
+  /* Resetting left margin for consistency */
+  font-size: 14px;
+  color: #555;
+}
+
+.resume-upload-section .error-message {
+  color: red;
+  margin-top: 5px;
+}
+
+.resume-upload-section .success-message {
+  color: green;
+  margin-top: 5px;
+}
+
+.resume-upload-section .progress-bar-container {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  height: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.resume-upload-section .progress-bar {
+  background-color: #2969C4;
+  height: 100%;
+  border-radius: 4px;
+  width: 0%;
+  /* Width will be updated dynamically */
+  transition: width 0.3s ease-in-out;
+  text-align: center;
+  line-height: 8px;
+  color: white;
+  font-size: 12px;
+}
+
+.resume-upload-section button.upload-button {
   background-color: #2969C4;
   color: white;
-  padding: 8px 16px;
+  padding: 10px 15px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-family: Karla;
-  font-size: 14px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
   width: fit-content;
+  /* Adjust width as needed */
 }
 
-.upload-button:disabled {
+.resume-upload-section button.upload-button:hover {
+  background-color: #1d4e8c;
+}
+
+.resume-upload-section button.upload-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
-.upload-button:hover:not(:disabled) {
-  background-color: #1d4e8c;
-}
-
-.upload-success {
-  color: green;
-  font-family: Karla;
-  margin-left: 10px;
-}
-
-#resume-upload {
-  font-family: Karla;
+.resume-upload-section .file-format-info {
+  font-size: 12px;
+  color: #777;
+  margin-top: 5px;
 }

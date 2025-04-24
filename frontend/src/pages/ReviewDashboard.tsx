@@ -18,6 +18,7 @@ export type Applicant = {
   npoExpertiseScore: number | null;
   communicationScore: number | null;
   overallScore: number | null;
+  resume?: string | null;
 };
 
 function ReviewDashboard() {
