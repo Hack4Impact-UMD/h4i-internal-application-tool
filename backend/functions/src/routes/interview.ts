@@ -13,7 +13,7 @@ const router = Router();
 const INTERVIEW_DATA_COLLECTION = "application-interviews"
 const USER_COLLECTION = "users"
 
-router.post("/submit", [isAuthenticated, validateSchema(ApplicationInterviewDataSchema)], async (req: Request, res: Response) => {
+router.post("/submit", [isAuthenticated, hasRoles, validateSchema(ApplicationInterviewDataSchema)], async (req: Request, res: Response) => {
     try {
         const interviewResponse = req.body as ApplicationInterviewData;
 
@@ -27,13 +27,6 @@ router.post("/submit", [isAuthenticated, validateSchema(ApplicationInterviewData
         const interviewerDoc = await userCollection.doc(interviewResponse.interviewerId).get()
         if (!interviewerDoc.exists) {
             res.status(400).send("Interviewer does not exist")
-            return
-        }
-
-        // verify that the reviewer had role of reviewer or super-reviewer
-        const interviewerDocData = interviewerDoc.data() as UserProfile
-        if (interviewerDocData.role !== "reviewer" && interviewerDocData.role !== "super-reviewer") {
-            res.status(403).send("User is not a reviewer or super-reviewer")
             return
         }
 
@@ -58,7 +51,7 @@ router.post("/submit", [isAuthenticated, validateSchema(ApplicationInterviewData
     }
 });
 
-router.get("/:id", [isAuthenticated], async (req: Request, res: Response) => {
+router.get("/:id", [isAuthenticated, hasRoles], async (req: Request, res: Response) => {
     try {
         const interviewId = req.params.id as string
 
@@ -67,14 +60,6 @@ router.get("/:id", [isAuthenticated], async (req: Request, res: Response) => {
         // make connections to database
         const interviewDataCollection = db.collection(INTERVIEW_DATA_COLLECTION) as CollectionReference<ApplicationInterviewData>
         const userCollection = db.collection(USER_COLLECTION) as CollectionReference<UserProfile>
-
-        // verify that the user has role of reviewer or super-reviewer
-        const userDoc = await userCollection.doc(req.token?.uid!).get()
-        const userDocData = userDoc.data() as UserProfile
-        if (userDocData.role !== "reviewer" && userDocData.role !== "super-reviewer") {
-            res.status(403).send("User is not a reviewer or super-reviewer")
-            return
-        }
 
         const interviewDoc = await interviewDataCollection.doc(interviewId).get()
 

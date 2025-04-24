@@ -13,7 +13,7 @@ const router = Router();
 const REVIEW_DATA_COLLECTION = "application-reviews"
 const USER_COLLECTION = "users"
 
-router.post("/submit", [isAuthenticated, validateSchema(ApplicationReviewDataSchema)], async (req: Request, res: Response) => {
+router.post("/submit", [isAuthenticated, hasRoles, validateSchema(ApplicationReviewDataSchema)], async (req: Request, res: Response) => {
     try {
         const reviewResponse = req.body as ApplicationReviewData;
 
@@ -27,13 +27,6 @@ router.post("/submit", [isAuthenticated, validateSchema(ApplicationReviewDataSch
         const reviewerDoc = await userCollection.doc(reviewResponse.reviewerId).get()
         if (!reviewerDoc.exists) {
             res.status(400).send("Reviewer does not exist")
-            return
-        }
-
-        // verify that the reviewer had role of reviewer or super-reviewer
-        const reviewerDocData = reviewerDoc.data() as UserProfile
-        if (reviewerDocData.role !== "reviewer" && reviewerDocData.role !== "super-reviewer") {
-            res.status(403).send("User is not a reviewer or super-reviewer")
             return
         }
 
@@ -58,7 +51,7 @@ router.post("/submit", [isAuthenticated, validateSchema(ApplicationReviewDataSch
     }
 });
 
-router.get("/:id", [isAuthenticated], async (req: Request, res: Response) => {
+router.get("/:id", [isAuthenticated, hasRoles], async (req: Request, res: Response) => {
     try {
         const reviewId = req.params.id as string
 
@@ -67,14 +60,6 @@ router.get("/:id", [isAuthenticated], async (req: Request, res: Response) => {
         // make connections to database
         const reviewDataCollection = db.collection(REVIEW_DATA_COLLECTION) as CollectionReference<ApplicationReviewData>
         const userCollection = db.collection(USER_COLLECTION) as CollectionReference<UserProfile>
-
-        // verify that the user has role of reviewer or super-reviewer
-        const userDoc = await userCollection.doc(req.token?.uid!).get()
-        const userDocData = userDoc.data() as UserProfile
-        if (userDocData.role !== "reviewer" && userDocData.role !== "super-reviewer") {
-            res.status(403).send("User is not a reviewer or super-reviewer")
-            return
-        }
 
         const reviewDoc = await reviewDataCollection.doc(reviewId).get()
 
