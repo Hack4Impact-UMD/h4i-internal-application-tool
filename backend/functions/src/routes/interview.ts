@@ -3,11 +3,11 @@ import { db } from "../index";
 import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { validateSchema } from "../middleware/validation";
-import { CollectionReference } from "firebase-admin/firestore";
 import { InterviewData, interviewSchema, updateInterviewSchema } from "../models/appInterview";
 
 const router = Router();
-const INTERVIEW_COLLECTION = db.collection("interview-data") as CollectionReference<InterviewData>;
+const INTERVIEW_COLLECTION = "interview-data";
+
 
 // Create a new interview
 router.post("/", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(interviewSchema)], async (req: Request, res: Response) => {
@@ -23,7 +23,7 @@ router.post("/", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), val
             updatedAt: timestamp
         };
 
-        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const docRef = db.collection(INTERVIEW_COLLECTION).doc(interviewId);
         const existing = await docRef.get();
 
         if (existing.exists) {
@@ -47,7 +47,7 @@ router.put("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), v
     const updates = req.body;
 
     try {
-        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const docRef = db.collection(INTERVIEW_COLLECTION).doc(interviewId);
         const existing = await docRef.get();
 
         if (!existing.exists) {
@@ -76,7 +76,7 @@ router.delete("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"])
     const interviewId = req.params.id;
 
     try {
-        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const docRef = db.collection(INTERVIEW_COLLECTION).doc(interviewId);
         const existing = await docRef.get();
 
         if (!existing.exists) {
