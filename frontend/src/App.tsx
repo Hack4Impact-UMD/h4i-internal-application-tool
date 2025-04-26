@@ -1,6 +1,5 @@
 import {
   Navigate,
-  NavLink,
   Route,
   Routes,
 } from "react-router-dom";
@@ -19,34 +18,15 @@ import Layout from "./pages/Layout";
 import RequireNoAuth from "./components/auth/RequireNoAuth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  ApplicationForm,
   PermissionRole,
 } from "./types/types";
-import ApplicationPreview from "./components/form/ApplicationPreview";
-import { useEffect, useState } from "react";
-import { getAllForms } from "./services/applicationFormsService";
-import ApplicationCard from "./components/form/ApplicationCard";
 import ApplicationPage from "./pages/ApplicationPage";
 import Overview from "./pages/Overview/Overview";
+import FormProvider from "./components/providers/FormProvider";
 
 const queryClient = new QueryClient();
 
 function App() {
-  const [forms, setForms] = useState<ApplicationForm[]>([]);
-
-  useEffect(() => {
-    async function fetchForms() {
-      try {
-        const fetchedForms = await getAllForms();
-        setForms(fetchedForms);
-        console.log("Fetched forms");
-      } catch (error) {
-        console.error("Error fetching forms", error);
-      }
-    }
-
-    fetchForms();
-  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -66,22 +46,16 @@ function App() {
                   </RequireAuth>
                 }
               ></Route>
-              {/* <Route */}
-              {/*   path="/apply/:formId" */}
-              {/*   element={ */}
-              {/*     <RequireAuth> */}
-              {/*       <ApplicationPreview /> */}
-              {/*     </RequireAuth> */}
-              {/*   } */}
-              {/* /> */}
-              <Route
-                path="/apply/:applicationResponseId/:sectionId"
-                element={
-                  <RequireAuth>
-                    <ApplicationPage />
-                  </RequireAuth>
-                }
-              />
+              <Route element={<FormProvider />}>
+                <Route
+                  path="/apply/:formId/:sectionId"
+                  element={
+                    <RequireAuth>
+                      <ApplicationPage />
+                    </RequireAuth>
+                  }
+                />
+              </Route>
               <Route
                 path="/apply/status"
                 element={

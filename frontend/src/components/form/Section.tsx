@@ -8,7 +8,7 @@ import Button from '../Button';
 interface SectionProps {
   section: ApplicationSection;
   responses: QuestionResponse[];
-  onChangeResponse: (questionId: string, value: any) => void;
+  onChangeResponse: (questionId: string, value: string | string[]) => void;
   onNext: () => void;
   onPrevious: () => void;
   isNextDisabled: boolean;

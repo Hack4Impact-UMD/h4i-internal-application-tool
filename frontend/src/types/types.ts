@@ -74,12 +74,11 @@ export interface ApplicationResponse {
     id: string;
     userId: string;
     applicationFormId: string;
-    applicationResponseId: string;
     rolesApplied: ApplicantRole[];
     sectionResponses: SectionResponse[];
     status: ApplicationStatus;
     dateSubmitted: Timestamp;
-    decisionLetterId: string;
+    decisionLetterId?: string;
 }
 
 // stores data about the content of the application forms
@@ -125,7 +124,7 @@ export interface ApplicationSection {
 }
 
 export interface SectionResponse {
-    sectionName: string;
+    sectionId: string;
     questions: QuestionResponse[];
 }
 

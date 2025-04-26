@@ -1,46 +1,22 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import Section from "../components/form/Section";
 import Timeline from "../components/status/Timeline"; // Import Timeline component
-import { ApplicationForm, QuestionType, SectionResponse } from "../types/types";
-import { getApplicationResponseByFormId } from "../services/applicationResponsesService";
+import useForm from "../hooks/useForm";
 
 const ApplicationPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
 
-  const form = location.state?.form as ApplicationForm;
+  const { form, response, updateQuestionResponse } = useForm()
+
+  if (!form) return <p>Failed to fetch form...</p>
+  if (!response) return <p>Failed to fetch response...</p>
+
   const applicationResponseId = location.state?.applicationResponseId;
   const userId = location.state?.userId;
 
-  const [responses, setResponses] = useState<SectionResponse[]>(
-    form.sections.map((section) => ({
-      sectionName: section.sectionName,
-      questions: section.questions.map((question) => ({
-        questionId: question.questionId,
-        questionType: question.questionType,
-        applicationFormId: form.id,
-        response:
-          question.questionType === QuestionType.MultipleSelect ? [] : "",
-      })),
-    }))
-  );
 
-  useEffect(() => {
-    const initializeApplicationResponse = async () => {
-      const existingApplicationResponse = await getApplicationResponseByFormId(
-        userId,
-        form.id
-      );
-      setResponses(
-        (existingApplicationResponse?.sectionResponses as SectionResponse[]) ||
-        responses
-      );
-    };
-
-    initializeApplicationResponse();
-  }, [applicationResponseId, form, userId]);
 
   const currentSection = form.sections.find(
     (section) => section.sectionId === sectionId
@@ -52,22 +28,8 @@ const ApplicationPage: React.FC = () => {
     );
   }
 
-  const handleResponseChange = (questionId: string, value: any) => {
-    console.log(`Response change ${questionId}: ${value}`)
-    setResponses((prev) =>
-      prev.map((sectionResponse) =>
-        sectionResponse.sectionName === currentSection.sectionName
-          ? {
-            ...sectionResponse,
-            questions: sectionResponse.questions.map((questionResponse) =>
-              questionResponse.questionId === questionId
-                ? { ...questionResponse, response: value }
-                : questionResponse
-            ),
-          }
-          : sectionResponse
-      )
-    );
+  const handleResponseChange = (questionId: string, value: string | string[]) => {
+    updateQuestionResponse(currentSection.sectionId, questionId, value)
   };
 
   const handleNext = () => {
@@ -76,7 +38,7 @@ const ApplicationPage: React.FC = () => {
     );
     if (currentIndex < form.sections.length - 1) {
       const nextSectionId = form.sections[currentIndex + 1].sectionId;
-      navigate(`/apply/${applicationResponseId}/${nextSectionId}`, {
+      navigate(`/apply/${form.id}/${nextSectionId}`, {
         state: { form, applicationResponseId, userId },
       });
     }
@@ -88,7 +50,7 @@ const ApplicationPage: React.FC = () => {
     );
     if (currentIndex > 0) {
       const previousSectionId = form.sections[currentIndex - 1].sectionId;
-      navigate(`/apply/${applicationResponseId}/${previousSectionId}`, {
+      navigate(`/apply/${form.id}/${previousSectionId}`, {
         state: { form, applicationResponseId, userId },
       });
     }
@@ -110,7 +72,7 @@ const ApplicationPage: React.FC = () => {
         maxStepReached={currentStep}
         onStepClick={(index) => {
           const targetSectionId = form.sections[index].sectionId;
-          navigate(`/apply/${applicationResponseId}/${targetSectionId}`, {
+          navigate(`/apply/${form.id}/${targetSectionId}`, {
             state: { form, applicationResponseId, userId },
           });
         }}
@@ -119,8 +81,8 @@ const ApplicationPage: React.FC = () => {
       <Section
         section={currentSection}
         responses={
-          responses.find(
-            (response) => response.sectionName === currentSection.sectionName
+          response.sectionResponses.find(
+            (sectionResp) => sectionResp.sectionId === currentSection.sectionId
           )?.questions || []
         }
         onChangeResponse={handleResponseChange}
