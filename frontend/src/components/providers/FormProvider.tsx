@@ -5,14 +5,15 @@ import Loading from "../Loading"
 import { useEffect, useState } from "react"
 import { ApplicationResponse } from "../../types/types"
 import { useMutation } from "@tanstack/react-query"
+import { saveApplicationResponse } from "../../services/applicationResponsesService"
 
 export default function FormProvider() {
   const { formId } = useParams()
   const { data, isLoading, error } = useApplicationResponseAndForm(formId)
   const saveMutation = useMutation({
-    mutationFn: async (reponseId: string) => {
+    mutationFn: async (r: ApplicationResponse) => {
       //TODO: hook this up 
-      console.log("saving...")
+      return await saveApplicationResponse(r)
     }
   })
   const [response, setResponse] = useState<ApplicationResponse | undefined>()
@@ -35,7 +36,6 @@ export default function FormProvider() {
 
   function updateQuestionResponse(sectionId: string, questionId: string, resp: string | string[]) {
     if (response) {
-      console.log("Update:", sectionId, questionId, resp)
       setResponse({
         ...response,
         sectionResponses: (response.sectionResponses.map(s => {

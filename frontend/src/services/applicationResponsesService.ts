@@ -1,13 +1,18 @@
 import { setDoc, Timestamp, arrayUnion, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { API_URL, db } from "../config/firebase";
 import {
   ApplicationForm,
   ApplicationResponse,
   SectionResponse,
 } from "../types/types";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
+
+export async function saveApplicationResponse(response: ApplicationResponse) {
+  await axios.put(API_URL + "/")
+}
 
 export async function getApplicationResponses(
   userId: string

@@ -13,10 +13,10 @@ export const firebaseConfig = {
   measurementId: "G-FS170BH0BM"
 };
 
-export const apiUrl = import.meta.env.MODE == "development" ? "http://127.0.0.1:5001/h4i-applications/us-central1/api" : "THE PROD URL"
+export const API_URL = import.meta.env.MODE == "development" ? "http://127.0.0.1:5001/h4i-applications/us-central1/api" : "THE PROD URL"
 
 console.log(`CURRENTLY RUNNING IN ${import.meta.env.MODE} MODE!`)
-console.log(`Using base API URL at: ${apiUrl}`)
+console.log(`Using base API URL at: ${API_URL}`)
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
