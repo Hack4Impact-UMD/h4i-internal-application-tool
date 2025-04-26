@@ -122,19 +122,6 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route
-                path="/admin/applicant/:id"
-                element={
-                  <RequireAuth
-                    requireRoles={[
-                      PermissionRole.Reviewer,
-                      PermissionRole.SuperReviewer,
-                    ]}
-                  >
-                    <ApplicantDetails />
-                  </RequireAuth>
-                }
-              />
             </Route>
           </Route>
           <Route
