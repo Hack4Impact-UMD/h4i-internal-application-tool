@@ -91,6 +91,13 @@ function App() {
                   </RequireAuth>
                 }
               />
+              <Route path="/apply/success" 
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <AppSubmitted />
+                  </RequireAuth>
+                }  
+              />
               <Route
                 path="/apply/decision"
                 element={
@@ -158,7 +165,6 @@ function App() {
               </RequireNoAuth>
             }
           />
-          <Route path="/success" element={<AppSubmitted/>}></Route>
           <Route path="/forgotpassword" element={<ForgotPass />}></Route>
           <Route path="/resetpassword" element={<ResetPassCard />}></Route>
         </Routes>
