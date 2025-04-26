@@ -28,6 +28,7 @@ import { getAllForms } from "./services/applicationFormsService";
 import ApplicationCard from "./components/form/ApplicationCard";
 import ApplicationPage from "./pages/ApplicationPage";
 import Overview from "./pages/Overview/Overview";
+import AppSubmitted from "./pages/AppSubmitted/AppSubmitted";
 
 const queryClient = new QueryClient();
 
@@ -157,6 +158,7 @@ function App() {
               </RequireNoAuth>
             }
           />
+          <Route path="/success" element={<AppSubmitted/>}></Route>
           <Route path="/forgotpassword" element={<ForgotPass />}></Route>
           <Route path="/resetpassword" element={<ResetPassCard />}></Route>
         </Routes>
