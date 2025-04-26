@@ -1,4 +1,4 @@
-import { ApplicationSection, QuestionType, OptionQuestion, QuestionResponse } from '../../types/types';
+import { ApplicationSection, QuestionType, OptionQuestion, QuestionResponse, RoleSelectQuestion } from '../../types/types';
 import OneLineInput from './OneLineInput';
 import LongFormInput from './LongFormInput';
 import ChoiceGroup from './ChoiceGroup';
@@ -67,7 +67,17 @@ const Section: React.FC<SectionProps> = ({
                   options={(question as OptionQuestion).questionOptions ?? []}
                   onOptionSelect={(value) => onChangeResponse(question.questionId, value ?? [])}
                 />
-              ) : null}
+              ) : (question.questionType == QuestionType.RoleSelect) ?
+                <ChoiceGroup
+                  question={"Which roles do you want to apply for?"}
+                  isRequired={true}
+                  label={"You are encouraged to apply to multiple roles at the same time if you believe they are a good fit."}
+                  value={typeof response === 'string' ? response : ""}
+                  options={Object.keys((question as RoleSelectQuestion).roleSections)}
+                  onOptionSelect={(value) => {
+                    console.log("hello there:", value)
+                  }}
+                /> : null}
             </div>
           );
         })}

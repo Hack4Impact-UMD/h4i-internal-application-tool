@@ -3,7 +3,7 @@ import { FormContext } from "../../contexts/formContext"
 import { useApplicationResponseAndForm } from "../../hooks/useApplicationResponses"
 import Loading from "../Loading"
 import { useEffect, useState } from "react"
-import { ApplicationResponse } from "../../types/types"
+import { ApplicantRole, ApplicationResponse } from "../../types/types"
 import { useMutation } from "@tanstack/react-query"
 import { saveApplicationResponse } from "../../services/applicationResponsesService"
 
@@ -17,6 +17,7 @@ export default function FormProvider() {
     }
   })
   const [response, setResponse] = useState<ApplicationResponse | undefined>()
+  const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>()
 
   useEffect(() => {
     if (data != undefined) {
@@ -62,7 +63,7 @@ export default function FormProvider() {
   }
 
   async function save() {
-    await saveMutation.mutateAsync(dbResponse.id)
+    await saveMutation.mutateAsync(dbResponse)
   }
 
 

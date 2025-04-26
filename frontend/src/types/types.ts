@@ -40,6 +40,7 @@ export enum QuestionType {
     MultipleChoice = 'multiple-choice',
     MultipleSelect = 'multiple-select',
     FileUpload = 'file-upload',
+    RoleSelect = "role-select"
 }
 
 export type UserProfile = {
@@ -159,6 +160,13 @@ export interface OptionQuestion extends ApplicationQuestion {
 export interface FileUploadQuestion extends ApplicationQuestion {
     questionType: QuestionType.FileUpload;
     fileId: string;
+}
+
+export interface RoleSelectQuestion extends ApplicationQuestion {
+    questionType: QuestionType.RoleSelect,
+    roleSections: {
+        [role in ApplicantRole]: string //map a role to it's form section, used to decide which sections to display
+    }
 }
 
 // type MockData = {
