@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import OptionButton from "../components/form/OptionButton";
-import Button from "../components/Button";
 import Timeline from "../components/status/Timeline";
+import ReviewCard from "../components/reviewer/ReviewCard";
 
 const engineerQuestions = [
   {
@@ -126,7 +125,7 @@ export default function Review() {
         currentStep={2}
         maxStepReached={2}
       />
-      <form onSubmit={handleSubmit} className="flex flex-row max-w-6xl mx-auto mt-8 gap-8">
+      <div onSubmit={handleSubmit} className="flex flex-row max-w-6xl mx-auto mt-8 gap-8">
         {/* Left column: Responsibilities and Questions */}
         <div className="flex-1 flex flex-col gap-6">
           <div className="bg-white rounded-lg p-6">
@@ -220,60 +219,8 @@ export default function Review() {
           </div>
         </div>
         {/* Right column: Review Rubric and Scores */}
-        <div className="w-[475px] flex-shrink-0">
-          <div className="bg-white rounded-lg p-6 flex flex-col gap-6 border border-gray-400">
-            <div className="mb-2">
-              <h2 className="text-xl font-semibold">Engineer Review</h2>
-              <a href="#" className="text-blue-600 underline text-sm block mt-1">Rubric link</a>
-            </div>
-            {reviewCategories.map((cat) => (
-              <div key={cat.key} className="mb-0">
-                <div className="font-medium mb-0">{cat.label}</div>
-                <div className="flex flex-row gap-4 bg-gray-100 rounded-xl p-3">
-                  {[0, 1, 2, 3, 4].map((score) => (
-                    <ScoreButton
-                      key={score}
-                      score={score}
-                      selected={scores[cat.key as ScoreKey] === score}
-                      onClick={() => handleScoreChange(cat.key as ScoreKey, score)}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div className="text-xl font-semibold mt-4 mb-2">Technical Assessment Scores</div>
-            {assessmentCategories.map((cat) => (
-              <div key={cat.key} className="mb-0">
-                <div className="font-medium mb-0">{cat.label}</div>
-                <div className="flex flex-row gap-4 bg-gray-100 rounded-xl p-3">
-                  {[0, 1, 2, 3, 4].map((score) => (
-                    <ScoreButton
-                      key={score}
-                      score={score}
-                      selected={scores[cat.key as ScoreKey] === score}
-                      onClick={() => handleScoreChange(cat.key as ScoreKey, score)}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div className="mt-4">
-              <div className="font-medium mb-1">Additional notes</div>
-              <textarea
-                className="p-3 w-full h-32 border border-gray-400 focus:border-gray-400 focus:outline-none bg-transparent text-base rounded-md resize-none"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </div>
-            <button
-              type="submit"
-              className="h-8 rounded-full text-sm font-semibold px-3 bg-blue-500 text-white flex items-center justify-center mt-4 self-start"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </form>
+        <ReviewCard></ReviewCard>
+      </div>
     </div>
   );
 }
