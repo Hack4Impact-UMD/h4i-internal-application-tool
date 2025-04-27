@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OptionButton from "./OptionButton";
 import { twMerge } from "tailwind-merge";
 
 interface ChoiceGroupProps {
     question: string,
     isRequired?: boolean,
-    label?: string
+    label?: string,
+    value: string,
     options: string[],
     onOptionSelect: (selected: string | null) => void,
     className?: string
 }
-const ChoiceGroup: React.FC<ChoiceGroupProps> = ({ question, isRequired, label, options, onOptionSelect, className = "" }) => {
-    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+const ChoiceGroup: React.FC<ChoiceGroupProps> = ({ question, isRequired, label, value, options, onOptionSelect, className = "" }) => {
+    const [selectedOption, setSelectedOption] = useState<string | null>(value);
+
+     useEffect(() => {
+            setSelectedOption(value);
+     });
 
     const handleSelectClick = (optionName: string) => {
         setSelectedOption(optionName);
@@ -23,7 +28,6 @@ const ChoiceGroup: React.FC<ChoiceGroupProps> = ({ question, isRequired, label, 
             <span className="text-xl font-normal">
                 {question} {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
             </span>
-
             <span className="mb-2.5 text-xs font-light">{label}</span>
             <div>
                 {options.map((option) => (
