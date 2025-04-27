@@ -16,6 +16,8 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({ question, isRequire
     const [selectedOptions, setSelectedOptions] = useState<string[]>(value || []);
 
     const handleSelectClick = (optionName: string) => {
+        //NOTE: filtering by name isn't ideal, there might end up being a case
+        //where duplicate names are needed. Better to assign an id (index would suffice)
         const updatedSelections = selectedOptions.includes(optionName)
             ? selectedOptions.filter((option) => option !== optionName)
             : [...selectedOptions, optionName];

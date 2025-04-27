@@ -68,11 +68,11 @@ const Section: React.FC<SectionProps> = ({
                   onOptionSelect={(value) => onChangeResponse(question.questionId, value ?? [])}
                 />
               ) : (question.questionType == QuestionType.RoleSelect) ?
-                <ChoiceGroup
+                <MultiSelectGroup
                   question={"Which roles do you want to apply for?"}
                   isRequired={true}
                   label={"You are encouraged to apply to multiple roles at the same time if you believe they are a good fit."}
-                  value={typeof response === 'string' ? response : ""}
+                  value={Array.isArray(response) ? response : []}
                   options={Object.keys((question as RoleSelectQuestion).roleSections)}
                   onOptionSelect={(value) => {
                     console.log("hello there:", value)

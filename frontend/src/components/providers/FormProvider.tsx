@@ -17,7 +17,7 @@ export default function FormProvider() {
     }
   })
   const [response, setResponse] = useState<ApplicationResponse | undefined>()
-  const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>()
+  const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>([])
 
   useEffect(() => {
     if (data != undefined) {
@@ -72,7 +72,9 @@ export default function FormProvider() {
       form: form,
       response: response,
       updateQuestionResponse: updateQuestionResponse,
-      save: save
+      save: save,
+      selectedRoles: selectedRoles,
+      setSelectedRoles: setSelectedRoles
     }}
   >
     <Outlet />

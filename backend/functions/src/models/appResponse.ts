@@ -81,3 +81,22 @@ export const appResponseFormSchema = z.object({
 });
 
 export type AppResponseForm = z.infer<typeof appResponseFormSchema>;
+
+export const SectionResponseSchema = z.object({
+  sectionName: z.string().nonempty(),
+  questions: z.array(z.object({
+    applicationFormId: z.string().nonempty(),
+    questionId: z.string().nonempty(),
+    questionType: z.nativeEnum(QuestionType),
+  })),
+});
+
+export const newApplicationResponseSchema = z.object({
+  id: z.string().nonempty(),
+  userId: z.string().nonempty(),
+  applicationFormId: z.string().nonempty(),
+  rolesApplied: z.array(z.nativeEnum(ApplicantRole)),
+  sectionResponses: z.array(SectionResponseSchema),
+});
+
+export type ApplicationResponseInput = z.infer<typeof newApplicationResponseSchema>;
