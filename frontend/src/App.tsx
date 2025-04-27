@@ -7,7 +7,6 @@ import {
 import StatusPage from "./components/status/StatusPage";
 import DecisionPage from "./components/status/DecisionPage";
 import ReviewDashboard from "./pages/ReviewDashboard";
-import ApplicantDetails from "./pages/ApplicantDetails";
 import SignUp from "./pages/SignUp/SignUp";
 import LogIn from "./pages/LogIn/LogIn";
 import ForgotPass from "./pages/ForgotPass/ForgotPass";
@@ -23,6 +22,7 @@ import {
 import ApplicationPage from "./pages/ApplicationPage";
 import Overview from "./pages/Overview/Overview";
 import FormProvider from "./components/providers/FormProvider";
+import AppSubmitted from "./pages/AppSubmitted/AppSubmitted";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +64,13 @@ function App() {
                   </RequireAuth>
                 }
               />
+              <Route path="/apply/success"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <AppSubmitted />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/apply/decision"
                 element={
@@ -85,19 +92,6 @@ function App() {
                     ]}
                   >
                     <ReviewDashboard></ReviewDashboard>
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/admin/applicant/:id"
-                element={
-                  <RequireAuth
-                    requireRoles={[
-                      PermissionRole.Reviewer,
-                      PermissionRole.SuperReviewer,
-                    ]}
-                  >
-                    <ApplicantDetails />
                   </RequireAuth>
                 }
               />
