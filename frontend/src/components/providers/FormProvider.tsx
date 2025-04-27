@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "react-router-dom"
+import { Outlet, useBlocker, useParams } from "react-router-dom"
 import { FormContext } from "../../contexts/formContext"
 import { useApplicationResponseAndForm } from "../../hooks/useApplicationResponses"
 import Loading from "../Loading"
@@ -7,6 +7,7 @@ import { ApplicantRole, ApplicationResponse } from "../../types/types"
 import { useMutation } from "@tanstack/react-query"
 import { saveApplicationResponse } from "../../services/applicationResponsesService"
 import { useAuth } from "../../hooks/useAuth"
+import { Timestamp } from "firebase/firestore/lite"
 
 export default function FormProvider() {
   const { formId } = useParams()
@@ -21,9 +22,12 @@ export default function FormProvider() {
   const [response, setResponse] = useState<ApplicationResponse | undefined>()
   const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>([])
 
+
   useEffect(() => {
     if (data != undefined) {
-      if (response == undefined) {
+      console.log(`local response time: ${response?.dateSubmitted.toMillis()}, server time ${data.response.dateSubmitted.toMillis()}`)
+
+      if (response == undefined || response.dateSubmitted.toMillis() < data.response.dateSubmitted.toMillis()) {
         // first load, use existing response data on firebase
         setResponse(data.response)
       }
@@ -36,6 +40,13 @@ export default function FormProvider() {
     const ref = setTimeout(() => {
       save()
     }, SAVE_DEBOUNCE_SEC * 1000)
+
+    // if (response) {
+    //   setResponse({
+    //     ...response,
+    //     dateSubmitted: Timestamp.now()
+    //   })
+    // }
 
     return () => {
       clearTimeout(ref)
@@ -53,6 +64,7 @@ export default function FormProvider() {
     if (response) {
       setResponse({
         ...response,
+        dateSubmitted: Timestamp.now(),
         sectionResponses: (response.sectionResponses.map(s => {
           if (s.sectionId == sectionId) {
             return {

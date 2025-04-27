@@ -17,6 +17,7 @@ export enum QuestionType {
   MultipleChoice = "multiple-choice",
   MultipleSelect = "multiple-select",
   FileUpload = "file-upload",
+  RoleSelect = "role-select"
 }
 
 export interface QuestionResponse {

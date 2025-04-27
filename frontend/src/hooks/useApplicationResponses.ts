@@ -24,6 +24,7 @@ export function useApplicationResponseAndForm(formId?: string) {
     queryKey: ["responses", user?.id, formId],
     gcTime: 0,
     enabled: !isLoading && isAuthed && formId != undefined,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const form = await getApplicationForm(formId!);
       console.log(`form found: ${form.semester}`)
