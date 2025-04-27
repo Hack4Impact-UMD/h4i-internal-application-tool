@@ -28,6 +28,7 @@ import { getAllForms } from "./services/applicationFormsService";
 import ApplicationCard from "./components/form/ApplicationCard";
 import ApplicationPage from "./pages/ApplicationPage";
 import Overview from "./pages/Overview/Overview";
+import AppSubmitted from "./pages/AppSubmitted/AppSubmitted";
 
 const queryClient = new QueryClient();
 
@@ -90,6 +91,13 @@ function App() {
                   </RequireAuth>
                 }
               />
+              <Route path="/apply/success" 
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <AppSubmitted />
+                  </RequireAuth>
+                }  
+              />
               <Route
                 path="/apply/decision"
                 element={
@@ -111,19 +119,6 @@ function App() {
                     ]}
                   >
                     <ReviewDashboard></ReviewDashboard>
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/admin/applicant/:id"
-                element={
-                  <RequireAuth
-                    requireRoles={[
-                      PermissionRole.Reviewer,
-                      PermissionRole.SuperReviewer,
-                    ]}
-                  >
-                    <ApplicantDetails />
                   </RequireAuth>
                 }
               />
