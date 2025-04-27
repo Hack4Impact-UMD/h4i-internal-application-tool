@@ -45,7 +45,7 @@ const ApplicationPage: React.FC = () => {
         state: { form, applicationResponseId, userId },
       });
     } else {
-
+      //TODO: Handle Submit
     }
   };
 
