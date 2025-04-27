@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { z } from "zod";
 
 // specific application
@@ -26,7 +27,7 @@ export interface QuestionResponse {
 }
 
 export interface SectionResponse {
-  sectionName: string;
+  sectionId: string;
   questions: QuestionResponse[];
 }
 
@@ -41,12 +42,11 @@ export interface ApplicationResponse {
   id: string;
   userId: string;
   applicationFormId: string;
-  applicationResponseId: string;
   rolesApplied: ApplicantRole[];
   sectionResponses: SectionResponse[];
   status: ApplicationStatus;
-  dateSubmitted: string;
-  decisionLetterId: string;
+  dateSubmitted: Timestamp;
+  decisionLetterId?: string;
 }
 
 export const appResponseFormSchema = z.object({
@@ -82,21 +82,23 @@ export const appResponseFormSchema = z.object({
 
 export type AppResponseForm = z.infer<typeof appResponseFormSchema>;
 
+export const QuestionResponseSchema = z.object({
+  questionType: z.nativeEnum(QuestionType),
+  applicationFormId: z.string().nonempty(),
+  questionId: z.string().nonempty(),
+  response: z.string().or(z.array(z.string()))
+})
+
 export const SectionResponseSchema = z.object({
-  sectionName: z.string().nonempty(),
-  questions: z.array(z.object({
-    applicationFormId: z.string().nonempty(),
-    questionId: z.string().nonempty(),
-    questionType: z.nativeEnum(QuestionType),
-  })),
+  sectionId: z.string().nonempty(),
+  questions: z.array(QuestionResponseSchema),
 });
 
-export const newApplicationResponseSchema = z.object({
+export const ApplicationResponseSchema = z.object({
   id: z.string().nonempty(),
-  userId: z.string().nonempty(),
   applicationFormId: z.string().nonempty(),
   rolesApplied: z.array(z.nativeEnum(ApplicantRole)),
   sectionResponses: z.array(SectionResponseSchema),
 });
 
-export type ApplicationResponseInput = z.infer<typeof newApplicationResponseSchema>;
+export type ApplicationResponseInput = z.infer<typeof ApplicationResponseSchema>;

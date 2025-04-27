@@ -2,8 +2,11 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 import Section from "../components/form/Section";
 import Timeline from "../components/status/Timeline"; // Import Timeline component
 import useForm from "../hooks/useForm";
+import Button from "../components/Button";
 
 const ApplicationPage: React.FC = () => {
+  //TODO: Some parts of this component should be moved to the form provider,
+  //including the timeline. Form provider should basically serve as the layout shell
   const location = useLocation();
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
@@ -41,6 +44,8 @@ const ApplicationPage: React.FC = () => {
       navigate(`/apply/${form.id}/${nextSectionId}`, {
         state: { form, applicationResponseId, userId },
       });
+    } else {
+
     }
   };
 
@@ -67,6 +72,7 @@ const ApplicationPage: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center p-3">
       <Timeline
+        className={"py-5"}
         items={timelineItems}
         currentStep={currentStep}
         maxStepReached={currentStep}
@@ -77,23 +83,35 @@ const ApplicationPage: React.FC = () => {
           });
         }}
       />
+      <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
 
-      <Section
-        section={currentSection}
-        responses={
-          response.sectionResponses.find(
-            (sectionResp) => sectionResp.sectionId === currentSection.sectionId
-          )?.questions || []
-        }
-        onChangeResponse={handleResponseChange}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        isNextDisabled={
-          form.sections[form.sections.length - 1].sectionId === sectionId
-        }
-        isPreviousDisabled={form.sections[0].sectionId === sectionId}
-      />
+        <Section
+          section={currentSection}
+          responses={
+            response.sectionResponses.find(
+              (sectionResp) => sectionResp.sectionId === currentSection.sectionId
+            )?.questions || []
+          }
+          onChangeResponse={handleResponseChange}
+        />
 
+        <div className="flex gap-1 mt-4">
+          <Button
+            className="border border-gray-400 text-black bg-white hover:bg-gray-100 px-8 rounded-full"
+            enabled={form.sections[0].sectionId !== sectionId}
+            onClick={handlePrevious}
+          > Back </Button>
+          {
+            form.sections[form.sections.length - 1].sectionId !== sectionId ?
+              <Button
+                className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
+                enabled={form.sections[form.sections.length - 1].sectionId !== sectionId}
+                onClick={handleNext}
+              > Next </Button> :
+              <Button className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"> Submit </Button>
+          }
+        </div>
+      </div>
     </div>
   );
 };

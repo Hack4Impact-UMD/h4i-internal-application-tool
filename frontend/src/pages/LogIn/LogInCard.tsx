@@ -136,10 +136,9 @@ export default function LogInCard() {
       </div>
       <Button
         className="w-full h-[73px]"
-        label="Log In"
         enabled={!loginMutation.isPending && isFormValid}
         type="submit"
-      />
+      > Log In </Button>
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-gray-500 mt-1">

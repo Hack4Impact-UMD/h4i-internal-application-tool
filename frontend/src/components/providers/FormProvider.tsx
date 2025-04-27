@@ -6,14 +6,16 @@ import { useEffect, useState } from "react"
 import { ApplicantRole, ApplicationResponse } from "../../types/types"
 import { useMutation } from "@tanstack/react-query"
 import { saveApplicationResponse } from "../../services/applicationResponsesService"
+import { useAuth } from "../../hooks/useAuth"
 
 export default function FormProvider() {
   const { formId } = useParams()
+  const { token } = useAuth()
   const { data, isLoading, error } = useApplicationResponseAndForm(formId)
   const saveMutation = useMutation({
     mutationFn: async (r: ApplicationResponse) => {
-      //TODO: hook this up 
-      return await saveApplicationResponse(r)
+      if (token)
+        return await saveApplicationResponse(r, token)
     }
   })
   const [response, setResponse] = useState<ApplicationResponse | undefined>()
@@ -28,9 +30,21 @@ export default function FormProvider() {
     }
   }, [data, response])
 
+  const SAVE_DEBOUNCE_SEC = 2;
+
+  useEffect(() => {
+    const ref = setTimeout(() => {
+      save()
+    }, SAVE_DEBOUNCE_SEC * 1000)
+
+    return () => {
+      clearTimeout(ref)
+    }
+  }, [response])
+
   if (isLoading) return <Loading />
   if (error) return <p>Something went wrong: {error.message}</p>
-  if (data == undefined) return <p>No data</p>
+  if (data == undefined) return <Loading />
 
   const { form, response: dbResponse } = data!;
 
@@ -63,7 +77,8 @@ export default function FormProvider() {
   }
 
   async function save() {
-    await saveMutation.mutateAsync(dbResponse)
+    if (response)
+      await saveMutation.mutateAsync(response)
   }
 
 
@@ -77,6 +92,18 @@ export default function FormProvider() {
       setSelectedRoles: setSelectedRoles
     }}
   >
+    <div className="w-full flex flex-row p-2 items-center justify-center">
+      <div className="w-full max-w-3xl flex flex-row items-center">
+        <div className="grow">
+          {saveMutation.isPending ? <p className="pulse font-bold">Saving...</p>
+            : (saveMutation.submittedAt != 0) ? <p>Last save: {new Date(saveMutation.submittedAt).toLocaleTimeString()}</p>
+              : (saveMutation.isError) ? <p className="text-red-500">Failed to save your application</p>
+                : <p>Form not yet saved!</p>
+          }
+        </div>
+        <button disabled={saveMutation.isPending} className="cursor-pointer p-2 bg-blue disabled:bg-blue/50 disabled:cursor-wait rounded text-white" onClick={save}>Save application</button>
+      </div>
+    </div>
     <Outlet />
   </FormContext.Provider>
 }

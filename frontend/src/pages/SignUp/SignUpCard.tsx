@@ -180,10 +180,9 @@ export default function SignUpCard() {
       </div>
       <Button
         className="w-full h-[73px]"
-        label={"Create account"}
         enabled={!signUpMutation.isPending && isFormValid}
         type="submit"
-      />
+      > Create Account </Button>
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-darkgray mt-1">

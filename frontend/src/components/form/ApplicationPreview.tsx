@@ -1,8 +1,8 @@
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import Button from "../Button";
-import { ApplicationForm} from "../../types/types";
-import { fetchOrCreateApplicationResponse} from "../../services/applicationResponsesService";
+import { ApplicationForm } from "../../types/types";
+import { fetchOrCreateApplicationResponse } from "../../services/applicationResponsesService";
 
 interface ApplicationPreviewProps {
   form?: ApplicationForm;
@@ -22,15 +22,15 @@ const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ form }) => {
       console.error("User not authenticated");
       return;
     }
-  
+
     try {
       if (!finalForm?.id) {
         console.error("Form ID is undefined");
         return;
       }
-  
+
       const applicationResponseId = await fetchOrCreateApplicationResponse(user.id, finalForm);
-  
+
       const firstSectionId = finalForm.sections[0]?.sectionId || "section-1";
       navigate(`/apply/${applicationResponseId}/${firstSectionId}`, {
         state: { form: finalForm, applicationResponseId, userId: user.id },
@@ -60,11 +60,10 @@ const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ form }) => {
           <div>
             <Button
               className="bg-[#202020] py-1.5 px-9 rounded-3xl text-md font-bold"
-              label="Apply"
               enabled={finalForm.isActive}
               type="button"
               onClick={handleApply}
-            />
+            > Apply </Button>
           </div>
         </div>
 

@@ -10,8 +10,20 @@ import axios from "axios";
 
 export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
 
-export async function saveApplicationResponse(response: ApplicationResponse) {
-  await axios.put(API_URL + "/")
+export async function saveApplicationResponse(response: ApplicationResponse, token: string) {
+  console.log("saving...")
+  console.log(response)
+  const res = await axios.put(API_URL + "/application/save/" + response.id, response, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  const data = res.data as ApplicationResponse
+
+  console.log(data)
+
+  return data
 }
 
 export async function getApplicationResponses(

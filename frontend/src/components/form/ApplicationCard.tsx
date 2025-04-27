@@ -51,11 +51,9 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
       <p className="text-sm text-gray-600">Due: <b>{formattedDueDate}</b></p>
       <Button
         className="bg-[#202020] py-1.5 px-9 rounded-3xl text-md font-bold"
-        label="Apply"
         type="button"
-        enabled={true}
         onClick={handleApply}
-      />
+      > Apply </Button>
     </div>
   );
 };
