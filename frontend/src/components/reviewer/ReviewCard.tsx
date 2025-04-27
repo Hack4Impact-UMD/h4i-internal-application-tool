@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 const reviewCategories = [
   {
@@ -52,9 +53,14 @@ export default function ReviewCard() {
     setScores((prev) => ({ ...prev, [key]: value }));
   };
 
+  const hasMissingScores = Object.values(scores).some(v => v === null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Submit logic here
+    if (hasMissingScores) {
+      alert("Please give every category a score before submitting.");
+      return;
+    }
     alert("Submitted!");
   };
 
@@ -119,10 +125,14 @@ export default function ReviewCard() {
               />
             </div>
             <button
-              type="submit" 
-              className="h-8 rounded-full text-sm font-semibold px-3 bg-blue-500 text-white flex items-center justify-center mt-4 self-start"
+            type="submit"
+            disabled={hasMissingScores}
+            className={twMerge(
+                "h-8 rounded-full text-sm font-semibold px-3 flex items-center justify-center mt-4 self-start",
+                hasMissingScores ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 text-white"
+            )}
             >
-              Submit
+            Submit
             </button>
           </div>
         </div>

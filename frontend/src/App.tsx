@@ -29,7 +29,6 @@ import ApplicationCard from "./components/form/ApplicationCard";
 import ApplicationPage from "./pages/ApplicationPage";
 import Overview from "./pages/Overview/Overview";
 import AppSubmitted from "./pages/AppSubmitted/AppSubmitted";
-import Review from "./pages/Review.tsx"
 
 const queryClient = new QueryClient();
 
@@ -54,12 +53,107 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Routes>
-          <Route 
-            path="/review"
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Navigate to="/login" />} />
+
+            <Route path="/apply">
+              <Route
+                index
+                element={
+                  <RequireAuth>
+                    <div>
+                      <Overview />
+                    </div>
+                  </RequireAuth>
+                }
+              ></Route>
+              {/* <Route */}
+              {/*   path="/apply/:formId" */}
+              {/*   element={ */}
+              {/*     <RequireAuth> */}
+              {/*       <ApplicationPreview /> */}
+              {/*     </RequireAuth> */}
+              {/*   } */}
+              {/* /> */}
+              <Route
+                path="/apply/:applicationResponseId/:sectionId"
+                element={
+                  <RequireAuth>
+                    <ApplicationPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/apply/status"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <StatusPage />
+                  </RequireAuth>
+                }
+              />
+              <Route path="/apply/success" 
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <AppSubmitted />
+                  </RequireAuth>
+                }  
+              />
+              <Route
+                path="/apply/decision"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <DecisionPage />
+                  </RequireAuth>
+                }
+              ></Route>
+            </Route>
+
+            <Route path="/admin">
+              <Route
+                index
+                element={
+                  <RequireAuth
+                    requireRoles={[
+                      PermissionRole.Reviewer,
+                      PermissionRole.SuperReviewer,
+                    ]}
+                  >
+                    <ReviewDashboard></ReviewDashboard>
+                  </RequireAuth>
+                }
+              />
+            </Route>
+          </Route>
+          <Route
+            path="/signup"
             element={
-                <Review />
+              <RequireNoAuth
+                redirect={{
+                  applicant: "/apply",
+                  reviewer: "/admin",
+                  "super-reviewer": "/admin",
+                }}
+              >
+                <SignUp />
+              </RequireNoAuth>
             }
           />
+          <Route
+            path="/login"
+            element={
+              <RequireNoAuth
+                redirect={{
+                  applicant: "/apply",
+                  reviewer: "/admin",
+                  "super-reviewer": "/admin",
+                }}
+              >
+                <LogIn />
+              </RequireNoAuth>
+            }
+          />
+          <Route path="/forgotpassword" element={<ForgotPass />}></Route>
+          <Route path="/resetpassword" element={<ResetPassCard />}></Route>
         </Routes>
       </AuthProvider>
     </QueryClientProvider>
