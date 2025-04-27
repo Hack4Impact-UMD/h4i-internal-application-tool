@@ -22,7 +22,7 @@ export function useApplicationResponseAndForm(formId?: string) {
 
   return useQuery<{ form: ApplicationForm, response: ApplicationResponse }>({
     queryKey: ["responses", user?.id, formId],
-    gcTime: 0,
+    gcTime: 0, //don't cache, should never return an old application state when called!
     enabled: !isLoading && isAuthed && formId != undefined,
     queryFn: async () => {
       const form = await getApplicationForm(formId!);
