@@ -13,6 +13,7 @@ interface SectionProps {
   onPrevious: () => void;
   isNextDisabled: boolean;
   isPreviousDisabled: boolean;
+  nextSectionName: string;
 }
 
 const Section: React.FC<SectionProps> = ({
@@ -23,6 +24,7 @@ const Section: React.FC<SectionProps> = ({
   onPrevious,
   isNextDisabled,
   isPreviousDisabled,
+  nextSectionName
 }) => {
   return (
     <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
@@ -82,7 +84,7 @@ const Section: React.FC<SectionProps> = ({
         />
         <Button
           className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-          label="Next >"
+          label={<span className='font-bold'>Next: {nextSectionName} {">"}</span>}
           enabled={!isNextDisabled}
           onClick={onNext}
         />

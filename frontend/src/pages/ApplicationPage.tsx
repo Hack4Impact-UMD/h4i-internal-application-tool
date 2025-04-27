@@ -130,6 +130,12 @@ const ApplicationPage: React.FC = () => {
           form.sections[form.sections.length - 1].sectionId === sectionId
         }
         isPreviousDisabled={form.sections[0].sectionId === sectionId}
+        nextSectionName={
+          form.sections.find(
+            (section, index) =>
+              index === form.sections.findIndex((s) => s.sectionId === sectionId) + 1
+          )?.sectionName || "Preview Submission"
+        }
       />
 
     </div>
