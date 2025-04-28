@@ -4,6 +4,7 @@ import { Timestamp } from 'firebase/firestore';
 // import FilterBar from '../components/reviewer/FilterBar'; 
 import DataTable from '../components/reviewer/DataTable';
 import './ReviewDashboard.css';
+import { getAllApplicants } from '../services/applicantService';
 
 export type ReviewerScores = {
   interestInClubScore: number | null;
@@ -55,128 +56,135 @@ function ReviewDashboard() {
   };
 
   useEffect(() => {
-    const dummy: Omit<Applicant, 'reviewerScore1' | 'reviewerScore2' | 'averageScore'>[] = [
-      {
-        id: '1',
-        name: 'America Ferrera',
-        email: 'america@example.com',
-        status: 'submitted',
-        dateApplied: Timestamp.fromDate(new Date('2024-03-01')),
-        roles: ['designer'],
-        reviewer1: 'Hannah Montana',
-        reviewer2: 'Elon Tusk',
-        reviewer1Scores: {
-          interestInClubScore: 3.5,
-          interestInSocialGoodScore: 3.8,
-          technicalExpertiseScore: 3.7,
-        },
-        reviewer2Scores: {
-          interestInClubScore: 3.8,
-          interestInSocialGoodScore: 3.5,
-          technicalExpertiseScore: 4.0,
-        },
-      },
-      {
-        id: '2',
-        name: 'Bob Dylan',
-        email: 'bob@example.com',
-        status: 'in-review',
-        dateApplied: Timestamp.fromDate(new Date('2024-02-15')),
-        roles: ['technical lead'],
-        reviewer1: 'Kate Bush',
-        reviewer2: 'Beyoncé Knowles',
-        reviewer1Scores: {
-          interestInClubScore: 4.0,
-          interestInSocialGoodScore: 3.9,
-          technicalExpertiseScore: 3.5,
-        },
-        reviewer2Scores: {
-          interestInClubScore: 3.7,
-          interestInSocialGoodScore: 4.0,
-          technicalExpertiseScore: 3.8,
-        },
-      },
-      {
-        id: '3',
-        name: 'Cara Delevingne',
-        email: 'cara@example.com',
-        status: 'in-review',
-        dateApplied: Timestamp.fromDate(new Date('2025-02-13')),
-        roles: ['bootcamp'],
-        reviewer1: 'Ryan Gosling',
-        reviewer2: 'Natalie Portman',
-        reviewer1Scores: {
-          interestInClubScore: 3.9,
-          interestInSocialGoodScore: 3.6,
-        },
-        reviewer2Scores: {
-          interestInClubScore: 3.7,
-          interestInSocialGoodScore: 3.8,
-        },
-      },
-      {
-        id: '4',
-        name: 'Drew Starkey',
-        email: 'drew@example.com',
-        status: 'in-review',
-        dateApplied: Timestamp.fromDate(new Date('2024-12-25')),
-        roles: ['product manager'],
-        reviewer1: 'Tom Riddle',
-        reviewer2: 'Taylor Swift',
-        reviewer1Scores: {
-          interestInClubScore: 4.0,
-          interestInSocialGoodScore: 3.8,
-          technicalExpertiseScore: 3.9,
-        },
-        reviewer2Scores: {
-          interestInClubScore: 3.9,
-          interestInSocialGoodScore: 4.0,
-          technicalExpertiseScore: 4.1,
-        },
-      },
-      {
-        id: '5',
-        name: 'Eva Green',
-        email: 'eva@example.com',
-        status: 'in-review',
-        dateApplied: Timestamp.fromDate(new Date('2024-11-11')),
-        roles: ['engineer'],
-        reviewer1: 'John Snow',
-        reviewer2: 'Arya Stark',
-        reviewer1Scores: {
-          interestInClubScore: 3.5,
-          interestInSocialGoodScore: 3.9,
-          technicalExpertiseScore: 4.2,
-        },
-        reviewer2Scores: {
-          interestInClubScore: 3.7,
-          interestInSocialGoodScore: 4.0,
-          technicalExpertiseScore: 4.1,
-        },
-      },
-      {
-        id: '6',
-        name: 'Finn Wolfhard',
-        email: 'finn@example.com',
-        status: 'submitted',
-        dateApplied: Timestamp.fromDate(new Date('2025-01-02')),
-        roles: ['sourcing'],
-        reviewer1: 'Dua Lipa',
-        reviewer2: 'Shawn Mendes',
-        reviewer1Scores: {
-          interestInClubScore: 4.2,
-          interestInSocialGoodScore: 4.1,
-          npoExpertiseScore: 3.8,
-          communicationScore: 3.9,
-        },
-        reviewer2Scores: {
-          interestInClubScore: 4.0,
-          interestInSocialGoodScore: 4.2,
-          npoExpertiseScore: 4.0,
-          communicationScore: 4.1,
-        },
-      },
-    ];
+    // let dummy: Omit<Applicant, 'reviewerScore1' | 'reviewerScore2' | 'averageScore'>[] = [];
+    let dummy: Applicant[]=[];
+    async function putApplicants(){
+      const apps = await getAllApplicants() as unknown as Applicant[];
+      dummy=apps
+    }
+    putApplicants()
+    // let dummy = getAllApplicants();
+    //   {
+    //     id: '1',
+    //     name: 'America Ferrera',
+    //     email: 'america@example.com',
+    //     status: 'submitted',
+    //     dateApplied: Timestamp.fromDate(new Date('2024-03-01')),
+    //     roles: ['designer'],
+    //     reviewer1: 'Hannah Montana',
+    //     reviewer2: 'Elon Tusk',
+    //     reviewer1Scores: {
+    //       interestInClubScore: 3.5,
+    //       interestInSocialGoodScore: 3.8,
+    //       technicalExpertiseScore: 3.7,
+    //     },
+    //     reviewer2Scores: {
+    //       interestInClubScore: 3.8,
+    //       interestInSocialGoodScore: 3.5,
+    //       technicalExpertiseScore: 4.0,
+    //     },
+    //   },
+    //   {
+    //     id: '2',
+    //     name: 'Bob Dylan',
+    //     email: 'bob@example.com',
+    //     status: 'in-review',
+    //     dateApplied: Timestamp.fromDate(new Date('2024-02-15')),
+    //     roles: ['technical lead'],
+    //     reviewer1: 'Kate Bush',
+    //     reviewer2: 'Beyoncé Knowles',
+    //     reviewer1Scores: {
+    //       interestInClubScore: 4.0,
+    //       interestInSocialGoodScore: 3.9,
+    //       technicalExpertiseScore: 3.5,
+    //     },
+    //     reviewer2Scores: {
+    //       interestInClubScore: 3.7,
+    //       interestInSocialGoodScore: 4.0,
+    //       technicalExpertiseScore: 3.8,
+    //     },
+    //   },
+    //   {
+    //     id: '3',
+    //     name: 'Cara Delevingne',
+    //     email: 'cara@example.com',
+    //     status: 'in-review',
+    //     dateApplied: Timestamp.fromDate(new Date('2025-02-13')),
+    //     roles: ['bootcamp'],
+    //     reviewer1: 'Ryan Gosling',
+    //     reviewer2: 'Natalie Portman',
+    //     reviewer1Scores: {
+    //       interestInClubScore: 3.9,
+    //       interestInSocialGoodScore: 3.6,
+    //     },
+    //     reviewer2Scores: {
+    //       interestInClubScore: 3.7,
+    //       interestInSocialGoodScore: 3.8,
+    //     },
+    //   },
+    //   {
+    //     id: '4',
+    //     name: 'Drew Starkey',
+    //     email: 'drew@example.com',
+    //     status: 'in-review',
+    //     dateApplied: Timestamp.fromDate(new Date('2024-12-25')),
+    //     roles: ['product manager'],
+    //     reviewer1: 'Tom Riddle',
+    //     reviewer2: 'Taylor Swift',
+    //     reviewer1Scores: {
+    //       interestInClubScore: 4.0,
+    //       interestInSocialGoodScore: 3.8,
+    //       technicalExpertiseScore: 3.9,
+    //     },
+    //     reviewer2Scores: {
+    //       interestInClubScore: 3.9,
+    //       interestInSocialGoodScore: 4.0,
+    //       technicalExpertiseScore: 4.1,
+    //     },
+    //   },
+    //   {
+    //     id: '5',
+    //     name: 'Eva Green',
+    //     email: 'eva@example.com',
+    //     status: 'in-review',
+    //     dateApplied: Timestamp.fromDate(new Date('2024-11-11')),
+    //     roles: ['engineer'],
+    //     reviewer1: 'John Snow',
+    //     reviewer2: 'Arya Stark',
+    //     reviewer1Scores: {
+    //       interestInClubScore: 3.5,
+    //       interestInSocialGoodScore: 3.9,
+    //       technicalExpertiseScore: 4.2,
+    //     },
+    //     reviewer2Scores: {
+    //       interestInClubScore: 3.7,
+    //       interestInSocialGoodScore: 4.0,
+    //       technicalExpertiseScore: 4.1,
+    //     },
+    //   },
+    //   {
+    //     id: '6',
+    //     name: 'Finn Wolfhard',
+    //     email: 'finn@example.com',
+    //     status: 'submitted',
+    //     dateApplied: Timestamp.fromDate(new Date('2025-01-02')),
+    //     roles: ['sourcing'],
+    //     reviewer1: 'Dua Lipa',
+    //     reviewer2: 'Shawn Mendes',
+    //     reviewer1Scores: {
+    //       interestInClubScore: 4.2,
+    //       interestInSocialGoodScore: 4.1,
+    //       npoExpertiseScore: 3.8,
+    //       communicationScore: 3.9,
+    //     },
+    //     reviewer2Scores: {
+    //       interestInClubScore: 4.0,
+    //       interestInSocialGoodScore: 4.2,
+    //       npoExpertiseScore: 4.0,
+    //       communicationScore: 4.1,
+    //     },
+    //   },
+    // ];
 
     const withScores = dummy.map(app => {
       const role = app.roles[0];
