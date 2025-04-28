@@ -46,13 +46,15 @@ function App() {
                   </RequireAuth>
                 }
               ></Route>
-              <Route element={<FormProvider />}>
+              <Route element={
+                <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                  <FormProvider />
+                </RequireAuth>
+              }>
                 <Route
                   path="/apply/:formId/:sectionId"
                   element={
-                    <RequireAuth>
-                      <ApplicationPage />
-                    </RequireAuth>
+                    <ApplicationPage />
                   }
                 />
               </Route>

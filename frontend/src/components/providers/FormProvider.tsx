@@ -157,7 +157,7 @@ export default function FormProvider() {
       <div className="w-full max-w-3xl flex flex-row items-center">
         <div className="grow">
           {saveMutation.isPending ? <p className="pulse font-bold">Saving...</p>
-            : (saveMutation.submittedAt != 0) ? <p>Last save: {new Date(saveMutation.submittedAt).toLocaleTimeString()}</p>
+            : (saveMutation.submittedAt != 0 && !saveMutation.isError) ? <p>Last save: {new Date(saveMutation.submittedAt).toLocaleTimeString()}</p>
               : (saveMutation.isError) ? <p className="text-red-500">Failed to save your application</p>
                 : <p>Form not yet saved!</p>
           }
