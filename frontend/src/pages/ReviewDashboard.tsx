@@ -314,7 +314,13 @@ function ReviewDashboard() {
       <div className="flex justify-between items-center mb-6 gap-4">
         <div className="flex gap-4">
           <button style={getTabButtonStyle('all')} onClick={() => setCurrentTab('all')}>
-            All Applications
+            Under Review
+          </button>
+          <button
+            style={getTabButtonStyle('qualified')}
+            onClick={() => setCurrentTab('qualified')}
+          >
+            Qualified
           </button>
           <button
             style={getTabButtonStyle('interviewers')}
@@ -341,6 +347,7 @@ function ReviewDashboard() {
         />
       </div>
 
+      {(currentTab==="all" || currentTab==="qualified") &&(
       <div className="flex flex-wrap gap-6 mb-6">
         {topBoxStyles.map((box, idx) => {
           const isSelected = selectedRole.toLowerCase() === box.roleKey.toLowerCase();
@@ -368,11 +375,9 @@ function ReviewDashboard() {
             </button>
           );
         })}
-      </div>
-
+      </div>)}
       {loading ? <p>Loading applicants...</p> : <DataTable applicants={filteredApplicants} />}
     </div>
-  );
-}
+  )};
 
 export default ReviewDashboard;
