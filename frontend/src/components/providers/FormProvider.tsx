@@ -1,16 +1,16 @@
-import { Outlet, useBlocker, useParams } from "react-router-dom"
+import { Outlet, useParams } from "react-router-dom"
 import { FormContext } from "../../contexts/formContext"
 import { useApplicationResponseAndForm } from "../../hooks/useApplicationResponses"
 import Loading from "../Loading"
-import { useEffect, useState } from "react"
-import { ApplicantRole, ApplicationResponse } from "../../types/types"
+import { useEffect, useMemo, useState } from "react"
+import { ApplicantRole, ApplicationResponse, QuestionResponse, QuestionType, RoleSelectQuestion } from "../../types/types"
 import { useMutation } from "@tanstack/react-query"
 import { saveApplicationResponse } from "../../services/applicationResponsesService"
 import { useAuth } from "../../hooks/useAuth"
 import { Timestamp } from "firebase/firestore/lite"
 
 export default function FormProvider() {
-  const { formId } = useParams()
+  const { formId, sectionId } = useParams()
   const { token } = useAuth()
   const { data, isLoading, error } = useApplicationResponseAndForm(formId)
   const saveMutation = useMutation({
@@ -21,6 +21,25 @@ export default function FormProvider() {
   })
   const [response, setResponse] = useState<ApplicationResponse | undefined>()
   const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>([])
+
+  useEffect(() => {
+    if (data) {
+      let rsid = undefined;
+      for (const section of data.form.sections) {
+        const rs = section.questions.find(q => q.questionType == QuestionType.RoleSelect)
+        if (rs != undefined) {
+          rsid = rs.questionId
+        }
+      }
+
+      for (const section of data.response.sectionResponses) {
+        const roleResponse = section.questions.find(q => q.questionId == rsid) as QuestionResponse | undefined
+        if (roleResponse) {
+          setSelectedRoles(roleResponse.response as ApplicantRole[])
+        }
+      }
+    }
+  }, [data])
 
 
   useEffect(() => {
@@ -52,6 +71,18 @@ export default function FormProvider() {
       clearTimeout(ref)
     }
   }, [response])
+
+  const sections = useMemo(() => {
+    if (!data) return []
+    return data.form.sections.filter((s) => {
+      if (s.forRoles) {
+        return (s.forRoles.filter(r => selectedRoles.includes(r)).length > 0)
+      } else {
+        return true;
+      }
+    }).map(s => s.sectionId)
+  }, [selectedRoles, data])
+
 
   if (isLoading) return <Loading />
   if (error) return <p>Something went wrong: {error.message}</p>
@@ -101,7 +132,25 @@ export default function FormProvider() {
       updateQuestionResponse: updateQuestionResponse,
       save: save,
       selectedRoles: selectedRoles,
-      setSelectedRoles: setSelectedRoles
+      setSelectedRoles: setSelectedRoles,
+      availableSections: sections,
+      currentSection: sectionId,
+      nextSection: () => {
+        const idx = sections.findIndex(s => s == sectionId);
+        if (idx >= 0 && idx + 1 < sections.length) {
+          return sections[idx + 1]
+        } else {
+          return sectionId ?? ""
+        }
+      },
+      previousSection: () => {
+        const idx = sections.findIndex(s => s == sectionId);
+        if (idx >= 1) {
+          return sections[idx - 1]
+        } else {
+          return sectionId ?? ""
+        }
+      }
     }}
   >
     <div className="w-full flex flex-row p-2 items-center justify-center">

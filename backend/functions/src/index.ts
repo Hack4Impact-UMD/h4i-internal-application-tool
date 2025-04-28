@@ -23,7 +23,7 @@ export const db = admin.firestore()
 //   logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
 // });
-//
-// uploadMockData();
+
+// uploadMockData()
 
 exports.api = onRequest(app);

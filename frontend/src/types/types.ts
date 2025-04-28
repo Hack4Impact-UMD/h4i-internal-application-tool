@@ -121,6 +121,7 @@ export interface ApplicationInterviewData {
 export interface ApplicationSection {
     sectionId: string, //no spaces, alphanumeric, unique (used as a route param)
     sectionName: string;
+    forRoles?: ApplicantRole[]; // some sections are role specific
     questions: ApplicationQuestion[];
 }
 
@@ -179,7 +180,7 @@ export interface RoleSelectQuestion extends ApplicationQuestion {
 //         {
 //             id: "",
 //             description: "A sample form for testing",
-//             dueDate: new Date(2026, 1, 1, 0, 0, 0, 0),
+//             dueDate: Timestamp.now(),
 //             isActive: true,
 //             semester: "Fall 2025",
 //             sections: [
@@ -209,10 +210,60 @@ export interface RoleSelectQuestion extends ApplicationQuestion {
 //                             questionOptions: ["Option 1", "Option 2", "Option 3"],
 //                             questionType: QuestionType.MultipleSelect,
 //                             secondaryText: "Some secondary text..."
-//                         } as OptionQuestion
+//                         } as OptionQuestion,
+//                         {
+//                             questionId: "q4",
+//                             optional: false,
+//                             questionText: "Select a role",
+//                             roleSections: {
+//                                 "bootcamp": "role-bc",
+//                                 "sourcing": "role-source",
+//                                 "tech-lead": "role-tl",
+//                                 "engineer": "role-engineer",
+//                                 "designer": "role-design",
+//                                 "product": "role-product"
+//                             }
+//                         } as RoleSelectQuestion
 //                     ],
-//                     sectionName: "Section 1"
-//                 }
+//                     sectionName: "Section 1",
+//                     sectionId: "section-1"
+//                 },
+//                 {
+//                     sectionId: "role-bc",
+//                     sectionName: "Bootcamp Section",
+//                     questions: [],
+//                     forRoles: [ApplicantRole.Bootcamp]
+//                 },
+//                 {
+//                     sectionId: "role-source",
+//                     sectionName: "Sourcing Section",
+//                     questions: [],
+//                     forRoles: [ApplicantRole.Sourcing]
+//                 },
+//                 {
+//                     sectionId: "role-tl",
+//                     sectionName: "Tech Lead Section",
+//                     questions: [],
+//                     forRoles: [ApplicantRole.TechLead]
+//                 },
+//                 {
+//                     sectionId: "role-engineer",
+//                     sectionName: "Engineer Section",
+//                     questions: [],
+//                     forRoles: [ApplicantRole.Engineer]
+//                 },
+//                 {
+//                     sectionId: "role-design",
+//                     sectionName: "Design Section",
+//                     questions: [],
+//                     forRoles: [ApplicantRole.Designer]
+//                 },
+//                 {
+//                     sectionId: "role-product",
+//                     sectionName: "Product Section",
+//                     questions: [],
+//                     forRoles: [ApplicantRole.Product]
+//                 },
 //             ]
 //         }
 //     ]

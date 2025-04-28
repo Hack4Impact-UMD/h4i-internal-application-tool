@@ -3,6 +3,7 @@ import Section from "../components/form/Section";
 import Timeline from "../components/status/Timeline"; // Import Timeline component
 import useForm from "../hooks/useForm";
 import Button from "../components/Button";
+import { useMemo } from "react";
 
 const ApplicationPage: React.FC = () => {
   //TODO: Some parts of this component should be moved to the form provider,
@@ -11,7 +12,13 @@ const ApplicationPage: React.FC = () => {
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
 
-  const { form, response, updateQuestionResponse } = useForm()
+  const { form, response, updateQuestionResponse, availableSections, previousSection, nextSection } = useForm()
+
+  const timelineItems = useMemo(() => form?.sections.filter((section) => availableSections.includes(section.sectionId)).map(s => {
+    return {
+      label: s.sectionName
+    }
+  }), [availableSections, form]);
 
   if (!form) return <p>Failed to fetch form...</p>
   if (!response) return <p>Failed to fetch response...</p>
@@ -36,44 +43,31 @@ const ApplicationPage: React.FC = () => {
   };
 
   const handleNext = () => {
-    const currentIndex = form.sections.findIndex(
-      (section) => section.sectionId === sectionId
+    const currentIndex = availableSections.findIndex(
+      (section) => section === sectionId
     );
     if (currentIndex < form.sections.length - 1) {
-      const nextSectionId = form.sections[currentIndex + 1].sectionId;
-      navigate(`/apply/${form.id}/${nextSectionId}`, {
-        state: { form, applicationResponseId, userId },
-      });
+      navigate(`/apply/${form.id}/${nextSection()}`);
     } else {
       //TODO: Handle Submit
     }
   };
 
   const handlePrevious = () => {
-    const currentIndex = form.sections.findIndex(
-      (section) => section.sectionId === sectionId
-    );
-    if (currentIndex > 0) {
-      const previousSectionId = form.sections[currentIndex - 1].sectionId;
-      navigate(`/apply/${form.id}/${previousSectionId}`, {
-        state: { form, applicationResponseId, userId },
-      });
-    }
+    console.log(previousSection())
+    navigate(`/apply/${form.id}/${previousSection()}`);
   };
 
-  const timelineItems = form.sections.map((section) => ({
-    label: section.sectionName,
-  }));
 
-  const currentStep = form.sections.findIndex(
-    (section) => section.sectionId === sectionId
+  const currentStep = availableSections.findIndex(
+    (section) => section === sectionId
   );
 
   return (
     <div className="flex flex-col items-center justify-center p-3">
       <Timeline
         className={"py-5"}
-        items={timelineItems}
+        items={timelineItems ?? []}
         currentStep={currentStep}
         maxStepReached={currentStep}
         onStepClick={(index) => {
@@ -102,7 +96,7 @@ const ApplicationPage: React.FC = () => {
             onClick={handlePrevious}
           > Back </Button>
           {
-            form.sections[form.sections.length - 1].sectionId !== sectionId ?
+            availableSections[availableSections.length - 1] !== sectionId ?
               <Button
                 className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
                 enabled={form.sections[form.sections.length - 1].sectionId !== sectionId}

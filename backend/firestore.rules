@@ -45,6 +45,13 @@ service cloud.firestore {
       allow delete: if isSuperReviewer();
     }
 
+    match /application-forms {
+      allow read: if isAuthed();
+      allow create: if isSuperReviewer();
+      allow update: if isSuperReviewer();
+      allow delete: if isSuperReviewer();
+    }
+
     match /application-responses/{response_id} {
       allow read: if isReviewer() || hasID(resource.data.userId); // currently all reviewers can read all apps
       allow create: if isApplicant();

@@ -8,11 +8,18 @@ export type FormProviderContext = {
   save: () => Promise<void>,
   selectedRoles: ApplicantRole[],
   setSelectedRoles: (roles: ApplicantRole[]) => void
+  availableSections: string[],
+  currentSection?: string
+  nextSection: () => string
+  previousSection: () => string
 }
 
 export const FormContext = createContext<FormProviderContext>({
   updateQuestionResponse: () => { },
   save: async () => { },
   selectedRoles: [],
-  setSelectedRoles: () => { }
+  setSelectedRoles: () => { },
+  availableSections: [],
+  nextSection: () => "",
+  previousSection: () => ""
 })

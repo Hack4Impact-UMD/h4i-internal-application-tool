@@ -82,7 +82,7 @@ export async function fetchOrCreateApplicationResponse(
       questionId: question.questionId,
       questionType: question.questionType,
       applicationFormId: form.id,
-      response: question.questionType === "multiple-select" ? [] : "",
+      response: (question.questionType === "multiple-select" || question.questionType == "role-select") ? [] : "",
     })),
   }));
 
