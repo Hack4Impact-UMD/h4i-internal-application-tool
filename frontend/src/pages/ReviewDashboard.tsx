@@ -59,10 +59,43 @@ function ReviewDashboard() {
     // let dummy: Omit<Applicant, 'reviewerScore1' | 'reviewerScore2' | 'averageScore'>[] = [];
     let dummy: Applicant[]=[];
     async function putApplicants(){
-      const apps = await getAllApplicants() as unknown as Applicant[];
-      dummy=apps
+      try{
+        const apps = await getAllApplicants() as unknown as Applicant[];
+        if (apps.length>0){
+          dummy=apps
+        }
+        else{
+          dummy =[
+          {
+            id: '1',
+            name: 'Unknown',
+            email: 'america@example.com',
+            status: 'submitted',
+            dateApplied: Timestamp.fromDate(new Date('2024-03-01')),
+            roles: ['engineer'],
+            reviewer1: 'One',
+            reviewer2: 'Two',
+            reviewer1Scores: {
+              interestInClubScore: 0.0,
+              interestInSocialGoodScore: 0.0,
+              technicalExpertiseScore: 0.0,
+            },
+            reviewer2Scores: {
+              interestInClubScore: 0.0,
+              interestInSocialGoodScore: 0.0,
+              technicalExpertiseScore: 0.0,
+            },
+            reviewerScore1: null,
+            reviewerScore2: null,
+            averageScore: null
+          }]
+        }
+      } catch{
+        console.error("Error fetching applicants:");
+      }
     }
-    putApplicants()
+        
+    putApplicants();
     // let dummy = getAllApplicants();
     //   {
     //     id: '1',
