@@ -6,12 +6,14 @@ interface OneLineInputProps {
     isRequired?: boolean,
     value: string,
     onChange: (value: string) => void,
-    className?: string
+    className?: string,
+    minWords?: number;
+    maxWords?: number;
 }
 
 const OneLineInput: React.FC<OneLineInputProps> = ({ question, label, isRequired, value, onChange, className = "" }) => {
     return (
-        <main className={twMerge("flex flex-col min-w-60", className)}>
+        <main className={twMerge("flex flex-col max-w-60", className)}>
             <span className="text-xl font-normal">
                 {question} {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
             </span>
