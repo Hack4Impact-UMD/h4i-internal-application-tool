@@ -55,7 +55,7 @@ service cloud.firestore {
     match /application-responses/{response_id} {
       allow read: if isReviewer() || hasID(resource.data.userId); // currently all reviewers can read all apps
       allow create: if isApplicant();
-      allow update: if isApplicant() && hasID(resource.data.userId);
+      allow update: if isApplicant() && hasID(resource.data.userId); //IMPORTANT TODO: editing should only be allowed before due date and if status == InProgress
       allow delete: if (isApplicant() && hasID(resource.data.userId)) || isSuperReviewer();
     }
     

@@ -1,9 +1,9 @@
-import { Outlet, useParams } from "react-router-dom"
+import { Navigate, Outlet, useParams } from "react-router-dom"
 import { FormContext } from "../../contexts/formContext"
 import { useApplicationResponseAndForm } from "../../hooks/useApplicationResponses"
 import Loading from "../Loading"
 import { useEffect, useMemo, useState } from "react"
-import { ApplicantRole, ApplicationResponse, QuestionResponse, QuestionType, RoleSelectQuestion } from "../../types/types"
+import { ApplicantRole, ApplicationResponse, ApplicationStatus, QuestionResponse, QuestionType, RoleSelectQuestion } from "../../types/types"
 import { useMutation } from "@tanstack/react-query"
 import { saveApplicationResponse } from "../../services/applicationResponsesService"
 import { useAuth } from "../../hooks/useAuth"
@@ -87,8 +87,12 @@ export default function FormProvider() {
   if (isLoading) return <Loading />
   if (error) return <p>Something went wrong: {error.message}</p>
   if (data == undefined) return <Loading />
-
   const { form, response: dbResponse } = data!;
+
+  //NOTE: not sure if it's a good idea to put this here, this component might need to be reused
+  //in a case where in-progress apps are allowed. But for now, this is the best way to prevent
+  //editing apps that are complete!
+  if (dbResponse.status != ApplicationStatus.InProgress) return <Navigate to="/apply/status" />
 
 
   function updateQuestionResponse(sectionId: string, questionId: string, resp: string | string[]) {

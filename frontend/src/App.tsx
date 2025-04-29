@@ -40,9 +40,7 @@ function App() {
                 index
                 element={
                   <RequireAuth>
-                    <div>
-                      <Overview />
-                    </div>
+                    <Overview />
                   </RequireAuth>
                 }
               ></Route>

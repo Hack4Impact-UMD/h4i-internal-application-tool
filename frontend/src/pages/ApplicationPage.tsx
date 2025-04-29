@@ -8,7 +8,7 @@ import { useMemo } from "react";
 const ApplicationPage: React.FC = () => {
   //TODO: Some parts of this component should be moved to the form provider,
   //including the timeline. Form provider should basically serve as the layout shell
-  const location = useLocation();
+  // const location = useLocation();
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
 
@@ -23,8 +23,8 @@ const ApplicationPage: React.FC = () => {
   if (!form) return <p>Failed to fetch form...</p>
   if (!response) return <p>Failed to fetch response...</p>
 
-  const applicationResponseId = location.state?.applicationResponseId;
-  const userId = location.state?.userId;
+  // const applicationResponseId = location.state?.applicationResponseId;
+  // const userId = location.state?.userId;
 
 
 
