@@ -52,7 +52,7 @@ function App() {
                 </RequireAuth>
               }>
                 <Route
-                  path="/apply/:formId/:sectionId"
+                  path="/apply/f/:formId/:sectionId"
                   element={
                     <ApplicationPage />
                   }

@@ -14,7 +14,7 @@ const Overview: React.FC = () => {
 
     async function handleApply() {
         setWait(true);
-        navigate(`/apply/${form!.id}/${form!.sections[0].sectionId}`)
+        navigate(`/apply/f/${form!.id}/${form!.sections[0].sectionId}`)
         setWait(false);
 
     }

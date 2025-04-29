@@ -47,7 +47,7 @@ const ApplicationPage: React.FC = () => {
       (section) => section === sectionId
     );
     if (currentIndex < form.sections.length - 1) {
-      navigate(`/apply/${form.id}/${nextSection()}`);
+      navigate(`/apply/f/${form.id}/${nextSection()}`);
     } else {
       //TODO: Handle Submit
     }
@@ -55,7 +55,7 @@ const ApplicationPage: React.FC = () => {
 
   const handlePrevious = () => {
     console.log(previousSection())
-    navigate(`/apply/${form.id}/${previousSection()}`);
+    navigate(`/apply/f/${form.id}/${previousSection()}`);
   };
 
 
@@ -72,9 +72,7 @@ const ApplicationPage: React.FC = () => {
         maxStepReached={currentStep}
         onStepClick={(index) => {
           const targetSectionId = form.sections[index].sectionId;
-          navigate(`/apply/${form.id}/${targetSectionId}`, {
-            state: { form, applicationResponseId, userId },
-          });
+          navigate(`/apply/f/${form.id}/${targetSectionId}`);
         }}
       />
       <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
