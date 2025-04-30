@@ -3,11 +3,11 @@ import { FormContext } from "../../contexts/formContext"
 import { useApplicationResponseAndForm } from "../../hooks/useApplicationResponses"
 import Loading from "../Loading"
 import { useEffect, useMemo, useState } from "react"
-import { ApplicantRole, ApplicationResponse, ApplicationStatus, QuestionResponse, QuestionType, RoleSelectQuestion } from "../../types/types"
+import { ApplicantRole, ApplicationResponse, ApplicationStatus, QuestionResponse, QuestionType } from "../../types/types"
 import { useMutation } from "@tanstack/react-query"
 import { saveApplicationResponse } from "../../services/applicationResponsesService"
 import { useAuth } from "../../hooks/useAuth"
-import { Timestamp } from "firebase/firestore/lite"
+import { Timestamp } from "firebase/firestore"
 
 export default function FormProvider() {
   const { formId, sectionId } = useParams()
@@ -21,6 +21,15 @@ export default function FormProvider() {
   })
   const [response, setResponse] = useState<ApplicationResponse | undefined>()
   const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>([])
+
+  useEffect(() => {
+    if (response) {
+      setResponse({
+        ...response,
+        rolesApplied: selectedRoles
+      })
+    }
+  }, [selectedRoles])
 
   useEffect(() => {
     if (data) {

@@ -12,7 +12,6 @@ export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
 
 export async function saveApplicationResponse(response: ApplicationResponse, token: string) {
   console.log("saving...")
-  console.log(response)
   const res = await axios.put(API_URL + "/application/save/" + response.id, response, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -20,8 +19,6 @@ export async function saveApplicationResponse(response: ApplicationResponse, tok
   })
 
   const data = res.data as ApplicationResponse
-
-  console.log(data)
 
   return data
 }
@@ -114,3 +111,15 @@ export async function fetchOrCreateApplicationResponse(
 
   return newResponse;
 };
+
+export async function submitApplicationResponse(response: ApplicationResponse, token: string) {
+  const res = await axios.post(API_URL + "/application/submit", response, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  const data = res.data as ApplicationResponse
+
+  return data
+}

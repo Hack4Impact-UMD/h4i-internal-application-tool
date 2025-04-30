@@ -1,4 +1,4 @@
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Section from "../components/form/Section";
 import Timeline from "../components/status/Timeline"; // Import Timeline component
 import useForm from "../hooks/useForm";
@@ -100,7 +100,7 @@ const ApplicationPage: React.FC = () => {
                 enabled={form.sections[form.sections.length - 1].sectionId !== sectionId}
                 onClick={handleNext}
               > Next </Button> :
-              <Button className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"> Submit </Button>
+              <Link to={`/apply/submit/${form.id}`} className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"> Submit </Link>
           }
         </div>
       </div>

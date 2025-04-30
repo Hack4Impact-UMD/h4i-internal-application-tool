@@ -20,9 +20,9 @@ const OptionButton: React.FC<OptionButtonProps> = ({
 }) => {
   const [clicked, setClicked] = useState(isSelected);
 
-  useEffect(() => {
-    setClicked(isSelected);
-  });
+  // useEffect(() => {
+  //   setClicked(isSelected);
+  // }, []);
 
   useEffect(() => {
     if (buttonType === "choice") {
@@ -37,20 +37,20 @@ const OptionButton: React.FC<OptionButtonProps> = ({
     }
   };
 
-  const backgroundColor = disabled
-    ? "#DADADA"
-    : clicked
-    ? "#2969C4"
-    : "#ffffff";
+  const backgroundColor = clicked
+    ? "#2969C4" :
+    disabled
+      ? "#DADADA"
+      : "#ffffff";
 
-  const textColor = disabled ? "#202020B2" : clicked ? "#ffffff" : "#202020B2";
+  const textColor = clicked ? "#ffffff" : disabled ? "#202020B2" : "#202020B2";
 
   const circleOutlineColor = disabled ? "outline-gray-400" : "outline-black";
   const innerCircleColor = disabled
     ? "bg-gray-400"
     : clicked
-    ? "bg-[#2969C4]"
-    : "bg-transparent";
+      ? "bg-[#2969C4]"
+      : "bg-transparent";
   const checkColor = disabled ? "text-gray-400" : "text-blue-600";
 
   return (

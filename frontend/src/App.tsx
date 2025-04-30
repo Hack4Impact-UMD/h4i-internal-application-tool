@@ -23,6 +23,7 @@ import ApplicationPage from "./pages/ApplicationPage";
 import Overview from "./pages/Overview/Overview";
 import FormProvider from "./components/providers/FormProvider";
 import AppSubmitted from "./pages/AppSubmitted/AppSubmitted";
+import AppSubmitPage from "./pages/AppSubmitPage";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,13 @@ function App() {
                 element={
                   <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                     <StatusPage />
+                  </RequireAuth>
+                }
+              />
+              <Route path="/apply/submit/:formId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <AppSubmitPage />
                   </RequireAuth>
                 }
               />

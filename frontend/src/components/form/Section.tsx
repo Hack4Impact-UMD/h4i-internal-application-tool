@@ -8,6 +8,7 @@ import useForm from '../../hooks/useForm';
 interface SectionProps {
   section: ApplicationSection;
   responses: QuestionResponse[];
+  disabled?: boolean;
   onChangeResponse: (questionId: string, value: string | string[]) => void;
 }
 
@@ -15,6 +16,7 @@ const Section: React.FC<SectionProps> = ({
   section,
   responses,
   onChangeResponse,
+  disabled = false,
 }) => {
   const { setSelectedRoles } = useForm()
   return (
@@ -27,6 +29,7 @@ const Section: React.FC<SectionProps> = ({
           <div key={question.questionId}>
             {question.questionType === QuestionType.ShortAnswer ? (
               <OneLineInput
+                disabled={disabled}
                 question={question.questionText}
                 isRequired={!question.optional}
                 label={question.secondaryText}
@@ -35,6 +38,7 @@ const Section: React.FC<SectionProps> = ({
               />
             ) : question.questionType === QuestionType.LongAnswer ? (
               <LongFormInput
+                disabled={disabled}
                 question={question.questionText}
                 isRequired={!question.optional}
                 label={question.secondaryText}
@@ -43,6 +47,7 @@ const Section: React.FC<SectionProps> = ({
               />
             ) : (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleChoice ? (
               <ChoiceGroup
+                disabled={disabled}
                 question={question.questionText}
                 isRequired={!question.optional}
                 label={question.secondaryText}
@@ -52,6 +57,7 @@ const Section: React.FC<SectionProps> = ({
               />
             ) : (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleSelect ? (
               <MultiSelectGroup
+                disabled={disabled}
                 question={question.questionText}
                 isRequired={!question.optional}
                 label={question.secondaryText}
@@ -61,6 +67,7 @@ const Section: React.FC<SectionProps> = ({
               />
             ) : (question.questionType == QuestionType.RoleSelect) ?
               <MultiSelectGroup
+                disabled={disabled}
                 question={"Which roles do you want to apply for?"}
                 isRequired={true}
                 label={"You are encouraged to apply to multiple roles at the same time if you believe they are a good fit."}

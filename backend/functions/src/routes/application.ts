@@ -39,6 +39,15 @@ function validateResponses(applicationResponse: ApplicationResponse, application
 
   // validate each response
   for (const section of applicationResponse.sectionResponses) {
+    const formSection = applicationForm.sections.find(s => s.sectionId == section.sectionId);
+    if (!formSection) return ["Invalid form section" + section.sectionId];
+
+    if (formSection.forRoles) {
+      if (formSection.forRoles.filter(role => applicationResponse.rolesApplied.includes(role)).length == 0) {
+        continue;
+      }
+    }
+
     for (const question of section.questions) {
       const metaData = formQuestions.get(question.questionId);
       if (!metaData) {
@@ -95,12 +104,14 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     }
 
     // Proceed with updating submission status
-    await applicationResponseCollection.doc(applicationResponse.id).update({
+    const newApp = {
+      ...applicationResponse,
       status: "submitted",
-      dateSubmitted: currentTime.toISOString(),
-    });
+      dateSubmitted: Timestamp.now(),
+    }
+    await applicationResponseCollection.doc(applicationResponse.id).update(newApp);
 
-    return res.status(200).json(applicationResponse).send();
+    return res.status(200).json(newApp).send();
   } catch (error) {
     logger.error("Error submitting application:", error);
     return res.status(500).send("Internal server error.");
