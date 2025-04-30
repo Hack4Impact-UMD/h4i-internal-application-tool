@@ -95,11 +95,14 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     const currentTime = new Date();
     const dueDate = new Date(applicationFormDocData!.dueDate);
     if (currentTime > dueDate) {
+      logger.warn("Submission deadline passed for form:" + applicationFormDocData?.id)
       return res.status(400).send("Submission deadline has passed");
     }
 
     const errors = validateResponses(applicationResponse, applicationFormDocData!)
     if (errors.length != 0) {
+      logger.warn("Validation errors found for response:" + applicationResponse.id)
+      logger.warn(errors)
       return res.status(400).send(errors.join(", "))
     }
 
@@ -110,6 +113,9 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
       dateSubmitted: Timestamp.now(),
     }
     await applicationResponseCollection.doc(applicationResponse.id).update(newApp);
+
+    logger.info("Successfully submitted form!")
+    logger.info(newApp)
 
     return res.status(200).json(newApp).send();
   } catch (error) {
