@@ -3,11 +3,13 @@ import { db } from "../index";
 import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { validateSchema } from "../middleware/validation";
-import { InterviewData, interviewSchema, updateInterviewSchema } from "../models/appInterview";
+import { FirebaseAuthError } from "firebase-admin/auth";
+import { CollectionReference } from "firebase-admin/firestore";
+import { InterviewData, interviewSchema, updateInterviewSchema, ApplicationInterviewData, ApplicationInterviewDataSchema } from "../models/appInterview";
 
 const router = Router();
-const INTERVIEW_COLLECTION = "interview-data";
-
+const INTERVIEW_COLLECTION = db.collection("interview-data") as CollectionReference<InterviewData>;
+const INTERVIEW_DATA_COLLECTION = "application-interviews"
 
 // Create a new interview
 router.post("/", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(interviewSchema)], async (req: Request, res: Response) => {
@@ -91,6 +93,68 @@ router.delete("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"])
     } catch (error) {
         logger.error("Failed to delete interview:", error);
         return res.status(500).send(error instanceof Error ? error.message : "Unknown error");
+    }
+});
+
+
+
+// Create new interviewData
+router.post("/submit", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), validateSchema(ApplicationInterviewDataSchema)], async (req: Request, res: Response) => {
+    try {
+        const interviewResponse = req.body as ApplicationInterviewData;
+
+        logger.info(`${req.token?.email} is submitting interview data`)
+
+        // make connections to database
+        const interviewDataCollection = db.collection(INTERVIEW_DATA_COLLECTION) as CollectionReference<ApplicationInterviewData>
+
+        const docRef = interviewDataCollection.doc();
+
+        const interviewWithId: ApplicationInterviewData = {
+            ...interviewResponse,
+            id: docRef.id,
+        };
+
+        await docRef.create(interviewWithId);
+
+        logger.info(`Successfully created interviewData doc for applicant:${interviewResponse.applicantId}`)
+
+        res.status(200).send(interviewWithId);
+    } catch (error) {
+        if (error instanceof FirebaseAuthError) {
+            res.status(500).send(error.message)
+        } else {
+            res.status(500).send()
+        }
+    }
+});
+
+// Get existing interviewData
+router.get("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"])], async (req: Request, res: Response) => {
+    try {
+        const interviewId = req.params.id as string
+
+        logger.info(`${req.token?.email} is getting interview data for ${interviewId}`)
+
+        // make connections to database
+        const interviewDataCollection = db.collection(INTERVIEW_DATA_COLLECTION) as CollectionReference<ApplicationInterviewData>
+
+        const interviewDoc = await interviewDataCollection.doc(interviewId).get()
+
+        // verify that the review exists
+        if (!interviewDoc.exists) {
+            res.status(400).send("Review does not exist")
+            return
+        }
+
+        const interviewDocData = interviewDoc.data() as ApplicationInterviewData
+        res.status(200).send(interviewDocData)
+    } catch (error) {
+        if (error instanceof FirebaseAuthError) {
+            res.status(500).send(error.message)
+        } else {
+            res.status(500).send()
+        }
     }
 });
 

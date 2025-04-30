@@ -78,7 +78,7 @@ export default function ReviewCard() {
   );
 
   return (
-      <form onSubmit={handleSubmit} className="flex flex-row max-w-6xl mx-auto mt-8 gap-8">
+      <form onSubmit={handleSubmit} className="m-3">
         <div className="w-[475px] flex-shrink-0">
           <div className="bg-white rounded-lg p-6 flex flex-col gap-6 border border-gray-400">
             <div className="mb-2">

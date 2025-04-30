@@ -1,5 +1,3 @@
-import { twMerge } from "tailwind-merge";
-
 type TimelineProps = {
   items: { label: string; link?: string }[];
   currentStep: number;
@@ -38,7 +36,11 @@ const Timeline = (props: TimelineProps) => {
                     : "bg-white text-gray-500 border-gray-300"
                   }`}
               >
-                {isCompleted ? "✓" : index + 1}
+                {isCompleted ?
+                  <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.5 6.4L4.92857 10L13.5 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  : index + 1}
               </div>
               <p
                 className={`uppercase ${isUnlocked
