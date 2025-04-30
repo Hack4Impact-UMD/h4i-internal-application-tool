@@ -1,12 +1,27 @@
-import { addDoc, arrayUnion, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { setDoc, Timestamp, arrayUnion, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { API_URL, db } from "../config/firebase";
 import {
   ApplicationForm,
   ApplicationResponse,
   SectionResponse,
 } from "../types/types";
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
+
+export async function saveApplicationResponse(response: ApplicationResponse, token: string) {
+  console.log("saving...")
+  const res = await axios.put(API_URL + "/application/save/" + response.id, response, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  const data = res.data as ApplicationResponse
+
+  return data
+}
 
 export async function getApplicationResponses(
   userId: string
@@ -22,9 +37,9 @@ export async function getApplicationResponseByFormId(
   userId: string,
   formId: string
 ): Promise<ApplicationResponse | undefined> {
-  const users = collection(db, APPLICATION_RESPONSES_COLLECTION);
+  const responses = collection(db, APPLICATION_RESPONSES_COLLECTION);
   const q = query(
-    users,
+    responses,
     where("userId", "==", userId),
     where("applicationFormId", "==", formId)
   );
@@ -37,42 +52,55 @@ export async function getApplicationResponseByFormId(
   const doc = results.docs[0];
   const data = doc.data() as ApplicationResponse;
 
-  return { ...data, applicationResponseId: doc.id };
+  return data;
 }
 
-export const fetchOrCreateApplicationResponse = async (
+
+export async function fetchOrCreateApplicationResponse(
   userId: string,
   form: ApplicationForm
-): Promise<string> => {
+): Promise<ApplicationResponse> {
   const existingApplicationResponse = await getApplicationResponseByFormId(
     userId,
     form.id
   );
 
   if (existingApplicationResponse) {
-    return existingApplicationResponse.applicationResponseId;
+    console.log("found existing")
+    console.log(existingApplicationResponse)
+    return existingApplicationResponse;
   }
+  console.log("creating new response object!")
 
   const sectionResponses: SectionResponse[] = form.sections.map((section) => ({
+    sectionId: section.sectionId,
     sectionName: section.sectionName,
     questions: section.questions.map((question) => ({
       questionId: question.questionId,
       questionType: question.questionType,
       applicationFormId: form.id,
-      response: question.questionType === "multiple-select" ? [] : "",
+      response: (question.questionType === "multiple-select" || question.questionType == "role-select") ? [] : "",
     })),
   }));
 
-  const applicationResponseRef = await addDoc(
-    collection(db, "application-responses"),
-    {
-      userId,
-      applicationFormId: form.id,
-      sectionResponses,
-      status: "in-progress",
-      dateSubmitted: null,
-      rolesApplied: [],
-    }
+  const newResponse = {
+    id: uuidv4(),
+    userId,
+    applicationFormId: form.id,
+    sectionResponses,
+    status: "in-progress",
+    dateSubmitted: Timestamp.now(),
+    rolesApplied: [],
+  } as ApplicationResponse
+
+  console.log("new response:")
+  console.log(newResponse)
+
+  const docRef = doc(db, APPLICATION_RESPONSES_COLLECTION, newResponse.id)
+
+  await setDoc(
+    docRef,
+    newResponse
   );
 
   const userRef = doc(db, "users", userId);
@@ -80,5 +108,18 @@ export const fetchOrCreateApplicationResponse = async (
     activeApplications: arrayUnion(form.id),
   });
 
-  return applicationResponseRef.id;
+
+  return newResponse;
 };
+
+export async function submitApplicationResponse(response: ApplicationResponse, token: string) {
+  const res = await axios.post(API_URL + "/application/submit", response, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  const data = res.data as ApplicationResponse
+
+  return data
+}

@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { useActiveForm } from '../../hooks/useApplicationForm';
 import Loading from '../../components/Loading';
-import { fetchOrCreateApplicationResponse } from '../../services/applicationResponsesService';
-import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 const Overview: React.FC = () => {
     const { data: form, isLoading, error } = useActiveForm()
-    const { user } = useAuth()
     const navigate = useNavigate();
     const [wait, setWait] = useState(false)
 
@@ -17,11 +14,7 @@ const Overview: React.FC = () => {
 
     async function handleApply() {
         setWait(true);
-        const responseId = await fetchOrCreateApplicationResponse(user!.id, form!)
-        //TODO: GET RID OF THIS, FORM SHOULD BE FETCHED ON APPLICATION PAGE!!
-        navigate(`/apply/${responseId}/${form!.sections[0].sectionId}`, {
-            state: { form: form, responseId, userId: user!.id },
-        })
+        navigate(`/apply/f/${form!.id}/${form!.sections[0].sectionId}`)
         setWait(false);
 
     }

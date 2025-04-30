@@ -1,8 +1,9 @@
+import { ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface ButtonProps {
   className?: string;
-  label: string;
+  children?: ReactNode;
   enabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "submit" | "reset" | "button" | undefined;
@@ -10,16 +11,15 @@ interface ButtonProps {
 
 export default function Button({
   className = "",
-  label,
-  enabled,
+  children,
+  enabled = true,
   onClick,
   type = undefined,
 }: ButtonProps) {
   const classes = twMerge(
     `cursor-pointer disabled:cursor-not-allowed text-white text-lg p-2 m-1 rounded-sm
-         focus:border-white ${
-           enabled ? "bg-blue hover:bg-darkblue" : "bg-darkgray"
-         }`,
+         focus:border-white ${enabled ? "bg-blue hover:bg-darkblue" : "bg-darkgray"
+    }`,
     className
   );
 
@@ -30,7 +30,7 @@ export default function Button({
       onClick={onClick}
       type={type}
     >
-      {label}
+      {children}
     </button>
   );
 }

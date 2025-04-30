@@ -3,7 +3,6 @@ import { Timestamp } from 'firebase/firestore';
 
 import Timeline from "./Timeline.tsx";
 import { ApplicationResponse, ApplicationStatus } from '../../types/types.ts';
-import { useApplicationForm } from '../../hooks/useApplicationForm.ts';
 import { useApplicationResponsesAndSemesters } from '../../hooks/useApplicationResponseAndSemesters.tsx';
 
 
@@ -16,22 +15,10 @@ const timelineItems = [
 
 
 function ApplicationResponseRow({ response }: { response: ApplicationResponse }) {
-    const { data: form, isLoading, error } = useApplicationForm(response.applicationFormId)
-
-    if (isLoading) {
-        return <tr className="w-full border-t border-gray-300">
-            <p>Loading...</p>
-        </tr>
-    }
-
-    if (error) {
-        return <tr className="w-full border-t border-gray-300">
-            <p className="text-red-600">Failed to fetch application form: {error.message}</p>
-        </tr>
-    }
-
     const getStatusDisplay = (status: ApplicationStatus) => {
         switch (status) {
+            case ApplicationStatus.Submitted:
+                return { text: 'Submitted', className: 'bg-blue-100 text-gray-700' };
             case ApplicationStatus.UnderReview:
                 return { text: 'Under review', className: 'bg-blue-100 text-blue-700' };
             case ApplicationStatus.Decided:
@@ -77,9 +64,9 @@ function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
     // replace this hook call with new call
     const { data: applications, isLoading, error } = useApplicationResponsesAndSemesters()
-    
+
     const activeApplications = applications.filter(app =>
-        [ApplicationStatus.UnderReview, ApplicationStatus.Interview].includes(app.status)
+        [ApplicationStatus.Submitted, ApplicationStatus.UnderReview, ApplicationStatus.Interview].includes(app.status)
     );
 
     const inactiveApplications = applications.filter(app =>
@@ -88,15 +75,15 @@ function StatusPage() {
 
     const activeList = (activeTab == "active") ? activeApplications : inactiveApplications
     const semesterGrouping = activeList.reduce((map, application) => {
-            const semester = application.semester
+        const semester = application.semester
 
-            if (!map.has(semester)) {
-                map.set(semester, []);
-            }
-            
-            map.get(semester)!.push(application);
-            return map;
-        }, new Map<string, ApplicationResponse[]>()
+        if (!map.has(semester)) {
+            map.set(semester, []);
+        }
+
+        map.get(semester)!.push(application);
+        return map;
+    }, new Map<string, ApplicationResponse[]>()
     );
 
     return (
@@ -138,48 +125,50 @@ function StatusPage() {
                         </div>
                     </div>
 
-                    {activeTab === 'active' && <Timeline currentStep={2} items={timelineItems} maxStepReached={2} />}
+                    <div className="mt-5">
+                        {activeTab === 'active' && <Timeline currentStep={2} items={timelineItems} maxStepReached={2} />}
+                    </div>
 
                     <div className="mt-3">
                         {isLoading ?
                             <p className="w-full">Loading...</p> :
                             error ? <p className="w-full">Error fetching applications: {error.message}</p> :
                                 activeList.length == 0 ? <p className="w-full">You don't have any {activeTab} applications. Go apply!</p> :
-                                (activeTab == "inactive") ? (Array.from(semesterGrouping.entries()).map(([semester, apps]) => (
-                                      <div>
-                                        <h2 className="text-lg font-semibold mt-6 mb-2">Hack4Impact {semester} Application</h2>
-                                        <table className="w-full">
-                                          <thead>
-                                            <tr className="border-t border-gray-300">
-                                              <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
-                                              <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
-                                              <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
-                                              <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            {apps.map((application) => (
-                                              <ApplicationResponseRow key={application.id} response={application} />
-                                            ))}
-                                          </tbody>
-                                        </table>
-                                      </div>
+                                    (activeTab == "inactive") ? (Array.from(semesterGrouping.entries()).map(([semester, apps]) => (
+                                        <div>
+                                            <h2 className="text-lg font-semibold mt-6 mb-2">Hack4Impact {semester} Application</h2>
+                                            <table className="w-full">
+                                                <thead>
+                                                    <tr className="border-t border-gray-300">
+                                                        <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                                        <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
+                                                        <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
+                                                        <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {apps.map((application) => (
+                                                        <ApplicationResponseRow key={application.id} response={application} />
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     ))
-                                ) : (<table className="w-full">
-                                    <thead>
-                                        <tr className="border-t border-gray-300">
-                                            <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
-                                            <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
-                                            <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
-                                            <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {activeList.map(application => (
-                                            <ApplicationResponseRow key={application.id} response={application} />
-                                        ))}
-                                    </tbody>
-                                </table>)}
+                                    ) : (<table className="w-full">
+                                        <thead>
+                                            <tr className="border-t border-gray-300">
+                                                <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                                <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
+                                                <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
+                                                <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {activeList.map(application => (
+                                                <ApplicationResponseRow key={application.id} response={application} />
+                                            ))}
+                                        </tbody>
+                                    </table>)}
                     </div>
                 </div>
             </div>

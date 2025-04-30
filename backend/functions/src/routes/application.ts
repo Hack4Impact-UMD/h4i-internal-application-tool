@@ -1,11 +1,12 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
-import { ApplicationResponse, appResponseFormSchema } from "../models/appResponse";
-import { CollectionReference } from "firebase-admin/firestore";
+import { ApplicationResponse, ApplicationResponseInput, ApplicationResponseSchema, ApplicationStatus, appResponseFormSchema } from "../models/appResponse";
+import { CollectionReference, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { ApplicationForm } from "../models/appForm";
+import { PermissionRole } from "../models/appReview";
 // import * as admin from "firebase-admin"
 
 const router = Router();
@@ -38,6 +39,15 @@ function validateResponses(applicationResponse: ApplicationResponse, application
 
   // validate each response
   for (const section of applicationResponse.sectionResponses) {
+    const formSection = applicationForm.sections.find(s => s.sectionId == section.sectionId);
+    if (!formSection) return ["Invalid form section" + section.sectionId];
+
+    if (formSection.forRoles) {
+      if (formSection.forRoles.filter(role => applicationResponse.rolesApplied.includes(role)).length == 0) {
+        continue;
+      }
+    }
+
     for (const question of section.questions) {
       const metaData = formQuestions.get(question.questionId);
       if (!metaData) {
@@ -72,7 +82,7 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     const applicationFormCollection = db.collection(APPLICATION_FORMS_COLLECTION) as CollectionReference<ApplicationForm>;
 
     // check that the correct user is updating the application
-    const applicationDoc = await applicationResponseCollection.doc(applicationResponse.applicationResponseId).get();
+    const applicationDoc = await applicationResponseCollection.doc(applicationResponse.id).get();
     const formattedApplicationDoc = applicationDoc.data() as ApplicationResponse;
     if (formattedApplicationDoc.userId !== req.token?.uid) {
       return res.status(403).send("User not authorized to submit this application");
@@ -94,17 +104,73 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     }
 
     // Proceed with updating submission status
-    await applicationResponseCollection.doc(applicationResponse.applicationResponseId).update({
+    const newApp = {
+      ...applicationResponse,
       status: "submitted",
-      dateSubmitted: currentTime.toISOString(),
-    });
+      dateSubmitted: Timestamp.now(),
+    }
+    await applicationResponseCollection.doc(applicationResponse.id).update(newApp);
 
-    return res.status(200).json(applicationResponse).send();
+    return res.status(200).json(newApp).send();
   } catch (error) {
     logger.error("Error submitting application:", error);
     return res.status(500).send("Internal server error.");
   }
 })
+
+router.get("/", (_, res) => {
+  res.send("Hello")
+})
+
+router.put("/save/:respId", [isAuthenticated, hasRoles([PermissionRole.Applicant]), validateSchema(ApplicationResponseSchema)], async (req: Request, res: Response) => {
+  const input = req.body as ApplicationResponseInput;
+  const respId = req.params.respId
+  logger.info("Received save request for response ID: ", respId)
+
+  try {
+    const newAppResponse: ApplicationResponse = {
+      id: input.id,
+      applicationFormId: input.applicationFormId,
+      userId: req.token!.uid,
+      dateSubmitted: Timestamp.now(),
+      rolesApplied: input.rolesApplied,
+      sectionResponses: input.sectionResponses,
+      status: ApplicationStatus.InProgress,
+    };
+
+    if (respId != newAppResponse.id) {
+      logger.error("Application save: Response ID mismatch")
+      res.status(500).send()
+      return
+    }
+
+    const appCollection = db.collection(APPLICATION_RESPONSE_COLLECTION) as CollectionReference<ApplicationResponse>;
+
+    const existingResp = (await appCollection.doc(newAppResponse.id).get()).data();
+
+    if (!existingResp) {
+      logger.warn("Attempt to save a non-existant application: ", newAppResponse.id)
+      res.status(400).send()
+      return;
+    }
+
+    if (existingResp.userId != req.token!.uid) {
+      logger.warn(`Unauthorized application save! UID: ${req.token!.uid} vs existing user id in response ${existingResp.userId}`)
+      logger.warn(`response id: ${respId}`)
+      res.status(403).send();
+      return;
+    }
+
+    await appCollection.doc(existingResp.id).set(newAppResponse)
+    logger.info(`Saved ApplicationResponse with ID: ${newAppResponse.id} for user ${newAppResponse.userId}`);
+
+    res.status(201).send(newAppResponse);
+  } catch (error) {
+    logger.error("Failed to create application response:", error);
+    res.status(400).send(error instanceof Error ? error.message : "Unknown error");
+  }
+}
+);
 
 
 export default router;

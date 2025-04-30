@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { z } from "zod";
 
 // specific application
@@ -16,6 +17,7 @@ export enum QuestionType {
   MultipleChoice = "multiple-choice",
   MultipleSelect = "multiple-select",
   FileUpload = "file-upload",
+  RoleSelect = "role-select"
 }
 
 export interface QuestionResponse {
@@ -26,7 +28,7 @@ export interface QuestionResponse {
 }
 
 export interface SectionResponse {
-  sectionName: string;
+  sectionId: string;
   questions: QuestionResponse[];
 }
 
@@ -41,17 +43,16 @@ export interface ApplicationResponse {
   id: string;
   userId: string;
   applicationFormId: string;
-  applicationResponseId: string;
   rolesApplied: ApplicantRole[];
   sectionResponses: SectionResponse[];
   status: ApplicationStatus;
-  dateSubmitted: string;
-  decisionLetterId: string;
+  dateSubmitted: Timestamp;
+  decisionLetterId?: string;
 }
 
 export const appResponseFormSchema = z.object({
   applicationFormId: z.string().nonempty("Cant have empty applicationFormId"),
-  applicationResponseId: z.string().nonempty("Cant have empty id"),
+  id: z.string().nonempty("Cant have empty id"),
   userId: z.string().nonempty("Cant have empty userId"),
   rolesApplied: z
     .array(z.nativeEnum(ApplicantRole))
@@ -59,17 +60,17 @@ export const appResponseFormSchema = z.object({
   sectionResponses: z
     .array(
       z.object({
-        sectionName: z.string(),
+        sectionId: z.string(),
+        forRoles: z.array(z.nativeEnum(ApplicantRole)).optional(),
         questions: z
           .array(
             z.object({
               applicationFormId: z.string(),
               questionId: z.string(),
               questionType: z.nativeEnum(QuestionType),
-              response: z.string(),
+              response: z.string().or(z.array(z.string())).optional(),
             })
           )
-          .nonempty("There should be at least one question per section"),
       })
     )
     .nonempty("At least one section must be provided"),
@@ -81,3 +82,24 @@ export const appResponseFormSchema = z.object({
 });
 
 export type AppResponseForm = z.infer<typeof appResponseFormSchema>;
+
+export const QuestionResponseSchema = z.object({
+  questionType: z.nativeEnum(QuestionType),
+  applicationFormId: z.string().nonempty(),
+  questionId: z.string().nonempty(),
+  response: z.string().or(z.array(z.string()))
+})
+
+export const SectionResponseSchema = z.object({
+  sectionId: z.string().nonempty(),
+  questions: z.array(QuestionResponseSchema),
+});
+
+export const ApplicationResponseSchema = z.object({
+  id: z.string().nonempty(),
+  applicationFormId: z.string().nonempty(),
+  rolesApplied: z.array(z.nativeEnum(ApplicantRole)),
+  sectionResponses: z.array(SectionResponseSchema),
+});
+
+export type ApplicationResponseInput = z.infer<typeof ApplicationResponseSchema>;

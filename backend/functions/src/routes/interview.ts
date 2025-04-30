@@ -25,7 +25,7 @@ router.post("/", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), val
             updatedAt: timestamp
         };
 
-        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const docRef = db.collection(INTERVIEW_COLLECTION).doc(interviewId);
         const existing = await docRef.get();
 
         if (existing.exists) {
@@ -49,7 +49,7 @@ router.put("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"]), v
     const updates = req.body;
 
     try {
-        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const docRef = db.collection(INTERVIEW_COLLECTION).doc(interviewId);
         const existing = await docRef.get();
 
         if (!existing.exists) {
@@ -78,7 +78,7 @@ router.delete("/:id", [isAuthenticated, hasRoles(["reviewer", "super-reviewer"])
     const interviewId = req.params.id;
 
     try {
-        const docRef = INTERVIEW_COLLECTION.doc(interviewId);
+        const docRef = db.collection(INTERVIEW_COLLECTION).doc(interviewId);
         const existing = await docRef.get();
 
         if (!existing.exists) {

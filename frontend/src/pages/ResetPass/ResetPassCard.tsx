@@ -42,7 +42,7 @@ export default function ResetPassCard() {
   // using dummy conditionals for now
   const handleSubmit = () => {
     let valid = true;
-    let errors = { ...formErrors };
+    const errors = { ...formErrors };
 
     if (!validCode(formData.code)) {
       valid = false;
@@ -110,10 +110,9 @@ export default function ResetPassCard() {
         />
         <Button
           className="w-full h-[73px]"
-          label="Reset"
           enabled={isFormValid}
           type="submit"
-        />
+        > Reset </Button>
         <hr className="w-full text-darkgray m-0"></hr>
       </div>
     </form>

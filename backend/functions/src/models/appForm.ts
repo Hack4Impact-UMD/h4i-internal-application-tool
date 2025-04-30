@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ApplicantRole } from "./appResponse";
 
 export const ApplicationQuestion = z.object({
   questionId: z.string().nonempty(),
@@ -12,6 +13,8 @@ export const ApplicationQuestion = z.object({
 
 export const ApplicationSectionSchema = z.object({
   sectionName: z.string(),
+  sectionId: z.string(),
+  forRoles: z.array(z.nativeEnum(ApplicantRole)).optional(),
   questions: z.array(ApplicationQuestion)
 })
 

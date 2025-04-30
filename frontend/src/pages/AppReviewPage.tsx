@@ -4,6 +4,7 @@ import Timeline from "../components/status/Timeline"; // Import Timeline compone
 import useForm from "../hooks/useForm";
 import Button from "../components/Button";
 import { useMemo } from "react";
+import ReviewCard from "../components/reviewer/ReviewCard";
 
 const ApplicationPage: React.FC = () => {
   //TODO: Some parts of this component should be moved to the form provider,
@@ -75,17 +76,23 @@ const ApplicationPage: React.FC = () => {
           navigate(`/apply/f/${form.id}/${targetSectionId}`);
         }}
       />
-      <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
-
-        <Section
-          section={currentSection}
-          responses={
-            response.sectionResponses.find(
-              (sectionResp) => sectionResp.sectionId === currentSection.sectionId
-            )?.questions || []
-          }
-          onChangeResponse={handleResponseChange}
-        />
+      <div className="flex">
+        <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
+            <Section
+            section={currentSection}
+            responses={
+                response.sectionResponses.find(
+                (sectionResp) => sectionResp.sectionId === currentSection.sectionId
+                )?.questions || []
+            }
+            onChangeResponse={() => {}} // TODO: make this optional?
+            disabled={true}
+            />
+        </div>
+        <div className="justify-self-start my-0">
+            <ReviewCard></ReviewCard>
+        </div>
+      </div>
 
         <div className="flex gap-1 mt-4">
           <Button
@@ -103,7 +110,6 @@ const ApplicationPage: React.FC = () => {
               <Link to={`/apply/submit/${form.id}`} className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"> Submit </Link>
           }
         </div>
-      </div>
     </div>
   );
 };
