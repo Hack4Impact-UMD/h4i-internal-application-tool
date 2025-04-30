@@ -12,7 +12,7 @@ const ApplicationPage: React.FC = () => {
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
 
-  const { form, response, updateQuestionResponse, availableSections, previousSection, nextSection } = useForm()
+  const { form, response, updateQuestionResponse, availableSections, previousSection, nextSection, save } = useForm()
 
   const timelineItems = useMemo(() => form?.sections.filter((section) => availableSections.includes(section.sectionId)).map(s => {
     return {
@@ -42,19 +42,19 @@ const ApplicationPage: React.FC = () => {
     updateQuestionResponse(currentSection.sectionId, questionId, value)
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const currentIndex = availableSections.findIndex(
       (section) => section === sectionId
     );
     if (currentIndex < form.sections.length - 1) {
+      await save();
       navigate(`/apply/f/${form.id}/${nextSection()}`);
-    } else {
-      //TODO: Handle Submit
     }
   };
 
-  const handlePrevious = () => {
+  const handlePrevious = async () => {
     console.log(previousSection())
+    await save();
     navigate(`/apply/f/${form.id}/${previousSection()}`);
   };
 
@@ -62,6 +62,11 @@ const ApplicationPage: React.FC = () => {
   const currentStep = availableSections.findIndex(
     (section) => section === sectionId
   );
+
+  const handleSubmit = async () => {
+    await save();
+    navigate(`/apply/submit/${form.id}`)
+  }
 
   return (
     <div className="flex flex-col items-center justify-center p-3">
@@ -100,7 +105,7 @@ const ApplicationPage: React.FC = () => {
                 enabled={form.sections[form.sections.length - 1].sectionId !== sectionId}
                 onClick={handleNext}
               > Next </Button> :
-              <Link to={`/apply/submit/${form.id}`} className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"> Submit </Link>
+              <Button onClick={handleSubmit} className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"> Submit </Button>
           }
         </div>
       </div>
