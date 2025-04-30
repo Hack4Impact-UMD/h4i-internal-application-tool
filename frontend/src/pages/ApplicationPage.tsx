@@ -70,16 +70,18 @@ const ApplicationPage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-3">
-      <Timeline
-        className={"py-5"}
-        items={timelineItems ?? []}
-        currentStep={currentStep}
-        maxStepReached={currentStep}
-        onStepClick={(index) => {
-          const targetSectionId = form.sections[index].sectionId;
-          navigate(`/apply/f/${form.id}/${targetSectionId}`);
-        }}
-      />
+      <div className="w-full max-w-3xl overflow-x-auto p-2">
+        <Timeline
+          className={"py-5"}
+          items={timelineItems ?? []}
+          currentStep={currentStep}
+          maxStepReached={currentStep}
+          onStepClick={(index) => {
+            const targetSectionId = form.sections[index].sectionId;
+            navigate(`/apply/f/${form.id}/${targetSectionId}`);
+          }}
+        />
+      </div>
       <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
 
         <Section
