@@ -33,8 +33,10 @@ export default function AppSubmitPage() {
 
   return <div className="w-full flex flex-col items-center p-4 pt-8">
     <div className="max-w-3xl w-full flex flex-col gap-2">
-      <h1 className="text-3xl font-bold">Almost there!</h1>
-      <p>Review your application before submitting.</p>
+      <div>
+        <h1 className="text-3xl font-bold">Almost there!</h1>
+        <p>Review your application before submitting.</p>
+      </div>
       {form.sections.filter(s => {
         if (s.forRoles) {
           if (s.forRoles) {
@@ -45,7 +47,16 @@ export default function AppSubmitPage() {
         } else {
           return true;
         }
-      }).map(s => <Section key={s.sectionId} disabled={true} section={s} responses={response.sectionResponses.find(r => r.sectionId == s.sectionId)!.questions} onChangeResponse={() => { }}></Section>)}
+      }).map(s =>
+        <div className="shadow border border-gray-400 rounded-md p-4">
+          <Section
+            key={s.sectionId}
+            disabled={true}
+            section={s}
+            responses={response.sectionResponses.find(r => r.sectionId == s.sectionId)!.questions}
+            onChangeResponse={() => { }} />
+        </div>
+      )}
       {submitMutation.error && <p>Failed to submit: {submitMutation.error.message}</p>}
       <Button enabled={!submitMutation.isPending} className="rounded-full" onClick={() => handleSubmit()}> Submit </Button>
     </div>
