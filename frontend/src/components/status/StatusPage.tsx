@@ -4,6 +4,7 @@ import { Timestamp } from 'firebase/firestore';
 import Timeline from "./Timeline.tsx";
 import { ApplicationResponse, ApplicationStatus } from '../../types/types.ts';
 import { useApplicationResponsesAndSemesters } from '../../hooks/useApplicationResponseAndSemesters.tsx';
+import { useApplicationForm } from '../../hooks/useApplicationForm.ts';
 
 
 const timelineItems = [
@@ -15,6 +16,8 @@ const timelineItems = [
 
 
 function ApplicationResponseRow({ response }: { response: ApplicationResponse }) {
+    const { data: form, isLoading, error } = useApplicationForm(response.applicationFormId)
+
     const getStatusDisplay = (status: ApplicationStatus) => {
         switch (status) {
             case ApplicationStatus.Submitted:
@@ -41,8 +44,16 @@ function ApplicationResponseRow({ response }: { response: ApplicationResponse })
         return '-';
     };
 
+    if (isLoading) return <tr className="border-t border-gray-300">
+        Loading...
+    </tr>
+
+    if (error) return <tr className="border-t border-red-300 bg-red-300">
+        <p>Failed to load form data: {error.message}</p>
+    </tr>
+
     return <tr className="border-t border-gray-300">
-        <td className="py-4 text-blue-500 font-bold">{response.rolesApplied.map(role => role.charAt(0).toUpperCase() + role.slice(1)).join(", ")}</td>
+        <td className="py-4 text-blue-500 font-bold">{form!.semester + ": " + response.rolesApplied.map(role => role.charAt(0).toUpperCase() + role.slice(1)).join(", ")}</td>
         <td className="text-center">
             <span className={`px-3 py-1 rounded-full ${getStatusDisplay(response.status).className}`}>
                 {getStatusDisplay(response.status).text}
@@ -138,7 +149,7 @@ function StatusPage() {
                                             <table className="w-full">
                                                 <thead>
                                                     <tr className="border-t border-gray-300">
-                                                        <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                                        <th className="pb-4 pt-4 text-left font-normal w-1/3">Application</th>
                                                         <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
                                                         <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
                                                         <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
@@ -155,7 +166,7 @@ function StatusPage() {
                                     ) : (<table className="w-full">
                                         <thead>
                                             <tr className="border-t border-gray-300">
-                                                <th className="pb-4 pt-4 text-left font-normal w-1/3">Job Title</th>
+                                                <th className="pb-4 pt-4 text-left font-normal w-1/3">Application</th>
                                                 <th className="pb-4 pt-4 text-center font-normal w-1/4">Application Status</th>
                                                 <th className="pb-4 pt-4 text-center font-normal w-1/4">Date Submitted</th>
                                                 <th className="pb-4 pt-4 text-center font-normal w-1/6">Action</th>
