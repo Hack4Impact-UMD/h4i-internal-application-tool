@@ -125,7 +125,9 @@ function StatusPage() {
                         </div>
                     </div>
 
-                    {activeTab === 'active' && <Timeline currentStep={2} items={timelineItems} maxStepReached={2} />}
+                    <div className="mt-5">
+                        {activeTab === 'active' && <Timeline currentStep={2} items={timelineItems} maxStepReached={2} />}
+                    </div>
 
                     <div className="mt-3">
                         {isLoading ?

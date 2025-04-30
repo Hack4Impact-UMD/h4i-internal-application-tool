@@ -37,7 +37,7 @@ const Timeline = (props: TimelineProps) => {
                       : "bg-white text-gray-500 border-gray-300"
                     }`}
                 >
-                  {isCompleted ? "✓" : index + 1}
+                  {isCompleted ? <img src="/timeline-checkmark.png" alt="success icon" className="h-[10px] w-[10px]" /> : index + 1}
                 </div>
                 <p
                   className={`uppercase ${isUnlocked
