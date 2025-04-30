@@ -24,6 +24,7 @@ import Overview from "./pages/Overview/Overview";
 import FormProvider from "./components/providers/FormProvider";
 import AppSubmitted from "./pages/AppSubmitted/AppSubmitted";
 import AppSubmitPage from "./pages/AppSubmitPage";
+import AppReviewPage from "./pages/AppReviewPage";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,18 @@ function App() {
                   </RequireAuth>
                 }
               />
+            </Route>
+            <Route element={
+                <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                  <FormProvider />
+                </RequireAuth>
+              }>
+                <Route
+                  path="/review/f/:formId/:sectionId" // TODO: change the routing to refer to an applicant + form, different provider
+                  element={
+                    <AppReviewPage />
+                  }
+                />
             </Route>
           </Route>
           <Route
