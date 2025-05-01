@@ -52,7 +52,7 @@ export default function FileUpload(props: FileUploadProps) {
           accept=".pdf,.doc,.docx,.rtf,.txt"
           className="hidden"
           required={props.required}
-          disabled={false}
+          disabled={props.disabled}
           onChange={handleFileChange}
         />
       </label>
