@@ -25,6 +25,7 @@ import FormProvider from "./components/providers/FormProvider";
 import AppSubmitted from "./pages/AppSubmitted/AppSubmitted";
 import AppSubmitPage from "./pages/AppSubmitPage";
 import AppReviewPage from "./pages/AppReviewPage";
+import ReviewProvider from "./components/providers/ReviewProvider";
 
 const queryClient = new QueryClient();
 
@@ -107,7 +108,7 @@ function App() {
             </Route>
             <Route element={
                 <RequireAuth requireRoles={[PermissionRole.Applicant]}>
-                  <FormProvider />
+                  <ReviewProvider />
                 </RequireAuth>
               }>
                 <Route
