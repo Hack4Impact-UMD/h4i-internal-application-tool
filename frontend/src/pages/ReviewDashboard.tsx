@@ -1,9 +1,17 @@
+
 import { useEffect, useState } from 'react';
-import ProgressBar from '../components/reviewer/ProgressBar';
-import FilterBar from '../components/reviewer/FilterBar';
+import { Timestamp } from 'firebase/firestore';
+// import FilterBar from '../components/reviewer/FilterBar'; 
 import DataTable from '../components/reviewer/DataTable';
 import './ReviewDashboard.css';
-import { Timestamp } from 'firebase/firestore';
+
+export type ReviewerScores = {
+  interestInClubScore: number | null;
+  interestInSocialGoodScore: number | null;
+  technicalExpertiseScore?: number | null;
+  npoExpertiseScore?: number | null;
+  communicationScore?: number | null;
+};
 
 export type Applicant = {
   id: string;
@@ -12,82 +20,61 @@ export type Applicant = {
   status: string;
   dateApplied: Timestamp;
   roles: string[];
-  interestInClubScore: number | null;
-  interestInSocialGoodScore: number | null;
-  technicalExpertiseScore: number | null;
-  npoExpertiseScore: number | null;
-  communicationScore: number | null;
-  overallScore: number | null;
+  reviewer1: string;
+  reviewer2: string;
+  reviewer1Scores: ReviewerScores;
+  reviewer2Scores: ReviewerScores;
+  reviewerScore1: number | null;
+  reviewerScore2: number | null;
+  averageScore: number | null;
 };
 
 function ReviewDashboard() {
-  const [search, setSearch] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
+  const [search, setSearch] = useState('');
+  const [currentTab, setCurrentTab] = useState('all');
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [allApplicants, setAllApplicants] = useState<Applicant[]>([]);
+  const [loading] = useState(false);
 
-  const calculateOverallScore = (applicant: Applicant): number | null => {
-    const role = applicant.roles[0]?.toLowerCase();
-
+  const calculateScore = (role: string, s: ReviewerScores): number | null => {
+    role = role.toLowerCase();
+    const ic = s.interestInClubScore, isg = s.interestInSocialGoodScore;
+    const te = s.technicalExpertiseScore, ne = s.npoExpertiseScore, c = s.communicationScore;
     if (role === 'bootcamp') {
-      if (applicant.interestInClubScore === null || applicant.interestInSocialGoodScore === null) {
-        return null;
-      }
-      return (0.5 * applicant.interestInClubScore) + (0.5 * applicant.interestInSocialGoodScore);
+      if (ic == null || isg == null) return null;
+      return 0.5 * ic + 0.5 * isg;
+    } else if (role === 'sourcing') {
+      if (ic == null || isg == null || ne == null || c == null) return null;
+      return 0.3 * ic + 0.3 * isg + 0.3 * ne + 0.1 * c;
+    } else if (['engineer','tl','pm','technical lead','designer','product manager','product'].includes(role)) {
+      if (ic == null || isg == null || te == null) return null;
+      return 0.25 * ic + 0.2 * isg + 0.55 * te;
     }
-
-    else if (role === 'sourcing') {
-      if (
-        applicant.interestInClubScore === null ||
-        applicant.interestInSocialGoodScore === null ||
-        applicant.npoExpertiseScore === null ||
-        applicant.communicationScore === null
-      ) {
-        return null;
-      }
-      return (
-        (0.3 * applicant.interestInClubScore) +
-        (0.3 * applicant.interestInSocialGoodScore) +
-        (0.3 * applicant.npoExpertiseScore) +
-        (0.1 * applicant.communicationScore)
-      );
-    }
-
-    else if (['engineer', 'tl', 'pm', 'designer', 'product'].includes(role)) {
-      if (
-        applicant.interestInClubScore === null ||
-        applicant.interestInSocialGoodScore === null ||
-        applicant.technicalExpertiseScore === null
-      ) {
-        return null;
-      }
-      return (
-        (0.25 * applicant.interestInClubScore) +
-        (0.2 * applicant.interestInSocialGoodScore) +
-        (0.55 * applicant.technicalExpertiseScore)
-      );
-    }
-
     return null;
   };
 
   useEffect(() => {
-    const dummyApplicants: Applicant[] = [
+    const dummy: Omit<Applicant, 'reviewerScore1' | 'reviewerScore2' | 'averageScore'>[] = [
       {
         id: '1',
         name: 'America Ferrera',
         email: 'america@example.com',
         status: 'submitted',
         dateApplied: Timestamp.fromDate(new Date('2024-03-01')),
-        roles: ['engineer'],
-        interestInClubScore: 4.5,
-        interestInSocialGoodScore: 3.8,
-        technicalExpertiseScore: 4.7,
-        npoExpertiseScore: 3.0,
-        communicationScore: 4.2,
-        overallScore: null,
+        roles: ['designer'],
+        reviewer1: 'Hannah Montana',
+        reviewer2: 'Elon Tusk',
+        reviewer1Scores: {
+          interestInClubScore: 3.5,
+          interestInSocialGoodScore: 3.8,
+          technicalExpertiseScore: 3.7,
+        },
+        reviewer2Scores: {
+          interestInClubScore: 3.8,
+          interestInSocialGoodScore: 3.5,
+          technicalExpertiseScore: 4.0,
+        },
       },
       {
         id: '2',
@@ -95,13 +82,19 @@ function ReviewDashboard() {
         email: 'bob@example.com',
         status: 'in-review',
         dateApplied: Timestamp.fromDate(new Date('2024-02-15')),
-        roles: ['designer'],
-        interestInClubScore: 4.0,
-        interestInSocialGoodScore: 4.5,
-        technicalExpertiseScore: 3.9,
-        npoExpertiseScore: 4.1,
-        communicationScore: 4.3,
-        overallScore: null,
+        roles: ['technical lead'],
+        reviewer1: 'Kate Bush',
+        reviewer2: 'Beyoncé Knowles',
+        reviewer1Scores: {
+          interestInClubScore: 4.0,
+          interestInSocialGoodScore: 3.9,
+          technicalExpertiseScore: 3.5,
+        },
+        reviewer2Scores: {
+          interestInClubScore: 3.7,
+          interestInSocialGoodScore: 4.0,
+          technicalExpertiseScore: 3.8,
+        },
       },
       {
         id: '3',
@@ -110,12 +103,16 @@ function ReviewDashboard() {
         status: 'in-review',
         dateApplied: Timestamp.fromDate(new Date('2025-02-13')),
         roles: ['bootcamp'],
-        interestInClubScore: 4.0,
-        interestInSocialGoodScore: 4.5,
-        technicalExpertiseScore: 3.9,
-        npoExpertiseScore: 4.1,
-        communicationScore: 4.3,
-        overallScore: null,
+        reviewer1: 'Ryan Gosling',
+        reviewer2: 'Natalie Portman',
+        reviewer1Scores: {
+          interestInClubScore: 3.9,
+          interestInSocialGoodScore: 3.6,
+        },
+        reviewer2Scores: {
+          interestInClubScore: 3.7,
+          interestInSocialGoodScore: 3.8,
+        },
       },
       {
         id: '4',
@@ -123,115 +120,249 @@ function ReviewDashboard() {
         email: 'drew@example.com',
         status: 'in-review',
         dateApplied: Timestamp.fromDate(new Date('2024-12-25')),
-        roles: ['product'],
-        interestInClubScore: 4.0,
-        interestInSocialGoodScore: 4.5,
-        technicalExpertiseScore: 3.9,
-        npoExpertiseScore: 4.1,
-        communicationScore: 4.3,
-        overallScore: null,
+        roles: ['product manager'],
+        reviewer1: 'Tom Riddle',
+        reviewer2: 'Taylor Swift',
+        reviewer1Scores: {
+          interestInClubScore: 4.0,
+          interestInSocialGoodScore: 3.8,
+          technicalExpertiseScore: 3.9,
+        },
+        reviewer2Scores: {
+          interestInClubScore: 3.9,
+          interestInSocialGoodScore: 4.0,
+          technicalExpertiseScore: 4.1,
+        },
+      },
+      {
+        id: '5',
+        name: 'Eva Green',
+        email: 'eva@example.com',
+        status: 'in-review',
+        dateApplied: Timestamp.fromDate(new Date('2024-11-11')),
+        roles: ['engineer'],
+        reviewer1: 'John Snow',
+        reviewer2: 'Arya Stark',
+        reviewer1Scores: {
+          interestInClubScore: 3.5,
+          interestInSocialGoodScore: 3.9,
+          technicalExpertiseScore: 4.2,
+        },
+        reviewer2Scores: {
+          interestInClubScore: 3.7,
+          interestInSocialGoodScore: 4.0,
+          technicalExpertiseScore: 4.1,
+        },
+      },
+      {
+        id: '6',
+        name: 'Finn Wolfhard',
+        email: 'finn@example.com',
+        status: 'submitted',
+        dateApplied: Timestamp.fromDate(new Date('2025-01-02')),
+        roles: ['sourcing'],
+        reviewer1: 'Dua Lipa',
+        reviewer2: 'Shawn Mendes',
+        reviewer1Scores: {
+          interestInClubScore: 4.2,
+          interestInSocialGoodScore: 4.1,
+          npoExpertiseScore: 3.8,
+          communicationScore: 3.9,
+        },
+        reviewer2Scores: {
+          interestInClubScore: 4.0,
+          interestInSocialGoodScore: 4.2,
+          npoExpertiseScore: 4.0,
+          communicationScore: 4.1,
+        },
       },
     ];
 
-
-    const applicantsWithScores = dummyApplicants.map(applicant => {
-      const calculatedScore = calculateOverallScore(applicant);
+    const withScores = dummy.map(app => {
+      const role = app.roles[0];
+      const s1 = calculateScore(role, app.reviewer1Scores);
+      const s2 = calculateScore(role, app.reviewer2Scores);
       return {
-        ...applicant,
-        overallScore: calculatedScore !== null ? parseFloat(calculatedScore.toFixed(2)) : null
+        ...app,
+        reviewerScore1: s1,
+        reviewerScore2: s2,
+        averageScore: s1 != null && s2 != null ? +(((s1 + s2) / 2).toFixed(2)) : null,
       };
     });
 
-    setApplicants(applicantsWithScores);
-    setAllApplicants(applicantsWithScores);
-    setFilteredApplicants(applicantsWithScores);
+    setApplicants(withScores);
+    setFilteredApplicants(withScores);
   }, []);
 
-  const handleSearch = (query: string) => {
-    setSearch(query);
-    filterApplicants(query, selectedRole);
-  };
-
-  const handleRoleFilter = (role: string) => {
-    setSelectedRole(role);
-    filterApplicants(search, role);
-  };
-
-  const finalizedApplicants = applicants.filter((applicant) => {
-    return ![
-      'App. Completed',
-      'Interview Conducted',
-      'Interview Offered',
-    ].includes(applicant.status);
-  });
-
-  const filterApplicants = (query: string, role: string) => {
-    const filtered = applicants.filter((applicant) => {
-      const matchesQuery = applicant.name.toLowerCase().includes(query.toLowerCase()) ||
-        applicant.email.toLowerCase().includes(query.toLowerCase());
-      const matchesRole = role ? applicant.roles.includes(role) : true;
-      return matchesQuery && matchesRole;
+  const filterApplicants = (role: string, query: string) => {
+    const filtered = applicants.filter(app => {
+      const matchesRole = role
+        ? app.roles.map(r => r.toLowerCase()).includes(role.toLowerCase())
+        : true;
+      const matchesQuery = app.name.toLowerCase().includes(query.toLowerCase());
+      return matchesRole && matchesQuery;
     });
     setFilteredApplicants(filtered);
   };
 
-  const handleSortChange = (sortType: string) => {
-    const sortedApplicants = [...filteredApplicants];
+  const handleRoleFilter = (role: string) => {
+    setSelectedRole(role);
+    filterApplicants(role, search);
+  };
 
-    switch (sortType) {
-      case "date":
-        sortedApplicants.sort((a, b) => b.dateApplied.toDate().getTime() - a.dateApplied.toDate().getTime());
-        break;
-      case "name":
-        sortedApplicants.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "score_high":
-        sortedApplicants.sort((a, b) => (b.overallScore ?? 0) - (a.overallScore ?? 0));
-        break;
-      case "score_low":
-        sortedApplicants.sort((a, b) => (a.overallScore ?? 0) - (b.overallScore ?? 0));
-        break;
-      default:
-        return;
-    }
+  const handleSearch = (query: string) => {
+    setSearch(query);
+    filterApplicants(selectedRole, query);
+  };
 
-    setFilteredApplicants(sortedApplicants);
+  const roleCounts: Record<string, number> = {
+    'product manager': 0,
+    designer: 0,
+    'technical lead': 0,
+    engineer: 0,
+    sourcing: 0,
+    bootcamp: 0,
+  };
+  applicants.forEach(a => {
+    const r = a.roles[0]?.toLowerCase();
+    if (r && roleCounts[r] !== undefined) roleCounts[r]++;
+  });
+  const totalApplicantsCount = applicants.length;
+
+  const topBoxStyles = [
+    {
+      category: 'Total Applicants',
+      count: totalApplicantsCount,
+      roleKey: '',
+      defaultStyle: {
+        backgroundColor: '#C4A484', 
+        color: 'white'
+      },
+      selectedStyle: {
+        backgroundColor: '#8B4513',
+        color: 'white'
+      }
+    },
+    {
+      category: 'Product Managers',
+      count: roleCounts['product manager'] || 0,
+      roleKey: 'product manager',
+      defaultStyle: { backgroundColor: '#E8F5ED', color: '#056041' },
+      selectedStyle: { backgroundColor: '#056041', color: 'white' },
+    },
+    {
+      category: 'Designer',
+      count: roleCounts['designer'] || 0,
+      roleKey: 'designer',
+      defaultStyle: { backgroundColor: '#F9D7E8', color: '#9D174D' },
+      selectedStyle: { backgroundColor: '#9D174D', color: 'white' },
+    },
+    {
+      category: 'Tech Lead',
+      count: roleCounts['technical lead'] || 0,
+      roleKey: 'technical lead',
+      defaultStyle: { backgroundColor: '#E9E4F9', color: '#4338CA' },
+      selectedStyle: { backgroundColor: '#4338CA', color: 'white' },
+    },
+    {
+      category: 'Engineer',
+      count: roleCounts['engineer'] || 0,
+      roleKey: 'engineer',
+      defaultStyle: { backgroundColor: '#E4F1F7', color: '#0C4A6E' },
+      selectedStyle: { backgroundColor: '#0C4A6E', color: 'white' },
+    },
+    {
+      category: 'Sourcing',
+      count: roleCounts['sourcing'] || 0,
+      roleKey: 'sourcing',
+      defaultStyle: { backgroundColor: '#F9F3D7', color: '#854D0E' },
+      selectedStyle: { backgroundColor: '#854D0E', color: 'white' },
+    },
+    {
+      category: 'Bootcamp',
+      count: roleCounts['bootcamp'] || 0,
+      roleKey: 'bootcamp',
+      defaultStyle: { backgroundColor: '#FAD7D7', color: '#B91C1C' },
+      selectedStyle: { backgroundColor: '#B91C1C', color: 'white' },
+    },
+  ];
+
+  const getTabButtonStyle = (tabName: string) => {
+    const isSelected = currentTab === tabName;
+    return {
+      padding: '0.5rem 1rem',
+      borderRadius: '0.5rem',
+      fontSize: '0.875rem',
+      fontWeight: 600,
+      backgroundColor: isSelected ? '#2563eb' : 'transparent',
+      color: isSelected ? 'white' : '#374151',
+      cursor: 'pointer',
+      transition: 'background-color 0.2s',
+    };
   };
 
   return (
-    <div className="App">
-      <>
-        <img src="Header.jpg" alt="Header" className="navbar-header-image" />
-        <header>
-          <div className="banner"></div>
-          <h1>Applicant Review Portal</h1>
-        </header>
-        <div className="styled-box">
-          <div className="box-header">
-            <h2 className="box-title">Number of Applicants:</h2>
-            <h2 className="box-title">Applicants Finalized</h2>
-          </div>
-          <ProgressBar finalized={finalizedApplicants.length} total={allApplicants.length} />
-          <div className="numbers">
-            <span className="applicants-count">{allApplicants.length}</span>
-            <span className="finalized-count">{finalizedApplicants.length}</span>
-          </div>
+    <div className="bg-[#F7F7F7] min-h-screen p-8 font-karla">
+      <div className="flex justify-between items-center mb-6 gap-4">
+        <div className="flex gap-4">
+          <button style={getTabButtonStyle('all')} onClick={() => setCurrentTab('all')}>
+            All Applications
+          </button>
+          <button
+            style={getTabButtonStyle('interviewers')}
+            onClick={() => setCurrentTab('interviewers')}
+          >
+            Interviewers
+          </button>
+          <button
+            style={getTabButtonStyle('reviewers')}
+            onClick={() => setCurrentTab('reviewers')}
+          >
+            Reviewers
+          </button>
         </div>
-        <main className="container mx-auto p-4">
-          <FilterBar
-            onSearch={handleSearch}
-            onSortChange={handleSortChange}
-            onRoleFilter={handleRoleFilter}
-            selectedRole={selectedRole}
-          />
+        <h1 className="text-2xl font-bold text-[#333333]">
+          Director of Recruitment Dashboard
+        </h1>
+        <input
+          type="text"
+          placeholder="Search"
+          value={search}
+          onChange={e => handleSearch(e.target.value)}
+          className="w-64 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+        />
+      </div>
 
-          {loading ? (
-            <p>Loading applicants...</p>
-          ) : (
-            <DataTable applicants={filteredApplicants} />
-          )}
-        </main>
-      </>
+      <div className="flex flex-wrap gap-6 mb-6">
+        {topBoxStyles.map((box, idx) => {
+          const isSelected = selectedRole.toLowerCase() === box.roleKey.toLowerCase();
+          const style = isSelected ? box.selectedStyle : box.defaultStyle;
+          return (
+            <button
+              key={idx}
+              onClick={() => handleRoleFilter(box.roleKey)}
+              style={{
+                ...style,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                width: '9.5rem',
+                height: '6rem',
+                padding: '1rem',
+                borderRadius: '0.5rem',
+                transition: 'background-color 0.2s',
+                cursor: 'pointer',
+              }}
+            >
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{box.count}</div>
+              <div style={{ fontSize: '0.875rem', marginTop: '0.25rem' }}>{box.category}</div>
+            </button>
+          );
+        })}
+      </div>
+
+      {loading ? <p>Loading applicants...</p> : <DataTable applicants={filteredApplicants} />}
     </div>
   );
 }

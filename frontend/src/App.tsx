@@ -103,8 +103,7 @@ function App() {
                 element={
                   <RequireAuth
                     requireRoles={[
-                      PermissionRole.Reviewer,
-                      PermissionRole.SuperReviewer,
+                      PermissionRole.Applicant
                     ]}
                   >
                     <ReviewDashboard></ReviewDashboard>
