@@ -5,6 +5,7 @@ import { registerUser } from "../../services/userService";
 import { AxiosError } from "axios";
 import { validEmail, validPassword } from "../../utils/verification";
 import { useMutation } from "@tanstack/react-query";
+import { throwErrorToast } from "../../components/error/ErrorToast";
 
 export default function SignUpCard() {
   const signUpMutation = useMutation({
@@ -63,19 +64,24 @@ export default function SignUpCard() {
   };
 
   // using dummy conditionals for now
+  // TODO: make variables less messy; unsure how to save server errors as in LogInCard
   const handleSubmit = async () => {
     let valid = true;
     const errors = { ...formErrors };
 
     if (!validEmail(formData.email)) {
       valid = false;
-      errors.email = "Invalid Email";
+      const errorMessage = "Invalid Email.";
+      errors.email = errorMessage;
+      throwErrorToast(errorMessage);
     }
 
     if (!validPassword(formData.password)) {
       valid = false;
-      errors.password =
+      const errorMessage =
         "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#).";
+      errors.password = errorMessage;
+      throwErrorToast(errorMessage);
     }
 
     setFormErrors(errors);
@@ -106,7 +112,7 @@ export default function SignUpCard() {
                 field: "firstName" | "lastName" | "email";
                 message: string;
               }) => {
-                console.log(
+                throwErrorToast(
                   `[Server validation error] ${issue.field}: ${issue.message}`
                 );
                 serverErrors[issue.field] = issue.message;
@@ -171,13 +177,6 @@ export default function SignUpCard() {
         invalidLabel={formErrors.password}
         onChange={(e) => handleInputChange("password", e.target.value)}
       />
-      <div className="w-full">
-        {signUpMutation.error && (
-          <p className="text-sm m-1 w-full text-red">
-            {signUpMutation.error.message}
-          </p>
-        )}
-      </div>
       <Button
         className="w-full h-[73px]"
         enabled={!signUpMutation.isPending && isFormValid}

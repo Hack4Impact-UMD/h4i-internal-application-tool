@@ -3,6 +3,7 @@ import { API_URL, auth, db } from "../config/firebase";
 import axios, { AxiosError } from "axios";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { UserProfile } from "../types/types";
+import { throwErrorToast } from "../components/error/ErrorToast";
 
 export const USER_COLLECTION = "users";
 
@@ -20,7 +21,9 @@ export async function registerUser(email: string, firstName: string, lastName: s
     return createdUser
   } catch (error) {
     if (error instanceof AxiosError) {
-      throw new Error(`Failed to register: ${error.message} (${error.response?.data})`)
+      const errorMessage = `Failed to register: ${error.message} (${error.response?.data})`
+      throwErrorToast(errorMessage);
+      throw new Error(errorMessage)
     } else {
       throw error
     }
