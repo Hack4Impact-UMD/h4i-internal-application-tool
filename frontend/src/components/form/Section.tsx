@@ -4,6 +4,7 @@ import LongFormInput from './LongFormInput';
 import ChoiceGroup from './ChoiceGroup';
 import MultiSelectGroup from './MultiSelectGroup';
 import useForm from '../../hooks/useForm';
+import FileUpload from './FileUpload';
 
 interface SectionProps {
   section: ApplicationSection;
@@ -24,7 +25,7 @@ const Section: React.FC<SectionProps> = ({
       <h1 className="font-bold text-xl">{section.sectionName}</h1>
       {section.questions.map((question) => {
         const response = responses.find((r) => r.questionId === question.questionId)?.response || '';
-
+        
         return (
           <div key={question.questionId}>
             {question.questionType === QuestionType.ShortAnswer ? (
@@ -65,6 +66,14 @@ const Section: React.FC<SectionProps> = ({
                 options={(question as OptionQuestion).questionOptions ?? []}
                 onOptionSelect={(value) => onChangeResponse(question.questionId, value ?? [])}
               />
+            ) : (question.questionType === QuestionType.FileUpload) ? (
+              <FileUpload 
+                question={question.questionText}
+                secondaryText={question.secondaryText}
+                onChange={(value) => onChangeResponse(question.questionId, value)}
+                disabled={disabled}
+                required={!question.optional}
+              />            
             ) : (question.questionType == QuestionType.RoleSelect) ?
               <MultiSelectGroup
                 disabled={disabled}
