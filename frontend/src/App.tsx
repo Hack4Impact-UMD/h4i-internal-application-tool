@@ -37,7 +37,7 @@ function App() {
       <AuthProvider>
         <ToastContainer
           // for error notifications; separate from Layout as it is needed in the account management pages
-          position="bottom-right"   
+          position="bottom-right"
           toastClassName={() => "bg-transparent shadow-none border-none mb-3"}
         />
         <Routes>
@@ -113,16 +113,16 @@ function App() {
               />
             </Route>
             <Route element={
-                <RequireAuth requireRoles={[PermissionRole.Applicant]}>
-                  <ReviewProvider />
-                </RequireAuth>
-              }>
-                <Route
-                  path="/review/f/:formId/:sectionId" // TODO: change the routing to refer to an applicant + form, different provider
-                  element={
-                    <AppReviewPage />
-                  }
-                />
+              <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                <ReviewProvider />
+              </RequireAuth>
+            }>
+              <Route
+                path="/review/f/:formId/:sectionId" // TODO: change the routing to refer to an applicant + form, different provider
+                element={
+                  <AppReviewPage />
+                }
+              />
             </Route>
           </Route>
           <Route
