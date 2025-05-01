@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { validEmail, validPassword } from "../../utils/verification";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { throwErrorToast } from "../../components/error/ErrorToast";
 
 export default function LogInCard() {
   const { login } = useAuth();
@@ -61,12 +62,16 @@ export default function LogInCard() {
 
     if (!validEmail(formData.email)) {
       valid = false;
-      errors.email = "Enter a valid terpmail address";
+      const errorMessage = "Invalid Email.";
+      errors.email = errorMessage;
+      throwErrorToast(errorMessage);
     }
     if (!validPassword(formData.password)) {
       valid = false;
-      errors.password =
+      const errorMessage =
         "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#).";
+      errors.password = errorMessage;
+      throwErrorToast(errorMessage);
     }
 
     setFormErrors(errors);
@@ -89,10 +94,13 @@ export default function LogInCard() {
       } catch (error) {
         console.log("Failed to login!");
         console.log(error);
+        const errorMessage = "Failed to login, check your email and password.";
         setFormErrors({
-          email: "Failed to login, check your email and password",
+          email: errorMessage,
           password: "",
         });
+
+        throwErrorToast(errorMessage);
       }
     }
   };

@@ -79,7 +79,7 @@ export default function ReviewCard() {
 
   return (
       <form onSubmit={handleSubmit} className="m-3">
-        <div className="w-[475px] flex-shrink-0">
+        <div className="flex-shrink-0">
           <div className="bg-white rounded-lg p-6 flex flex-col gap-6 border border-gray-400">
             <div className="mb-2">
               <h2 className="text-xl font-semibold">Engineer Review</h2>
@@ -129,7 +129,7 @@ export default function ReviewCard() {
             disabled={hasMissingScores}
             className={twMerge(
                 "h-8 rounded-full text-sm font-semibold px-3 flex items-center justify-center mt-4 self-start",
-                hasMissingScores ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 text-white"
+                hasMissingScores ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 text-white cursor-pointer"
             )}
             >
             Submit

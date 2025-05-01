@@ -13,7 +13,7 @@ const ApplicationPage: React.FC = () => {
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
 
-  const { form, response, updateQuestionResponse, availableSections, previousSection, nextSection } = useForm()
+  const { form, response, availableSections, previousSection, nextSection } = useForm()
 
   const timelineItems = useMemo(() => form?.sections.filter((section) => availableSections.includes(section.sectionId)).map(s => {
     return {
@@ -39,16 +39,12 @@ const ApplicationPage: React.FC = () => {
     );
   }
 
-  const handleResponseChange = (questionId: string, value: string | string[]) => {
-    updateQuestionResponse(currentSection.sectionId, questionId, value)
-  };
-
   const handleNext = () => {
     const currentIndex = availableSections.findIndex(
       (section) => section === sectionId
     );
     if (currentIndex < form.sections.length - 1) {
-      navigate(`/apply/f/${form.id}/${nextSection()}`);
+      navigate(`/review/f/${form.id}/${nextSection()}`);
     } else {
       //TODO: Handle Submit
     }
@@ -56,7 +52,7 @@ const ApplicationPage: React.FC = () => {
 
   const handlePrevious = () => {
     console.log(previousSection())
-    navigate(`/apply/f/${form.id}/${previousSection()}`);
+    navigate(`/review/f/${form.id}/${previousSection()}`);
   };
 
 
@@ -73,11 +69,11 @@ const ApplicationPage: React.FC = () => {
         maxStepReached={currentStep}
         onStepClick={(index) => {
           const targetSectionId = form.sections[index].sectionId;
-          navigate(`/apply/f/${form.id}/${targetSectionId}`);
+          navigate(`/review/f/${form.id}/${targetSectionId}`);
         }}
       />
-      <div className="flex">
-        <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
+      <div className="flex justify-center items-start">
+        <div className="flex flex-col justify-self-center m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white min-w-[600px] max-w-60">
             <Section
             section={currentSection}
             responses={
@@ -89,25 +85,27 @@ const ApplicationPage: React.FC = () => {
             disabled={true}
             />
         </div>
-        <div className="justify-self-start my-0">
+        <div className="justify-self-start my-0 min-w-[400px] max-w-40">
             <ReviewCard></ReviewCard>
         </div>
       </div>
 
         <div className="flex gap-1 mt-4">
-          <Button
-            className="border border-gray-400 text-black bg-white hover:bg-gray-100 px-8 rounded-full"
-            enabled={form.sections[0].sectionId !== sectionId}
-            onClick={handlePrevious}
-          > Back </Button>
+          {
+            availableSections[0] !== sectionId ?
+              <Button
+                className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
+                enabled={form.sections[0].sectionId !== sectionId}
+                onClick={handlePrevious}
+              > Back </Button> : <div></div>
+          }
           {
             availableSections[availableSections.length - 1] !== sectionId ?
               <Button
                 className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
                 enabled={form.sections[form.sections.length - 1].sectionId !== sectionId}
                 onClick={handleNext}
-              > Next </Button> :
-              <Link to={`/apply/submit/${form.id}`} className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"> Submit </Link>
+              > Next </Button> : <div></div>
           }
         </div>
     </div>

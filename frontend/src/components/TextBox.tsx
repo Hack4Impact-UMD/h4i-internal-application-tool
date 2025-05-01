@@ -2,7 +2,7 @@ interface TextBoxProps {
   inputType: string;
   className: string;
   label: string;
-  invalidLabel?: string;
+  invalidLabel?: string; // TODO: change this to boolean as we'll use error toasts for labels
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -27,11 +27,6 @@ export default function TextBox({
           onChange={onChange}
         ></input>
       </label>
-      {invalidLabel && (
-        <div className="flex justify-end p-1">
-          <p className="text-xs text-red">{invalidLabel}</p>
-        </div>
-      )}
     </div>
   );
 }

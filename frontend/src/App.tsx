@@ -25,6 +25,8 @@ import FormProvider from "./components/providers/FormProvider";
 import AppSubmitted from "./pages/AppSubmitted/AppSubmitted";
 import AppSubmitPage from "./pages/AppSubmitPage";
 import AppReviewPage from "./pages/AppReviewPage";
+import ReviewProvider from "./components/providers/ReviewProvider";
+import { ToastContainer } from "react-toastify";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <ToastContainer
+          // for error notifications; separate from Layout as it is needed in the account management pages
+          position="bottom-right"   
+          toastClassName={() => "bg-transparent shadow-none border-none mb-3"}
+        />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/login" />} />
@@ -107,7 +114,7 @@ function App() {
             </Route>
             <Route element={
                 <RequireAuth requireRoles={[PermissionRole.Applicant]}>
-                  <FormProvider />
+                  <ReviewProvider />
                 </RequireAuth>
               }>
                 <Route
