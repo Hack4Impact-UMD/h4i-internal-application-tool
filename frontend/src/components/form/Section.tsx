@@ -25,7 +25,7 @@ const Section: React.FC<SectionProps> = ({
       <h1 className="font-bold text-xl">{section.sectionName}</h1>
       {section.questions.map((question) => {
         const response = responses.find((r) => r.questionId === question.questionId)?.response || '';
-        
+
         return (
           <div key={question.questionId}>
             {question.questionType === QuestionType.ShortAnswer ? (
@@ -44,6 +44,8 @@ const Section: React.FC<SectionProps> = ({
                 isRequired={!question.optional}
                 label={question.secondaryText}
                 value={typeof response === 'string' ? response : ''}
+                maxWordCount={question.maximumWordCount}
+                minWordCount={question.minimumWordCount}
                 onChange={(value) => onChangeResponse(question.questionId, value)}
               />
             ) : (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleChoice ? (
@@ -67,13 +69,13 @@ const Section: React.FC<SectionProps> = ({
                 onOptionSelect={(value) => onChangeResponse(question.questionId, value ?? [])}
               />
             ) : (question.questionType === QuestionType.FileUpload) ? (
-              <FileUpload 
+              <FileUpload
                 question={question.questionText}
                 secondaryText={question.secondaryText}
                 onChange={(value) => onChangeResponse(question.questionId, value)}
                 disabled={disabled}
                 required={!question.optional}
-              />            
+              />
             ) : (question.questionType == QuestionType.RoleSelect) ?
               <MultiSelectGroup
                 disabled={disabled}
