@@ -8,15 +8,21 @@ import { useMutation } from "@tanstack/react-query"
 import { saveApplicationResponse } from "../../services/applicationResponsesService"
 import { useAuth } from "../../hooks/useAuth"
 import { Timestamp } from "firebase/firestore"
+import { queryClient } from "../../config/query"
 
 export default function FormProvider() {
   const { formId, sectionId } = useParams()
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const { data, isLoading, error } = useApplicationResponseAndForm(formId)
   const saveMutation = useMutation({
     mutationFn: async (r: ApplicationResponse) => {
       if (token)
         return await saveApplicationResponse(r, token)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["responses", user?.id, formId]
+      })
     }
   })
   const [response, setResponse] = useState<ApplicationResponse | undefined>()
@@ -55,12 +61,13 @@ export default function FormProvider() {
     if (data != undefined) {
       console.log(`local response time: ${response?.dateSubmitted.toMillis()}, server time ${data.response.dateSubmitted.toMillis()}`)
 
-      if (response == undefined || response.dateSubmitted.toMillis() < data.response.dateSubmitted.toMillis()) {
+      if (JSON.stringify(response?.sectionResponses) !== JSON.stringify(data.response.sectionResponses)) {
         // first load, use existing response data on firebase
+        console.log("here")
         setResponse(data.response)
       }
     }
-  }, [data, response])
+  }, [data])
 
   const SAVE_DEBOUNCE_SEC = 2;
 

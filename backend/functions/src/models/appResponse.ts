@@ -55,8 +55,7 @@ export const appResponseFormSchema = z.object({
   id: z.string().nonempty("Cant have empty id"),
   userId: z.string().nonempty("Cant have empty userId"),
   rolesApplied: z
-    .array(z.nativeEnum(ApplicantRole))
-    .nonempty("Have to apply to atleast one role"),
+    .array(z.nativeEnum(ApplicantRole)),
   sectionResponses: z
     .array(
       z.object({

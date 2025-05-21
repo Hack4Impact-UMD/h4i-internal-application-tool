@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
-import { ApplicationResponse, ApplicationResponseInput, ApplicationResponseSchema, ApplicationStatus, appResponseFormSchema } from "../models/appResponse";
+import { ApplicationResponse, ApplicationResponseInput, ApplicationResponseSchema, ApplicationStatus, appResponseFormSchema, QuestionResponse, QuestionType } from "../models/appResponse";
 import { CollectionReference, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
@@ -42,6 +42,24 @@ function validateResponses(applicationResponse: ApplicationResponse, application
       ])
     )
   );
+
+  if (applicationResponse.rolesApplied.length == 0) {
+    let roleSelectQuestion: QuestionResponse | undefined;
+    let sectionId: string | undefined;
+    for (const section of applicationResponse.sectionResponses) {
+      roleSelectQuestion = section.questions.find(q => q.questionType == QuestionType.RoleSelect);
+      sectionId = section.sectionId
+      if (roleSelectQuestion) break;
+    }
+
+    return [
+      {
+        questionId: roleSelectQuestion!.questionId,
+        sectionId: sectionId!,
+        message: "You must apply for at least one role"
+      }
+    ]
+  }
 
   // validate each response
   for (const section of applicationResponse.sectionResponses) {

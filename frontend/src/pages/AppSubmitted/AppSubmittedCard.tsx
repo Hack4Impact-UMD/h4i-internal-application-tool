@@ -6,7 +6,9 @@ export default function AppSubmittedCard() {
 
     return (
         <div className="flex flex-col items-center text-center justify-around w-[1000px] h-[400px] m-20">
-            <img src="/success_icon.png" alt="success icon" className="h-[100px] w-[100px]" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-[100px] stroke-blue">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
             <h3 className="text-3xl text-black">Your Application has been Successfully Submitted</h3>
             <div>
                 <Button

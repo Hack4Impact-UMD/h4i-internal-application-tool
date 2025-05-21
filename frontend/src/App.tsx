@@ -15,7 +15,7 @@ import AuthProvider from "./components/providers/AuthProvider";
 import RequireAuth from "./components/auth/RequireAuth";
 import Layout from "./pages/Layout";
 import RequireNoAuth from "./components/auth/RequireNoAuth";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import {
   PermissionRole,
 } from "./types/types";
@@ -27,11 +27,9 @@ import AppSubmitPage from "./pages/AppSubmitPage";
 import AppReviewPage from "./pages/AppReviewPage";
 import ReviewProvider from "./components/providers/ReviewProvider";
 import { ToastContainer } from "react-toastify";
-
-const queryClient = new QueryClient();
+import { queryClient } from "./config/query";
 
 function App() {
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

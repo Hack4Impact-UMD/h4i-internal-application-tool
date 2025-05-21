@@ -27,10 +27,8 @@ const OptionButton: React.FC<OptionButtonProps> = ({
   // }, []);
 
   useEffect(() => {
-    if (buttonType === "choice") {
-      setClicked(isSelected);
-    }
-  }, [isSelected, buttonType]);
+    setClicked(isSelected);
+  }, [isSelected]);
 
   const handleClick = () => {
     if (!disabled) {

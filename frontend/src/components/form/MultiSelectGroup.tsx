@@ -29,6 +29,11 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
 }) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(value || []);
 
+  useEffect(() => {
+    console.log(value)
+    setSelectedOptions(value || [])
+  }, [value])
+
   const handleSelectClick = (optionName: string) => {
     //NOTE: filtering by name isn't ideal, there might end up being a case
     //where duplicate names are needed. Better to assign an id (index would suffice)
@@ -38,10 +43,6 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
     setSelectedOptions(updatedSelections);
     onOptionSelect(updatedSelections);
   };
-
-  useEffect(() => {
-    setSelectedOptions(value || []);
-  }, [value]);
 
   return (
     <main className={twMerge("flex flex-col min-w-60", className)}>

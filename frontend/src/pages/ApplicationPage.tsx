@@ -23,11 +23,6 @@ const ApplicationPage: React.FC = () => {
   if (!form) return <p>Failed to fetch form...</p>
   if (!response) return <p>Failed to fetch response...</p>
 
-  // const applicationResponseId = location.state?.applicationResponseId;
-  // const userId = location.state?.userId;
-
-
-
   const currentSection = form.sections.find(
     (section) => section.sectionId === sectionId
   );

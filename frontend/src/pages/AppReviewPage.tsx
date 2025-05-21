@@ -1,4 +1,4 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Section from "../components/form/Section";
 import Timeline from "../components/status/Timeline"; // Import Timeline component
 import useForm from "../hooks/useForm";
@@ -74,40 +74,40 @@ const ApplicationPage: React.FC = () => {
       />
       <div className="flex justify-center items-start">
         <div className="flex flex-col justify-self-center m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white min-w-[600px] max-w-60">
-            <Section
+          <Section
             section={currentSection}
             responses={
-                response.sectionResponses.find(
+              response.sectionResponses.find(
                 (sectionResp) => sectionResp.sectionId === currentSection.sectionId
-                )?.questions || []
+              )?.questions || []
             }
-            onChangeResponse={() => {}} // TODO: make this optional?
+            onChangeResponse={() => { }} // TODO: make this optional?
             disabled={true}
-            />
+          />
         </div>
         <div className="justify-self-start my-0 min-w-[400px] max-w-40">
-            <ReviewCard></ReviewCard>
+          <ReviewCard></ReviewCard>
         </div>
       </div>
 
-        <div className="flex gap-1 mt-4">
-          {
-            availableSections[0] !== sectionId ?
-              <Button
-                className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-                enabled={form.sections[0].sectionId !== sectionId}
-                onClick={handlePrevious}
-              > Back </Button> : <div></div>
-          }
-          {
-            availableSections[availableSections.length - 1] !== sectionId ?
-              <Button
-                className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-                enabled={form.sections[form.sections.length - 1].sectionId !== sectionId}
-                onClick={handleNext}
-              > Next </Button> : <div></div>
-          }
-        </div>
+      <div className="flex gap-1 mt-4">
+        {
+          availableSections[0] !== sectionId ?
+            <Button
+              className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
+              enabled={form.sections[0].sectionId !== sectionId}
+              onClick={handlePrevious}
+            > Back </Button> : <div></div>
+        }
+        {
+          availableSections[availableSections.length - 1] !== sectionId ?
+            <Button
+              className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
+              enabled={form.sections[form.sections.length - 1].sectionId !== sectionId}
+              onClick={handleNext}
+            > Next </Button> : <div></div>
+        }
+      </div>
     </div>
   );
 };

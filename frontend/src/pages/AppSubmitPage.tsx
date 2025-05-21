@@ -46,6 +46,8 @@ export default function AppSubmitPage() {
     }
   }
 
+  console.log(response)
+
   return <div className="w-full flex flex-col items-center p-4 pt-8">
     <div className="max-w-3xl w-full flex flex-col gap-2">
       <div>
