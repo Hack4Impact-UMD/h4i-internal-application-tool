@@ -4,6 +4,7 @@ import {
   ApplicationForm,
   ApplicationResponse,
   SectionResponse,
+  ValidationError,
 } from "../types/types";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
@@ -112,14 +113,26 @@ export async function fetchOrCreateApplicationResponse(
   return newResponse;
 };
 
-export async function submitApplicationResponse(response: ApplicationResponse, token: string) {
+type SuccessfulSubmitResponse = {
+  status: "success",
+  application: ApplicationResponse
+}
+
+type ErrorApplicationResponse = {
+  status: "error",
+  validationErrors: ValidationError[]
+}
+
+export type ApplicationSubmitResponse = SuccessfulSubmitResponse | ErrorApplicationResponse
+
+export async function submitApplicationResponse(response: ApplicationResponse, token: string): Promise<ApplicationSubmitResponse> {
   const res = await axios.post(API_URL + "/application/submit", response, {
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
 
-  const data = res.data as ApplicationResponse
+  const data = res.data as ApplicationSubmitResponse
 
   return data
 }

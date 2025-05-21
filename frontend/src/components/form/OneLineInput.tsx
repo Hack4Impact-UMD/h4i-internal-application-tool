@@ -10,6 +10,7 @@ interface OneLineInputProps {
   minWords?: number;
   maxWords?: number;
   disabled?: boolean;
+  errorMessage?: string;
 }
 
 const OneLineInput: React.FC<OneLineInputProps> = ({
@@ -20,6 +21,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
   onChange,
   className = "",
   disabled,
+  errorMessage
 }) => {
   return (
     <main className={twMerge("flex flex-col max-w-60", className)}>
@@ -41,6 +43,9 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
       ></input>
+
+
+      {errorMessage && <p className="text-red-600">{errorMessage}</p>}
     </main>
   );
 };

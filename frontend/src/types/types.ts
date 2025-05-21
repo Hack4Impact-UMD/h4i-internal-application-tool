@@ -98,7 +98,7 @@ export interface RubricQuestion {
     id: string;
     name: string; // just a way to refer to the question, i.e. "social-good"
     type: QuestionType.MultipleChoice | QuestionType.LongAnswer;
-    prompt: string; 
+    prompt: string;
     roles: ApplicantRole[]; // put down every role if applies to all applicants
 }
 
@@ -155,7 +155,7 @@ export interface QuestionResponse {
     response: string | string[]
 }
 
-export interface ApplicationQuestion {
+export interface IApplicationQuestion {
     questionId: string;
     questionType: QuestionType;
     optional: boolean;
@@ -163,29 +163,38 @@ export interface ApplicationQuestion {
     secondaryText?: string;
 }
 
-export interface TextQuestion extends ApplicationQuestion {
+export interface TextQuestion extends IApplicationQuestion {
     questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer;
     placeholderText: string;
     maximumWordCount?: number;
     minimumWordCount?: number;
 }
 
-export interface OptionQuestion extends ApplicationQuestion {
+export interface OptionQuestion extends IApplicationQuestion {
     questionType: QuestionType.MultipleChoice | QuestionType.MultipleSelect;
     multipleSelect: boolean;
     questionOptions: string[];
 }
 
-export interface FileUploadQuestion extends ApplicationQuestion {
+export interface FileUploadQuestion extends IApplicationQuestion {
     questionType: QuestionType.FileUpload;
     fileId: string;
 }
 
-export interface RoleSelectQuestion extends ApplicationQuestion {
+export interface RoleSelectQuestion extends IApplicationQuestion {
     questionType: QuestionType.RoleSelect,
     roleSections: {
         [role in ApplicantRole]: string //map a role to it's form section, used to decide which sections to display
     }
+}
+
+//helps with automatic type inference based on the questionType field
+export type ApplicationQuestion = TextQuestion | OptionQuestion | FileUploadQuestion | RoleSelectQuestion
+
+export type ValidationError = {
+    sectionId: string
+    questionId: string,
+    message: string
 }
 
 // type MockData = {

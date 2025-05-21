@@ -1,4 +1,4 @@
-import { ApplicationSection, QuestionType, OptionQuestion, QuestionResponse, RoleSelectQuestion, ApplicantRole } from '../../types/types';
+import { ApplicationSection, QuestionType, OptionQuestion, QuestionResponse, RoleSelectQuestion, ApplicantRole, ValidationError } from '../../types/types';
 import OneLineInput from './OneLineInput';
 import LongFormInput from './LongFormInput';
 import ChoiceGroup from './ChoiceGroup';
@@ -10,6 +10,7 @@ interface SectionProps {
   section: ApplicationSection;
   responses: QuestionResponse[];
   disabled?: boolean;
+  validationErrors?: ValidationError[];
   onChangeResponse: (questionId: string, value: string | string[]) => void;
 }
 
@@ -17,6 +18,7 @@ const Section: React.FC<SectionProps> = ({
   section,
   responses,
   onChangeResponse,
+  validationErrors,
   disabled = false,
 }) => {
   const { setSelectedRoles } = useForm()
@@ -25,7 +27,8 @@ const Section: React.FC<SectionProps> = ({
       <h1 className="font-bold text-xl">{section.sectionName}</h1>
       {section.questions.map((question) => {
         const response = responses.find((r) => r.questionId === question.questionId)?.response || '';
-        
+        const validationError = validationErrors?.find(e => e.questionId == question.questionId)
+
         return (
           <div key={question.questionId}>
             {question.questionType === QuestionType.ShortAnswer ? (
@@ -33,6 +36,7 @@ const Section: React.FC<SectionProps> = ({
                 disabled={disabled}
                 question={question.questionText}
                 isRequired={!question.optional}
+                errorMessage={validationError?.message}
                 label={question.secondaryText}
                 value={typeof response === 'string' ? response : ''}
                 onChange={(value) => onChangeResponse(question.questionId, value)}
@@ -41,15 +45,19 @@ const Section: React.FC<SectionProps> = ({
               <LongFormInput
                 disabled={disabled}
                 question={question.questionText}
+                errorMessage={validationError?.message}
                 isRequired={!question.optional}
                 label={question.secondaryText}
                 value={typeof response === 'string' ? response : ''}
+                maxWordCount={question.maximumWordCount}
+                minWordCount={question.minimumWordCount}
                 onChange={(value) => onChangeResponse(question.questionId, value)}
               />
             ) : (question as OptionQuestion).questionOptions && question.questionType === QuestionType.MultipleChoice ? (
               <ChoiceGroup
                 disabled={disabled}
                 question={question.questionText}
+                errorMessage={validationError?.message}
                 isRequired={!question.optional}
                 label={question.secondaryText}
                 value={typeof response === 'string' ? response : ""}
@@ -60,6 +68,7 @@ const Section: React.FC<SectionProps> = ({
               <MultiSelectGroup
                 disabled={disabled}
                 question={question.questionText}
+                errorMessage={validationError?.message}
                 isRequired={!question.optional}
                 label={question.secondaryText}
                 value={Array.isArray(response) ? response : []}
@@ -67,17 +76,19 @@ const Section: React.FC<SectionProps> = ({
                 onOptionSelect={(value) => onChangeResponse(question.questionId, value ?? [])}
               />
             ) : (question.questionType === QuestionType.FileUpload) ? (
-              <FileUpload 
+              <FileUpload
                 question={question.questionText}
                 secondaryText={question.secondaryText}
+                errorMessage={validationError?.message}
                 onChange={(value) => onChangeResponse(question.questionId, value)}
                 disabled={disabled}
                 required={!question.optional}
-              />            
+              />
             ) : (question.questionType == QuestionType.RoleSelect) ?
               <MultiSelectGroup
                 disabled={disabled}
                 question={"Which roles do you want to apply for?"}
+                errorMessage={validationError?.message}
                 isRequired={true}
                 label={"You are encouraged to apply to multiple roles at the same time if you believe they are a good fit."}
                 value={Array.isArray(response) ? response : []}

@@ -20,8 +20,14 @@ interface QuestionMetadata {
   maximumWordCount?: number;
 }
 
-function validateResponses(applicationResponse: ApplicationResponse, applicationForm: ApplicationForm) {
-  const errors: string[] = [];
+type ValidationError = {
+  sectionId: string
+  questionId: string,
+  message: string
+}
+
+function validateResponses(applicationResponse: ApplicationResponse, applicationForm: ApplicationForm): ValidationError[] {
+  const errors: ValidationError[] = [];
 
   // fill formQuestions map
   const formQuestions = new Map<string, QuestionMetadata>(
@@ -40,7 +46,9 @@ function validateResponses(applicationResponse: ApplicationResponse, application
   // validate each response
   for (const section of applicationResponse.sectionResponses) {
     const formSection = applicationForm.sections.find(s => s.sectionId == section.sectionId);
-    if (!formSection) return ["Invalid form section" + section.sectionId];
+    if (!formSection) {
+      throw new Error("Invalid form section: " + section.sectionId)
+    }
 
     if (formSection.forRoles) {
       if (formSection.forRoles.filter(role => applicationResponse.rolesApplied.includes(role)).length == 0) {
@@ -51,19 +59,29 @@ function validateResponses(applicationResponse: ApplicationResponse, application
     for (const question of section.questions) {
       const metaData = formQuestions.get(question.questionId);
       if (!metaData) {
-        errors.push(`Question ${question.questionId} has no metadata`)
+        logger.error(`Question ${question.questionId} has no metadata`)
         continue;
       }
 
+      if (metaData?.optional) continue; // no need for validation
+
       if (metaData?.optional === false && question.response.length == 0) {
-        errors.push(`Question ${question.questionId} is required`)
+        errors.push({
+          sectionId: section.sectionId,
+          questionId: question.questionId,
+          message: "This question is required"
+        })
       }
 
-      const responseWordsArr = question.response.toString().split(" ")
+      const responseWordsArr = question.response.toString().trim().split(" ")
       if (metaData?.maximumWordCount && responseWordsArr.length > metaData?.maximumWordCount ||
         metaData?.minimumWordCount && responseWordsArr.length < metaData?.minimumWordCount
       ) {
-        errors.push(`Question ${question.questionId}: word count (${responseWordsArr.length}) is out of range [${metaData.minimumWordCount || 0}, ${metaData.maximumWordCount || "∞"}]`);
+        errors.push({
+          sectionId: section.sectionId,
+          questionId: question.questionId,
+          message: `Word count ${responseWordsArr.length} is out of range [${metaData.minimumWordCount || 0}, ${metaData.maximumWordCount || "∞"}]`
+        });
       }
     }
   }
@@ -99,11 +117,21 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
       return res.status(400).send("Submission deadline has passed");
     }
 
-    const errors = validateResponses(applicationResponse, applicationFormDocData!)
-    if (errors.length != 0) {
-      logger.warn("Validation errors found for response:" + applicationResponse.id)
-      logger.warn(errors)
-      return res.status(400).send(errors.join(", "))
+    try {
+      const errors = validateResponses(applicationResponse, applicationFormDocData!)
+
+      if (errors.length != 0) {
+        logger.warn("Validation errors found for response:" + applicationResponse.id)
+        logger.warn(errors)
+        return res.status(400).json({
+          status: "error",
+          validationErrors: errors
+        }).send()
+      }
+    } catch (err) {
+      logger.error("Validation error: ")
+      logger.error(err)
+      res.status(500).send();
     }
 
     // Proceed with updating submission status
@@ -117,15 +145,14 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     logger.info("Successfully submitted form!")
     logger.info(newApp)
 
-    return res.status(200).json(newApp).send();
+    return res.status(200).json({
+      status: "success",
+      application: newApp
+    }).send();
   } catch (error) {
     logger.error("Error submitting application:", error);
     return res.status(500).send("Internal server error.");
   }
-})
-
-router.get("/", (_, res) => {
-  res.send("Hello")
 })
 
 router.put("/save/:respId", [isAuthenticated, hasRoles([PermissionRole.Applicant]), validateSchema(ApplicationResponseSchema)], async (req: Request, res: Response) => {
