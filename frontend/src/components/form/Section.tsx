@@ -10,7 +10,7 @@ interface SectionProps {
   section: ApplicationSection;
   responses: QuestionResponse[];
   disabled?: boolean;
-  validationErrors: ValidationError[];
+  validationErrors?: ValidationError[];
   onChangeResponse: (questionId: string, value: string | string[]) => void;
 }
 
@@ -27,7 +27,7 @@ const Section: React.FC<SectionProps> = ({
       <h1 className="font-bold text-xl">{section.sectionName}</h1>
       {section.questions.map((question) => {
         const response = responses.find((r) => r.questionId === question.questionId)?.response || '';
-        const validationError = validationErrors.find(e => e.questionId == question.questionId)
+        const validationError = validationErrors?.find(e => e.questionId == question.questionId)
 
         return (
           <div key={question.questionId}>

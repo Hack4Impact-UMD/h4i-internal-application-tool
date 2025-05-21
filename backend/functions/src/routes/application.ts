@@ -63,6 +63,8 @@ function validateResponses(applicationResponse: ApplicationResponse, application
         continue;
       }
 
+      if (metaData?.optional) continue; // no need for validation
+
       if (metaData?.optional === false && question.response.length == 0) {
         errors.push({
           sectionId: section.sectionId,
