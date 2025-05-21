@@ -9,6 +9,7 @@ import { saveApplicationResponse } from "../../services/applicationResponsesServ
 import { useAuth } from "../../hooks/useAuth"
 import { Timestamp } from "firebase/firestore"
 import { queryClient } from "../../config/query"
+import { throwErrorToast } from "../error/ErrorToast"
 
 export default function FormProvider() {
   const { formId, sectionId } = useParams()
@@ -140,8 +141,14 @@ export default function FormProvider() {
   }
 
   async function save() {
-    if (response)
-      await saveMutation.mutateAsync(response)
+    try {
+      if (response)
+        await saveMutation.mutateAsync(response)
+    } catch (err) {
+      console.error("Save failed!")
+      console.error(err)
+      throwErrorToast("Failed to save your application!")
+    }
   }
 
 
@@ -176,11 +183,13 @@ export default function FormProvider() {
     <div className="w-full flex flex-row p-2 items-center justify-center">
       <div className="w-full max-w-3xl flex flex-row items-center">
         <div className="grow">
-          {saveMutation.isPending ? <p className="pulse font-bold">Saving...</p>
-            : (saveMutation.submittedAt != 0 && !saveMutation.isError) ? <p>Last save: {new Date(saveMutation.submittedAt).toLocaleTimeString()}</p>
-              : (saveMutation.isError) ? <p className="text-red-500">Failed to save your application</p>
-                : <p>Form not yet saved!</p>
-          }
+          <div className={`w-fit ${saveMutation.isError ? 'bg-red-100' : 'bg-lightblue'} rounded-full px-2 text-blue`}>
+            {saveMutation.isPending ? <p className="pulse font-bold">Saving...</p>
+              : (saveMutation.submittedAt != 0 && !saveMutation.isError) ? <p>Last save: {new Date(saveMutation.submittedAt).toLocaleTimeString()}</p>
+                : (saveMutation.isError) ? <p className="text-red-500">Failed to save your application (Last save: {new Date(saveMutation.submittedAt).toLocaleTimeString()})</p>
+                  : <p>Form not yet saved!</p>
+            }
+          </div>
         </div>
         <button disabled={saveMutation.isPending} className="cursor-pointer p-2 bg-blue disabled:bg-blue/50 disabled:cursor-wait rounded text-white" onClick={save}>Save application</button>
       </div>
