@@ -8,6 +8,7 @@ interface ChoiceGroupProps {
   label?: string;
   value: string;
   options: string[];
+  errorMessage?: string;
   onOptionSelect: (selected: string | null) => void;
   className?: string;
   disabled?: boolean;
@@ -21,12 +22,9 @@ const ChoiceGroup: React.FC<ChoiceGroupProps> = ({
   onOptionSelect,
   className = "",
   disabled,
+  errorMessage
 }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(value);
-
-  useEffect(() => {
-    setSelectedOption(value);
-  });
 
   const handleSelectClick = (optionName: string) => {
     setSelectedOption(optionName);
@@ -52,6 +50,7 @@ const ChoiceGroup: React.FC<ChoiceGroupProps> = ({
           />
         ))}
       </div>
+      {errorMessage && <p className="text-red-600">{errorMessage}</p>}
     </main>
   );
 };

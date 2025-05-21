@@ -11,6 +11,7 @@ interface LongFormInputProps {
   disabled?: boolean;
   minWordCount?: number
   maxWordCount?: number
+  errorMessage?: string
 }
 
 const LongFormInput: React.FC<LongFormInputProps> = ({
@@ -22,7 +23,8 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
   className = "",
   disabled,
   minWordCount,
-  maxWordCount
+  maxWordCount,
+  errorMessage
 }) => {
   const wordCount = useMemo(() => {
     const words = value.trim().split(" ")
@@ -37,7 +39,13 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
       <span className="text-xs font-light">{label}</span>
-      <p className="text-xs mb-2.5 font-light">{wordCount} word{(wordCount != 1) && 's'}</p>
+      {(minWordCount && maxWordCount) ?
+        <p className="mb-1 text-xs">Minimum: {minWordCount} word{(minWordCount != 1) && 's'}. Maximum: {maxWordCount} word{(minWordCount != 1) && 's'}.</p>
+        : (minWordCount) ?
+          <p className="mb-1 text-xs">Minimum: {minWordCount} word{(minWordCount != 1) && 's'}.</p>
+          : (maxWordCount) ?
+            <p className="mb-1 text-xs">Maximum: {maxWordCount} word{(minWordCount != 1) && 's'}.</p>
+            : <></>}
       <textarea
         className={twMerge(
           "p-2 h-32 w-full rounded-md outline outline-black",
@@ -50,13 +58,8 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
       ></textarea>
-      {(minWordCount && maxWordCount) ?
-        <p className="mt-1 text-xs font-light">Minimum: {minWordCount} word{(minWordCount != 1) && 's'}. Maximum: {maxWordCount} word{(minWordCount != 1) && 's'}.</p>
-        : (minWordCount) ?
-          <p className="mt-1 text-xs font-light">Minimum: {minWordCount} word{(minWordCount != 1) && 's'}.</p>
-          : (maxWordCount) ?
-            <p className="mt-1 text-xs font-light">Maximum: {maxWordCount} word{(minWordCount != 1) && 's'}.</p>
-            : <></>}
+      <p className="text-xs mt-1 font-light">{wordCount} word{(wordCount != 1) && 's'}</p>
+      {errorMessage && <p className="text-red-600">{errorMessage}</p>}
     </main>
   );
 };

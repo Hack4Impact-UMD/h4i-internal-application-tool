@@ -83,7 +83,6 @@ const ApplicationPage: React.FC = () => {
         />
       </div>
       <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
-
         <Section
           section={currentSection}
           responses={

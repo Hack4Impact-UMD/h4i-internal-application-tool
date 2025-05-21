@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { twMerge } from "tailwind-merge";
 
-function Navbar() {
+function Navbar({ className }: { className?: string }) {
     const { isLoading, isAuthed, logout } = useAuth()
 
     function handleSignout() {
@@ -9,7 +10,7 @@ function Navbar() {
     }
 
     return (
-        <div className="z-50 flex flex-row w-full py-4 px-8 justify-center items-center bg-lightgray h-20">
+        <div className={twMerge("z-50 flex flex-row w-full py-4 px-8 justify-center items-center bg-lightgray/70 backdrop-blur-sm h-16", className)}>
             <div className="flex flex-row h-full max-w-5xl w-full">
                 <div className="flex flex-2 items-center">
                     <NavLink to="/">

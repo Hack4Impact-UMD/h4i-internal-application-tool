@@ -8,6 +8,7 @@ interface OptionButtonProps {
   onClick: () => void;
   className?: string;
   disabled?: boolean;
+  errorMessage?: string;
 }
 
 const OptionButton: React.FC<OptionButtonProps> = ({
@@ -17,6 +18,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
   onClick,
   className = "",
   disabled,
+  errorMessage
 }) => {
   const [clicked, setClicked] = useState(isSelected);
 
@@ -99,6 +101,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
         )}
       </div>
       <span className="text-md ml-3">{optionName}</span>
+      {errorMessage && <p className="text-red-600">{errorMessage}</p>}
     </button>
   );
 };

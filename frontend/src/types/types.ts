@@ -191,6 +191,12 @@ export interface RoleSelectQuestion extends IApplicationQuestion {
 //helps with automatic type inference based on the questionType field
 export type ApplicationQuestion = TextQuestion | OptionQuestion | FileUploadQuestion | RoleSelectQuestion
 
+export type ValidationError = {
+    sectionId: string
+    questionId: string,
+    message: string
+}
+
 // type MockData = {
 //     applicationForms: [ApplicationForm]
 // }

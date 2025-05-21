@@ -12,6 +12,7 @@ interface MultiSelectGroupProps {
   displayName?: (key: string) => string;
   className?: string;
   disabled?: boolean;
+  errorMessage?: string;
 }
 
 const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
@@ -23,6 +24,7 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
   onOptionSelect,
   className = "",
   disabled,
+  errorMessage,
   displayName = (k) => k
 }) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(value || []);
@@ -62,6 +64,7 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
           />
         ))}
       </div>
+      {errorMessage && <p className="text-red-600">{errorMessage}</p>}
     </main>
   );
 };
