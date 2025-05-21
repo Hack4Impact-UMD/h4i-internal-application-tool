@@ -109,6 +109,14 @@ function App() {
                   </RequireAuth>
                 }
               />
+              <Route
+                path="/admin/reviewers"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <p>Hello there</p>
+                  </RequireAuth>
+                }
+              />
             </Route>
             <Route element={
               <RequireAuth requireRoles={[PermissionRole.Applicant]}>
