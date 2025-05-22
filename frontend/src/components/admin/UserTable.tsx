@@ -22,7 +22,7 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
   const [action, setAction] = useState<"delete" | "role">()
 
   function DeleteDialog() {
-    return <DialogContent className="sm:max-w-md">
+    return <>
       <DialogHeader>
         <DialogTitle>Confirm User Deletion</DialogTitle>
         <DialogDescription>
@@ -47,13 +47,13 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
           </Button>
         </DialogClose>
       </DialogFooter>
-    </DialogContent>
+    </>
   }
 
   function RoleDialog() {
     const [role, setRole] = useState<PermissionRole>(PermissionRole.Applicant);
 
-    return <DialogContent className="sm:max-w-md">
+    return <>
       <DialogHeader>
         <DialogTitle>Update Roles</DialogTitle>
         <DialogDescription>
@@ -80,7 +80,7 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
           </Button>
         </DialogClose>
       </DialogFooter>
-    </DialogContent>
+    </>
   }
 
   const columns: ColumnDef<UserProfile>[] = [
@@ -140,11 +140,13 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
       <div className="grow">
         <input type="text" value={searchFilter} onChange={e => setSearchFilter(e.target.value)} className="min-h-5 px-2 py-1 border-gray-400 border rounded-sm" placeholder="Search" />
       </div>
+
       <Button variant="secondary">Whitelist Reviewers</Button>
+
       <Dialog>
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button className="">Bulk Actions</Button>
+          <DropdownMenuTrigger className="bg-blue p-1 px-2 rounded-sm text-white cursor-pointer">
+            Bulk Actions
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Apply to selected users</DropdownMenuLabel>
@@ -156,14 +158,19 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
               <DropdownMenuItem className="cursor-pointer text-destructive" onClick={() => setToUpdate(selectedUsers)}>Delete selected</DropdownMenuItem>
             </DialogTrigger>
           </DropdownMenuContent>
-          {action == "delete" ? <DeleteDialog /> : <RoleDialog />}
         </DropdownMenu>
+
+        <DialogContent className="sm:max-w-md">
+          {action == "delete" ? <DeleteDialog /> : <RoleDialog />}
+        </DialogContent>
       </Dialog>
     </div>
+
     <Dialog>
       <DataTable selectedRows={selectedRows} setSelectedRows={setSelectedRows} globalFilter={searchFilter} data={users} columns={columns}></DataTable>
-      <DeleteDialog />
+      <DialogContent className="sm:max-w-md">
+        <DeleteDialog />
+      </DialogContent>
     </Dialog>
-
   </div>
 }
