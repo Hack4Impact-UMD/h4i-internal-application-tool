@@ -111,7 +111,7 @@ function App() {
                 }
               />
               <Route
-                path="/admin/roles"
+                path="/admin/users"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                     <UserRolePage></UserRolePage>

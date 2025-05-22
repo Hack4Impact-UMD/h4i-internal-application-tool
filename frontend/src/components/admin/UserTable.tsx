@@ -1,6 +1,6 @@
 import { PermissionRole, UserProfile } from "@/types/types"
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table"
-import { DataTable } from "../DataTable"
+import { UserDataTable } from "./UserDataTable"
 import { Checkbox } from "../ui/checkbox"
 import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button";
@@ -98,20 +98,21 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
       }
     },
     {
+      id: "Name",
       accessorFn: (profile) => `${profile.firstName} ${profile.lastName}`,
-      header: "Name"
+      header: ({ column }) => <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Name</Button>,
     },
     {
       accessorKey: "id",
-      header: "User ID",
+      header: ({ column }) => <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>User ID</Button>,
     },
     {
       accessorKey: "email",
-      header: "Email"
+      header: ({ column }) => <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Email</Button>,
     },
     {
       accessorKey: "role",
-      header: "Role",
+      header: ({ column }) => <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Role</Button>,
       cell: ({ row }) => {
         const role = row.getValue("role") as string
         return <select value={role} onChange={(e) => setUserRoles([row.original], e.target.value as PermissionRole)}>
@@ -122,12 +123,10 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
     {
       id: "delete",
       cell: ({ row }) => {
-        return <DialogTrigger asChild>
-          <Button variant="outline" className="cursor-pointer rounded-sm p-2" onClick={() => setToUpdate([row.original])}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 stroke-red-400">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-            </svg>
-          </Button>
+        return <DialogTrigger className="cursor-pointer border rounded-sm p-2" onClick={() => setToUpdate([row.original])}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 stroke-red-400">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+          </svg>
         </DialogTrigger>
       }
     }
@@ -151,11 +150,25 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
           <DropdownMenuContent>
             <DropdownMenuLabel>Apply to selected users</DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
-            <DialogTrigger disabled={selectedUsers.length == 0} asChild onClick={() => setAction("role")}>
-              <DropdownMenuItem onClick={() => setToUpdate(selectedUsers)} className="cursor-pointer">Change roles...</DropdownMenuItem>
+            <DialogTrigger className="cursor-pointer" disabled={selectedUsers.length == 0} asChild onClick={() => {
+              setToUpdate(selectedUsers)
+              setAction("role")
+            }}>
+              <DropdownMenuItem>
+                <span>
+                  Change roles...
+                </span>
+              </DropdownMenuItem>
             </DialogTrigger>
-            <DialogTrigger disabled={selectedUsers.length == 0} asChild onClick={() => setAction("delete")}>
-              <DropdownMenuItem className="cursor-pointer text-destructive" onClick={() => setToUpdate(selectedUsers)}>Delete selected</DropdownMenuItem>
+            <DialogTrigger className="cursor-pointer text-destructive" disabled={selectedUsers.length == 0} asChild onClick={() => {
+              setToUpdate(selectedUsers)
+              setAction("delete")
+            }}>
+              <DropdownMenuItem>
+                <span>
+                  Delete selected
+                </span>
+              </DropdownMenuItem>
             </DialogTrigger>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -167,7 +180,8 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
     </div>
 
     <Dialog>
-      <DataTable selectedRows={selectedRows} setSelectedRows={setSelectedRows} globalFilter={searchFilter} data={users} columns={columns}></DataTable>
+      <UserDataTable selectedRows={selectedRows} setSelectedRows={setSelectedRows} globalFilter={searchFilter} data={users} columns={columns}></UserDataTable>
+
       <DialogContent className="sm:max-w-md">
         <DeleteDialog />
       </DialogContent>
