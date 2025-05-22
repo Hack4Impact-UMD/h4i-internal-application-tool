@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useActiveForm } from '../../hooks/useApplicationForm';
 import Loading from '../../components/Loading';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const Overview: React.FC = () => {
     const { data: form, isLoading, error } = useActiveForm()
@@ -27,13 +28,13 @@ const Overview: React.FC = () => {
                     <h3 className="text-blue text-2xl">Application {form!.semester}</h3>
                 </div>
                 {
-                    <button
+                    <Button
                         onClick={handleApply}
                         disabled={wait}
                         className="w-full sm:w-fit cursor-pointer inline-flex items-center justify-center px-10 py-2 rounded-full bg-black 
                 text-white transition-colors hover:bg-darkgray">
                         Apply
-                    </button>
+                    </Button>
                 }
             </div>
             <div className="font-[Karla] text-sm font-normal leading-tight text-justify [text-justify:inter-word]">

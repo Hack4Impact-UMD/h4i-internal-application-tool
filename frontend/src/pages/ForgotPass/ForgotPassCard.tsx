@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { validEmail } from "../../utils/verification";
 import TextBox from "../../components/TextBox";
-import Button from "../../components/Button";
+import { Button } from "../../components/ui/button";
 
 export default function ForgotPassCard() {
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ export default function ForgotPassCard() {
       />
       <Button
         className="w-full h-[73px]"
-        enabled={isFormValid}
+        disabled={!isFormValid}
         type="submit"
       > Send Code </Button>
       <div className="w-full">

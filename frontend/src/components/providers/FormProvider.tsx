@@ -10,6 +10,7 @@ import { useAuth } from "../../hooks/useAuth"
 import { Timestamp } from "firebase/firestore"
 import { queryClient } from "../../config/query"
 import { throwErrorToast } from "../error/ErrorToast"
+import { Button } from "../ui/button"
 
 export default function FormProvider() {
   const { formId, sectionId } = useParams()
@@ -191,7 +192,7 @@ export default function FormProvider() {
             }
           </div>
         </div>
-        <button disabled={saveMutation.isPending} className="cursor-pointer p-2 bg-blue disabled:bg-blue/50 disabled:cursor-wait rounded text-white" onClick={save}>Save application</button>
+        <Button disabled={saveMutation.isPending} className="cursor-pointer p-2 bg-blue disabled:bg-blue/50 disabled:cursor-wait rounded text-white" onClick={save}>Save application</Button>
       </div>
     </div>
     <Outlet />

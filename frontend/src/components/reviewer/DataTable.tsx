@@ -9,7 +9,7 @@ type Props = {
 const thClasses = "bg-white border border-[#69778780] p-[8px] text-left font-bold";
 const tableCellClasses = "border-0 p-[8px] text-left overflow-hidden text-ellipsis last:text-right bg-gray-100 hover:bg-gray-300";
 
-const DataTable: React.FC<Props> = ({ applicants }: Props) => {
+const ApplicantDataTable: React.FC<Props> = ({ applicants }: Props) => {
     const navigate = useNavigate();
 
     const handleRowClick = (id: string) => {
@@ -70,4 +70,4 @@ const DataTable: React.FC<Props> = ({ applicants }: Props) => {
     );
 };
 
-export default DataTable;
+export default ApplicantDataTable;

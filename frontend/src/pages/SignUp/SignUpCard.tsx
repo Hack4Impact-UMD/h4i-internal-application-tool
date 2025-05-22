@@ -1,6 +1,6 @@
 import { useState } from "react";
 import TextBox from "../../components/TextBox";
-import Button from "../../components/Button";
+import { Button } from "../../components/ui/button";
 import { registerUser } from "../../services/userService";
 import { AxiosError } from "axios";
 import { validEmail, validPassword } from "../../utils/verification";
@@ -179,7 +179,7 @@ export default function SignUpCard() {
       />
       <Button
         className="w-full h-[73px]"
-        enabled={!signUpMutation.isPending && isFormValid}
+        disabled={signUpMutation.isPending || !isFormValid}
         type="submit"
       > Create Account </Button>
       <div className="w-full">

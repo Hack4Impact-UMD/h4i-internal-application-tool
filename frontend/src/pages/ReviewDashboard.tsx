@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ProgressBar from '../components/reviewer/ProgressBar';
 import FilterBar from '../components/reviewer/FilterBar';
-import DataTable from '../components/reviewer/DataTable';
+import ApplicantDataTable from '../components/reviewer/DataTable';
 import './ReviewDashboard.css';
 import { Timestamp } from 'firebase/firestore';
 
@@ -228,7 +228,7 @@ function ReviewDashboard() {
           {loading ? (
             <p>Loading applicants...</p>
           ) : (
-            <DataTable applicants={filteredApplicants} />
+            <ApplicantDataTable applicants={filteredApplicants} />
           )}
         </main>
       </>

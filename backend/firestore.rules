@@ -36,6 +36,7 @@ service cloud.firestore {
       // user documents can be written to only by the user they represent or super-reviewers
       allow create: if hasID(user_id);
       allow update: if hasID(user_id) || isSuperReviewer();
+      allow delete: if hasID(user_id) || isSuperReviewer();
     }
 
     match /application-forms/{form_id} {

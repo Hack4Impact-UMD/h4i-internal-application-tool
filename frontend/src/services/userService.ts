@@ -1,8 +1,8 @@
 import { signInWithEmailAndPassword, signOut, UserInfo } from "firebase/auth";
 import { API_URL, auth, db } from "../config/firebase";
 import axios, { AxiosError } from "axios";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { UserProfile } from "../types/types";
+import { collection, doc, getDoc, getDocs, query, updateDoc, where, writeBatch } from "firebase/firestore";
+import { PermissionRole, UserProfile } from "../types/types";
 import { throwErrorToast } from "../components/error/ErrorToast";
 
 export const USER_COLLECTION = "users";
@@ -57,6 +57,42 @@ export async function getUserByEmail(email: string): Promise<UserProfile> {
   } else {
     throw new Error(`User with email ${email} does not exist!`)
   }
+}
+
+export async function getAllUsers(): Promise<UserProfile[]> {
+  const users = collection(db, USER_COLLECTION);
+  const results = await getDocs(users)
+
+
+  return results.docs.map(d => d.data() as UserProfile)
+}
+
+export async function updateUserRole(userId: string, role: PermissionRole) {
+  const users = collection(db, USER_COLLECTION);
+  const userDoc = doc(users, userId);
+  await updateDoc(userDoc, {
+    role: role
+  })
+}
+
+export async function updateUserRoles(userIds: string[], role: PermissionRole) {
+  const batch = writeBatch(db)
+  const users = collection(db, USER_COLLECTION);
+
+  userIds.forEach(id => batch.update(doc(users, id), {
+    role: role
+  }))
+
+  await batch.commit()
+}
+
+export async function deleteUsers(userIds: string[]) {
+  const batch = writeBatch(db)
+  const users = collection(db, USER_COLLECTION);
+
+  userIds.forEach(id => batch.delete(doc(users, id)))
+
+  await batch.commit()
 }
 
 export function onAuthStateChange(handler: (userInfo: UserInfo | null) => void) {
