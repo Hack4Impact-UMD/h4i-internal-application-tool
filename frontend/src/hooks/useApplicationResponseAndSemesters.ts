@@ -4,14 +4,14 @@ import { getApplicationResponseAndSemester } from "../services/applicationRespon
 import { ApplicationResponse } from "../types/types";
 
 export type ApplicationResponseWithSemester = ApplicationResponse & {
-    semester: string;
+  semester: string;
 };
 
 export function useApplicationResponsesAndSemesters() {
   const { user, isAuthed, isLoading } = useAuth()
 
   return useQuery<ApplicationResponseWithSemester[]>({
-    queryKey: ["responses-and-semester",  user?.id],
+    queryKey: ["responses-and-semester", user?.id],
     enabled: !isLoading && isAuthed,
     queryFn: () => {
       return getApplicationResponseAndSemester(user!.id)

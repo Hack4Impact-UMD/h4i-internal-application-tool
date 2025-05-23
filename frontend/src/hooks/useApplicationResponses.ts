@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
-import { fetchOrCreateApplicationResponse, getAllApplicationResponsesByFormId, getApplicationResponses } from "../services/applicationResponsesService";
-import { ApplicationForm, ApplicationResponse } from "../types/types";
+import { fetchOrCreateApplicationResponse, getAllApplicationResponsesByFormId, getApplicationResponses, getAssignedApplicationResponsesByFormId } from "../services/applicationResponsesService";
+import { ApplicationForm, ApplicationResponse, PermissionRole } from "../types/types";
 import { getApplicationForm } from "../services/applicationFormsService";
 
 //gets the current user's application responses
@@ -46,5 +46,16 @@ export function useAllApplicationResponsesForForm(formId: string) {
   })
 }
 
+//gets all application responses for a given form assigned to the current reviewer
 export function useAssignedApplicationResponsesForForm(formId: string) {
+  const { user, isAuthed, isLoading } = useAuth()
+
+  return useQuery<ApplicationResponse[]>({
+    queryKey: ["responses", "assigned", user?.id, formId],
+    enabled: !isLoading && isAuthed && formId != undefined,
+    queryFn: async () => {
+      if (user?.role != PermissionRole.Reviewer) throw new Error("Assigned application data is only available to reviewers!")
+      return getAssignedApplicationResponsesByFormId(formId, user!.id)
+    }
+  })
 }

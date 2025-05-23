@@ -3,7 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 
 import Timeline from "./Timeline.tsx";
 import { ApplicationResponse, ApplicationStatus } from '../../types/types.ts';
-import { useApplicationResponsesAndSemesters } from '../../hooks/useApplicationResponseAndSemesters.tsx';
+import { useApplicationResponsesAndSemesters } from '../../hooks/useApplicationResponseAndSemesters.ts';
 import { useApplicationForm } from '../../hooks/useApplicationForm.ts';
 
 
