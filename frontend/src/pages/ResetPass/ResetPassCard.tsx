@@ -1,6 +1,6 @@
 import { useState } from "react";
 import TextBox from "../../components/TextBox";
-import Button from "../../components/Button";
+import { Button } from "../../components/ui/button";
 import { validPassword, validCode } from "../../utils/verification";
 
 export default function ResetPassCard() {
@@ -110,7 +110,7 @@ export default function ResetPassCard() {
         />
         <Button
           className="w-full h-[73px]"
-          enabled={isFormValid}
+          disabled={!isFormValid}
           type="submit"
         > Reset </Button>
         <hr className="w-full text-darkgray m-0"></hr>

@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { useApplicationResponseAndForm } from "../hooks/useApplicationResponses"
 import Loading from "../components/Loading"
 import Section from "../components/form/Section"
-import Button from "../components/Button"
+import { Button } from "../components/ui/button"
 import { useAuth } from "../hooks/useAuth"
 import { ApplicationSubmitResponse, submitApplicationResponse } from "../services/applicationResponsesService"
 import { useMutation } from "@tanstack/react-query"
@@ -85,7 +85,7 @@ export default function AppSubmitPage() {
             onChangeResponse={() => { }} />
         </div>
       )}
-      <Button enabled={!submitMutation.isPending} className="rounded-full" onClick={() => handleSubmit()}> Submit </Button>
+      <Button disabled={submitMutation.isPending} className="rounded-full" onClick={() => handleSubmit()}> Submit </Button>
     </div>
   </div>
 }

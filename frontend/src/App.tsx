@@ -28,6 +28,7 @@ import AppReviewPage from "./pages/AppReviewPage";
 import ReviewProvider from "./components/providers/ReviewProvider";
 import { ToastContainer } from "react-toastify";
 import { queryClient } from "./config/query";
+import UserRolePage from "./pages/UserRolePage";
 
 function App() {
   return (
@@ -106,6 +107,14 @@ function App() {
                     ]}
                   >
                     <ReviewDashboard></ReviewDashboard>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <UserRolePage></UserRolePage>
                   </RequireAuth>
                 }
               />

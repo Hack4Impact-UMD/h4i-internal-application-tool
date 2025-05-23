@@ -1,6 +1,6 @@
 import { useState } from "react";
 import TextBox from "../../components/TextBox";
-import Button from "../../components/Button";
+import { Button } from "../../components/ui/button";
 import { useAuth } from "../../hooks/useAuth";
 import { validEmail, validPassword } from "../../utils/verification";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -82,7 +82,7 @@ export default function LogInCard() {
           email: formData.email,
           password: formData.password,
         });
-        if (state.path) {
+        if (state.path != null) {
           navigate(state.path);
         } else {
           if (user.role == "applicant") {
@@ -144,7 +144,7 @@ export default function LogInCard() {
       </div>
       <Button
         className="w-full h-[73px]"
-        enabled={!loginMutation.isPending && isFormValid}
+        disabled={loginMutation.isPending || !isFormValid}
         type="submit"
       > Log In </Button>
       <div className="w-full">

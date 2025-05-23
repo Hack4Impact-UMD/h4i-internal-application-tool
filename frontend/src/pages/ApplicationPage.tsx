@@ -1,8 +1,8 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Section from "../components/form/Section";
 import Timeline from "../components/status/Timeline"; // Import Timeline component
 import useForm from "../hooks/useForm";
-import Button from "../components/Button";
+import { Button } from "../components/ui/button";
 import { useMemo } from "react";
 
 const ApplicationPage: React.FC = () => {
@@ -91,14 +91,14 @@ const ApplicationPage: React.FC = () => {
         <div className="flex gap-1 mt-4">
           <Button
             className="border border-gray-400 text-black bg-white hover:bg-gray-100 px-8 rounded-full"
-            enabled={form.sections[0].sectionId !== sectionId}
+            disabled={form.sections[0].sectionId === sectionId}
             onClick={handlePrevious}
           > Back </Button>
           {
             availableSections[availableSections.length - 1] !== sectionId ?
               <Button
                 className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-                enabled={form.sections[form.sections.length - 1].sectionId !== sectionId}
+                disabled={form.sections[form.sections.length - 1].sectionId === sectionId}
                 onClick={handleNext}
               > Next </Button> :
               <Button onClick={handleSubmit} className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"> Submit </Button>
