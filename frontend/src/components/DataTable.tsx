@@ -4,8 +4,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  OnChangeFn,
-  RowSelectionState,
+  TableOptions,
   useReactTable,
 } from "@tanstack/react-table"
 
@@ -21,17 +20,13 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[],
-  globalFilter?: string,
-  selectedRows: RowSelectionState,
-  setSelectedRows: OnChangeFn<RowSelectionState>
+  options: Partial<TableOptions<TData>>
 }
 
-export function UserDataTable<TData, TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
-  globalFilter = "",
-  selectedRows,
-  setSelectedRows,
+  options
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -39,11 +34,7 @@ export function UserDataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    onRowSelectionChange: setSelectedRows,
-    state: {
-      globalFilter: globalFilter,
-      rowSelection: selectedRows
-    }
+    ...options
   })
 
   return (

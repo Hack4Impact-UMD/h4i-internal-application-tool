@@ -1,6 +1,6 @@
 import { PermissionRole, UserProfile } from "@/types/types"
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table"
-import { UserDataTable } from "./UserDataTable"
+import { DataTable } from "../DataTable"
 import { Checkbox } from "../ui/checkbox"
 import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button";
@@ -138,7 +138,7 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
     </>
   }
 
-  const columns: ColumnDef<UserProfile>[] = [
+  const columns: ColumnDef<UserProfile>[] = useMemo(() => [
     {
       id: "select",
       cell: ({ row }) => {
@@ -185,7 +185,7 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
         </DialogTrigger>
       }
     }
-  ]
+  ], [setUserRoles])
 
   const selectedUsers = useMemo(() => Object.keys(selectedRows).filter(k => selectedRows[k]).map(i => users[parseInt(i)]), [selectedRows, users])
 
@@ -244,7 +244,15 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
     </div>
 
     <Dialog>
-      <UserDataTable selectedRows={selectedRows} setSelectedRows={setSelectedRows} globalFilter={searchFilter} data={users} columns={columns}></UserDataTable>
+      <DataTable
+        options={{
+          onRowSelectionChange: setSelectedRows,
+          state: {
+            globalFilter: searchFilter,
+            rowSelection: selectedRows
+          },
+        }}
+        data={users} columns={columns}></DataTable>
 
       <DialogContent className="sm:max-w-md">
         <DeleteDialog />

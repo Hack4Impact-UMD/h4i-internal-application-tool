@@ -82,7 +82,7 @@ export default function LogInCard() {
           email: formData.email,
           password: formData.password,
         });
-        if (state.path) {
+        if (state.path != null) {
           navigate(state.path);
         } else {
           if (user.role == "applicant") {
