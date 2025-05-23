@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { displayRoleName } from "@/utils/display"
+import { throwErrorToast } from "../error/ErrorToast"
 
 type UserTableProps = {
   users: UserProfile[],
@@ -83,6 +84,60 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
     </>
   }
 
+  function WhitelistDialog() {
+    const [input, setInput] = useState("");
+
+    function handleUpdate() {
+      const emails = input
+        .split("\n")
+        .map(e => e.trim())
+        .filter(e => e.length != 0)
+      const usersToUpdate = emails
+        .map(email => users.find(u => u.email == email))
+        .filter(u => u != undefined)
+
+      console.log("Setting the following users to REVIEWER: ", usersToUpdate)
+
+      if (usersToUpdate.length == 0) {
+        throwErrorToast("The emails you entered don't match any users")
+      } else if (usersToUpdate.length != emails.length) {
+        throwErrorToast(`Some emails did not match existing users. Inputted ${emails.length} emails, but found ${usersToUpdate.length} corresponding users!`)
+        setUserRoles(usersToUpdate, PermissionRole.Reviewer)
+      } else {
+        setUserRoles(usersToUpdate, PermissionRole.Reviewer)
+      }
+
+    }
+
+    return <>
+      <DialogHeader>
+        <DialogTitle>Whitelist Reviewers</DialogTitle>
+        <DialogDescription>
+          Paste a list of emails to assign the reviewer role to the corresponding users. Emails
+          should be separated by a new line. The whitelist will only apply to currently registered
+          users. <span className="font-bold">Users that register after the whitelist is applied will need to be whitelisted again
+            or manually assigned the reviewer role.</span>
+        </DialogDescription>
+      </DialogHeader>
+      <div className="flex items-center space-x-2 max-h-32 overflow-y-scroll">
+        <textarea className="w-full min-h-32 border rounded-sm p-1 text-sm bg-lightgray" value={input} onChange={e => setInput(e.target.value)}>
+        </textarea>
+      </div >
+      <DialogFooter className="sm:justify-start flex">
+        <DialogClose asChild className="grow">
+          <Button type="button" variant="default" onClick={handleUpdate}>
+            Update
+          </Button>
+        </DialogClose>
+        <DialogClose asChild>
+          <Button type="button" variant="secondary">
+            Cancel
+          </Button>
+        </DialogClose>
+      </DialogFooter>
+    </>
+  }
+
   const columns: ColumnDef<UserProfile>[] = [
     {
       id: "select",
@@ -140,12 +195,21 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
         <input type="text" value={searchFilter} onChange={e => setSearchFilter(e.target.value)} className="min-h-5 px-2 py-1 border-gray-400 border rounded-sm" placeholder="Search" />
       </div>
 
-      <Button variant="secondary">Whitelist Reviewers</Button>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="secondary">Whitelist Reviewers</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <WhitelistDialog />
+        </DialogContent>
+      </Dialog>
 
       <Dialog>
         <DropdownMenu>
-          <DropdownMenuTrigger className="bg-blue p-1 px-2 rounded-sm text-white cursor-pointer">
-            Bulk Actions
+          <DropdownMenuTrigger asChild>
+            <Button>
+              Bulk Actions
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Apply to selected users</DropdownMenuLabel>
