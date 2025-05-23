@@ -1,4 +1,4 @@
-import { setDoc, Timestamp, arrayUnion, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { setDoc, Timestamp, arrayUnion, collection, doc, getDocs, query, updateDoc, where, getDoc } from "firebase/firestore";
 import { API_URL, db } from "../config/firebase";
 import {
   ApplicationForm,
@@ -8,6 +8,8 @@ import {
 } from "../types/types";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import { getApplicantsAssignedForReview } from "./applicantService";
+import { getReviewAssignments } from "./reviewAssignmentService";
 
 export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
 
@@ -27,11 +29,17 @@ export async function saveApplicationResponse(response: ApplicationResponse, tok
 export async function getApplicationResponses(
   userId: string
 ): Promise<ApplicationResponse[]> {
-  const users = collection(db, APPLICATION_RESPONSES_COLLECTION);
-  const q = query(users, where("userId", "==", userId));
+  const responses = collection(db, APPLICATION_RESPONSES_COLLECTION);
+  const q = query(responses, where("userId", "==", userId));
   const results = await getDocs(q);
 
   return results.docs.map((d) => d.data() as ApplicationResponse);
+}
+
+export async function getApplicationResponseById(responseId: string): Promise<ApplicationResponse | undefined> {
+  const responses = collection(db, APPLICATION_RESPONSES_COLLECTION);
+  const respDoc = doc(responses, responseId)
+  return (await getDoc(respDoc)).data() as (ApplicationResponse | undefined)
 }
 
 export async function getApplicationResponseByFormId(
@@ -56,6 +64,27 @@ export async function getApplicationResponseByFormId(
   return data;
 }
 
+export async function getAllApplicationResponsesByFormId(formId: string): Promise<ApplicationResponse[]> {
+  const responses = collection(db, APPLICATION_RESPONSES_COLLECTION)
+  const q = query(
+    responses,
+    where("applicationFormId", "==", formId)
+  )
+
+  const results = await getDocs(q);
+
+  return results.docs.map(d => d.data() as ApplicationResponse)
+}
+
+export async function getAssignedApplicationResponsesByFormId(formId: string, reviewerId: string): Promise<ApplicationResponse[]> {
+  const assignments = (await getReviewAssignments(formId, reviewerId)).filter(a => a.assignmentType == "review");
+  const responses = collection(db, APPLICATION_RESPONSES_COLLECTION)
+
+  const q = query(responses, where("id", "in", assignments.map(a => a.applicationResponseId)))
+  const res = await getDocs(q)
+
+  return res.docs.map(d => d.data() as ApplicationResponse)
+}
 
 export async function fetchOrCreateApplicationResponse(
   userId: string,

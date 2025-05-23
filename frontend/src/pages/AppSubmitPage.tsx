@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { useApplicationResponseAndForm } from "../hooks/useApplicationResponses"
+import { useMyApplicationResponseAndForm } from "../hooks/useApplicationResponses"
 import Loading from "../components/Loading"
 import Section from "../components/form/Section"
 import { Button } from "../components/ui/button"
@@ -14,7 +14,7 @@ import { throwErrorToast } from "../components/error/ErrorToast"
 export default function AppSubmitPage() {
   const { formId } = useParams()
   const navigate = useNavigate()
-  const { data, isLoading, error } = useApplicationResponseAndForm(formId)
+  const { data, isLoading, error } = useMyApplicationResponseAndForm(formId)
   const { token } = useAuth()
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
 
@@ -45,8 +45,6 @@ export default function AppSubmitPage() {
       }
     }
   }
-
-  console.log(response)
 
   return <div className="w-full flex flex-col items-center p-4 pt-8">
     <div className="max-w-3xl w-full flex flex-col gap-2">

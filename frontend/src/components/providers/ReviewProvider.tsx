@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useParams } from "react-router-dom"
 import { FormContext } from "../../contexts/formContext"
-import { useApplicationResponseAndForm } from "../../hooks/useApplicationResponses"
+import { useMyApplicationResponseAndForm } from "../../hooks/useApplicationResponses"
 import Loading from "../Loading"
 import { useEffect, useMemo, useState } from "react"
 import { ApplicantRole, ApplicationResponse, ApplicationStatus, QuestionResponse, QuestionType } from "../../types/types"
@@ -12,7 +12,7 @@ import { Timestamp } from "firebase/firestore"
 export default function ReviewProvider() {
   const { formId, sectionId } = useParams()
   const { token } = useAuth()
-  const { data, isLoading, error } = useApplicationResponseAndForm(formId)
+  const { data, isLoading, error } = useMyApplicationResponseAndForm(formId)
   const saveMutation = useMutation({
     mutationFn: async (r: ApplicationResponse) => {
       if (token)

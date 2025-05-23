@@ -52,6 +52,11 @@ service cloud.firestore {
       allow update: if isApplicant() && hasID(resource.data.userId); //IMPORTANT TODO: editing should only be allowed before due date and if status == InProgress
       allow delete: if (isApplicant() && hasID(resource.data.userId)) || isSuperReviewer();
     }
+
+    match /review-assignments/{assignment_id} {
+      allow read: if isReviewer();
+      allow write: if isSuperReviewer();
+    }
     
     // by default, all documents should be inaccessible to reads and writes
     match /{document=**} {

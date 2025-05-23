@@ -57,17 +57,29 @@ export interface ApplicantUserProfile extends UserProfile {
     inactiveApplicationIds: string[];
 }
 
-export type ReviewAssignment = {
+export type InterviewAssignment = {
+    id: string;
+    assignmentType: "interview",
+    formId: string, // what form is this review for
+    interviewerId: string,
     applicantId: string, // the applicant that was assigned for review
-    applicationId: string // the submitted application that was assigned for review
+    applicationResponseId: string // the submitted application that was assigned for review
 }
+
+export type AppReviewAssignment = {
+    id: string;
+    assignmentType: "review",
+    formId: string, // what form is this review for
+    reviewerId: string,
+    applicantId: string, // the applicant that was assigned for review
+    applicationResponseId: string // the submitted application that was assigned for review
+    forRole: ApplicantRole
+}
+
+export type ReviewerAssignment = AppReviewAssignment | InterviewAssignment
 
 export interface ReviewerUserProfile extends UserProfile {
     role: PermissionRole.Reviewer;
-    reviewAssignments: {
-        applicationReviewAssignments: ReviewAssignment[];
-        interviewAssignmentIds: ReviewAssignment[];
-    };
 }
 
 // stores the actual user submitted application responses
