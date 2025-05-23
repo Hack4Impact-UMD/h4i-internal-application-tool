@@ -16,8 +16,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { twMerge } from "tailwind-merge"
 
 interface DataTableProps<TData, TValue> {
+  className?: string,
   columns: ColumnDef<TData, TValue>[]
   data: TData[],
   options: Partial<TableOptions<TData>>
@@ -26,7 +28,8 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  options
+  options,
+  className = ""
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -38,7 +41,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="rounded-md border">
+    <div className={twMerge("rounded-md border", className)}>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
