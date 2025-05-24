@@ -16,7 +16,8 @@ const ApplicationPage: React.FC = () => {
 
   const timelineItems = useMemo(() => form?.sections.filter((section) => availableSections.includes(section.sectionId)).map(s => {
     return {
-      label: s.sectionName
+      label: s.sectionName,
+      id: s.sectionId
     }
   }), [availableSections, form]);
 
@@ -71,8 +72,8 @@ const ApplicationPage: React.FC = () => {
           items={timelineItems ?? []}
           currentStep={currentStep}
           maxStepReached={currentStep}
-          onStepClick={(index) => {
-            const targetSectionId = form.sections[index].sectionId;
+          onStepClick={(_, item) => {
+            const targetSectionId = item.id;
             navigate(`/apply/f/${form.id}/${targetSectionId}`);
           }}
         />

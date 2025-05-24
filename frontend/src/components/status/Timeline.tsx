@@ -1,15 +1,20 @@
+type TimelineItem = {
+  id: string
+  label: string,
+}
+
 type TimelineProps = {
-  items: { label: string; link?: string }[];
+  items: TimelineItem[];
   currentStep: number;
   maxStepReached: number;
   className?: string
-  onStepClick?: (index: number) => void;
+  onStepClick?: (index: number, item: TimelineItem) => void;
 };
 
 const Timeline = (props: TimelineProps) => {
   const handleStepClick = (index: number) => {
     if (index <= props.maxStepReached && props.onStepClick) {
-      props.onStepClick(index);
+      props.onStepClick(index, props.items[index]);
     }
   };
 

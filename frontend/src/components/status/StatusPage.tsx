@@ -8,10 +8,10 @@ import { useApplicationForm } from '../../hooks/useApplicationForm.ts';
 
 
 const timelineItems = [
-    { label: "About Yourself" },
-    { label: "Resume" },
-    { label: "More questions " },
-    { label: "Review" },
+    { label: "In Progress", id: ApplicationStatus.InProgress },
+    { label: "Submitted", id: ApplicationStatus.Submitted },
+    { label: "Interview", id: ApplicationStatus.Interview, },
+    { label: "Decided", id: ApplicationStatus.Decided },
 ];
 
 
@@ -137,7 +137,7 @@ function StatusPage() {
                     </div>
 
                     <div className="mt-5">
-                        {activeTab === 'active' && <Timeline currentStep={2} items={timelineItems} maxStepReached={2} />}
+                        {activeTab === 'active' && <Timeline currentStep={1} items={timelineItems} maxStepReached={2} />}
                     </div>
 
                     <div className="mt-3">

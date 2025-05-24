@@ -17,6 +17,7 @@ const ApplicationPage: React.FC = () => {
 
   const timelineItems = useMemo(() => form?.sections.filter((section) => availableSections.includes(section.sectionId)).map(s => {
     return {
+      id: s.sectionId,
       label: s.sectionName
     }
   }), [availableSections, form]);
@@ -67,9 +68,8 @@ const ApplicationPage: React.FC = () => {
         items={timelineItems ?? []}
         currentStep={currentStep}
         maxStepReached={currentStep}
-        onStepClick={(index) => {
-          const targetSectionId = form.sections[index].sectionId;
-          navigate(`/review/f/${form.id}/${targetSectionId}`);
+        onStepClick={(_, item) => {
+          navigate(`/review/f/${form.id}/${item.id}`);
         }}
       />
       <div className="flex justify-center items-start">
@@ -81,7 +81,7 @@ const ApplicationPage: React.FC = () => {
                 (sectionResp) => sectionResp.sectionId === currentSection.sectionId
               )?.questions || []
             }
-            onChangeResponse={() => { }} // TODO: make this optional?
+            // onChangeResponse={() => { }} // TODO: make this optional? yes
             disabled={true}
           />
         </div>
