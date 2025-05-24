@@ -22,6 +22,17 @@ const ApplicationPage: React.FC = () => {
     }
   }), [availableSections, form]);
 
+
+  const currentSection = useMemo(() => form?.sections.find(
+    (section) => section.sectionId === sectionId
+  ), [form, sectionId])
+
+  const responses = useMemo(() => {
+    return response?.sectionResponses.find(
+      (sectionResp) => sectionResp.sectionId === currentSection?.sectionId
+    )?.questions || []
+  }, [response, currentSection])
+
   if (!form) return <p>Failed to fetch form...</p>
   if (!response) return <p>Failed to fetch response...</p>
 
@@ -29,10 +40,6 @@ const ApplicationPage: React.FC = () => {
   // const userId = location.state?.userId;
 
 
-
-  const currentSection = form.sections.find(
-    (section) => section.sectionId === sectionId
-  );
 
   if (!currentSection) {
     return (
@@ -77,9 +84,7 @@ const ApplicationPage: React.FC = () => {
           <Section
             section={currentSection}
             responses={
-              response.sectionResponses.find(
-                (sectionResp) => sectionResp.sectionId === currentSection.sectionId
-              )?.questions || []
+              responses
             }
             // onChangeResponse={() => { }} // TODO: make this optional? yes
             disabled={true}

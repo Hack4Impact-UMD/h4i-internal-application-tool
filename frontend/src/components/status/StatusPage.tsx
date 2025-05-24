@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
 
 import Timeline from "./Timeline.tsx";
@@ -76,13 +76,13 @@ function StatusPage() {
     // replace this hook call with new call
     const { data: applications, isLoading, error } = useApplicationResponsesAndSemesters()
 
-    const activeApplications = applications.filter(app =>
+    const activeApplications = useMemo(() => applications.filter(app =>
         [ApplicationStatus.Submitted, ApplicationStatus.UnderReview, ApplicationStatus.Interview].includes(app.status)
-    );
+    ), [applications]);
 
-    const inactiveApplications = applications.filter(app =>
+    const inactiveApplications = useMemo(() => applications.filter(app =>
         [ApplicationStatus.InActive].includes(app.status)
-    );
+    ), [applications]);
 
     const activeList = (activeTab == "active") ? activeApplications : inactiveApplications
     const semesterGrouping = activeList.reduce((map, application) => {
@@ -96,6 +96,12 @@ function StatusPage() {
         return map;
     }, new Map<string, ApplicationResponse[]>()
     );
+
+    const currentTimelineStep = useMemo(() => {
+        //Double check this sorting!
+        const activeStatus = activeApplications.sort((a, b) => a.dateSubmitted.toMillis() - b.dateSubmitted.toMillis())[0].status
+        return timelineItems.findIndex(i => i.id == activeStatus)
+    }, [activeApplications])
 
     return (
         <div className="flex flex-col">
@@ -137,7 +143,7 @@ function StatusPage() {
                     </div>
 
                     <div className="mt-5">
-                        {activeTab === 'active' && <Timeline currentStep={1} items={timelineItems} maxStepReached={2} />}
+                        {activeTab === 'active' && <Timeline currentStep={currentTimelineStep} items={timelineItems} maxStepReached={2} />}
                     </div>
 
                     <div className="mt-3">

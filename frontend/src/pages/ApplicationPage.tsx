@@ -21,12 +21,19 @@ const ApplicationPage: React.FC = () => {
     }
   }), [availableSections, form]);
 
+  const currentSection = useMemo(() => form?.sections.find(
+    (section) => section.sectionId === sectionId
+  ), [form, sectionId])
+
+  const responses = useMemo(() => {
+    return response?.sectionResponses.find(
+      (sectionResp) => sectionResp.sectionId === currentSection?.sectionId
+    )?.questions || []
+  }, [response, currentSection])
+
   if (!form) return <p>Failed to fetch form...</p>
   if (!response) return <p>Failed to fetch response...</p>
 
-  const currentSection = form.sections.find(
-    (section) => section.sectionId === sectionId
-  );
 
   if (!currentSection) {
     return (
@@ -64,6 +71,7 @@ const ApplicationPage: React.FC = () => {
     navigate(`/apply/submit/${form.id}`)
   }
 
+
   return (
     <div className="flex flex-col items-center justify-center p-3">
       <div className="w-full max-w-3xl overflow-x-auto p-2">
@@ -81,11 +89,7 @@ const ApplicationPage: React.FC = () => {
       <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 p-4 md:pt-16 md:pb-8 md:px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
         <Section
           section={currentSection}
-          responses={
-            response.sectionResponses.find(
-              (sectionResp) => sectionResp.sectionId === currentSection.sectionId
-            )?.questions || []
-          }
+          responses={responses}
           onChangeResponse={handleResponseChange}
         />
 

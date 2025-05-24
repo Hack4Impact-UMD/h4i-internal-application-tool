@@ -22,7 +22,6 @@ export default function AppSubmitPage() {
     mutationFn: (response: ApplicationResponse) => submitApplicationResponse(response, token!),
   })
 
-
   if (isLoading) return <Loading />
   if (error) return <p>Something went wrong: {error.message}</p>
 
