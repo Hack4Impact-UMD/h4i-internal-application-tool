@@ -155,19 +155,19 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
     {
       id: "Name",
       accessorFn: (profile) => `${profile.firstName} ${profile.lastName}`,
-      header: ({ column }) => <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Name</Button>,
+      header: ({ column }) => <Button variant="ghost" className="p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Name</Button>,
     },
     {
       accessorKey: "id",
-      header: ({ column }) => <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>User ID</Button>,
+      header: ({ column }) => <Button variant="ghost" className="p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>User ID</Button>,
     },
     {
       accessorKey: "email",
-      header: ({ column }) => <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Email</Button>,
+      header: ({ column }) => <Button variant="ghost" className="p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Email</Button>,
     },
     {
       accessorKey: "role",
-      header: ({ column }) => <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Role</Button>,
+      header: ({ column }) => <Button variant="ghost" className="p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Role</Button>,
       cell: ({ row }) => {
         const role = row.getValue("role") as string
         return <select value={role} onChange={(e) => setUserRoles([row.original], e.target.value as PermissionRole)}>
