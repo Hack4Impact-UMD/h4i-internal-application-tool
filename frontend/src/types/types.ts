@@ -57,6 +57,12 @@ export interface ApplicantUserProfile extends UserProfile {
     inactiveApplicationIds: string[];
 }
 
+export interface ReviewerUserProfile extends UserProfile {
+    role: PermissionRole.Reviewer;
+    applicantRolePreferences: ApplicantRole[]; // the roles that this reviewer prefers to review for
+}
+
+
 export type InterviewAssignment = {
     id: string;
     assignmentType: "interview",
@@ -77,11 +83,6 @@ export type AppReviewAssignment = {
 }
 
 export type ReviewerAssignment = AppReviewAssignment | InterviewAssignment
-
-export interface ReviewerUserProfile extends UserProfile {
-    role: PermissionRole.Reviewer;
-}
-
 // stores the actual user submitted application responses
 export interface ApplicationResponse {
     id: string;
