@@ -134,7 +134,7 @@ export interface ApplicationReviewData {
     applicantScores: {
         [scoreCategory in string]: number // between 0-4, each review category in the rubric will have a value here
     };
-    reviewerNotes?: string[];
+    reviewerNotes: string;
     reviewStatus: ReviewStatus;
     forRole: ApplicantRole; // what role is this review for
 }

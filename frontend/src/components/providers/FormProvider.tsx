@@ -4,15 +4,15 @@ import { useMyApplicationResponseAndForm } from "../../hooks/useApplicationRespo
 import Loading from "../Loading"
 import { useEffect, useMemo, useState } from "react"
 import { ApplicantRole, ApplicationResponse, ApplicationStatus, QuestionResponse, QuestionType } from "../../types/types"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { saveApplicationResponse } from "../../services/applicationResponsesService"
 import { useAuth } from "../../hooks/useAuth"
 import { Timestamp } from "firebase/firestore"
-import { queryClient } from "../../config/query"
 import { throwErrorToast } from "../error/ErrorToast"
 import { Button } from "../ui/button"
 
 export default function FormProvider() {
+  const queryClient = useQueryClient();
   const { formId, sectionId } = useParams()
   const { token, user } = useAuth()
   const { data, isLoading, error } = useMyApplicationResponseAndForm(formId)

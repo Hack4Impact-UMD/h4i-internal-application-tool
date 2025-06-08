@@ -1,14 +1,14 @@
 import UserTable from "@/components/admin/UserTable";
 import { throwErrorToast } from "@/components/error/ErrorToast";
 import Loading from "@/components/Loading";
-import { queryClient } from "@/config/query";
 import { useUsers } from "@/hooks/useUsers";
 import { deleteUsers, updateUserRoles } from "@/services/userService";
 import { PermissionRole, UserProfile } from "@/types/types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function UserRolePage() {
   const { data: users, isLoading, error } = useUsers();
+  const queryClient = useQueryClient()
 
   const roleMutation = useMutation({
     mutationFn: ({ users, role }: { users: UserProfile[], role: PermissionRole }) => {
