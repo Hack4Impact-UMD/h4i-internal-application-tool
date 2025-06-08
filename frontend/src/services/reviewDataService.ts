@@ -1,4 +1,4 @@
-import { and, collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { ApplicantRole, ApplicationReviewData } from "../types/types";
 import { db } from "../config/firebase";
 import { v4 as uuidv4 } from "uuid"
@@ -55,7 +55,11 @@ export async function createReviewData(review: Omit<ApplicationReviewData, 'id'>
   return reviewDoc
 }
 
-export async function updateReviewDataForReviewerResponse(reviewerId: string, responseId: string, update: Partial<Omit<ApplicationReviewData, 'id'>>) {
+export async function updateReviewDataForReviewerResponse(
+  reviewerId: string,
+  responseId: string,
+  update: Partial<Omit<ApplicationReviewData, 'id'>>
+) {
   const reviewData = collection(db, REVIEW_DATA_COLLECTION)
   const q = query(reviewData, where('reviewerId', '==', reviewerId), where('applicationResponseId', '==', responseId))
 
