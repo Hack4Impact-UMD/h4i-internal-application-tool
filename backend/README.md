@@ -35,3 +35,16 @@ firebase login
    latest version of the Java installer through the Oracle website, run the installer, 
    and finally add Java to your path variables. You may need to do this even if you have
    Java through Eclipse.
+
+# Testing with Mock Data
+
+During testing, you may want to run the emulators with persisting mock data, such as 
+your user information or a mock form. We have included two mock data folders to start 
+with, `./emulator_data` and `./emulator_data2`. To start the emulators with this data, 
+run the following:
+   
+```firebase emulators:start --export-on-exit=./emulator_data --import=./emulator_data```
+
+Replace `./emulator_data` with whatever directory you want to store/use the data in. Also,
+omit ``--export-on-exit`` if you don't intend to save changes. Be careful not to 
+unintentionally commit and push mock data. 
