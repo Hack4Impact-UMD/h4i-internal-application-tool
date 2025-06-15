@@ -57,7 +57,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
     <button
       onClick={handleClick}
       className={twMerge(
-        "flex items-center shadow-md mb-2 min-w-40 cursor-pointer rounded-lg",
+        "flex items-center shadow-md mb-2 min-w-40 cursor-pointer rounded-lg hover:brightness-95 transition",
         disabled && "cursor-not-allowed",
         className
       )}

@@ -26,7 +26,7 @@ export default function FileUpload(props: FileUploadProps) {
     <div>
       <label
         htmlFor="resume-upload"
-        className="flex items-start gap-4 p-4 bg-lightgray rounded-lg cursor-pointer py-7"
+        className="flex items-start gap-4 p-4 bg-lightgray hover:brightness-95 transition rounded-lg cursor-pointer py-7"
       >
         <div className="flex-shrink-0 mr-3">
           <svg width="70" height="70" viewBox="0 0 43 59" fill="none" xmlns="http://www.w3.org/2000/svg">

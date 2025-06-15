@@ -33,7 +33,7 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
   }, [value])
 
   return (
-    <main className={twMerge("flex flex-col min-w-52", className)}>
+    <main className={twMerge("flex flex-col min-w-52 hover:brightness-95 transition", className)}>
       <span className="text-xl font-normal">
         {question}{" "}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}

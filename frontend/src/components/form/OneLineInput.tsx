@@ -24,7 +24,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
   errorMessage
 }) => {
   return (
-    <main className={twMerge("flex flex-col max-w-60", className)}>
+    <main className={twMerge("flex flex-col max-w-60 hover:brightness-95 transition", className)}>
       <span className="text-xl font-normal">
         {question}{" "}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
