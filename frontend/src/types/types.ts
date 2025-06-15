@@ -43,21 +43,24 @@ export enum QuestionType {
     RoleSelect = "role-select"
 }
 
-export type UserProfile = {
+
+export type UserProfile = ApplicantUserProfile | ReviewerUserProfile
+export interface IUserProfile {
     id: string;
     email: string;
     firstName: string;
     lastName: string;
     role: PermissionRole;
+    dateCreated: Timestamp;
 };
 
-export interface ApplicantUserProfile extends UserProfile {
+export interface ApplicantUserProfile extends IUserProfile {
     role: PermissionRole.Applicant;
     activeApplicationIds: string[];
     inactiveApplicationIds: string[];
 }
 
-export interface ReviewerUserProfile extends UserProfile {
+export interface ReviewerUserProfile extends IUserProfile {
     role: PermissionRole.Reviewer;
     applicantRolePreferences: ApplicantRole[]; // the roles that this reviewer prefers to review for
 }

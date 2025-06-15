@@ -6,8 +6,9 @@ import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { displayRoleName } from "@/utils/display"
+import { displayUserRoleName } from "@/utils/display"
 import { throwErrorToast } from "../error/ErrorToast"
+import { Timestamp } from "firebase/firestore"
 
 type UserTableProps = {
   users: UserProfile[],
@@ -67,7 +68,7 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
         </ul>
       </div>
       <select value={role} className="bg-lightgray p-2 rounded-sm" onChange={e => setRole(e.target.value as PermissionRole)}>
-        {Object.entries(PermissionRole).map(e => <option key={e[1]} value={e[1]}>{displayRoleName(e[1])}</option>)}
+        {Object.entries(PermissionRole).map(e => <option key={e[1]} value={e[1]}>{displayUserRoleName(e[1])}</option>)}
       </select>
       <DialogFooter className="sm:justify-start flex">
         <DialogClose asChild className="grow">
@@ -166,12 +167,20 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
       header: ({ column }) => <Button variant="ghost" className="p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Email</Button>,
     },
     {
+      accessorKey: "dateCreated",
+      header: ({ column }) => <Button variant="ghost" className="p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Date Created</Button>,
+      cell: ({ row }) => {
+        const ts = row.getValue("dateCreated") as Timestamp
+        return <span>{ts.toDate().toLocaleDateString() + " " + ts.toDate().toLocaleTimeString()}</span>
+      }
+    },
+    {
       accessorKey: "role",
       header: ({ column }) => <Button variant="ghost" className="p-0" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>Role</Button>,
       cell: ({ row }) => {
         const role = row.getValue("role") as string
         return <select value={role} onChange={(e) => setUserRoles([row.original], e.target.value as PermissionRole)}>
-          {Object.entries(PermissionRole).map(e => <option value={e[1]} key={e[1]}>{displayRoleName(e[1] as PermissionRole)}</option>)}
+          {Object.entries(PermissionRole).map(e => <option value={e[1]} key={e[1]}>{displayUserRoleName(e[1] as PermissionRole)}</option>)}
         </select>
       }
     },

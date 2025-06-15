@@ -1,8 +1,12 @@
 import { ReactNode, useEffect, useState } from "react";
-import { getUserById, loginUser, logoutUser, onAuthStateChange } from "../../services/userService";
-import { UserProfile } from "../../types/types";
+import { getUserById, loginUser, logoutUser, onAuthStateChange, setReviewerRolePreferences } from "../../services/userService";
+import { ApplicantRole, PermissionRole, UserProfile } from "../../types/types";
 import { auth } from "../../config/firebase";
 import { AuthContext } from "../../contexts/authContext";
+import ReviewerRoleSelectDialog from "../reviewer/ReviewerRoleSelectDialog";
+import { useMutation } from "@tanstack/react-query";
+import { throwErrorToast } from "../error/ErrorToast";
+import { throwSuccessToast } from "../toasts/SuccessToast";
 
 interface AuthProviderProps {
   children?: ReactNode
@@ -16,12 +20,35 @@ interface AuthState {
   isLoading: boolean
 }
 
+
 export default function AuthProvider(props: AuthProviderProps) {
+  const MIN_REVIEWER_ROLE_PREFS = 3
+
   const [authState, setAuthState] = useState<AuthState>({
     user: undefined,
     token: undefined,
     isAuthed: false,
     isLoading: true
+  })
+
+  const submitMutation = useMutation({
+    mutationFn: (roles: ApplicantRole[]) => setReviewerRolePreferences(authState.user?.id ?? "", roles),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onSuccess: (_data, vars, _ctx) => {
+      if (authState.user?.role == PermissionRole.Reviewer) {
+        setAuthState({
+          ...authState,
+          user: {
+            ...authState.user!,
+            applicantRolePreferences: vars
+          }
+        })
+        throwSuccessToast("Successfully updated role preferences!")
+      }
+    },
+    onError: () => {
+      throwErrorToast("Failed to set review preferences!")
+    }
   })
 
   useEffect(() => {
@@ -61,6 +88,13 @@ export default function AuthProvider(props: AuthProviderProps) {
       })
     }
   }}>
+    {
+      authState.user?.role == PermissionRole.Reviewer &&
+      <ReviewerRoleSelectDialog
+        open={!authState.user.applicantRolePreferences || authState.user.applicantRolePreferences.length < MIN_REVIEWER_ROLE_PREFS}
+        minRoles={MIN_REVIEWER_ROLE_PREFS}
+        onSubmit={(roles) => submitMutation.mutate(roles)} />
+    }
     {props.children}
   </AuthContext.Provider>
 }

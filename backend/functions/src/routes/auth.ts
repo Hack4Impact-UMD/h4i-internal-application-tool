@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
 import { UserProfile, UserRegisterForm, userRegisterFormSchema } from "../models/user";
-import { CollectionReference } from "firebase-admin/firestore";
+import { CollectionReference, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import * as admin from "firebase-admin"
 import { isAuthenticated } from "../middleware/authentication";
@@ -32,7 +32,9 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
       firstName: registerForm.firstName,
       lastName: registerForm.lastName,
       role: "applicant", // by default, everyone is set to applicant. higher privelages can only be assigned by super-reviewers
+      createdAt: Timestamp.now(),
       activeApplications: [],
+
       inactiveApplications: []
     }
 

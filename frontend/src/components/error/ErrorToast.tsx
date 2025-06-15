@@ -5,7 +5,7 @@ type ErrorToastProps = {
     closeToast?: () => void;
 };
 
-export function ErrorToast({ message, closeToast}: ErrorToastProps) {
+export function ErrorToast({ message, closeToast }: ErrorToastProps) {
     return (
         <div className="bg-red-100 text-red-800 border border-red-300 rounded-xl shadow-lg p-4 flex items-start gap-2 max-w-md z-50">
             <span>🚫</span>
@@ -19,8 +19,8 @@ export function ErrorToast({ message, closeToast}: ErrorToastProps) {
 
 export function throwErrorToast(message: string): void {
     toast.error(<ErrorToast message={message} />, {
-        icon: false,            
+        icon: false,
         closeButton: false,
         hideProgressBar: true,
-      });
+    });
 };

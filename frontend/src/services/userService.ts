@@ -2,7 +2,7 @@ import { signInWithEmailAndPassword, signOut, UserInfo } from "firebase/auth";
 import { API_URL, auth, db } from "../config/firebase";
 import axios, { AxiosError } from "axios";
 import { collection, doc, getDoc, getDocs, query, updateDoc, where, writeBatch } from "firebase/firestore";
-import { PermissionRole, UserProfile } from "../types/types";
+import { ApplicantRole, PermissionRole, ReviewerUserProfile, UserProfile } from "../types/types";
 import { throwErrorToast } from "../components/error/ErrorToast";
 
 export const USER_COLLECTION = "users";
@@ -93,6 +93,18 @@ export async function deleteUsers(userIds: string[]) {
   userIds.forEach(id => batch.delete(doc(users, id)))
 
   await batch.commit()
+}
+
+export async function setReviewerRolePreferences(reviewerId: string, prefs: ApplicantRole[]) {
+  const user = await getUserById(reviewerId)
+  if (user.role != PermissionRole.Reviewer) throw new Error("User is not a reviewer!")
+
+  const users = collection(db, USER_COLLECTION)
+  const userDoc = doc(users, reviewerId)
+
+  await updateDoc(userDoc, {
+    applicantRolePreferences: prefs
+  } as Partial<ReviewerUserProfile>)
 }
 
 export function onAuthStateChange(handler: (userInfo: UserInfo | null) => void) {

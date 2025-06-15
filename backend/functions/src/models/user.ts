@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { z } from "zod";
 
 export type UserRole = "applicant" | "reviewer" | "super-reviewer"
@@ -8,6 +9,7 @@ export type UserProfile = {
   firstName: string;
   lastName: string;
   role: UserRole;
+  createdAt: Timestamp;
   activeApplications?: string[];
   inactiveApplications?: string[]
 }

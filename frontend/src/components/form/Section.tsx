@@ -5,6 +5,7 @@ import ChoiceGroup from './ChoiceGroup';
 import MultiSelectGroup from './MultiSelectGroup';
 import useForm from '../../hooks/useForm';
 import FileUpload from './FileUpload';
+import { displayApplicantRoleName, displayUserRoleName } from '@/utils/display';
 
 interface SectionProps {
   section: ApplicationSection;
@@ -98,15 +99,7 @@ const Section: React.FC<SectionProps> = ({
                   onChangeResponse(question.questionId, value ?? [])
                   setSelectedRoles(value as ApplicantRole[])
                 }}
-                displayName={(key) => {
-                  if (key == ApplicantRole.Bootcamp) return "Bootcamp"
-                  else if (key == ApplicantRole.TechLead) return "Tech Lead"
-                  else if (key == ApplicantRole.Product) return "Product"
-                  else if (key == ApplicantRole.Sourcing) return "Sourcing"
-                  else if (key == ApplicantRole.Engineer) return "Engineer"
-                  else if (key == ApplicantRole.Designer) return "Designer"
-                  else return key
-                }}
+                displayName={(key) => displayApplicantRoleName(key as ApplicantRole)}
               /> : null}
           </div>
         );
