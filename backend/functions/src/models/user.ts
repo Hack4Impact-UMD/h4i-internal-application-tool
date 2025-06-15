@@ -9,7 +9,7 @@ export type UserProfile = {
   firstName: string;
   lastName: string;
   role: UserRole;
-  createdAt: Timestamp;
+  dateCreated: Timestamp;
   activeApplications?: string[];
   inactiveApplications?: string[]
 }

@@ -1,4 +1,4 @@
-import { PermissionRole, UserProfile } from "@/types/types"
+import { ApplicantRole, PermissionRole, UserProfile } from "@/types/types"
 import { ColumnDef, RowSelectionState } from "@tanstack/react-table"
 import { DataTable } from "../DataTable"
 import { Checkbox } from "../ui/checkbox"
@@ -6,7 +6,7 @@ import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { displayUserRoleName } from "@/utils/display"
+import { displayApplicantRoleName, displayUserRoleName } from "@/utils/display"
 import { throwErrorToast } from "../error/ErrorToast"
 import { Timestamp } from "firebase/firestore"
 
@@ -172,6 +172,16 @@ export default function UserTable({ users, setUserRoles, deleteUsers }: UserTabl
       cell: ({ row }) => {
         const ts = row.getValue("dateCreated") as Timestamp
         return <span>{ts.toDate().toLocaleDateString() + " " + ts.toDate().toLocaleTimeString()}</span>
+      }
+    },
+    {
+      id: 'revRole',
+      header: () => <span>Rev. Role</span>,
+      cell: ({ row }) => {
+        const roles = row.getValue('revRole') as ApplicantRole[] ?? []
+        return <div className="flex flex-row gap-1">
+          {roles.map(r => <span className="rounded-full p-2 bg-amber-200">{displayApplicantRoleName(r)}</span>)}
+        </div>
       }
     },
     {
