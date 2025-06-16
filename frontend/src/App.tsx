@@ -6,7 +6,6 @@ import {
 
 import StatusPage from "./components/status/StatusPage";
 import DecisionPage from "./components/status/DecisionPage";
-import ReviewDashboard from "./pages/ReviewDashboard";
 import SignUp from "./pages/SignUp/SignUp";
 import LogIn from "./pages/LogIn/LogIn";
 import ForgotPass from "./pages/ForgotPass/ForgotPass";
@@ -29,6 +28,7 @@ import ReviewProvider from "./components/providers/ReviewProvider";
 import { ToastContainer } from "react-toastify";
 import { queryClient } from "./config/query";
 import UserRolePage from "./pages/UserRolePage";
+import ReviewerDashboard from "./pages/ReviewerDashboard";
 
 function App() {
   return (
@@ -110,19 +110,19 @@ function App() {
                 }
               />
               <Route
-                path="/admin/reviewer"
+                path="/admin/reviewer/:formId"
                 element={
                   <RequireAuth
                     requireRoles={[
                       PermissionRole.Reviewer,
                     ]}
                   >
-                    <p>Reviewer dashboard</p>
+                    <ReviewerDashboard />
                   </RequireAuth>
                 }
               />
               <Route
-                path="/admin/users"
+                path="/admin/dor/users"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                     <UserRolePage></UserRolePage>
@@ -136,7 +136,7 @@ function App() {
               </RequireAuth>
             }>
               <Route
-                path="/review/f/:formId/:sectionId" // TODO: change the routing to refer to an applicant + form, different provider
+                path="/admin/review/f/:formId/:sectionId" // TODO: change the routing to refer to an applicant + form, different provider
                 element={
                   <AppReviewPage />
                 }
