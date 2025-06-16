@@ -98,15 +98,26 @@ function App() {
 
             <Route path="/admin">
               <Route
-                index
+                path="/admin/dor"
+                element={
+                  <RequireAuth
+                    requireRoles={[
+                      PermissionRole.SuperReviewer,
+                    ]}
+                  >
+                    <p>Super reviewer dashboard</p>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/admin/reviewer"
                 element={
                   <RequireAuth
                     requireRoles={[
                       PermissionRole.Reviewer,
-                      PermissionRole.SuperReviewer,
                     ]}
                   >
-                    <ReviewDashboard></ReviewDashboard>
+                    <p>Reviewer dashboard</p>
                   </RequireAuth>
                 }
               />
