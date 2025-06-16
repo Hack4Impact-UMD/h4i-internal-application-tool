@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, RequestHandler } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
 import { ApplicationResponse, ApplicationResponseInput, ApplicationResponseSchema, ApplicationStatus, appResponseFormSchema, QuestionResponse, QuestionType } from "../models/appResponse";
@@ -7,9 +7,13 @@ import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { ApplicationForm } from "../models/appForm";
 import { PermissionRole } from "../models/appReview";
-// import * as admin from "firebase-admin"
+import multer from "multer";
+import * as admin from "firebase-admin"
 
 const router = Router();
+
+const upload = multer({ storage: multer.memoryStorage() });
+const fileUploadHandler = upload.single("file") as unknown as RequestHandler;
 
 const APPLICATION_RESPONSE_COLLECTION = "application-responses"
 const APPLICATION_FORMS_COLLECTION = "application-forms"
@@ -223,5 +227,33 @@ router.put("/save/:respId", [isAuthenticated, hasRoles([PermissionRole.Applicant
 }
 );
 
+router.put("/upload/:filename", [isAuthenticated, hasRoles([PermissionRole.Applicant]), fileUploadHandler], async (req: Request, res: Response) => {
+  try {
+    const filename = req.params.filename;
+    logger.info(`${req.token?.email} is uploading file: ${filename}.`);
+
+    if (!req.file) {
+      logger.error("File upload: File doesn't exist");
+      res.status(500).send();
+      return;
+    }
+
+    const uid = req.token!.uid;
+    const firebasePath = `uploads/${uid}/${filename}`;
+
+    const bucket = admin.storage().bucket();
+    const file = bucket.file(firebasePath);
+
+    await file.save(req.file.buffer, {
+      metadata: { contentType: req.file.mimetype },
+    });
+
+    logger.info(`File ${firebasePath} uploaded by ${uid}`);
+    res.status(201).json( {path: firebasePath} ).send();
+  } catch (error) {
+    logger.error("Failed to upload file: ", error);
+    res.status(400).send(error instanceof Error ? error.message : "Unknown error");
+  }
+});
 
 export default router;

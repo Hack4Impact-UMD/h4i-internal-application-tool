@@ -13,6 +13,19 @@ import { getReviewAssignments } from "./reviewAssignmentService";
 
 export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
 
+export async function uploadFile(file: File, filename: string, token: string) {
+  console.log("uploading file...")
+  const res = await axios.put(API_URL + "/application/upload/" + filename, file, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+
+  const data = res.data.path as string;
+
+  return data
+}
+
 export async function saveApplicationResponse(response: ApplicationResponse, token: string) {
   console.log("saving...")
   const res = await axios.put(API_URL + "/application/save/" + response.id, response, {

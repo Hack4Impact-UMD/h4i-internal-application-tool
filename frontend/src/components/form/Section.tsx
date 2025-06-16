@@ -79,6 +79,7 @@ const Section: React.FC<SectionProps> = ({
             ) : (question.questionType === QuestionType.FileUpload) ? (
               <FileUpload
                 question={question.questionText}
+                value={typeof response === 'string' ? response : ""}
                 secondaryText={question.secondaryText}
                 errorMessage={validationError?.message}
                 onChange={(value) => onChangeResponse(question.questionId, value)}

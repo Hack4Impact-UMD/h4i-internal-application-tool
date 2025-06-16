@@ -1,23 +1,22 @@
-import { useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 type FileUploadProps = {
   question: string;
+  value: string;
   disabled: boolean;
   required: boolean;
   errorMessage?: string;
-  onChange: (fileName: string) => void;
+  onChange: (value: string) => void;
   secondaryText?: string;
 }
 
 export default function FileUpload(props: FileUploadProps) {
-  const [fileName, setFileName] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFileName(file.name);
-      props.onChange(file.name);
-      // TODO: fix fileName not being included in responses
+      props.onChange(file.name); // adds new file to ApplicationResponse object
+      // TODO: auto generate a file name so we can delete and keep track of one file per user/form in submissions
       // TODO: actually upload the file to firebase
     }
   };
@@ -26,7 +25,7 @@ export default function FileUpload(props: FileUploadProps) {
     <div>
       <label
         htmlFor="resume-upload"
-        className="flex items-start gap-4 p-4 bg-lightgray hover:brightness-95 transition rounded-lg cursor-pointer py-7"
+        className={twMerge("flex items-start gap-4 p-4 hover:brightness-95 transition rounded-lg cursor-pointer py-7", props.disabled ? "bg-[#DADADA]" : "bg-lightgray")}
       >
         <div className="flex-shrink-0 mr-3">
           <svg width="70" height="70" viewBox="0 0 43 59" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,14 +33,14 @@ export default function FileUpload(props: FileUploadProps) {
           </svg>
         </div>
 
-        {fileName === null ? (
+        {props.value === "" ? (
           <div className="flex flex-col text-left w-70 justify-between h-[70px]">
             <span className="font-semibold text-lg text-gray-900">{props.question}</span>
             {props.secondaryText ? <div className="font-light text-xs text-gray-600"> {props.secondaryText} </div> : <div></div>}
           </div>
         ) : (
           <div className="w-full flex flex-row self-center justify-between px-4">
-            <span className="font-semibold text-lg">{fileName}</span>
+            <span className="font-semibold text-lg">{props.value}</span>
             <span>View</span>
           </div>
         )
