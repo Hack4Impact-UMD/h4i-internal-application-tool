@@ -13,7 +13,7 @@ export default function ReviewerDashboard() {
 	if (isLoading) return <Loading />
 	if (error) return <p>Failed to fetch assigned applications: {error.message}</p>
 
-	return <div className="w-full h-full bg-lightgray flex flex-col items-center p-2">
+	return <div className="w-full h-full bg-lightgray flex flex-col items-center p-2 py-4">
 		<div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
 			<div className="flex flex-row items-center">
 				<Link className="p-2 bg-blue text-white rounded text-sm" to={`/admin/reviewer/${formId}`}>Under Review</Link>
