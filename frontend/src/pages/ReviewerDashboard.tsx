@@ -16,7 +16,7 @@ export default function ReviewerDashboard() {
 	return <div className="w-full h-full bg-lightgray flex flex-col items-center p-2 py-4">
 		<div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
 			<div className="flex flex-row items-center">
-				<Link className="p-2 bg-blue text-white rounded text-sm" to={`/admin/reviewer/${formId}`}>Under Review</Link>
+				<Link className="p-2 bg-blue text-white rounded text-sm" to={`/admin/reviewer/dashboard/${formId}`}>Under Review</Link>
 				<input className="border border-gray-300 rounded-full px-2 py-1 text-sm min-w-sm ml-auto" placeholder="Search" />
 			</div>
 			<div className="flex flex-row gap-2 items-center min-h-28 justify-stretch mt-8">
