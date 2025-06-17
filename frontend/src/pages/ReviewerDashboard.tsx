@@ -1,12 +1,12 @@
 import Loading from "@/components/Loading";
-import ApplicationsTable from "@/components/reviewer/ApplicationsTable";
+import ReviewerApplicationsTable from "@/components/reviewer/ReviewerApplicationsTable";
 import { Button } from "@/components/ui/button";
-import { useAssignedApplicationResponsesForForm } from "@/hooks/useApplicationResponses";
+import { useMyReviewAssignments } from "@/hooks/useReviewAssignments";
 import { Link, useParams } from "react-router-dom";
 
 export default function ReviewerDashboard() {
 	const { formId } = useParams()
-	const { data: assignedApps, isLoading, error } = useAssignedApplicationResponsesForForm(formId ?? "")
+	const { data: assignedApps, isLoading, error } = useMyReviewAssignments(formId ?? "")
 
 	if (!formId) return <p>Form ID not provided!</p>
 
@@ -39,7 +39,7 @@ export default function ReviewerDashboard() {
 					<span className="mt-auto">Pending</span>
 				</Button>
 			</div>
-			<ApplicationsTable />
+			<ReviewerApplicationsTable assignments={assignedApps ?? []} />
 		</div>
 	</div>
 }
