@@ -13,17 +13,19 @@ import { getReviewAssignments } from "./reviewAssignmentService";
 
 export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
 
-export async function uploadFile(file: File, filename: string, token: string) {
+export async function uploadFile(file: File, token: string) {
   console.log("uploading file...")
-  const res = await axios.put(API_URL + "/application/upload/" + filename, file, {
+
+  const form = new FormData()
+  form.append("form", file) // HTML form for multer to parse file from
+
+  const res = await axios.put(API_URL + "/application/upload/" + file.name, form, {
     headers: {
       Authorization: `Bearer ${token}`
     }
   })
 
-  const data = res.data.path as string;
-
-  return data
+  return res.data.path
 }
 
 export async function saveApplicationResponse(response: ApplicationResponse, token: string) {

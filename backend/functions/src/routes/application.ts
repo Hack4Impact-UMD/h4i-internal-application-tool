@@ -234,7 +234,7 @@ router.put("/upload/:filename", [isAuthenticated, hasRoles([PermissionRole.Appli
 
     if (!req.file) {
       logger.error("File upload: File doesn't exist");
-      res.status(500).send();
+      res.status(400).send();
       return;
     }
 
