@@ -44,7 +44,7 @@ export enum QuestionType {
 }
 
 
-export type UserProfile = ApplicantUserProfile | ReviewerUserProfile
+export type UserProfile = ApplicantUserProfile | ReviewerUserProfile | SuperReviewerUserProfile
 export interface IUserProfile {
     id: string;
     email: string;
@@ -63,6 +63,10 @@ export interface ApplicantUserProfile extends IUserProfile {
 export interface ReviewerUserProfile extends IUserProfile {
     role: PermissionRole.Reviewer;
     applicantRolePreferences: ApplicantRole[]; // the roles that this reviewer prefers to review for
+}
+
+export interface SuperReviewerUserProfile extends IUserProfile {
+    role: PermissionRole.SuperReviewer;
 }
 
 
