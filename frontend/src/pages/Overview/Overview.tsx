@@ -4,14 +4,16 @@ import Loading from '../../components/Loading';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useMyApplicationResponses } from '@/hooks/useApplicationResponses';
+import { ApplicationStatus } from '@/types/types';
 
 const Overview: React.FC = () => {
     const { data: form, isLoading: formLoading, error: formError } = useActiveForm()
     const { data: applications, isLoading: appsLoading, error: appsError } = useMyApplicationResponses()
 
     const applied = useMemo(() => {
+        console.log("applications:", applications)
         if (form && applications)
-            return applications.map(app => app.applicationFormId).includes(form.id)
+            return applications.filter(app => app.status == ApplicationStatus.Submitted).map(app => app.applicationFormId).includes(form.id)
         else return false
     }, [applications, form])
 

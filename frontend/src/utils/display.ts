@@ -15,3 +15,13 @@ export function displayApplicantRoleName(role: ApplicantRole) {
   else if (role == ApplicantRole.Designer) return "Designer"
   else return role
 }
+
+export function applicantRoleColor(role: ApplicantRole) {
+  if (role == ApplicantRole.Bootcamp) return "#FBDED9"
+  else if (role == ApplicantRole.TechLead) return "#E2D8E8"
+  else if (role == ApplicantRole.Product) return "#DCEBDD"
+  else if (role == ApplicantRole.Sourcing) return "#F8E6BA"
+  else if (role == ApplicantRole.Engineer) return "#D5E7F2"
+  else if (role == ApplicantRole.Designer) return "#F8DFEB"
+  else return "#FFFFFF"
+}

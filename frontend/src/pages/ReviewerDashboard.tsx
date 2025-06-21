@@ -39,7 +39,7 @@ export default function ReviewerDashboard() {
 					<span className="mt-auto">Pending</span>
 				</Button>
 			</div>
-			<ReviewerApplicationsTable assignments={assignedApps ?? []} />
+			<ReviewerApplicationsTable search={""} assignments={assignedApps?.flatMap(row => Array.from({ length: 100 }, () => row)) ?? []} />
 		</div>
 	</div>
 }

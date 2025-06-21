@@ -1,5 +1,5 @@
 import { collection, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
-import { ApplicantRole, ApplicationReviewData } from "../types/types";
+import { ApplicantRole, ApplicationReviewData, AppReviewAssignment } from "../types/types";
 import { db } from "../config/firebase";
 import { v4 as uuidv4 } from "uuid"
 
@@ -38,6 +38,21 @@ export async function getReviewDataForApplicantRole(formId: string, applicantId:
   const result = await getDocs(q)
 
   return result.docs.map(doc => doc.data() as ApplicationReviewData)
+}
+
+export async function getReviewDataForAssignemnt(assignment: AppReviewAssignment) {
+  const reviewData = collection(db, REVIEW_DATA_COLLECTION)
+  const q = query(reviewData,
+    where("applicantId", "==", assignment.applicantId),
+    where("forRole", "==", assignment.forRole.toString()),
+    where("applicationFormId", "==", assignment.formId),
+    where("reviewerId", "==", assignment.reviewerId),
+  )
+  const result = await getDocs(q)
+
+  if (result.docs.length < 1) return undefined
+
+  return result.docs[0].data() as ApplicationReviewData
 }
 
 
