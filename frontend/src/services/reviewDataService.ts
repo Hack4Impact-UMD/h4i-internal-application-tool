@@ -89,3 +89,14 @@ export async function updateReviewData(reviewDataId: string, update: Partial<Omi
 
   await updateDoc(reviewRef, update)
 }
+
+export async function getReviewDataForReviewer(formId: string, reviewerId: string) {
+  const reviewData = collection(db, REVIEW_DATA_COLLECTION)
+  const q = query(reviewData,
+    where("reviewerId", "==", reviewerId),
+    where("applicationFormId", "==", formId)
+  )
+  const result = await getDocs(q)
+
+  return result.docs.map(doc => doc.data() as ApplicationReviewData)
+}

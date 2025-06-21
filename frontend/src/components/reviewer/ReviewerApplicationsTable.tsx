@@ -12,6 +12,7 @@ type ReviewerApplicationsTableProps = {
 	assignments: AppReviewAssignment[],
 	search: string,
 	rowCount?: number,
+	statusFilter: 'all' | 'reviewed' | 'pending'
 }
 
 type AssignmentRow = {
@@ -25,7 +26,7 @@ type AssignmentRow = {
 	}
 }
 
-export default function ReviewerApplicationsTable({ assignments, search, rowCount = 20 }: ReviewerApplicationsTableProps) {
+export default function ReviewerApplicationsTable({ assignments, search, rowCount = 20, statusFilter = 'all' }: ReviewerApplicationsTableProps) {
 	function useRows(pageIndex: number) {
 		return useQuery({
 			queryKey: ["my-assignment-rows", pageIndex],
@@ -44,7 +45,7 @@ export default function ReviewerApplicationsTable({ assignments, search, rowCoun
 						}
 
 						const row: AssignmentRow = {
-							index: pageIndex * rowCount + index,
+							index: 1 + pageIndex * rowCount + index,
 							applicant: `${user.firstName} ${user.lastName}`,
 							role: assignment.forRole,
 							review: review,
@@ -70,7 +71,7 @@ export default function ReviewerApplicationsTable({ assignments, search, rowCoun
 		columnHelper.accessor('index', {
 			id: 'number',
 			header: 'S. NO',
-			cell: ({ getValue }) => getValue() + 1
+			cell: ({ getValue }) => getValue()
 		}),
 		columnHelper.accessor('applicant', {
 			id: 'applicant-name',
@@ -86,10 +87,25 @@ export default function ReviewerApplicationsTable({ assignments, search, rowCoun
 			header: 'SCORE',
 			cell: ({ getValue }) => getValue().value && getValue().outOf ? `${getValue().value}/${getValue().outOf}` : `N/A`
 		}),
-		columnHelper.display({
-			id: 'review-btn',
+		columnHelper.accessor('review', {
+			id: 'review-status',
 			header: 'ACTION',
-			cell: () => <Button variant="outline" className="rounded-full">Review</Button>
+			cell: ({ getValue }) => {
+				const review = getValue()
+				if (review) {
+					return <Button variant="outline" className="border-2 rounded-full">Edit</Button>
+				} else {
+					return <Button variant="outline" className="border-2 rounded-full">Review</Button>
+				}
+			},
+			filterFn: (row, columnId, filterValue) => {
+				const value = row.getValue(columnId) as ApplicationReviewData | undefined
+
+				if (filterValue == 'all') return true
+				else if (filterValue == 'pending') return !value
+				else if (filterValue == 'reviewed') return !!value
+				else return true
+			}
 		})
 	] as ColumnDef<AssignmentRow>[], [columnHelper])
 
@@ -109,9 +125,16 @@ export default function ReviewerApplicationsTable({ assignments, search, rowCoun
 				manualPagination: true,
 				onPaginationChange: setPagination,
 				rowCount: rowCount,
+				enableGlobalFilter: true,
 				state: {
 					globalFilter: search,
-					pagination
+					pagination,
+					columnFilters: [
+						{
+							id: 'review-status',
+							value: statusFilter
+						}
+					]
 				}
 			}}
 		/>
