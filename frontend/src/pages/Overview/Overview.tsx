@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useActiveForm } from '../../hooks/useApplicationForm';
 import Loading from '../../components/Loading';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useMyApplicationResponses } from '@/hooks/useApplicationResponses';
+import { ApplicationStatus } from '@/types/types';
 
 const Overview: React.FC = () => {
-    const { data: form, isLoading, error } = useActiveForm()
+    const { data: form, isLoading: formLoading, error: formError } = useActiveForm()
+    const { data: applications, isLoading: appsLoading, error: appsError } = useMyApplicationResponses()
+
+    const applied = useMemo(() => {
+        console.log("applications:", applications)
+        if (form && applications)
+            return applications.filter(app => app.status == ApplicationStatus.Submitted).map(app => app.applicationFormId).includes(form.id)
+        else return false
+    }, [applications, form])
+
     const navigate = useNavigate();
     const [wait, setWait] = useState(false)
 
-    if (isLoading) return <Loading />
-    if (error) return <p>Something went wrong: {error.message}</p>
+    if (appsLoading || formLoading) return <Loading />
+    if (appsError) return <p>Something went wrong while fetching your applications: {appsError.message}</p>
+    if (formError) return <p>Something went wrong while fetching this form: {formError.message}</p>
 
     if (!form) return <div className="mt-5 mx-auto max-w-5xl w-full px-5 py-5 font-sans leading-relaxed">
         <h1 className='mb-3 text-5xl text-black'>Overview</h1>
@@ -38,7 +50,7 @@ const Overview: React.FC = () => {
                         disabled={wait}
                         className="w-full sm:w-fit cursor-pointer inline-flex items-center justify-center px-10 py-2 rounded-full bg-black 
                 text-white transition-colors hover:bg-darkgray">
-                        Apply
+                        {applied ? "Go to status page" : "Apply"}
                     </Button>
                 }
             </div>

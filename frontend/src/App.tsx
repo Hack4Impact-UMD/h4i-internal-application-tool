@@ -6,7 +6,6 @@ import {
 
 import StatusPage from "./components/status/StatusPage";
 import DecisionPage from "./components/status/DecisionPage";
-import ReviewDashboard from "./pages/ReviewDashboard";
 import SignUp from "./pages/SignUp/SignUp";
 import LogIn from "./pages/LogIn/LogIn";
 import ForgotPass from "./pages/ForgotPass/ForgotPass";
@@ -29,6 +28,8 @@ import ReviewProvider from "./components/providers/ReviewProvider";
 import { ToastContainer } from "react-toastify";
 import { queryClient } from "./config/query";
 import UserRolePage from "./pages/UserRolePage";
+import ReviewerDashboard from "./pages/ReviewerDashboard";
+import AdminHome from "./pages/AdminHome";
 
 function App() {
   return (
@@ -96,36 +97,48 @@ function App() {
               ></Route>
             </Route>
 
-            <Route path="/admin">
-              <Route
-                index
-                element={
-                  <RequireAuth
-                    requireRoles={[
-                      PermissionRole.Reviewer,
-                      PermissionRole.SuperReviewer,
-                    ]}
-                  >
-                    <ReviewDashboard></ReviewDashboard>
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/admin/users"
-                element={
-                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                    <UserRolePage></UserRolePage>
-                  </RequireAuth>
-                }
-              />
-            </Route>
+            <Route path="/admin" element={
+              <AdminHome />
+            } />
+            <Route
+              path="/admin/dor/dashboard/:formId"
+              element={
+                <RequireAuth
+                  requireRoles={[
+                    PermissionRole.SuperReviewer,
+                  ]}
+                >
+                  <p>Super reviewer dashboard</p>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin/reviewer/dashboard/:formId"
+              element={
+                <RequireAuth
+                  requireRoles={[
+                    PermissionRole.Reviewer,
+                  ]}
+                >
+                  <ReviewerDashboard />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin/dor/users"
+              element={
+                <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                  <UserRolePage></UserRolePage>
+                </RequireAuth>
+              }
+            />
             <Route element={
-              <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+              <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
                 <ReviewProvider />
               </RequireAuth>
             }>
               <Route
-                path="/review/f/:formId/:sectionId" // TODO: change the routing to refer to an applicant + form, different provider
+                path="/admin/review/f/:formId/:sectionId/:reviewDataId" // TODO: change the routing to refer to an applicant + form, different provider
                 element={
                   <AppReviewPage />
                 }

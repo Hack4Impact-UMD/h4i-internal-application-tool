@@ -15,8 +15,7 @@ export default function ReviewerRoleSelectDialog({ open, onSubmit, minRoles }: R
 	const { user } = useAuth()
 	const [selectedRoles, setSelectedRoles] = useState([ApplicantRole.Bootcamp])
 
-
-	const isValid = useMemo(() => selectedRoles.includes(ApplicantRole.Bootcamp) && selectedRoles.length >= minRoles, [selectedRoles])
+	const isValid = useMemo(() => selectedRoles.includes(ApplicantRole.Bootcamp) && selectedRoles.length >= minRoles, [selectedRoles, minRoles])
 
 	if (!user) return <p>Failed to fetch user!</p>
 

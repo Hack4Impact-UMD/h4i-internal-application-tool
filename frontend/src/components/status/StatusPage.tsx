@@ -73,7 +73,6 @@ function ApplicationResponseRow({ response }: { response: ApplicationResponse })
 
 function StatusPage() {
     const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
-    // replace this hook call with new call
     const { data: applications, isLoading, error } = useApplicationResponsesAndSemesters()
 
     const activeApplications = useMemo(() => applications.filter(app =>
@@ -98,9 +97,12 @@ function StatusPage() {
     );
 
     const currentTimelineStep = useMemo(() => {
-        //Double check this sorting!
-        const activeStatus = activeApplications.sort((a, b) => a.dateSubmitted.toMillis() - b.dateSubmitted.toMillis())[0].status
-        return timelineItems.findIndex(i => i.id == activeStatus)
+        if (activeApplications.length > 0) {
+            const activeStatus = activeApplications.sort((a, b) => a.dateSubmitted.toMillis() - b.dateSubmitted.toMillis())[0].status
+            return timelineItems.findIndex(i => i.id == activeStatus)
+        } else {
+            return 0
+        }
     }, [activeApplications])
 
     return (

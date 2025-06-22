@@ -11,12 +11,12 @@ export async function getAllApplicants(): Promise<ApplicantUserProfile[]> {
   return results.docs.map(doc => doc.data() as ApplicantUserProfile);
 }
 
-export async function getApplicantById(id: string): Promise<ApplicantUserProfile | undefined> {
+export async function getApplicantById(id: string): Promise<ApplicantUserProfile> {
   const user = await getUserById(id);
   if (user.role == PermissionRole.Applicant) {
     return user as ApplicantUserProfile;
   } else {
-    return undefined
+    throw new Error('user is not an applicant')
   }
 }
 

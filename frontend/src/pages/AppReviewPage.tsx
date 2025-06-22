@@ -11,7 +11,7 @@ const ApplicationPage: React.FC = () => {
   //including the timeline. Form provider should basically serve as the layout shell
   // const location = useLocation();
   const navigate = useNavigate();
-  const { sectionId } = useParams<{ sectionId: string }>();
+  const { sectionId } = useParams<{ formId: string, reviewDataId: string, sectionId: string }>();
 
   const { form, response, availableSections, previousSection, nextSection } = useForm()
 

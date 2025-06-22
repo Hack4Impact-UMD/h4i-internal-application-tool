@@ -8,7 +8,6 @@ import {
 } from "../types/types";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import { getApplicantsAssignedForReview } from "./applicantService";
 import { getReviewAssignments } from "./reviewAssignmentService";
 
 export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
@@ -79,6 +78,8 @@ export async function getAllApplicationResponsesByFormId(formId: string): Promis
 export async function getAssignedApplicationResponsesByFormId(formId: string, reviewerId: string): Promise<ApplicationResponse[]> {
   const assignments = (await getReviewAssignments(formId, reviewerId)).filter(a => a.assignmentType == "review");
   const responses = collection(db, APPLICATION_RESPONSES_COLLECTION)
+
+  if (assignments.length == 0) return []
 
   const q = query(responses, where("id", "in", assignments.map(a => a.applicationResponseId)))
   const res = await getDocs(q)
