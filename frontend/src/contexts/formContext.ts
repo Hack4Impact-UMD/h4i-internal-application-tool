@@ -4,7 +4,7 @@ import { ApplicantRole, ApplicationForm, ApplicationResponse } from "../types/ty
 export type FormProviderContext = {
   response?: ApplicationResponse,
   form?: ApplicationForm,
-  updateQuestionResponse: (sectionId: string, questionId: string, newResponse: string | string[]) => void
+  updateQuestionResponse: (sectionId: string, questionId: string, newResponse: string | string[] | File) => void
   save: () => Promise<void>,
   selectedRoles: ApplicantRole[],
   setSelectedRoles: (roles: ApplicantRole[]) => void

@@ -12,7 +12,7 @@ interface SectionProps {
   responses: QuestionResponse[];
   disabled?: boolean;
   validationErrors?: ValidationError[];
-  onChangeResponse?: (questionId: string, value: string | string[]) => void;
+  onChangeResponse?: (questionId: string, value: string | string[] | File) => void;
 }
 
 const Section: React.FC<SectionProps> = ({

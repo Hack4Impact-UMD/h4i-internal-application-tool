@@ -5,7 +5,7 @@ import Loading from "../Loading"
 import { useEffect, useMemo, useState } from "react"
 import { ApplicantRole, ApplicationResponse, ApplicationStatus, QuestionResponse, QuestionType } from "../../types/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { saveApplicationResponse } from "../../services/applicationResponsesService"
+import { saveApplicationResponse, uploadFile } from "../../services/applicationResponsesService"
 import { useAuth } from "../../hooks/useAuth"
 import { Timestamp } from "firebase/firestore"
 import { throwErrorToast } from "../error/ErrorToast"
@@ -113,7 +113,7 @@ export default function FormProvider() {
   if (dbResponse.status != ApplicationStatus.InProgress) return <Navigate to="/apply/status" />
 
 
-  function updateQuestionResponse(sectionId: string, questionId: string, resp: string | string[]) {
+  function updateQuestionResponse(sectionId: string, questionId: string, resp: string | string[] | File) {
     if (response) {
       setResponse({
         ...response,
@@ -123,11 +123,17 @@ export default function FormProvider() {
             return {
               ...s,
               questions: s.questions.map(q => {
-                if (q.questionId == questionId) {
-                  return {
-                    ...q,
-                    response: resp
-                  }
+              if (q.questionId == questionId && q.questionType == QuestionType.FileUpload) {
+                if (token) uploadFile(resp as File, token)
+                return {
+                  ...q,
+                  response: (resp as File).name
+                }
+              } else if (q.questionId == questionId) {
+                return {
+                  ...q,
+                  response: (resp as string) || (resp as string[])
+                }
                 } else {
                   return q
                 }

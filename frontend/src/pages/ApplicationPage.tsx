@@ -41,7 +41,7 @@ const ApplicationPage: React.FC = () => {
     );
   }
 
-  const handleResponseChange = (questionId: string, value: string | string[]) => {
+  const handleResponseChange = (questionId: string, value: string | string[] | File) => {
     updateQuestionResponse(currentSection.sectionId, questionId, value)
   };
 

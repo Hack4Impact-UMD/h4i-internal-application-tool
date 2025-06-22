@@ -1,4 +1,5 @@
 import { twMerge } from "tailwind-merge";
+import { useState } from "react";
 
 type FileUploadProps = {
   question: string;
@@ -6,18 +7,20 @@ type FileUploadProps = {
   disabled: boolean;
   required: boolean;
   errorMessage?: string;
-  onChange: (value: string) => void;
+  onChange: (value: File) => void;
   secondaryText?: string;
 }
 
+// TODO: allow users to redownload their file for sanity checks
+
 export default function FileUpload(props: FileUploadProps) {
+  const [selectedFile, setSelectedFile] = useState<string>(props.value);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      props.onChange(file.name); // adds new file to ApplicationResponse object
-      // TODO: auto generate a file name so we can delete and keep track of one file per user/form in submissions
-      // TODO: actually upload the file to firebase
+      props.onChange(file);
+      setSelectedFile(file.name);
     }
   };
 
@@ -25,7 +28,7 @@ export default function FileUpload(props: FileUploadProps) {
     <div>
       <label
         htmlFor="resume-upload"
-        className={twMerge("flex items-start gap-4 p-4 hover:brightness-95 transition rounded-lg cursor-pointer py-7", props.disabled ? "bg-[#DADADA]" : "bg-lightgray")}
+        className={twMerge("flex items-start gap-4 p-4 hover:brightness-95 transition rounded-lg cursor-pointer py-7", props.disabled ? "bg-[#DADADA] cursor-not-allowed" : "bg-lightgray")}
       >
         <div className="flex-shrink-0 mr-3">
           <svg width="70" height="70" viewBox="0 0 43 59" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,14 +36,14 @@ export default function FileUpload(props: FileUploadProps) {
           </svg>
         </div>
 
-        {props.value === "" ? (
+        {selectedFile === "" ? (
           <div className="flex flex-col text-left w-70 justify-between h-[70px]">
             <span className="font-semibold text-lg text-gray-900">{props.question}</span>
             {props.secondaryText ? <div className="font-light text-xs text-gray-600"> {props.secondaryText} </div> : <div></div>}
           </div>
         ) : (
           <div className="w-full flex flex-row self-center justify-between px-4">
-            <span className="font-semibold text-lg">{props.value}</span>
+            <span className="font-semibold text-lg">{selectedFile}</span>
             <span>View</span>
           </div>
         )
@@ -49,7 +52,7 @@ export default function FileUpload(props: FileUploadProps) {
         <input
           id="resume-upload"
           type="file"
-          accept=".pdf,.doc,.docx,.rtf,.txt"
+          accept=".pdf,.doc,.docx,.rtf,.txt,.png"
           className="hidden"
           required={props.required}
           disabled={props.disabled}
