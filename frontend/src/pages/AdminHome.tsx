@@ -17,7 +17,7 @@ export default function AdminHome() {
 	if (!forms) return <p>Failed to fetch forms!</p>
 
 	return <div className="w-full h-full px-2 py-4 flex flex-col bg-lightgray items-center">
-		<div className="max-w-5xl w-full p-4 bg-white">
+		<div className="max-w-5xl w-full p-4 bg-white rounded-md">
 			<h1 className="text-xl font-bold mt-4">Select a form</h1>
 			<p className="text-muted-foreground">To access dashboards, you need to select which form you want to view application and review data for.</p>
 

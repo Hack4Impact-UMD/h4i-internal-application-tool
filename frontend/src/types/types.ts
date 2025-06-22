@@ -144,6 +144,7 @@ export interface ApplicationReviewData {
     reviewerNotes: string;
     reviewStatus: ReviewStatus;
     forRole: ApplicantRole; // what role is this review for
+    submitted: boolean;
 }
 
 export interface ApplicationInterviewData {

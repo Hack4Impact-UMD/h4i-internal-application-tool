@@ -3,7 +3,6 @@ import ReviewerApplicationsTable from "@/components/reviewer/ReviewerApplication
 import { Button } from "@/components/ui/button";
 import { useMyReviewAssignments } from "@/hooks/useReviewAssignments";
 import { useMyReviews } from "@/hooks/useReviewData";
-import { useQueries } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -15,16 +14,16 @@ export default function ReviewerDashboard() {
 	const [statusFilter, setStatusFilter] = useState<'all' | 'reviewed' | 'pending'>('all')
 
 	//NOTE: Just for testing, duplicates a bunch of rows
-	const rows = useMemo(() => assignedApps?.flatMap(row => Array.from({ length: 100 }, () => row)) ?? [], [assignedApps])
+	// const rows = useMemo(() => assignedApps?.flatMap(row => Array.from({ length: 100 }, () => row)) ?? [], [assignedApps])
 
-	const numReviewed = useMemo(() => rows
+	const numReviewed = useMemo(() => assignedApps
 		?.filter(f => reviews?.map(r => r.applicationResponseId)
 			.includes(f.applicationResponseId)).length,
 		[reviews, assignedApps])
 
 	if (!formId) return <p>Form ID not provided!</p>
 
-	if (assignmentsLoading || reviewsLoading) return <Loading />
+	if (assignmentsLoading || reviewsLoading || !assignedApps) return <Loading />
 	if (assignmentsError) return <p>Failed to fetch assigned applications: {assignmentsError.message}</p>
 	if (reviewError) return <p>Failed to fetch assigned applications: {reviewError.message}</p>
 
@@ -41,7 +40,7 @@ export default function ReviewerDashboard() {
 					onClick={() => setStatusFilter('all')}
 				>
 					<span className="text-3xl">
-						{rows?.length}
+						{assignedApps.length}
 					</span>
 					<span className="mt-auto">Total Applications</span>
 				</Button>
@@ -62,12 +61,12 @@ export default function ReviewerDashboard() {
 					onClick={() => setStatusFilter('pending')}
 				>
 					<span className="text-3xl">
-						{rows.length - numReviewed}
+						{assignedApps.length - (numReviewed ?? 0)}
 					</span>
 					<span className="mt-auto">Pending</span>
 				</Button>
 			</div>
-			<ReviewerApplicationsTable statusFilter={statusFilter} search={search} assignments={rows} />
+			<ReviewerApplicationsTable formId={formId} statusFilter={statusFilter} search={search} assignments={assignedApps} />
 		</div>
 	</div>
 }

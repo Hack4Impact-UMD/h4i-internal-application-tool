@@ -1,23 +1,32 @@
-import { ApplicantRole, ApplicationReviewData, AppReviewAssignment } from "@/types/types"
+import { ApplicantRole, ApplicationReviewData, AppReviewAssignment, ReviewStatus } from "@/types/types"
 import { ColumnDef, createColumnHelper, getPaginationRowModel } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
 import { DataTable } from "../DataTable"
 import { Button } from "../ui/button"
 import { useQuery } from "@tanstack/react-query"
 import { getApplicantById } from "@/services/applicantService"
-import { getReviewDataForAssignemnt } from "@/services/reviewDataService"
+import { createReviewData, getReviewDataForAssignemnt } from "@/services/reviewDataService"
 import { applicantRoleColor, displayApplicantRoleName } from "@/utils/display"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/hooks/useAuth"
+import { throwErrorToast } from "../error/ErrorToast"
+import { getApplicationForm } from "@/services/applicationFormsService"
 
 type ReviewerApplicationsTableProps = {
 	assignments: AppReviewAssignment[],
 	search: string,
 	rowCount?: number,
-	statusFilter: 'all' | 'reviewed' | 'pending'
+	statusFilter: 'all' | 'reviewed' | 'pending',
+	formId: string
 }
 
 type AssignmentRow = {
 	index: number,
-	applicant: string,
+	applicant: {
+		name: string,
+		id: string
+	},
+	responseId: string,
 	role: ApplicantRole,
 	review?: ApplicationReviewData,
 	score: {
@@ -26,7 +35,10 @@ type AssignmentRow = {
 	}
 }
 
-export default function ReviewerApplicationsTable({ assignments, search, rowCount = 20, statusFilter = 'all' }: ReviewerApplicationsTableProps) {
+export default function ReviewerApplicationsTable({ assignments, search, formId, rowCount = 20, statusFilter = 'all' }: ReviewerApplicationsTableProps) {
+	const navigate = useNavigate()
+	const { user } = useAuth()
+
 	function useRows(pageIndex: number) {
 		return useQuery({
 			queryKey: ["my-assignment-rows", pageIndex],
@@ -46,7 +58,11 @@ export default function ReviewerApplicationsTable({ assignments, search, rowCoun
 
 						const row: AssignmentRow = {
 							index: 1 + pageIndex * rowCount + index,
-							applicant: `${user.firstName} ${user.lastName}`,
+							applicant: {
+								id: user.id,
+								name: `${user.firstName} ${user.lastName}`
+							},
+							responseId: assignment.applicationResponseId,
 							role: assignment.forRole,
 							review: review,
 							score: {
@@ -73,7 +89,7 @@ export default function ReviewerApplicationsTable({ assignments, search, rowCoun
 			header: 'S. NO',
 			cell: ({ getValue }) => getValue()
 		}),
-		columnHelper.accessor('applicant', {
+		columnHelper.accessor('applicant.name', {
 			id: 'applicant-name',
 			header: 'APPLICANT',
 		}),
@@ -90,12 +106,13 @@ export default function ReviewerApplicationsTable({ assignments, search, rowCoun
 		columnHelper.accessor('review', {
 			id: 'review-status',
 			header: 'ACTION',
-			cell: ({ getValue }) => {
+			cell: ({ getValue, row }) => {
 				const review = getValue()
+				const rowData = row.original
 				if (review) {
-					return <Button variant="outline" className="border-2 rounded-full">Edit</Button>
+					return <Button disabled={rowData.review?.submitted} onClick={() => handleReview(review, rowData.applicant.id, rowData.responseId, rowData.role)} variant="outline" className="border-2 rounded-full">Edit</Button>
 				} else {
-					return <Button variant="outline" className="border-2 rounded-full">Review</Button>
+					return <Button onClick={() => handleReview(review, rowData.applicant.id, rowData.responseId, rowData.role)} variant="outline" className="border-2 rounded-full">Review</Button>
 				}
 			},
 			filterFn: (row, columnId, filterValue) => {
@@ -108,6 +125,34 @@ export default function ReviewerApplicationsTable({ assignments, search, rowCoun
 			}
 		})
 	] as ColumnDef<AssignmentRow>[], [columnHelper])
+
+	async function handleReview(appReviewData: ApplicationReviewData | undefined, applicantId: string, responseId: string, role: ApplicantRole) {
+		const form = await getApplicationForm(formId)
+		if (appReviewData) { // there's an existing review, edit it
+			if (appReviewData.submitted) {
+				throwErrorToast("This review has already been submitted!")
+			} else {
+				navigate(`/admin/review/f/${appReviewData.applicationFormId}/${form.sections[0].sectionId}/${appReviewData.id}`)
+			}
+		} else {
+			const review = {
+				applicantScores: {},
+				applicantId: applicantId,
+				applicationFormId: formId,
+				applicationResponseId: responseId,
+				forRole: role,
+				reviewStatus: ReviewStatus.NotReviewed,
+				reviewerId: user!.id,
+				reviewerNotes: "",
+				submitted: false
+			}
+
+			console.log(review)
+
+			const newReview = await createReviewData(review)
+			navigate(`/admin/review/f/${newReview.applicationFormId}/${form.sections[0].sectionId}/${newReview.id}`)
+		}
+	}
 
 
 	const { data: rows, isPending, error } = useRows(pagination.pageIndex)

@@ -133,12 +133,12 @@ function App() {
               }
             />
             <Route element={
-              <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+              <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
                 <ReviewProvider />
               </RequireAuth>
             }>
               <Route
-                path="/admin/review/f/:formId/:sectionId" // TODO: change the routing to refer to an applicant + form, different provider
+                path="/admin/review/f/:formId/:sectionId/:reviewDataId" // TODO: change the routing to refer to an applicant + form, different provider
                 element={
                   <AppReviewPage />
                 }
