@@ -111,24 +111,7 @@ export interface ApplicationForm {
     description: string;
     // metadata: {};
     sections: ApplicationSection[];
-    reviewerRubric: RubricQuestion[];
-}
-
-export interface RubricQuestion {
-    id: string;
-    name: string; // just a way to refer to the question, i.e. "social-good"
-    type: QuestionType.MultipleChoice | QuestionType.LongAnswer;
-    prompt: string;
-    roles: ApplicantRole[]; // put down every role if applies to all applicants
-}
-
-export interface RubricScoreQuestion extends RubricQuestion {
-    type: QuestionType.MultipleChoice;
-    options: string[];
-}
-
-export interface RubricTextQuestion extends RubricQuestion {
-    type: QuestionType.LongAnswer;
+    // reviewerRubrics: RoleReviewRubric[];
 }
 
 // One of these per review. Reviews tie together an application, role, and reviewer.
@@ -216,6 +199,21 @@ export type ValidationError = {
     sectionId: string
     questionId: string,
     message: string
+}
+
+export type RoleReviewRubric = {
+    id: string,
+    formId: string,
+    role: ApplicantRole,
+    rubricQuestions: RubricQuestion[]
+}
+
+export type RubricQuestion = {
+    scoreKey: string,
+    prompt: string,
+    description?: string,
+    maxValue?: number, // assume 4
+    minValue?: number // assume 0
 }
 
 // type MockData = {
