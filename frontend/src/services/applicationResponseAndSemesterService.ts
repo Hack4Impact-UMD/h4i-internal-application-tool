@@ -1,34 +1,49 @@
-import { collection, CollectionReference, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  CollectionReference,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../config/firebase";
 import { ApplicationForm, ApplicationResponse } from "../types/types";
 import { getApplicationResponses } from "./applicationResponsesService";
 
-export const APPLICATION_RESPONSES_COLLECTION = "application-responses"
-export const APPLICATION_FORMS_COLLECTION = "application-forms"
+export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
+export const APPLICATION_FORMS_COLLECTION = "application-forms";
 
 export type ApplicationResponseWithSemester = ApplicationResponse & {
   semester: string;
 };
 
-export async function getApplicationResponseAndSemester(userId: string): Promise<ApplicationResponseWithSemester[]> {
-  const forms = collection(db, APPLICATION_FORMS_COLLECTION) as CollectionReference<ApplicationForm>
+export async function getApplicationResponseAndSemester(
+  userId: string,
+): Promise<ApplicationResponseWithSemester[]> {
+  const forms = collection(
+    db,
+    APPLICATION_FORMS_COLLECTION,
+  ) as CollectionReference<ApplicationForm>;
 
-  const rawResponses = await getApplicationResponses(userId)
+  const rawResponses = await getApplicationResponses(userId);
   const responsesWithSemester: ApplicationResponseWithSemester[] = [];
 
   for (const response of rawResponses) {
-    const formQuery = query(forms, where("id", "==", response.applicationFormId))
-    const formResults = await getDocs(formQuery)
-    const matchedForms = formResults.docs.map((d) => d.data() as ApplicationForm);
+    const formQuery = query(
+      forms,
+      where("id", "==", response.applicationFormId),
+    );
+    const formResults = await getDocs(formQuery);
+    const matchedForms = formResults.docs.map(
+      (d) => d.data() as ApplicationForm,
+    );
 
-    const semester = matchedForms[0]?.semester ?? "Unknown"
+    const semester = matchedForms[0]?.semester ?? "Unknown";
 
     responsesWithSemester.push({
       ...response,
       semester,
     });
-
   }
 
-  return responsesWithSemester
+  return responsesWithSemester;
 }

@@ -25,14 +25,14 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
   className = "",
   disabled,
   errorMessage,
-  displayName = (k) => k
+  displayName = (k) => k,
 }) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(value || []);
 
   useEffect(() => {
-    console.log(value)
-    setSelectedOptions(value || [])
-  }, [value])
+    console.log(value);
+    setSelectedOptions(value || []);
+  }, [value]);
 
   const handleSelectClick = (optionName: string) => {
     //NOTE: filtering by name isn't ideal, there might end up being a case

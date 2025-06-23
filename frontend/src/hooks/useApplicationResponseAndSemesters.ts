@@ -8,14 +8,14 @@ export type ApplicationResponseWithSemester = ApplicationResponse & {
 };
 
 export function useApplicationResponsesAndSemesters() {
-  const { user, isAuthed, isLoading } = useAuth()
+  const { user, isAuthed, isLoading } = useAuth();
 
   return useQuery<ApplicationResponseWithSemester[]>({
     queryKey: ["responses-and-semester", user?.id],
     enabled: !isLoading && isAuthed,
     queryFn: () => {
-      return getApplicationResponseAndSemester(user!.id)
+      return getApplicationResponseAndSemester(user!.id);
     },
-    initialData: []
-  })
+    initialData: [],
+  });
 }

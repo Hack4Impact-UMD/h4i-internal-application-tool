@@ -1,8 +1,4 @@
-import {
-  Navigate,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import StatusPage from "./components/status/StatusPage";
 import DecisionPage from "./components/status/DecisionPage";
@@ -15,9 +11,7 @@ import RequireAuth from "./components/auth/RequireAuth";
 import Layout from "./pages/Layout";
 import RequireNoAuth from "./components/auth/RequireNoAuth";
 import { QueryClientProvider } from "@tanstack/react-query";
-import {
-  PermissionRole,
-} from "./types/types";
+import { PermissionRole } from "./types/types";
 import ApplicationPage from "./pages/ApplicationPage";
 import Overview from "./pages/Overview/Overview";
 import FormProvider from "./components/providers/FormProvider";
@@ -53,16 +47,16 @@ function App() {
                   </RequireAuth>
                 }
               ></Route>
-              <Route element={
-                <RequireAuth requireRoles={[PermissionRole.Applicant]}>
-                  <FormProvider />
-                </RequireAuth>
-              }>
+              <Route
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <FormProvider />
+                  </RequireAuth>
+                }
+              >
                 <Route
                   path="/apply/f/:formId/:sectionId"
-                  element={
-                    <ApplicationPage />
-                  }
+                  element={<ApplicationPage />}
                 />
               </Route>
               <Route
@@ -73,14 +67,16 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route path="/apply/submit/:formId"
+              <Route
+                path="/apply/submit/:formId"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                     <AppSubmitPage />
                   </RequireAuth>
                 }
               />
-              <Route path="/apply/success"
+              <Route
+                path="/apply/success"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                     <AppSubmitted />
@@ -97,17 +93,11 @@ function App() {
               ></Route>
             </Route>
 
-            <Route path="/admin" element={
-              <AdminHome />
-            } />
+            <Route path="/admin" element={<AdminHome />} />
             <Route
               path="/admin/dor/dashboard/:formId"
               element={
-                <RequireAuth
-                  requireRoles={[
-                    PermissionRole.SuperReviewer,
-                  ]}
-                >
+                <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                   <p>Super reviewer dashboard</p>
                 </RequireAuth>
               }
@@ -115,11 +105,7 @@ function App() {
             <Route
               path="/admin/reviewer/dashboard/:formId"
               element={
-                <RequireAuth
-                  requireRoles={[
-                    PermissionRole.Reviewer,
-                  ]}
-                >
+                <RequireAuth requireRoles={[PermissionRole.Reviewer]}>
                   <ReviewerDashboard />
                 </RequireAuth>
               }
@@ -132,16 +118,21 @@ function App() {
                 </RequireAuth>
               }
             />
-            <Route element={
-              <RequireAuth requireRoles={[PermissionRole.Reviewer, PermissionRole.SuperReviewer]}>
-                <ReviewProvider />
-              </RequireAuth>
-            }>
+            <Route
+              element={
+                <RequireAuth
+                  requireRoles={[
+                    PermissionRole.Reviewer,
+                    PermissionRole.SuperReviewer,
+                  ]}
+                >
+                  <ReviewProvider />
+                </RequireAuth>
+              }
+            >
               <Route
                 path="/admin/review/f/:formId/:sectionId/:reviewDataId" // TODO: change the routing to refer to an applicant + form, different provider
-                element={
-                  <AppReviewPage />
-                }
+                element={<AppReviewPage />}
               />
             </Route>
           </Route>

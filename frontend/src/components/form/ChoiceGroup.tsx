@@ -22,7 +22,7 @@ const ChoiceGroup: React.FC<ChoiceGroupProps> = ({
   onOptionSelect,
   className = "",
   disabled,
-  errorMessage
+  errorMessage,
 }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(value);
 

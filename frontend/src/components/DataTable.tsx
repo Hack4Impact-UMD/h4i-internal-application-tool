@@ -6,7 +6,7 @@ import {
   getSortedRowModel,
   TableOptions,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -15,21 +15,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { twMerge } from "tailwind-merge"
+} from "@/components/ui/table";
+import { twMerge } from "tailwind-merge";
 
 interface DataTableProps<TData, TValue> {
-  className?: string,
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[],
-  options: Partial<TableOptions<TData>>
+  className?: string;
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  options: Partial<TableOptions<TData>>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   options,
-  className = ""
+  className = "",
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -37,8 +37,8 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(), // These are here by default, should be able to override with options,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    ...options
-  })
+    ...options,
+  });
 
   return (
     <div className={twMerge("rounded-md border", className)}>
@@ -52,11 +52,11 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
-                )
+                );
               })}
             </TableRow>
           ))}
@@ -85,6 +85,5 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
-

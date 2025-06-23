@@ -19,7 +19,7 @@ export default function SignUpCard() {
         formData.email,
         formData.firstName,
         formData.lastName,
-        formData.password
+        formData.password,
       );
     },
   });
@@ -113,10 +113,10 @@ export default function SignUpCard() {
                 message: string;
               }) => {
                 throwErrorToast(
-                  `[Server validation error] ${issue.field}: ${issue.message}`
+                  `[Server validation error] ${issue.field}: ${issue.message}`,
                 );
                 serverErrors[issue.field] = issue.message;
-              }
+              },
             );
           }
         } else if (error instanceof Error) {
@@ -181,7 +181,10 @@ export default function SignUpCard() {
         className="w-full h-[73px]"
         disabled={signUpMutation.isPending || !isFormValid}
         type="submit"
-      > Create Account </Button>
+      >
+        {" "}
+        Create Account{" "}
+      </Button>
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-darkgray mt-1">

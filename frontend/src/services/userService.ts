@@ -1,114 +1,143 @@
 import { signInWithEmailAndPassword, signOut, UserInfo } from "firebase/auth";
 import { API_URL, auth, db } from "../config/firebase";
 import axios, { AxiosError } from "axios";
-import { collection, doc, getDoc, getDocs, query, updateDoc, where, writeBatch } from "firebase/firestore";
-import { ApplicantRole, PermissionRole, ReviewerUserProfile, UserProfile } from "../types/types";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
+import {
+  ApplicantRole,
+  PermissionRole,
+  ReviewerUserProfile,
+  UserProfile,
+} from "../types/types";
 import { throwErrorToast } from "../components/error/ErrorToast";
 
 export const USER_COLLECTION = "users";
 
-export async function registerUser(email: string, firstName: string, lastName: string, password: string): Promise<UserProfile> {
+export async function registerUser(
+  email: string,
+  firstName: string,
+  lastName: string,
+  password: string,
+): Promise<UserProfile> {
   try {
-    const createdUser = await axios.post(API_URL + "/auth/register", {
+    const createdUser = (await axios.post(API_URL + "/auth/register", {
       email: email,
       password: password,
       firstName: firstName,
-      lastName: lastName
-    }) as UserProfile
+      lastName: lastName,
+    })) as UserProfile;
 
-    await signInWithEmailAndPassword(auth, email, password)
+    await signInWithEmailAndPassword(auth, email, password);
 
-    return createdUser
+    return createdUser;
   } catch (error) {
     if (error instanceof AxiosError) {
-      const errorMessage = `Failed to register: ${error.message} (${error.response?.data})`
+      const errorMessage = `Failed to register: ${error.message} (${error.response?.data})`;
       throwErrorToast(errorMessage);
-      throw new Error(errorMessage)
+      throw new Error(errorMessage);
     } else {
-      throw error
+      throw error;
     }
   }
 }
 
-export async function loginUser(email: string, password: string): Promise<UserProfile> {
-  const res = await signInWithEmailAndPassword(auth, email, password)
-  return await getUserById(res.user.uid)
+export async function loginUser(
+  email: string,
+  password: string,
+): Promise<UserProfile> {
+  const res = await signInWithEmailAndPassword(auth, email, password);
+  return await getUserById(res.user.uid);
 }
 
 export async function logoutUser() {
-  await signOut(auth)
+  await signOut(auth);
 }
 
 export async function getUserById(id: string): Promise<UserProfile> {
-  const users = collection(db, USER_COLLECTION)
-  const userDoc = doc(users, id)
-  const userData = (await getDoc(userDoc)).data()
+  const users = collection(db, USER_COLLECTION);
+  const userDoc = doc(users, id);
+  const userData = (await getDoc(userDoc)).data();
 
-  return userData as UserProfile
+  return userData as UserProfile;
 }
 
 export async function getUserByEmail(email: string): Promise<UserProfile> {
-  const users = collection(db, USER_COLLECTION)
-  const q = query(users, where("email", "==", email))
+  const users = collection(db, USER_COLLECTION);
+  const q = query(users, where("email", "==", email));
 
-  const results = await getDocs(q)
+  const results = await getDocs(q);
   if (!results.empty) {
-    return results.docs.at(0)?.data() as UserProfile
+    return results.docs.at(0)?.data() as UserProfile;
   } else {
-    throw new Error(`User with email ${email} does not exist!`)
+    throw new Error(`User with email ${email} does not exist!`);
   }
 }
 
 export async function getAllUsers(): Promise<UserProfile[]> {
   const users = collection(db, USER_COLLECTION);
-  const results = await getDocs(users)
+  const results = await getDocs(users);
 
-
-  return results.docs.map(d => d.data() as UserProfile)
+  return results.docs.map((d) => d.data() as UserProfile);
 }
 
 export async function updateUserRole(userId: string, role: PermissionRole) {
   const users = collection(db, USER_COLLECTION);
   const userDoc = doc(users, userId);
   await updateDoc(userDoc, {
-    role: role
-  })
+    role: role,
+  });
 }
 
 export async function updateUserRoles(userIds: string[], role: PermissionRole) {
-  const batch = writeBatch(db)
+  const batch = writeBatch(db);
   const users = collection(db, USER_COLLECTION);
 
-  userIds.forEach(id => batch.update(doc(users, id), {
-    role: role
-  }))
+  userIds.forEach((id) =>
+    batch.update(doc(users, id), {
+      role: role,
+    }),
+  );
 
-  await batch.commit()
+  await batch.commit();
 }
 
 export async function deleteUsers(userIds: string[]) {
-  const batch = writeBatch(db)
+  const batch = writeBatch(db);
   const users = collection(db, USER_COLLECTION);
 
-  userIds.forEach(id => batch.delete(doc(users, id)))
+  userIds.forEach((id) => batch.delete(doc(users, id)));
 
-  await batch.commit()
+  await batch.commit();
 }
 
-export async function setReviewerRolePreferences(reviewerId: string, prefs: ApplicantRole[]) {
-  const user = await getUserById(reviewerId)
-  if (user.role != PermissionRole.Reviewer) throw new Error("User is not a reviewer!")
+export async function setReviewerRolePreferences(
+  reviewerId: string,
+  prefs: ApplicantRole[],
+) {
+  const user = await getUserById(reviewerId);
+  if (user.role != PermissionRole.Reviewer)
+    throw new Error("User is not a reviewer!");
 
-  const users = collection(db, USER_COLLECTION)
-  const userDoc = doc(users, reviewerId)
+  const users = collection(db, USER_COLLECTION);
+  const userDoc = doc(users, reviewerId);
 
   await updateDoc(userDoc, {
-    applicantRolePreferences: prefs
-  } as Partial<ReviewerUserProfile>)
+    applicantRolePreferences: prefs,
+  } as Partial<ReviewerUserProfile>);
 }
 
-export function onAuthStateChange(handler: (userInfo: UserInfo | null) => void) {
+export function onAuthStateChange(
+  handler: (userInfo: UserInfo | null) => void,
+) {
   return auth.onAuthStateChanged((userInfo) => {
-    handler(userInfo)
-  })
+    handler(userInfo);
+  });
 }

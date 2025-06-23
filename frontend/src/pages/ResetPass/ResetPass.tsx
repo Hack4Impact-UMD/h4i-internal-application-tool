@@ -1,9 +1,9 @@
-import ResetPassCard from "./ResetPassCard"
+import ResetPassCard from "./ResetPassCard";
 
 export default function ResetPass() {
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-white">
-            <ResetPassCard />
-        </div>
-    )
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <ResetPassCard />
+    </div>
+  );
 }

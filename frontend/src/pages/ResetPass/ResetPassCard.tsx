@@ -112,7 +112,10 @@ export default function ResetPassCard() {
           className="w-full h-[73px]"
           disabled={!isFormValid}
           type="submit"
-        > Reset </Button>
+        >
+          {" "}
+          Reset{" "}
+        </Button>
         <hr className="w-full text-darkgray m-0"></hr>
       </div>
     </form>

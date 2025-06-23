@@ -8,23 +8,27 @@ export async function getAllApplicants(): Promise<ApplicantUserProfile[]> {
   const q = query(users, where("role", "==", PermissionRole.Applicant));
 
   const results = await getDocs(q);
-  return results.docs.map(doc => doc.data() as ApplicantUserProfile);
+  return results.docs.map((doc) => doc.data() as ApplicantUserProfile);
 }
 
-export async function getApplicantById(id: string): Promise<ApplicantUserProfile> {
+export async function getApplicantById(
+  id: string,
+): Promise<ApplicantUserProfile> {
   const user = await getUserById(id);
   if (user.role == PermissionRole.Applicant) {
     return user as ApplicantUserProfile;
   } else {
-    throw new Error('user is not an applicant')
+    throw new Error("user is not an applicant");
   }
 }
 
-export async function getApplicantByEmail(email: string): Promise<ApplicantUserProfile | undefined> {
+export async function getApplicantByEmail(
+  email: string,
+): Promise<ApplicantUserProfile | undefined> {
   const user = await getUserByEmail(email);
   if (user.role == PermissionRole.Applicant) {
     return user as ApplicantUserProfile;
   } else {
-    return undefined
+    return undefined;
   }
 }

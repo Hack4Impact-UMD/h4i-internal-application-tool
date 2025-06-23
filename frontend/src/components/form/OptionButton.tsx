@@ -18,7 +18,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
   onClick,
   className = "",
   disabled,
-  errorMessage
+  errorMessage,
 }) => {
   const [clicked, setClicked] = useState(isSelected);
 
@@ -38,8 +38,8 @@ const OptionButton: React.FC<OptionButtonProps> = ({
   };
 
   const backgroundColor = clicked
-    ? "#2969C4" :
-    disabled
+    ? "#2969C4"
+    : disabled
       ? "#DADADA"
       : "#ffffff";
 
@@ -59,7 +59,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
       className={twMerge(
         "flex items-center shadow-md mb-2 min-w-40 cursor-pointer rounded-lg hover:brightness-95 transition",
         disabled && "cursor-not-allowed",
-        className
+        className,
       )}
       style={{
         padding: "0.3em 0.8em",
@@ -72,7 +72,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
         <div
           className={twMerge(
             "absolute rounded-full bg-white outline h-4 w-4 flex items-center justify-center",
-            circleOutlineColor
+            circleOutlineColor,
           )}
         ></div>
         {buttonType === "choice" ? (
@@ -84,7 +84,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
             xmlns="http://www.w3.org/2000/svg"
             className={twMerge(
               "h-3 w-3 z-10",
-              clicked ? checkColor : "invisible"
+              clicked ? checkColor : "invisible",
             )}
             fill="none"
             stroke="currentColor"

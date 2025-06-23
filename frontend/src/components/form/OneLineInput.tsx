@@ -21,10 +21,15 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
   onChange,
   className = "",
   disabled,
-  errorMessage
+  errorMessage,
 }) => {
   return (
-    <main className={twMerge("flex flex-col max-w-60 hover:brightness-95 transition", className)}>
+    <main
+      className={twMerge(
+        "flex flex-col max-w-60 hover:brightness-95 transition",
+        className,
+      )}
+    >
       <span className="text-xl font-normal">
         {question}{" "}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
@@ -36,14 +41,13 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
           "mt-auto p-1 w-full bg-white rounded-md outline outline-black",
           disabled
             ? "bg-[#DADADA] cursor-not-allowed text-[#202020B2]"
-            : "bg-white"
+            : "bg-white",
         )}
         required={isRequired}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
       ></input>
-
 
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
     </main>

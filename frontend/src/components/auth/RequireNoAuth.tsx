@@ -4,24 +4,31 @@ import { useAuth } from "../../hooks/useAuth";
 import { PermissionRole } from "../../types/types";
 import Loading from "../Loading";
 
-
 interface RequireNoAuthProps {
   children: ReactNode;
-  redirect: {
-    [key in PermissionRole]: string
-  } | string;
+  redirect:
+    | {
+        [key in PermissionRole]: string;
+      }
+    | string;
 }
 
-export default function RequireNoAuth({ children, redirect }: RequireNoAuthProps) {
-  const { isLoading, isAuthed, user } = useAuth()
+export default function RequireNoAuth({
+  children,
+  redirect,
+}: RequireNoAuthProps) {
+  const { isLoading, isAuthed, user } = useAuth();
 
-  if (isLoading) return <Loading />
+  if (isLoading) return <Loading />;
 
-  console.log("role: " + user?.role)
+  console.log("role: " + user?.role);
 
-  return !isAuthed ? children : <Navigate to={
-    (typeof redirect == "string") ?
-      redirect :
-      redirect[user!.role]
-  } replace />
+  return !isAuthed ? (
+    children
+  ) : (
+    <Navigate
+      to={typeof redirect == "string" ? redirect : redirect[user!.role]}
+      replace
+    />
+  );
 }

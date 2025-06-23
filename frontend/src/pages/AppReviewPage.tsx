@@ -11,35 +11,46 @@ const ApplicationPage: React.FC = () => {
   //including the timeline. Form provider should basically serve as the layout shell
   // const location = useLocation();
   const navigate = useNavigate();
-  const { sectionId } = useParams<{ formId: string, reviewDataId: string, sectionId: string }>();
+  const { sectionId } = useParams<{
+    formId: string;
+    reviewDataId: string;
+    sectionId: string;
+  }>();
 
-  const { form, response, availableSections, previousSection, nextSection } = useForm()
+  const { form, response, availableSections, previousSection, nextSection } =
+    useForm();
 
-  const timelineItems = useMemo(() => form?.sections.filter((section) => availableSections.includes(section.sectionId)).map(s => {
-    return {
-      id: s.sectionId,
-      label: s.sectionName
-    }
-  }), [availableSections, form]);
+  const timelineItems = useMemo(
+    () =>
+      form?.sections
+        .filter((section) => availableSections.includes(section.sectionId))
+        .map((s) => {
+          return {
+            id: s.sectionId,
+            label: s.sectionName,
+          };
+        }),
+    [availableSections, form],
+  );
 
-
-  const currentSection = useMemo(() => form?.sections.find(
-    (section) => section.sectionId === sectionId
-  ), [form, sectionId])
+  const currentSection = useMemo(
+    () => form?.sections.find((section) => section.sectionId === sectionId),
+    [form, sectionId],
+  );
 
   const responses = useMemo(() => {
-    return response?.sectionResponses.find(
-      (sectionResp) => sectionResp.sectionId === currentSection?.sectionId
-    )?.questions || []
-  }, [response, currentSection])
+    return (
+      response?.sectionResponses.find(
+        (sectionResp) => sectionResp.sectionId === currentSection?.sectionId,
+      )?.questions || []
+    );
+  }, [response, currentSection]);
 
-  if (!form) return <p>Failed to fetch form...</p>
-  if (!response) return <p>Failed to fetch response...</p>
+  if (!form) return <p>Failed to fetch form...</p>;
+  if (!response) return <p>Failed to fetch response...</p>;
 
   // const applicationResponseId = location.state?.applicationResponseId;
   // const userId = location.state?.userId;
-
-
 
   if (!currentSection) {
     return (
@@ -49,7 +60,7 @@ const ApplicationPage: React.FC = () => {
 
   const handleNext = () => {
     const currentIndex = availableSections.findIndex(
-      (section) => section === sectionId
+      (section) => section === sectionId,
     );
     if (currentIndex < form.sections.length - 1) {
       navigate(`/review/f/${form.id}/${nextSection()}`);
@@ -59,13 +70,12 @@ const ApplicationPage: React.FC = () => {
   };
 
   const handlePrevious = () => {
-    console.log(previousSection())
+    console.log(previousSection());
     navigate(`/review/f/${form.id}/${previousSection()}`);
   };
 
-
   const currentStep = availableSections.findIndex(
-    (section) => section === sectionId
+    (section) => section === sectionId,
   );
 
   return (
@@ -83,9 +93,7 @@ const ApplicationPage: React.FC = () => {
         <div className="flex flex-col justify-self-center m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white min-w-[600px] max-w-60">
           <Section
             section={currentSection}
-            responses={
-              responses
-            }
+            responses={responses}
             // onChangeResponse={() => { }} // TODO: make this optional? yes
             disabled={true}
           />
@@ -96,22 +104,32 @@ const ApplicationPage: React.FC = () => {
       </div>
 
       <div className="flex gap-1 mt-4">
-        {
-          availableSections[0] !== sectionId ?
-            <Button
-              className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-              disabled={form.sections[0].sectionId === sectionId}
-              onClick={handlePrevious}
-            > Back </Button> : <div></div>
-        }
-        {
-          availableSections[availableSections.length - 1] !== sectionId ?
-            <Button
-              className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-              disabled={form.sections[form.sections.length - 1].sectionId === sectionId}
-              onClick={handleNext}
-            > Next </Button> : <div></div>
-        }
+        {availableSections[0] !== sectionId ? (
+          <Button
+            className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
+            disabled={form.sections[0].sectionId === sectionId}
+            onClick={handlePrevious}
+          >
+            {" "}
+            Back{" "}
+          </Button>
+        ) : (
+          <div></div>
+        )}
+        {availableSections[availableSections.length - 1] !== sectionId ? (
+          <Button
+            className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
+            disabled={
+              form.sections[form.sections.length - 1].sectionId === sectionId
+            }
+            onClick={handleNext}
+          >
+            {" "}
+            Next{" "}
+          </Button>
+        ) : (
+          <div></div>
+        )}
       </div>
     </div>
   );

@@ -1,13 +1,13 @@
 type TimelineItem = {
-  id: string
-  label: string,
-}
+  id: string;
+  label: string;
+};
 
 type TimelineProps = {
   items: TimelineItem[];
   currentStep: number;
   maxStepReached: number;
-  className?: string
+  className?: string;
   onStepClick?: (index: number, item: TimelineItem) => void;
 };
 
@@ -31,27 +31,44 @@ const Timeline = (props: TimelineProps) => {
               key={index}
               className="flex-1 text-center relative z-10"
               onClick={() => handleStepClick(index)}
-              style={{ cursor: isUnlocked && !!props.onStepClick ? "pointer" : "default" }}
+              style={{
+                cursor:
+                  isUnlocked && !!props.onStepClick ? "pointer" : "default",
+              }}
             >
               <div
-                className={`w-12 h-12 mx-auto mb-2 flex items-center justify-center rounded-full border-4 transition-colors duration-300 ${isCompleted
-                  ? "bg-[#2969C4] text-white border-[#2969C4]"
-                  : isActive
+                className={`w-12 h-12 mx-auto mb-2 flex items-center justify-center rounded-full border-4 transition-colors duration-300 ${
+                  isCompleted
                     ? "bg-[#2969C4] text-white border-[#2969C4]"
-                    : "bg-white text-gray-500 border-gray-300"
-                  }`}
+                    : isActive
+                      ? "bg-[#2969C4] text-white border-[#2969C4]"
+                      : "bg-white text-gray-500 border-gray-300"
+                }`}
               >
-                {isCompleted ?
-                  <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1.5 6.4L4.92857 10L13.5 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                {isCompleted ? (
+                  <svg
+                    width="15"
+                    height="11"
+                    viewBox="0 0 15 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1.5 6.4L4.92857 10L13.5 1"
+                      stroke="white"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
-                  : index + 1}
+                ) : (
+                  index + 1
+                )}
               </div>
               <p
-                className={`uppercase ${isUnlocked
-                  ? "text-gray-800 font-semibold"
-                  : "text-gray-400"
-                  } whitespace-nowrap`}
+                className={`uppercase ${
+                  isUnlocked ? "text-gray-800 font-semibold" : "text-gray-400"
+                } whitespace-nowrap`}
               >
                 {item.label}
               </p>

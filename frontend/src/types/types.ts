@@ -1,220 +1,225 @@
 import { Timestamp } from "firebase/firestore";
 
 export enum PermissionRole {
-    SuperReviewer = "super-reviewer",
-    Reviewer = "reviewer",
-    Applicant = "applicant"
+  SuperReviewer = "super-reviewer",
+  Reviewer = "reviewer",
+  Applicant = "applicant",
 }
 
 export enum ApplicantRole {
-    Bootcamp = 'bootcamp',
-    Engineer = "engineer",
-    Designer = "designer",
-    Product = "product",
-    Sourcing = "sourcing",
-    TechLead = "tech-lead"
+  Bootcamp = "bootcamp",
+  Engineer = "engineer",
+  Designer = "designer",
+  Product = "product",
+  Sourcing = "sourcing",
+  TechLead = "tech-lead",
 }
 
 export enum ApplicationStatus {
-    InProgress = 'in-progress',
-    Submitted = "submitted",
-    UnderReview = "in-review",
-    Interview = "interview",
-    Decided = "decided",
-    InActive = "inactive"
+  InProgress = "in-progress",
+  Submitted = "submitted",
+  UnderReview = "in-review",
+  Interview = "interview",
+  Decided = "decided",
+  InActive = "inactive",
 }
 
 export enum ReviewStatus {
-    NotReviewed = 'not-reviewed',
-    Reviewed = "reviewed",
-    Interview = "interview",
-    Accepted = "accepted",
-    Denied = "denied",
-    Waitlisted = "waitlist",
-    // Released = "released"
+  NotReviewed = "not-reviewed",
+  Reviewed = "reviewed",
+  Interview = "interview",
+  Accepted = "accepted",
+  Denied = "denied",
+  Waitlisted = "waitlist",
+  // Released = "released"
 }
 
 export enum QuestionType {
-    ShortAnswer = 'short-answer',
-    LongAnswer = 'long-answer',
-    MultipleChoice = 'multiple-choice',
-    MultipleSelect = 'multiple-select',
-    FileUpload = 'file-upload',
-    RoleSelect = "role-select"
+  ShortAnswer = "short-answer",
+  LongAnswer = "long-answer",
+  MultipleChoice = "multiple-choice",
+  MultipleSelect = "multiple-select",
+  FileUpload = "file-upload",
+  RoleSelect = "role-select",
 }
 
-
-export type UserProfile = ApplicantUserProfile | ReviewerUserProfile | SuperReviewerUserProfile
+export type UserProfile =
+  | ApplicantUserProfile
+  | ReviewerUserProfile
+  | SuperReviewerUserProfile;
 export interface IUserProfile {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: PermissionRole;
-    dateCreated: Timestamp;
-};
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: PermissionRole;
+  dateCreated: Timestamp;
+}
 
 export interface ApplicantUserProfile extends IUserProfile {
-    role: PermissionRole.Applicant;
-    activeApplicationIds: string[];
-    inactiveApplicationIds: string[];
+  role: PermissionRole.Applicant;
+  activeApplicationIds: string[];
+  inactiveApplicationIds: string[];
 }
 
 export interface ReviewerUserProfile extends IUserProfile {
-    role: PermissionRole.Reviewer;
-    applicantRolePreferences: ApplicantRole[]; // the roles that this reviewer prefers to review for
+  role: PermissionRole.Reviewer;
+  applicantRolePreferences: ApplicantRole[]; // the roles that this reviewer prefers to review for
 }
 
 export interface SuperReviewerUserProfile extends IUserProfile {
-    role: PermissionRole.SuperReviewer;
+  role: PermissionRole.SuperReviewer;
 }
-
 
 export type InterviewAssignment = {
-    id: string;
-    assignmentType: "interview",
-    formId: string, // what form is this review for
-    interviewerId: string,
-    applicantId: string, // the applicant that was assigned for review
-    applicationResponseId: string // the submitted application that was assigned for review
-}
+  id: string;
+  assignmentType: "interview";
+  formId: string; // what form is this review for
+  interviewerId: string;
+  applicantId: string; // the applicant that was assigned for review
+  applicationResponseId: string; // the submitted application that was assigned for review
+};
 
 export type AppReviewAssignment = {
-    id: string;
-    assignmentType: "review",
-    formId: string, // what form is this review for
-    reviewerId: string,
-    applicantId: string, // the applicant that was assigned for review
-    applicationResponseId: string // the submitted application that was assigned for review
-    forRole: ApplicantRole
-}
+  id: string;
+  assignmentType: "review";
+  formId: string; // what form is this review for
+  reviewerId: string;
+  applicantId: string; // the applicant that was assigned for review
+  applicationResponseId: string; // the submitted application that was assigned for review
+  forRole: ApplicantRole;
+};
 
-export type ReviewerAssignment = AppReviewAssignment | InterviewAssignment
+export type ReviewerAssignment = AppReviewAssignment | InterviewAssignment;
 // stores the actual user submitted application responses
 export interface ApplicationResponse {
-    id: string;
-    userId: string;
-    applicationFormId: string;
-    rolesApplied: ApplicantRole[];
-    sectionResponses: SectionResponse[];
-    status: ApplicationStatus;
-    dateSubmitted: Timestamp;
-    decisionLetterId?: string;
+  id: string;
+  userId: string;
+  applicationFormId: string;
+  rolesApplied: ApplicantRole[];
+  sectionResponses: SectionResponse[];
+  status: ApplicationStatus;
+  dateSubmitted: Timestamp;
+  decisionLetterId?: string;
 }
 
 // stores data about the content of the application forms
 export interface ApplicationForm {
-    id: string;
-    isActive: boolean;
-    dueDate: Timestamp;
-    semester: string;
-    description: string;
-    // metadata: {};
-    sections: ApplicationSection[];
-    // reviewerRubrics: RoleReviewRubric[];
+  id: string;
+  isActive: boolean;
+  dueDate: Timestamp;
+  semester: string;
+  description: string;
+  // metadata: {};
+  sections: ApplicationSection[];
+  // reviewerRubrics: RoleReviewRubric[];
 }
 
 // One of these per review. Reviews tie together an application, role, and reviewer.
 export interface ApplicationReviewData {
-    id: string;
-    reviewerId: string;
-    applicationFormId: string;
-    applicationResponseId: string;
-    applicantId: string;
-    applicantScores: {
-        [scoreCategory in string]: number // between 0-4, each review category in the rubric will have a value here
-    };
-    reviewerNotes: string;
-    reviewStatus: ReviewStatus;
-    forRole: ApplicantRole; // what role is this review for
-    submitted: boolean;
+  id: string;
+  reviewerId: string;
+  applicationFormId: string;
+  applicationResponseId: string;
+  applicantId: string;
+  applicantScores: {
+    [scoreCategory in string]: number; // between 0-4, each review category in the rubric will have a value here
+  };
+  reviewerNotes: string;
+  reviewStatus: ReviewStatus;
+  forRole: ApplicantRole; // what role is this review for
+  submitted: boolean;
 }
 
 export interface ApplicationInterviewData {
-    id: string;
-    interviewerId: string; // user id for the interviewer
-    applicationFormId: string;
-    applicationResponseId: string;
-    applicantId: string;
-    interviewNotes: string;
-    interviewComplete: boolean;
+  id: string;
+  interviewerId: string; // user id for the interviewer
+  applicationFormId: string;
+  applicationResponseId: string;
+  applicantId: string;
+  interviewNotes: string;
+  interviewComplete: boolean;
 }
 
 export interface ApplicationSection {
-    sectionId: string, //no spaces, alphanumeric, unique (used as a route param)
-    sectionName: string;
-    forRoles?: ApplicantRole[]; // some sections are role specific
-    questions: ApplicationQuestion[];
+  sectionId: string; //no spaces, alphanumeric, unique (used as a route param)
+  sectionName: string;
+  forRoles?: ApplicantRole[]; // some sections are role specific
+  questions: ApplicationQuestion[];
 }
 
 export interface SectionResponse {
-    sectionId: string;
-    questions: QuestionResponse[];
+  sectionId: string;
+  questions: QuestionResponse[];
 }
 
 export interface QuestionResponse {
-    questionType: QuestionType;
-    applicationFormId: string;
-    questionId: string;
-    response: string | string[]
+  questionType: QuestionType;
+  applicationFormId: string;
+  questionId: string;
+  response: string | string[];
 }
 
 export interface IApplicationQuestion {
-    questionId: string;
-    questionType: QuestionType;
-    optional: boolean;
-    questionText: string;
-    secondaryText?: string;
+  questionId: string;
+  questionType: QuestionType;
+  optional: boolean;
+  questionText: string;
+  secondaryText?: string;
 }
 
 export interface TextQuestion extends IApplicationQuestion {
-    questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer;
-    placeholderText: string;
-    maximumWordCount?: number;
-    minimumWordCount?: number;
+  questionType: QuestionType.ShortAnswer | QuestionType.LongAnswer;
+  placeholderText: string;
+  maximumWordCount?: number;
+  minimumWordCount?: number;
 }
 
 export interface OptionQuestion extends IApplicationQuestion {
-    questionType: QuestionType.MultipleChoice | QuestionType.MultipleSelect;
-    multipleSelect: boolean;
-    questionOptions: string[];
+  questionType: QuestionType.MultipleChoice | QuestionType.MultipleSelect;
+  multipleSelect: boolean;
+  questionOptions: string[];
 }
 
 export interface FileUploadQuestion extends IApplicationQuestion {
-    questionType: QuestionType.FileUpload;
-    fileId: string;
+  questionType: QuestionType.FileUpload;
+  fileId: string;
 }
 
 export interface RoleSelectQuestion extends IApplicationQuestion {
-    questionType: QuestionType.RoleSelect,
-    roleSections: {
-        [role in ApplicantRole]: string //map a role to it's form section, used to decide which sections to display
-    }
+  questionType: QuestionType.RoleSelect;
+  roleSections: {
+    [role in ApplicantRole]: string; //map a role to it's form section, used to decide which sections to display
+  };
 }
 
 //helps with automatic type inference based on the questionType field
-export type ApplicationQuestion = TextQuestion | OptionQuestion | FileUploadQuestion | RoleSelectQuestion
+export type ApplicationQuestion =
+  | TextQuestion
+  | OptionQuestion
+  | FileUploadQuestion
+  | RoleSelectQuestion;
 
 export type ValidationError = {
-    sectionId: string
-    questionId: string,
-    message: string
-}
+  sectionId: string;
+  questionId: string;
+  message: string;
+};
 
 export type RoleReviewRubric = {
-    id: string,
-    formId: string,
-    role: ApplicantRole,
-    rubricQuestions: RubricQuestion[]
-}
+  id: string;
+  formId: string;
+  role: ApplicantRole;
+  rubricQuestions: RubricQuestion[];
+};
 
 export type RubricQuestion = {
-    scoreKey: string,
-    prompt: string,
-    description?: string,
-    maxValue?: number, // assume 4
-    minValue?: number // assume 0
-}
+  scoreKey: string;
+  prompt: string;
+  description?: string;
+  maxValue?: number; // assume 4
+  minValue?: number; // assume 0
+};
 
 // type MockData = {
 //     applicationForms: [ApplicationForm]

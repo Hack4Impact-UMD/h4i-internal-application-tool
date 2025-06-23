@@ -1,25 +1,33 @@
-import { createContext } from "react"
-import { ApplicantRole, ApplicationForm, ApplicationResponse } from "../types/types"
+import { createContext } from "react";
+import {
+  ApplicantRole,
+  ApplicationForm,
+  ApplicationResponse,
+} from "../types/types";
 
 export type FormProviderContext = {
-  response?: ApplicationResponse,
-  form?: ApplicationForm,
-  updateQuestionResponse: (sectionId: string, questionId: string, newResponse: string | string[]) => void
-  save: () => Promise<void>,
-  selectedRoles: ApplicantRole[],
-  setSelectedRoles: (roles: ApplicantRole[]) => void
-  availableSections: string[],
-  currentSection?: string
-  nextSection: () => string
-  previousSection: () => string
-}
+  response?: ApplicationResponse;
+  form?: ApplicationForm;
+  updateQuestionResponse: (
+    sectionId: string,
+    questionId: string,
+    newResponse: string | string[],
+  ) => void;
+  save: () => Promise<void>;
+  selectedRoles: ApplicantRole[];
+  setSelectedRoles: (roles: ApplicantRole[]) => void;
+  availableSections: string[];
+  currentSection?: string;
+  nextSection: () => string;
+  previousSection: () => string;
+};
 
 export const FormContext = createContext<FormProviderContext>({
-  updateQuestionResponse: () => { },
-  save: async () => { },
+  updateQuestionResponse: () => {},
+  save: async () => {},
   selectedRoles: [],
-  setSelectedRoles: () => { },
+  setSelectedRoles: () => {},
   availableSections: [],
   nextSection: () => "",
-  previousSection: () => ""
-})
+  previousSection: () => "",
+});
