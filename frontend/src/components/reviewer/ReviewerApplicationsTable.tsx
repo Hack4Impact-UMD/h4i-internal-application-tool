@@ -133,10 +133,17 @@ export default function ReviewerApplicationsTable({
         columnHelper.accessor("score", {
           id: "score",
           header: "SCORE",
-          cell: ({ getValue }) =>
-            getValue().value && getValue().outOf
-              ? `${getValue().value}/${getValue().outOf}`
-              : `N/A`,
+          cell: ({ getValue, row }) => {
+            const review = row.original.review
+            const score = getValue()
+            if (!review?.submitted) {
+              return "INC"
+            } else {
+              return score.value && score.outOf
+                ? `${score.value}/${score.outOf}`
+                : `N/A`
+            }
+          },
         }),
         columnHelper.accessor("review", {
           id: "review-status",
