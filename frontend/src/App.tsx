@@ -96,7 +96,11 @@ function App() {
               ></Route>
             </Route>
 
-            <Route path="/admin" element={<AdminHome />} />
+            <Route path="/admin" element={
+              <RequireAuth>
+                <AdminHome />
+              </RequireAuth>
+            } />
 
             <Route
               path="/admin/dor/"
