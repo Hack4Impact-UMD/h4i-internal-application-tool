@@ -134,14 +134,14 @@ export default function ReviewerApplicationsTable({
           id: "score",
           header: "SCORE",
           cell: ({ getValue, row }) => {
-            const review = row.original.review
-            const score = getValue()
+            const review = row.original.review;
+            const score = getValue();
             if (!review?.submitted) {
-              return "INC"
+              return "INC";
             } else {
               return score.value && score.outOf
                 ? `${score.value}/${score.outOf}`
-                : `N/A`
+                : `N/A`;
             }
           },
         }),

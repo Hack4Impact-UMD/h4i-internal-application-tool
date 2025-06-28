@@ -126,7 +126,7 @@ export interface ApplicationReviewData {
     [scoreCategory in string]: number; // between 0-4, each review category in the rubric will have a value here
   };
   reviewerNotes: {
-    [rubricId in string]: string // each rubric has a section for comments which should be saved here
+    [rubricId in string]: string; // each rubric has a section for comments which should be saved here
   };
   reviewStatus: ReviewStatus;
   forRole: ApplicantRole; // what role is this review for
@@ -211,7 +211,7 @@ export type ValidationError = {
 export type RoleReviewRubric = {
   id: string;
   formId: string;
-  role: ApplicantRole | 'any';
+  role: ApplicantRole | "any";
   rubricQuestions: RubricQuestion[];
 };
 

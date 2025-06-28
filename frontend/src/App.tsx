@@ -24,6 +24,7 @@ import { queryClient } from "./config/query";
 import UserRolePage from "./pages/UserRolePage";
 import ReviewerDashboard from "./pages/ReviewerDashboard";
 import AdminHome from "./pages/AdminHome";
+import SuperReviewerDashboardShell from "./pages/SuperReviewerDashboardShell";
 
 function App() {
   return (
@@ -94,14 +95,18 @@ function App() {
             </Route>
 
             <Route path="/admin" element={<AdminHome />} />
-            <Route
-              path="/admin/dor/dashboard/:formId"
-              element={
-                <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                  <p>Super reviewer dashboard</p>
-                </RequireAuth>
-              }
-            />
+
+            <Route path="/admin/dor/" element={<SuperReviewerDashboardShell />}>
+              <Route
+                path="/admin/dor/dashboard/:formId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <p>Super reviewer dashboard</p>
+                  </RequireAuth>
+                }
+              />
+            </Route>
+
             <Route
               path="/admin/reviewer/dashboard/:formId"
               element={
