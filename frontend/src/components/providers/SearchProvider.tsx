@@ -8,7 +8,7 @@ export default function SearchProvider({ children }: { children: ReactNode }) {
     <SearchContext.Provider
       value={{
         search: search,
-        setSearch: setSearch
+        setSearch: setSearch,
       }}
     >
       {children}

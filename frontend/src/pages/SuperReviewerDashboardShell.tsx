@@ -2,27 +2,39 @@ import useSearch from "@/hooks/useSearch";
 import { NavLink, Outlet, useParams } from "react-router-dom";
 
 export default function SuperReviewerDashboardShell() {
-  const { search, setSearch } = useSearch()
-  const { formId } = useParams<{ formId: string }>()
+  const { search, setSearch } = useSearch();
+  const { formId } = useParams<{ formId: string }>();
 
   return (
     <div className="w-full h-full bg-lightgray flex flex-col items-center p-2 py-4">
       <div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
         <div className="flex gap-2 flex-row items-center">
           <NavLink
-            className={({ isActive }) => isActive ? "p-2 bg-blue text-white rounded text-sm" : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"}
+            className={({ isActive }) =>
+              isActive
+                ? "p-2 bg-blue text-white rounded text-sm"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"
+            }
             to={`/admin/dor/dashboard/${formId}/all`}
           >
             All Applications
           </NavLink>
           <NavLink
-            className={({ isActive }) => isActive ? "p-2 bg-blue text-white rounded text-sm" : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"}
+            className={({ isActive }) =>
+              isActive
+                ? "p-2 bg-blue text-white rounded text-sm"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"
+            }
             to={`/admin/dor/dashboard/${formId}/qualified`}
           >
             Qualified
           </NavLink>
           <NavLink
-            className={({ isActive }) => isActive ? "p-2 bg-blue text-white rounded text-sm" : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"}
+            className={({ isActive }) =>
+              isActive
+                ? "p-2 bg-blue text-white rounded text-sm"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"
+            }
             to={`/admin/dor/dashboard/${formId}/reviewers`}
           >
             Reviewers

@@ -96,11 +96,14 @@ function App() {
               ></Route>
             </Route>
 
-            <Route path="/admin" element={
-              <RequireAuth>
-                <AdminHome />
-              </RequireAuth>
-            } />
+            <Route
+              path="/admin"
+              element={
+                <RequireAuth>
+                  <AdminHome />
+                </RequireAuth>
+              }
+            />
 
             <Route
               path="/admin/dor/"
@@ -110,24 +113,19 @@ function App() {
                     <SuperReviewerDashboardShell />
                   </SearchProvider>
                 </RequireAuth>
-              }>
+              }
+            >
               <Route
                 path="/admin/dor/dashboard/:formId/all"
-                element={
-                  <SuperReviewerApplicationsDashboard />
-                }
+                element={<SuperReviewerApplicationsDashboard />}
               />
               <Route
                 path="/admin/dor/dashboard/:formId/qualified"
-                element={
-                  <p>Qualified</p>
-                }
+                element={<p>Qualified</p>}
               />
               <Route
                 path="/admin/dor/dashboard/:formId/reviewers"
-                element={
-                  <p>Reviewers</p>
-                }
+                element={<p>Reviewers</p>}
               />
             </Route>
 
