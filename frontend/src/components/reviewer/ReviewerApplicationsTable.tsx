@@ -18,7 +18,7 @@ import {
   createReviewData,
   getReviewDataForAssignemnt,
 } from "@/services/reviewDataService";
-import { applicantRoleColor, displayApplicantRoleName } from "@/utils/display";
+import { applicantRoleColor, applicantRoleDarkColor, displayApplicantRoleName } from "@/utils/display";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { throwErrorToast } from "../error/ErrorToast";
@@ -123,7 +123,7 @@ export default function ReviewerApplicationsTable({
           header: "ROLE",
           cell: ({ getValue }) => (
             <span
-              style={{ backgroundColor: applicantRoleColor(getValue()) }}
+              style={{ backgroundColor: applicantRoleColor(getValue()), color: applicantRoleDarkColor(getValue()) }}
               className={`rounded-full px-2 py-1`}
             >
               {displayApplicantRoleName(getValue())}

@@ -25,6 +25,8 @@ import UserRolePage from "./pages/UserRolePage";
 import ReviewerDashboard from "./pages/ReviewerDashboard";
 import AdminHome from "./pages/AdminHome";
 import SuperReviewerDashboardShell from "./pages/SuperReviewerDashboardShell";
+import SearchProvider from "./components/providers/SearchProvider";
+import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerApplicationsDashboard";
 
 function App() {
   return (
@@ -96,13 +98,31 @@ function App() {
 
             <Route path="/admin" element={<AdminHome />} />
 
-            <Route path="/admin/dor/" element={<SuperReviewerDashboardShell />}>
+            <Route
+              path="/admin/dor/"
+              element={
+                <RequireAuth>
+                  <SearchProvider>
+                    <SuperReviewerDashboardShell />
+                  </SearchProvider>
+                </RequireAuth>
+              }>
               <Route
-                path="/admin/dor/dashboard/:formId"
+                path="/admin/dor/dashboard/:formId/all"
                 element={
-                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                    <p>Super reviewer dashboard</p>
-                  </RequireAuth>
+                  <SuperReviewerApplicationsDashboard />
+                }
+              />
+              <Route
+                path="/admin/dor/dashboard/:formId/qualified"
+                element={
+                  <p>Qualified</p>
+                }
+              />
+              <Route
+                path="/admin/dor/dashboard/:formId/reviewers"
+                element={
+                  <p>Reviewers</p>
                 }
               />
             </Route>

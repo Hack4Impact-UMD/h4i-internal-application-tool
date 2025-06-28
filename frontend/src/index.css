@@ -2,7 +2,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
 
 @import "tailwindcss";
-
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -15,6 +14,7 @@
   --color-gray: #fafafa;
   --color-darkgray: #636363;
   --color-black: #202020;
+  --color-fg: #565656;
 
   /* theme colors from previous designs, left to not "ruin" prior work */
   --color-lightblue: rgb(194, 224, 251);
@@ -92,11 +92,9 @@ body,
   height: 9rem;
   padding: 0 1rem;
   justify-content: space-evenly;
-  background: linear-gradient(
-    to right,
-    var(--custom-lightblue),
-    var(--custom-teal)
-  );
+  background: linear-gradient(to right,
+      var(--custom-lightblue),
+      var(--custom-teal));
 }
 
 .sign-out-button {
@@ -553,6 +551,7 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

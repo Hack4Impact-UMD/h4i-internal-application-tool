@@ -7,5 +7,5 @@ export type SearchContextType = {
 
 export const SearchContext = createContext<SearchContextType>({
   search: "",
-  setSearch: () => {},
+  setSearch: () => { },
 });

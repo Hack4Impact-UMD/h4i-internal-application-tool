@@ -25,3 +25,13 @@ export function applicantRoleColor(role: ApplicantRole) {
   else if (role == ApplicantRole.Designer) return "#F8DFEB";
   else return "#FFFFFF";
 }
+
+export function applicantRoleDarkColor(role: ApplicantRole) {
+  if (role == ApplicantRole.Bootcamp) return "#5D1615";
+  else if (role == ApplicantRole.TechLead) return "#592878";
+  else if (role == ApplicantRole.Product) return "#1D3829";
+  else if (role == ApplicantRole.Sourcing) return "#402C1B";
+  else if (role == ApplicantRole.Engineer) return "#193347";
+  else if (role == ApplicantRole.Designer) return "#4C2337";
+  else return "#000000";
+}
