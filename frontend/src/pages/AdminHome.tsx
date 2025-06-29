@@ -1,10 +1,13 @@
 import Loading from "@/components/Loading";
+import { Button } from "@/components/ui/button";
 import { useAllApplicationForms } from "@/hooks/useApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
 import { PermissionRole } from "@/types/types";
-import { Link } from "react-router-dom";
+import { displayUserRoleName } from "@/utils/display";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function AdminHome() {
+  const navigate = useNavigate()
   const { data: forms, isLoading, error } = useAllApplicationForms();
   const { user } = useAuth();
 
@@ -18,9 +21,16 @@ export default function AdminHome() {
   if (!forms) return <p>Failed to fetch forms!</p>;
 
   return (
-    <div className="w-full h-full px-2 py-4 flex flex-col bg-lightgray items-center">
+    <div className="w-full h-full px-2 py-4 flex gap-2 flex-col bg-lightgray items-center">
+      <div className="max-w-5xl w-full p-4 rounded-md">
+        <h1 className="text-2xl font-bold">Welcome, {user.firstName}!</h1>
+        <p className="text-muted-foreground">
+          You are a {displayUserRoleName(user.role)}.
+        </p>
+      </div>
+
       <div className="max-w-5xl w-full p-4 bg-white rounded-md">
-        <h1 className="text-xl font-bold mt-4">Select a form</h1>
+        <h1 className="text-xl">Go to Review Dashboards</h1>
         <p className="text-muted-foreground">
           To access dashboards, you need to select which form you want to view
           application and review data for.
@@ -47,6 +57,15 @@ export default function AdminHome() {
           })}
         </ul>
       </div>
+      {user.role == PermissionRole.SuperReviewer &&
+        <div className="max-w-5xl w-full p-4 bg-white rounded-md">
+          <h1 className="text-xl">Or Manage Users </h1>
+          <p className="text-muted-foreground">
+            View all registered users, grant reviewer access, edit roles, and delete user accounts.
+          </p>
+          <Button className="mt-4" onClick={() => navigate('/admin/dor/users')}>Manage Users</Button>
+        </div>
+      }
     </div>
   );
 }

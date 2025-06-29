@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 import Loading from "../Loading";
 import SuperReviewerApplicationsTable from "./SuperReviewerApplicationsTable";
 import useSearch from "@/hooks/useSearch";
+import Spinner from "../Spinner";
 
 export default function SuperReviewerApplicationsDashboard() {
   const { formId } = useParams<{ formId: string }>();
