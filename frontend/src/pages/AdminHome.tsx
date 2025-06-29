@@ -11,6 +11,7 @@ export default function AdminHome() {
   if (!user) return <Loading />;
 
   const route = user.role == PermissionRole.Reviewer ? "reviewer" : "dor";
+  const table = user.role == PermissionRole.SuperReviewer ? "/all" : "";
 
   if (isLoading) return <Loading />;
   if (error) return <p>Failed to fetch forms: {error.message}</p>;
@@ -30,7 +31,7 @@ export default function AdminHome() {
             return (
               <Link
                 className="border border-gray-300 p-2 rounded-md flex flex-row gap-2 items-center"
-                to={`/admin/${route}/dashboard/${form.id}`}
+                to={`/admin/${route}/dashboard/${form.id}${table}`}
                 key={form.id}
               >
                 <span

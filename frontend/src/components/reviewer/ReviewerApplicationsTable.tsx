@@ -106,7 +106,7 @@ export default function ReviewerApplicationsTable({
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: rowCount,
   });
 
   const columnHelper = createColumnHelper<AssignmentRow>();

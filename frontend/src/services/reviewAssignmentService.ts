@@ -7,6 +7,7 @@ import { getApplicationResponseById } from "./applicationResponsesService";
 import {
   and,
   collection,
+  CollectionReference,
   doc,
   getDoc,
   getDocs,
@@ -73,4 +74,11 @@ export async function getReviewAssignmentById(
   const docRef = doc(assignments, assignmentId);
 
   return (await getDoc(docRef)).data() as ReviewerAssignment | undefined;
+}
+
+export async function getReviewAssignmentsForApplication(responseId: string): Promise<AppReviewAssignment[]> {
+  const assignments = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
+  const q = query(assignments, where("applicationResponseId", "==", responseId));
+
+  return (await getDocs(q)).docs.map(d => d.data() as AppReviewAssignment);
 }
