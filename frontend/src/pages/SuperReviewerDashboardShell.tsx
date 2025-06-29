@@ -42,7 +42,7 @@ export default function SuperReviewerDashboardShell() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border border-gray-300 rounded-full px-2 py-1 text-sm min-w-sm ml-auto"
+            className="border border-gray-300 rounded-full px-2 py-1 text-sm min-w-sm max-w-md ml-auto"
             placeholder="Search"
           />
         </div>

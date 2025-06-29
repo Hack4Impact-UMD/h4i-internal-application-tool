@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { throwErrorToast } from "../error/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 type ReviewerApplicationsTableProps = {
   assignments: AppReviewAssignment[];
@@ -115,16 +116,52 @@ export default function ReviewerApplicationsTable({
       [
         columnHelper.accessor("index", {
           id: "number",
-          header: "S. NO",
+          header: ({ column }) => {
+            return <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              <span className="flex flex-row gap-1">
+                S. NO
+                {column.getIsSorted() === false ? <ArrowUpDown />
+                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+              </span>
+            </Button>
+          },
           cell: ({ getValue }) => getValue(),
         }),
         columnHelper.accessor("applicant.name", {
           id: "applicant-name",
-          header: "APPLICANT",
+          header: ({ column }) => {
+            return <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              <span className="flex flex-row gap-1">
+                APPLICANT
+                {column.getIsSorted() === false ? <ArrowUpDown />
+                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+              </span>
+            </Button>
+          },
         }),
         columnHelper.accessor("role", {
           id: "role",
-          header: "ROLE",
+          header: ({ column }) => {
+            return <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              <span className="flex flex-row gap-1">
+                ROLE
+                {column.getIsSorted() === false ? <ArrowUpDown />
+                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+              </span>
+            </Button>
+          },
           cell: ({ getValue }) => (
             <span
               style={{
@@ -139,7 +176,19 @@ export default function ReviewerApplicationsTable({
         }),
         columnHelper.accessor("score", {
           id: "score",
-          header: "SCORE",
+          header: ({ column }) => {
+            return <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              <span className="flex flex-row gap-1">
+                SCORE
+                {column.getIsSorted() === false ? <ArrowUpDown />
+                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+              </span>
+            </Button>
+          },
           cell: ({ getValue, row }) => {
             const review = row.original.review;
             const score = getValue();
@@ -154,7 +203,19 @@ export default function ReviewerApplicationsTable({
         }),
         columnHelper.accessor("review", {
           id: "review-status",
-          header: "ACTION",
+          header: ({ column }) => {
+            return <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              <span className="flex flex-row gap-1">
+                ACTION
+                {column.getIsSorted() === false ? <ArrowUpDown />
+                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+              </span>
+            </Button>
+          },
           cell: ({ getValue, row }) => {
             const review = getValue();
             const rowData = row.original;

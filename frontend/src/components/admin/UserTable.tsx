@@ -25,6 +25,7 @@ import {
 import { displayApplicantRoleName, displayUserRoleName } from "@/utils/display";
 import { throwErrorToast } from "../error/ErrorToast";
 import { Timestamp } from "firebase/firestore";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 type UserTableProps = {
   users: UserProfile[];
@@ -226,51 +227,67 @@ export default function UserTable({
       {
         id: "Name",
         accessorFn: (profile) => `${profile.firstName} ${profile.lastName}`,
-        header: ({ column }) => (
-          <Button
+        header: ({ column }) => {
+          return <Button
             variant="ghost"
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Name
+            <span className="flex flex-row gap-1">
+              NAME
+              {column.getIsSorted() === false ? <ArrowUpDown />
+                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+            </span>
           </Button>
-        ),
+        },
       },
       {
         accessorKey: "id",
-        header: ({ column }) => (
-          <Button
+        header: ({ column }) => {
+          return <Button
             variant="ghost"
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            User ID
+            <span className="flex flex-row gap-1">
+              USER ID
+              {column.getIsSorted() === false ? <ArrowUpDown />
+                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+            </span>
           </Button>
-        ),
+        },
       },
       {
         accessorKey: "email",
-        header: ({ column }) => (
-          <Button
+        header: ({ column }) => {
+          return <Button
             variant="ghost"
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Email
+            <span className="flex flex-row gap-1">
+              EMAIL
+              {column.getIsSorted() === false ? <ArrowUpDown />
+                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+            </span>
           </Button>
-        ),
+        },
       },
       {
         accessorKey: "dateCreated",
-        header: ({ column }) => (
-          <Button
+        header: ({ column }) => {
+          return <Button
             variant="ghost"
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Date Created
+            <span className="flex flex-row gap-1">
+              DATE CREATED
+              {column.getIsSorted() === false ? <ArrowUpDown />
+                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+            </span>
           </Button>
-        ),
+        },
         cell: ({ row }) => {
           const ts = row.getValue("dateCreated") as Timestamp;
           return (
@@ -300,15 +317,19 @@ export default function UserTable({
       },
       {
         accessorKey: "role",
-        header: ({ column }) => (
-          <Button
+        header: ({ column }) => {
+          return <Button
             variant="ghost"
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Role
+            <span className="flex flex-row gap-1">
+              ROLE
+              {column.getIsSorted() === false ? <ArrowUpDown />
+                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
+            </span>
           </Button>
-        ),
+        },
         cell: ({ row }) => {
           const role = row.getValue("role") as string;
           return (
