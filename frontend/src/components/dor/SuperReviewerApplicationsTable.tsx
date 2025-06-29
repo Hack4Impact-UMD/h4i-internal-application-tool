@@ -180,7 +180,7 @@ export default function SuperReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="items-center flex flex-row gap-1">
                 S. NO
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -197,7 +197,7 @@ export default function SuperReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="items-center flex flex-row gap-1">
                 APPLICANT
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -213,7 +213,7 @@ export default function SuperReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="items-center flex flex-row gap-1">
                 ROLE
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -258,7 +258,7 @@ export default function SuperReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="items-center flex flex-row gap-1">
                 REV. COMPLETE
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -280,7 +280,7 @@ export default function SuperReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="items-center flex flex-row gap-1">
                 AVG. SCORE
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -298,14 +298,14 @@ export default function SuperReviewerApplicationsTable({
 
   const { data: rows, isPending, error } = useRows(pagination.pageIndex);
 
-  if (isPending || !rows) return <p>Loading...</p>;
+  if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
 
   return (
     <div className="flex flex-col w-full gap-2">
       <DataTable
         columns={cols}
-        data={rows}
+        data={rows ?? []}
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),

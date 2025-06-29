@@ -122,7 +122,7 @@ export default function ReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="flex items-center flex-row gap-1">
                 S. NO
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -139,7 +139,7 @@ export default function ReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="flex items-center flex-row gap-1">
                 APPLICANT
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -155,7 +155,7 @@ export default function ReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="flex items-center flex-row gap-1">
                 ROLE
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -182,7 +182,7 @@ export default function ReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="flex items-center flex-row gap-1">
                 SCORE
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -209,7 +209,7 @@ export default function ReviewerApplicationsTable({
               className="p-0"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              <span className="flex flex-row gap-1">
+              <span className="flex items-center flex-row gap-1">
                 ACTION
                 {column.getIsSorted() === false ? <ArrowUpDown />
                   : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}

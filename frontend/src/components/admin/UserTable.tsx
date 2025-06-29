@@ -233,7 +233,7 @@ export default function UserTable({
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            <span className="flex flex-row gap-1">
+            <span className="items-center flex flex-row gap-1">
               NAME
               {column.getIsSorted() === false ? <ArrowUpDown />
                 : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -249,7 +249,7 @@ export default function UserTable({
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            <span className="flex flex-row gap-1">
+            <span className="items-center flex flex-row gap-1">
               USER ID
               {column.getIsSorted() === false ? <ArrowUpDown />
                 : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -265,7 +265,7 @@ export default function UserTable({
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            <span className="flex flex-row gap-1">
+            <span className="items-center flex flex-row gap-1">
               EMAIL
               {column.getIsSorted() === false ? <ArrowUpDown />
                 : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -281,7 +281,7 @@ export default function UserTable({
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            <span className="flex flex-row gap-1">
+            <span className="items-center flex flex-row gap-1">
               DATE CREATED
               {column.getIsSorted() === false ? <ArrowUpDown />
                 : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
@@ -323,7 +323,7 @@ export default function UserTable({
             className="p-0"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            <span className="flex flex-row gap-1">
+            <span className="items-center flex flex-row gap-1">
               ROLE
               {column.getIsSorted() === false ? <ArrowUpDown />
                 : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
