@@ -117,50 +117,77 @@ export default function ReviewerApplicationsTable({
         columnHelper.accessor("index", {
           id: "number",
           header: ({ column }) => {
-            return <Button
-              variant="ghost"
-              className="p-0"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              <span className="flex items-center flex-row gap-1">
-                S. NO
-                {column.getIsSorted() === false ? <ArrowUpDown />
-                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-              </span>
-            </Button>
+            return (
+              <Button
+                variant="ghost"
+                className="p-0"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                <span className="flex items-center flex-row gap-1">
+                  S. NO
+                  {column.getIsSorted() === false ? (
+                    <ArrowUpDown />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ArrowUp />
+                  ) : (
+                    <ArrowDown />
+                  )}
+                </span>
+              </Button>
+            );
           },
           cell: ({ getValue }) => getValue(),
         }),
         columnHelper.accessor("applicant.name", {
           id: "applicant-name",
           header: ({ column }) => {
-            return <Button
-              variant="ghost"
-              className="p-0"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              <span className="flex items-center flex-row gap-1">
-                APPLICANT
-                {column.getIsSorted() === false ? <ArrowUpDown />
-                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-              </span>
-            </Button>
+            return (
+              <Button
+                variant="ghost"
+                className="p-0"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                <span className="flex items-center flex-row gap-1">
+                  APPLICANT
+                  {column.getIsSorted() === false ? (
+                    <ArrowUpDown />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ArrowUp />
+                  ) : (
+                    <ArrowDown />
+                  )}
+                </span>
+              </Button>
+            );
           },
         }),
         columnHelper.accessor("role", {
           id: "role",
           header: ({ column }) => {
-            return <Button
-              variant="ghost"
-              className="p-0"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              <span className="flex items-center flex-row gap-1">
-                ROLE
-                {column.getIsSorted() === false ? <ArrowUpDown />
-                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-              </span>
-            </Button>
+            return (
+              <Button
+                variant="ghost"
+                className="p-0"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                <span className="flex items-center flex-row gap-1">
+                  ROLE
+                  {column.getIsSorted() === false ? (
+                    <ArrowUpDown />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ArrowUp />
+                  ) : (
+                    <ArrowDown />
+                  )}
+                </span>
+              </Button>
+            );
           },
           cell: ({ getValue }) => (
             <span
@@ -177,17 +204,26 @@ export default function ReviewerApplicationsTable({
         columnHelper.accessor("score", {
           id: "score",
           header: ({ column }) => {
-            return <Button
-              variant="ghost"
-              className="p-0"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              <span className="flex items-center flex-row gap-1">
-                SCORE
-                {column.getIsSorted() === false ? <ArrowUpDown />
-                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-              </span>
-            </Button>
+            return (
+              <Button
+                variant="ghost"
+                className="p-0"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                <span className="flex items-center flex-row gap-1">
+                  SCORE
+                  {column.getIsSorted() === false ? (
+                    <ArrowUpDown />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ArrowUp />
+                  ) : (
+                    <ArrowDown />
+                  )}
+                </span>
+              </Button>
+            );
           },
           cell: ({ getValue, row }) => {
             const review = row.original.review;
@@ -204,17 +240,26 @@ export default function ReviewerApplicationsTable({
         columnHelper.accessor("review", {
           id: "review-status",
           header: ({ column }) => {
-            return <Button
-              variant="ghost"
-              className="p-0"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              <span className="flex items-center flex-row gap-1">
-                ACTION
-                {column.getIsSorted() === false ? <ArrowUpDown />
-                  : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-              </span>
-            </Button>
+            return (
+              <Button
+                variant="ghost"
+                className="p-0"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                <span className="flex items-center flex-row gap-1">
+                  ACTION
+                  {column.getIsSorted() === false ? (
+                    <ArrowUpDown />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ArrowUp />
+                  ) : (
+                    <ArrowDown />
+                  )}
+                </span>
+              </Button>
+            );
           },
           cell: ({ getValue, row }) => {
             const review = getValue();

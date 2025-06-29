@@ -76,9 +76,14 @@ export async function getReviewAssignmentById(
   return (await getDoc(docRef)).data() as ReviewerAssignment | undefined;
 }
 
-export async function getReviewAssignmentsForApplication(responseId: string): Promise<AppReviewAssignment[]> {
+export async function getReviewAssignmentsForApplication(
+  responseId: string,
+): Promise<AppReviewAssignment[]> {
   const assignments = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
-  const q = query(assignments, where("applicationResponseId", "==", responseId));
+  const q = query(
+    assignments,
+    where("applicationResponseId", "==", responseId),
+  );
 
-  return (await getDocs(q)).docs.map(d => d.data() as AppReviewAssignment);
+  return (await getDocs(q)).docs.map((d) => d.data() as AppReviewAssignment);
 }

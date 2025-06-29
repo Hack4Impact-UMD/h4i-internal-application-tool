@@ -228,65 +228,101 @@ export default function UserTable({
         id: "Name",
         accessorFn: (profile) => `${profile.firstName} ${profile.lastName}`,
         header: ({ column }) => {
-          return <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              NAME
-              {column.getIsSorted() === false ? <ArrowUpDown />
-                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                NAME
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
         },
       },
       {
         accessorKey: "id",
         header: ({ column }) => {
-          return <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              USER ID
-              {column.getIsSorted() === false ? <ArrowUpDown />
-                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                USER ID
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
         },
       },
       {
         accessorKey: "email",
         header: ({ column }) => {
-          return <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              EMAIL
-              {column.getIsSorted() === false ? <ArrowUpDown />
-                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                EMAIL
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
         },
       },
       {
         accessorKey: "dateCreated",
         header: ({ column }) => {
-          return <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              DATE CREATED
-              {column.getIsSorted() === false ? <ArrowUpDown />
-                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                DATE CREATED
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
         },
         cell: ({ row }) => {
           const ts = row.getValue("dateCreated") as Timestamp;
@@ -318,17 +354,26 @@ export default function UserTable({
       {
         accessorKey: "role",
         header: ({ column }) => {
-          return <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              ROLE
-              {column.getIsSorted() === false ? <ArrowUpDown />
-                : column.getIsSorted() === 'desc' ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                ROLE
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
         },
         cell: ({ row }) => {
           const role = row.getValue("role") as string;

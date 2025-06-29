@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react";
 import { Button } from "../ui/button";
-import { ApplicantRole, ApplicationResponse, ApplicationStatus } from "@/types/types";
+import {
+  ApplicantRole,
+  ApplicationResponse,
+  ApplicationStatus,
+} from "@/types/types";
 import {
   applicantRoleColor,
   applicantRoleDarkColor,
@@ -13,37 +17,45 @@ import SuperReviewerApplicationsTable from "./SuperReviewerApplicationsTable";
 import useSearch from "@/hooks/useSearch";
 
 export default function SuperReviewerApplicationsDashboard() {
-  const { formId } = useParams<{ formId: string }>()
-  const [roleFilter, setRoleFilter] = useState<"all" | ApplicantRole>(
-    "all",
-  );
+  const { formId } = useParams<{ formId: string }>();
+  const [roleFilter, setRoleFilter] = useState<"all" | ApplicantRole>("all");
 
-  const { data: apps, isLoading, error } = useAllApplicationResponsesForForm(formId ?? "")
-  const { search } = useSearch()
+  const {
+    data: apps,
+    isLoading,
+    error,
+  } = useAllApplicationResponsesForForm(formId ?? "");
+  const { search } = useSearch();
 
   const expandedSubmittedApps = useMemo(
-    () => apps
-      ?.filter(app => app.status != ApplicationStatus.InProgress)
-      ?.flatMap(app => app.rolesApplied.map(role => ({
-        ...app,
-        rolesApplied: [role]
-      }) as ApplicationResponse))
-    , [apps])
+    () =>
+      apps
+        ?.filter((app) => app.status != ApplicationStatus.InProgress)
+        ?.flatMap((app) =>
+          app.rolesApplied.map(
+            (role) =>
+              ({
+                ...app,
+                rolesApplied: [role],
+              }) as ApplicationResponse,
+          ),
+        ),
+    [apps],
+  );
 
   const applicationsByRole = useMemo(() => {
-    const freqs: Map<ApplicantRole, number> = new Map()
-    expandedSubmittedApps?.forEach(app => {
-      const role = app.rolesApplied[0]
-      freqs.set(role, freqs.get(role) ?? 0 + 1)
-    })
+    const freqs: Map<ApplicantRole, number> = new Map();
+    expandedSubmittedApps?.forEach((app) => {
+      const role = app.rolesApplied[0];
+      freqs.set(role, freqs.get(role) ?? 0 + 1);
+    });
 
-    return freqs
-  }, [expandedSubmittedApps])
+    return freqs;
+  }, [expandedSubmittedApps]);
 
-  if (!formId) return <p>No formId found! The url is probably malformed.</p>
-  if (isLoading || !apps || !expandedSubmittedApps) return <Loading />
-  if (error) return <p>Something went wrong: {error.message}</p>
-
+  if (!formId) return <p>No formId found! The url is probably malformed.</p>;
+  if (isLoading || !apps || !expandedSubmittedApps) return <Loading />;
+  if (error) return <p>Something went wrong: {error.message}</p>;
 
   return (
     <div>
@@ -71,7 +83,9 @@ export default function SuperReviewerApplicationsDashboard() {
               onClick={() => setRoleFilter(role)}
               key={role}
             >
-              <span className="text-3xl">{applicationsByRole.get(role) ?? 0}</span>
+              <span className="text-3xl">
+                {applicationsByRole.get(role) ?? 0}
+              </span>
               <span className="mt-auto">{displayApplicantRoleName(role)}</span>
             </Button>
           );
