@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 import StatusPage from "./components/status/StatusPage";
 import DecisionPage from "./components/status/DecisionPage";
@@ -153,12 +153,12 @@ function App() {
                     PermissionRole.SuperReviewer,
                   ]}
                 >
-                  <ReviewProvider />
+                  <Outlet />
                 </RequireAuth>
               }
             >
               <Route
-                path="/admin/review/f/:formId/:sectionId/:reviewDataId" // TODO: change the routing to refer to an applicant + form, different provider
+                path="/admin/review/f/:formId/:responseId/:sectionId/:reviewDataId" // TODO: change the routing to refer to an applicant + form, different provider
                 element={<AppReviewPage />}
               />
             </Route>

@@ -115,35 +115,38 @@ function ReviewerSearchPopover({ role, responseId, onSelect }: ReviewerSearchPop
     <CommandList>
       <CommandEmpty>No results found.</CommandEmpty>
       <CommandGroup>
-        {validReviewers?.map((reviewer, index) => (
-          <CommandItem
-            key={reviewer.id}
-            value={`${reviewer.firstName} ${reviewer.lastName}`}
-            className="cursor-pointer flex flex-col gap-1 items-start"
-            onSelect={() => onSelect(reviewer)}
-          >
-            <p>
-              {reviewer.firstName} {reviewer.lastName} {
-                assignments[index].isLoading ? <Spinner className="size-3 inline ml-2" /> :
-                  assignments[index]?.error ? ('N/A') :
-                    `(${assignments[index].data?.length ?? 'N/A'})`
-              }
-            </p>
-            <div className="flex flex-wrap gap-1">
+        {validReviewers?.filter(r => reviewers?.find(x => x.id == r.id)).map((reviewer) => {
+          const index = reviewers!.findIndex(r => r.id === reviewer.id)
+          return (
+            <CommandItem
+              key={reviewer.id}
+              value={`${reviewer.firstName} ${reviewer.lastName}`}
+              className="cursor-pointer flex flex-col gap-1 items-start"
+              onSelect={() => onSelect(reviewer)}
+            >
+              <p>
+                {reviewer.firstName} {reviewer.lastName} {
+                  assignments[index].isLoading ? <Spinner className="size-3 inline ml-2" /> :
+                    assignments[index]?.error ? ('N/A') :
+                      `(${assignments[index].data?.length ?? 'N/A'})`
+                }
+              </p>
+              <div className="flex flex-wrap gap-1">
 
-              {reviewer.applicantRolePreferences.map(role => <span
-                key={role}
-                style={{
-                  backgroundColor: applicantRoleColor(role),
-                  color: applicantRoleDarkColor(role),
-                }}
-                className={`text-xs rounded-full px-2 py-1`}
-              >
-                {displayApplicantRoleName(role)}
-              </span>)}
-            </div>
-          </CommandItem>
-        ))}
+                {reviewer.applicantRolePreferences.map(role => <span
+                  key={role}
+                  style={{
+                    backgroundColor: applicantRoleColor(role),
+                    color: applicantRoleDarkColor(role),
+                  }}
+                  className={`text-xs rounded-full px-2 py-1`}
+                >
+                  {displayApplicantRoleName(role)}
+                </span>)}
+              </div>
+            </CommandItem>
+          )
+        })}
       </CommandGroup>
     </CommandList>
   </Command>

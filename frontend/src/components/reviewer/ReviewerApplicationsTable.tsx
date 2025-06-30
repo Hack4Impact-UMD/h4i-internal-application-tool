@@ -28,6 +28,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { throwErrorToast } from "../error/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { calculateReviewScore } from "@/utils/scores";
 
 type ReviewerApplicationsTableProps = {
   assignments: AppReviewAssignment[];
@@ -77,12 +78,6 @@ export default function ReviewerApplicationsTable({
               const user = await getApplicantById(assignment.applicantId);
               const review = await getReviewDataForAssignemnt(assignment);
 
-              const avgScore = (scores: { [score in string]: number }) => {
-                const keys = Object.keys(scores);
-                const sum = keys.reduce((acc, key) => scores[key] + acc, 0);
-                return sum / keys.length;
-              };
-
               const row: AssignmentRow = {
                 index: 1 + pageIndex * rowCount + index,
                 applicant: {
@@ -93,7 +88,7 @@ export default function ReviewerApplicationsTable({
                 role: assignment.forRole,
                 review: review,
                 score: {
-                  value: review ? avgScore(review.applicantScores) : undefined,
+                  value: review ? await calculateReviewScore(review) : undefined,
                   outOf: 4, // NOTE: All scores are assummed to be out of 4
                 },
               };
@@ -329,7 +324,7 @@ export default function ReviewerApplicationsTable({
         throwErrorToast("This review has already been submitted!");
       } else {
         navigate(
-          `/admin/review/f/${appReviewData.applicationFormId}/${form.sections[0].sectionId}/${appReviewData.id}`,
+          `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
         );
       }
     } else {
@@ -341,7 +336,7 @@ export default function ReviewerApplicationsTable({
         forRole: role,
         reviewStatus: ReviewStatus.NotReviewed,
         reviewerId: user!.id,
-        reviewerNotes: "",
+        reviewerNotes: {},
         submitted: false,
       };
 
@@ -349,7 +344,7 @@ export default function ReviewerApplicationsTable({
 
       const newReview = await createReviewData(review);
       navigate(
-        `/admin/review/f/${newReview.applicationFormId}/${form.sections[0].sectionId}/${newReview.id}`,
+        `/admin/review/f/${newReview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newReview.id}`,
       );
     }
   }

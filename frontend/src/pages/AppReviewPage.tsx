@@ -1,24 +1,40 @@
 import { useParams, useNavigate } from "react-router-dom";
 import Section from "../components/form/Section";
 import Timeline from "../components/status/Timeline"; // Import Timeline component
-import useForm from "../hooks/useForm";
 import { Button } from "../components/ui/button";
 import { useMemo } from "react";
 import ReviewCard from "../components/reviewer/ReviewCard";
+import { useApplicationForm } from "@/hooks/useApplicationForm";
+import Loading from "@/components/Loading";
+import { useApplicationResponse } from "@/hooks/useApplicationResponses";
 
 const ApplicationPage: React.FC = () => {
   //TODO: Some parts of this component should be moved to the form provider,
   //including the timeline. Form provider should basically serve as the layout shell
   // const location = useLocation();
   const navigate = useNavigate();
-  const { sectionId } = useParams<{
+  const { sectionId, formId, responseId, reviewDataId } = useParams<{
     formId: string;
     reviewDataId: string;
+    responseId: string;
     sectionId: string;
   }>();
 
-  const { form, response, availableSections, previousSection, nextSection } =
-    useForm();
+
+  const { data: response, isLoading: responseLoading, error: responseError } = useApplicationResponse(responseId)
+  const { data: form, isLoading: formLoading, error: formError } = useApplicationForm(formId)
+
+  const availableSections = useMemo(() => {
+    return form?.sections
+      .filter((s) => {
+        if (s.forRoles) {
+          return s.forRoles.filter((r) => response?.rolesApplied?.includes(r)).length > 0;
+        } else {
+          return true;
+        }
+      })
+      .map((s) => s.sectionId) ?? [];
+  }, [response?.rolesApplied, form]);
 
   const timelineItems = useMemo(
     () =>
@@ -46,8 +62,9 @@ const ApplicationPage: React.FC = () => {
     );
   }, [response, currentSection]);
 
-  if (!form) return <p>Failed to fetch form...</p>;
-  if (!response) return <p>Failed to fetch response...</p>;
+  if (formLoading || responseLoading) return <Loading />
+  if (formError || !form) return <p>Failed to fetch form...</p>;
+  if (responseError || !response) return <p>Failed to fetch response...</p>;
 
   // const applicationResponseId = location.state?.applicationResponseId;
   // const userId = location.state?.userId;
@@ -58,12 +75,31 @@ const ApplicationPage: React.FC = () => {
     );
   }
 
+  function nextSection() {
+    if (!form) return
+    const idx = availableSections.findIndex((s) => s == sectionId);
+    if (idx >= 0 && idx + 1 < availableSections.length) {
+      return availableSections[idx + 1];
+    } else {
+      return sectionId ?? "";
+    }
+  }
+
+  function previousSection() {
+    const idx = availableSections.findIndex((s) => s == sectionId);
+    if (idx >= 1) {
+      return availableSections[idx - 1];
+    } else {
+      return sectionId ?? "";
+    }
+  }
+
   const handleNext = () => {
     const currentIndex = availableSections.findIndex(
       (section) => section === sectionId,
     );
     if (currentIndex < form.sections.length - 1) {
-      navigate(`/review/f/${form.id}/${nextSection()}`);
+      navigate(`/admin/review/f/${formId}/${responseId}/${nextSection()}/${reviewDataId}`);
     } else {
       //TODO: Handle Submit
     }
@@ -71,7 +107,7 @@ const ApplicationPage: React.FC = () => {
 
   const handlePrevious = () => {
     console.log(previousSection());
-    navigate(`/review/f/${form.id}/${previousSection()}`);
+    navigate(`/admin/review/f/${formId}/${responseId}/${previousSection()}/${reviewDataId}`);
   };
 
   const currentStep = availableSections.findIndex(
@@ -94,7 +130,6 @@ const ApplicationPage: React.FC = () => {
           <Section
             section={currentSection}
             responses={responses}
-            // onChangeResponse={() => { }} // TODO: make this optional? yes
             disabled={true}
           />
         </div>

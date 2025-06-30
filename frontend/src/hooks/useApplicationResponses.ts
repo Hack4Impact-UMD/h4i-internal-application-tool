@@ -3,6 +3,7 @@ import { useAuth } from "./useAuth";
 import {
   fetchOrCreateApplicationResponse,
   getAllApplicationResponsesByFormId,
+  getApplicationResponseById,
   getApplicationResponses,
   getAssignedApplicationResponsesByFormId,
 } from "../services/applicationResponsesService";
@@ -68,6 +69,16 @@ export function useAssignedApplicationResponsesForForm(formId: string) {
           "Assigned application data is only available to reviewers!",
         );
       return getAssignedApplicationResponsesByFormId(formId, user!.id);
+    },
+  });
+}
+
+export function useApplicationResponse(responseId?: string) {
+  return useQuery<ApplicationResponse | undefined>({
+    queryKey: ["responses", "response", responseId],
+    enabled: !!responseId,
+    queryFn: () => {
+      return getApplicationResponseById(responseId!);
     },
   });
 }
