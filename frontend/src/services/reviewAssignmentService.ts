@@ -8,6 +8,7 @@ import {
   and,
   collection,
   CollectionReference,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -46,6 +47,14 @@ export async function assignReview(
   await setDoc(doc(assignments, reviewAssignment.id), reviewAssignment);
 
   return reviewAssignment;
+}
+
+export async function removeReviewAssignment(
+  assignmentId: string
+) {
+  const assignments = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
+  const assignment = doc(assignments, assignmentId)
+  await deleteDoc(assignment)
 }
 
 export async function getReviewAssignments(

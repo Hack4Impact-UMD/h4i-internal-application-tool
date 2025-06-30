@@ -13,7 +13,7 @@ import {
 import { useMemo, useState } from "react";
 import { DataTable } from "../DataTable";
 import { Button } from "../ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApplicantById } from "@/services/applicantService";
 import { getReviewDataForResponseRole } from "@/services/reviewDataService";
 import {
@@ -23,10 +23,15 @@ import {
 } from "@/utils/display";
 import { calculateReviewScore } from "@/utils/scores";
 import { getUserById } from "@/services/userService";
-import { getReviewAssignmentsForApplication } from "@/services/reviewAssignmentService";
+import { assignReview, getReviewAssignments, getReviewAssignmentsForApplication, removeReviewAssignment } from "@/services/reviewAssignmentService";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Input } from "../ui/input";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
+import { useReviewersForRole } from "@/hooks/useReviewers";
+import Spinner from "../Spinner";
+import { useParams } from "react-router-dom";
+import { throwSuccessToast } from "../toasts/SuccessToast";
+import { throwErrorToast } from "../error/ErrorToast";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -54,31 +59,118 @@ type ApplicationRow = {
   reviewers: {
     assigned: ReviewerUserProfile[];
   };
+  assignments: AppReviewAssignment[]
 };
 
 type ReviewerSelectProps = {
   onAdd: (reviewer: ReviewerUserProfile) => void;
-  onDelete: (reviewer: ReviewerUserProfile) => void;
+  onDelete: (reviewer: ReviewerUserProfile, assignment: AppReviewAssignment) => void;
   role: ApplicantRole;
   reviewers: ReviewerUserProfile[];
+  assignments: AppReviewAssignment[];
+  responseId: string;
+  disabled?: boolean;
 };
+
+type ReviewerSearchPopoverProps = {
+  role: ApplicantRole;
+  onSelect: (reviewer: ReviewerUserProfile) => void;
+  responseId: string;
+}
+
+function ReviewerSearchPopover({ role, responseId, onSelect }: ReviewerSearchPopoverProps) {
+  const { formId } = useParams<{ formId: string }>()
+
+  const { data: reviewers, isLoading, error } = useReviewersForRole(role)
+  const assignments = useQueries({
+    queries: reviewers?.map(reviewer => ({
+      queryKey: ["assignments", "id", formId!, reviewer.id],
+      queryFn: () => getReviewAssignments(formId!, reviewer.id),
+    })) ?? []
+  })
+
+  const validReviewers = useMemo(() => {
+    return reviewers?.filter((_, index) => {
+      const query = assignments[index]
+
+      if (query.data) {
+        const reviewerAssignments = query.data
+        return !(reviewerAssignments.find(a => a.applicationResponseId == responseId && a.forRole == role))
+      } else {
+        return true
+      }
+    })
+  }, [reviewers, assignments, responseId])
+
+  if (isLoading) return <div className="flex items-center justify-center p-2 w-full">
+    <Spinner />
+  </div>
+
+  if (error) return <div className="flex items-center justify-center p-2 w-full">
+    <p>Failed to fetch reviewers: {error.message}</p>
+  </div>
+
+  return <Command>
+    <CommandInput placeholder="Search Reviewers..." />
+    <CommandList>
+      <CommandEmpty>No results found.</CommandEmpty>
+      <CommandGroup>
+        {validReviewers?.map((reviewer, index) => (
+          <CommandItem
+            key={reviewer.id}
+            value={`${reviewer.firstName} ${reviewer.lastName}`}
+            className="cursor-pointer flex flex-col gap-1 items-start"
+            onSelect={() => onSelect(reviewer)}
+          >
+            <p>
+              {reviewer.firstName} {reviewer.lastName} {
+                assignments[index].isLoading ? <Spinner className="size-3 inline ml-2" /> :
+                  assignments[index]?.error ? ('N/A') :
+                    `(${assignments[index].data?.length ?? 'N/A'})`
+              }
+            </p>
+            <div className="flex flex-wrap gap-1">
+
+              {reviewer.applicantRolePreferences.map(role => <span
+                key={role}
+                style={{
+                  backgroundColor: applicantRoleColor(role),
+                  color: applicantRoleDarkColor(role),
+                }}
+                className={`text-xs rounded-full px-2 py-1`}
+              >
+                {displayApplicantRoleName(role)}
+              </span>)}
+            </div>
+          </CommandItem>
+        ))}
+      </CommandGroup>
+    </CommandList>
+  </Command>
+}
 
 function ReviewerSelect({
   onAdd,
   onDelete,
   role,
   reviewers,
+  responseId,
+  disabled = false,
+  assignments
 }: ReviewerSelectProps) {
+  const [showPopover, setShowPopover] = useState(false)
+
   return (
     <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll">
-      {reviewers.map((reviewer) => (
+      {reviewers.map((reviewer, index) => (
         <div
+          key={reviewer.id}
           className={`rounded-full border h-7 px-2 py-1 bg-muted text-sm flex flex-row gap-1 items-center`}
         >
           <span className="text-sm">
             {reviewer.firstName} {reviewer.lastName}
           </span>
-          <Button variant="ghost" className="size-3">
+          <Button disabled={disabled} variant="ghost" className="size-3" onClick={() => onDelete(reviewer, assignments[index])}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -96,11 +188,12 @@ function ReviewerSelect({
           </Button>
         </div>
       ))}
-      <Popover>
+      <Popover open={showPopover} onOpenChange={setShowPopover}>
         <PopoverTrigger asChild>
           <Button
             variant="default"
             className="rounded-full text-sm h-7 font-normal p-0"
+            disabled={disabled}
           >
             Assign
             <svg
@@ -119,16 +212,8 @@ function ReviewerSelect({
             </svg>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 max-h-32">
-          <div className="grid gap-4">
-            <div className="space-y-2">
-              <h4 className="leading-none font-medium">Assign Reviewer</h4>
-              <p className="text-muted-foreground text-sm">
-                Search for and select a reviewer below
-              </p>
-              <Input />
-            </div>
-          </div>
+        <PopoverContent className="p-0 max-h-32">
+          <ReviewerSearchPopover responseId={responseId} role={role} onSelect={onAdd} />
         </PopoverContent>
       </Popover>
     </div>
@@ -144,6 +229,7 @@ export default function SuperReviewerApplicationsTable({
 }: SuperReviewerApplicationsTableProps) {
   // const navigate = useNavigate();
   // const { user } = useAuth();
+  const queryClient = useQueryClient()
 
   function useRows(pageIndex: number) {
     return useQuery({
@@ -163,9 +249,9 @@ export default function SuperReviewerApplicationsTable({
                 app.id,
                 app.rolesApplied[0],
               );
-              const assignments = await getReviewAssignmentsForApplication(
+              const assignments = (await getReviewAssignmentsForApplication(
                 app.id,
-              );
+              )).filter(a => a.forRole === app.rolesApplied[0]);
 
               const completedReviews = reviews.filter(
                 (r) => r.submitted,
@@ -174,12 +260,12 @@ export default function SuperReviewerApplicationsTable({
                 completedReviews == 0
                   ? 0
                   : (
-                      await Promise.all(
-                        reviews
-                          .filter((r) => r.submitted)
-                          .map(async (r) => await calculateReviewScore(r)),
-                      )
-                    ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                    await Promise.all(
+                      reviews
+                        .filter((r) => r.submitted)
+                        .map(async (r) => await calculateReviewScore(r)),
+                    )
+                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
 
               const row: ApplicationRow = {
                 index: 1 + pageIndex * rowCount + index,
@@ -206,6 +292,7 @@ export default function SuperReviewerApplicationsTable({
                     ),
                   ),
                 },
+                assignments: assignments
               };
 
               return row;
@@ -214,6 +301,41 @@ export default function SuperReviewerApplicationsTable({
       },
     });
   }
+
+  const addReviewerMutation = useMutation({
+    mutationFn: async ({ reviewer, responseId, role }: { pageIndex: number, reviewer: ReviewerUserProfile, responseId: string, role: ApplicantRole }) => {
+      console.log("Adding assignment: ", reviewer.firstName, role, responseId)
+      return await assignReview(responseId, reviewer.id, role)
+    },
+    onSuccess: () => {
+      throwSuccessToast('Successfully assigned reviewer!')
+    },
+    onError: (error) => {
+      throwErrorToast('Failed to assign reviewer!')
+      console.log(error)
+    },
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["all-apps-rows", variables.pageIndex] })
+      queryClient.invalidateQueries({ predicate: q => q.queryKey.includes('assignments') || q.queryKey.includes('assignment') })
+    }
+  })
+
+  const removeReviewerMutation = useMutation({
+    mutationFn: async ({ assignmentId }: { assignmentId: string, pageIndex: number }) => {
+      return await removeReviewAssignment(assignmentId)
+    },
+    onSuccess: () => {
+      throwSuccessToast('Successfully removed reviewer assignment!')
+    },
+    onError: (error) => {
+      throwErrorToast('Failed to remove reviewer assignment!')
+      console.log(error)
+    },
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["all-apps-rows", variables.pageIndex] })
+      queryClient.invalidateQueries({ predicate: q => q.queryKey.includes('assignments') || q.queryKey.includes('assignment') })
+    }
+  })
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -321,12 +443,23 @@ export default function SuperReviewerApplicationsTable({
           id: "reviewers",
           header: "REVIEWERS",
           cell: ({ getValue, row }) => {
-            const role = row.original.role;
+            const rowData = row.original;
+            const role = rowData.role;
             return (
               <ReviewerSelect
                 reviewers={getValue()}
-                onAdd={() => console.log("add")}
-                onDelete={() => console.log("delete")}
+                onAdd={(reviewer) => addReviewerMutation.mutate({
+                  pageIndex: pagination.pageIndex,
+                  reviewer: reviewer,
+                  responseId: rowData.responseId,
+                  role: role
+                })}
+                assignments={row.original.assignments}
+                onDelete={(_reviewer, assignment) => removeReviewerMutation.mutate({
+                  pageIndex: pagination.pageIndex,
+                  assignmentId: assignment.id
+                })}
+                responseId={row.original.responseId}
                 role={role}
               />
             );
