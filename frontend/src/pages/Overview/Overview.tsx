@@ -9,12 +9,12 @@ import { ApplicationStatus } from "@/types/types";
 const Overview: React.FC = () => {
   const {
     data: form,
-    isLoading: formLoading,
+    isPending: formLoading,
     error: formError,
   } = useActiveForm();
   const {
     data: applications,
-    isLoading: appsLoading,
+    isPending: appsLoading,
     error: appsError,
   } = useMyApplicationResponses();
 

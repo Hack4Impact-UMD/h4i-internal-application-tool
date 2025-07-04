@@ -10,12 +10,12 @@ export default function ReviewerDashboard() {
   const { formId } = useParams();
   const {
     data: assignedApps,
-    isLoading: assignmentsLoading,
+    isPending: assignmentsLoading,
     error: assignmentsError,
   } = useMyReviewAssignments(formId ?? "");
   const {
     data: reviews,
-    isLoading: reviewsLoading,
+    isPending: reviewsLoading,
     error: reviewError,
   } = useMyReviews(formId ?? "");
   const [search, setSearch] = useState("");
@@ -38,7 +38,7 @@ export default function ReviewerDashboard() {
 
   if (!formId) return <p>Form ID not provided!</p>;
 
-  if (assignmentsLoading || reviewsLoading || !assignedApps) return <Loading />;
+  if (assignmentsLoading || reviewsLoading) return <Loading />;
   if (assignmentsError)
     return (
       <p>Failed to fetch assigned applications: {assignmentsError.message}</p>

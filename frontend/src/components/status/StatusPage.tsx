@@ -20,7 +20,7 @@ function ApplicationResponseRow({
 }) {
   const {
     data: form,
-    isLoading,
+    isPending,
     error,
   } = useApplicationForm(response.applicationFormId);
 
@@ -53,7 +53,7 @@ function ApplicationResponseRow({
     return "-";
   };
 
-  if (isLoading)
+  if (isPending)
     return <tr className="border-t border-gray-300">Loading...</tr>;
 
   if (error)
@@ -66,7 +66,7 @@ function ApplicationResponseRow({
   return (
     <tr className="border-t border-gray-300">
       <td className="py-4 text-blue-500 font-bold">
-        {form!.semester +
+        {form.semester +
           ": " +
           response.rolesApplied
             .map((role) => role.charAt(0).toUpperCase() + role.slice(1))
@@ -100,7 +100,7 @@ function StatusPage() {
   const [activeTab, setActiveTab] = useState<"active" | "inactive">("active");
   const {
     data: applications,
-    isLoading,
+    isPending,
     error,
   } = useApplicationResponsesAndSemesters();
 
@@ -158,9 +158,8 @@ function StatusPage() {
             <div className="flex gap-8">
               <button
                 onClick={() => setActiveTab("active")}
-                className={`relative pb-4 px-1 cursor-pointer ${
-                  activeTab === "active" ? "text-blue-500" : "text-gray-500"
-                }`}
+                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "active" ? "text-blue-500" : "text-gray-500"
+                  }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Active ({activeApplications.length})
@@ -170,9 +169,8 @@ function StatusPage() {
               </button>
               <button
                 onClick={() => setActiveTab("inactive")}
-                className={`relative pb-4 px-1 cursor-pointer ${
-                  activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
-                }`}
+                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
+                  }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Inactive ({inactiveApplications.length})
@@ -194,7 +192,7 @@ function StatusPage() {
           </div>
 
           <div className="mt-3">
-            {isLoading ? (
+            {isPending ? (
               <p className="w-full">Loading...</p>
             ) : error ? (
               <p className="w-full">

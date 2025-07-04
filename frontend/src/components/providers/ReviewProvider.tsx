@@ -18,7 +18,7 @@ import { Timestamp } from "firebase/firestore";
 export default function ReviewProvider() {
   const { formId, sectionId } = useParams();
   const { token } = useAuth();
-  const { data, isLoading, error } = useMyApplicationResponseAndForm(formId);
+  const { data, isPending, error } = useMyApplicationResponseAndForm(formId);
   const saveMutation = useMutation({
     mutationFn: async (r: ApplicationResponse) => {
       if (token) return await saveApplicationResponse(r, token);
@@ -68,7 +68,7 @@ export default function ReviewProvider() {
       if (
         response == undefined ||
         response.dateSubmitted.toMillis() <
-          data.response.dateSubmitted.toMillis()
+        data.response.dateSubmitted.toMillis()
       ) {
         // first load, use existing response data on firebase
         setResponse(data.response);
@@ -108,10 +108,9 @@ export default function ReviewProvider() {
       .map((s) => s.sectionId);
   }, [selectedRoles, data]);
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
   if (error) return <p>Something went wrong: {error.message}</p>;
-  if (data == undefined) return <Loading />;
-  const { form, response: dbResponse } = data!;
+  const { form, response: dbResponse } = data;
 
   //NOTE: not sure if it's a good idea to put this here, this component might need to be reused
   //in a case where in-progress apps are allowed. But for now, this is the best way to prevent

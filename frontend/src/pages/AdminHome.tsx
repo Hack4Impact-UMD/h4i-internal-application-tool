@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function AdminHome() {
   const navigate = useNavigate()
-  const { data: forms, isLoading, error } = useAllApplicationForms();
+  const { data: forms, isPending, error } = useAllApplicationForms();
   const { user } = useAuth();
 
   if (!user) return <Loading />;
@@ -16,9 +16,8 @@ export default function AdminHome() {
   const route = user.role == PermissionRole.Reviewer ? "reviewer" : "dor";
   const table = user.role == PermissionRole.SuperReviewer ? "/all" : "";
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
   if (error) return <p>Failed to fetch forms: {error.message}</p>;
-  if (!forms) return <p>Failed to fetch forms!</p>;
 
   return (
     <div className="w-full h-full px-2 py-4 flex gap-2 flex-col bg-lightgray items-center">

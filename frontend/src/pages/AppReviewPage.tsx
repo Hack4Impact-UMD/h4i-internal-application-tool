@@ -21,8 +21,8 @@ const ApplicationPage: React.FC = () => {
   }>();
 
 
-  const { data: response, isLoading: responseLoading, error: responseError } = useApplicationResponse(responseId)
-  const { data: form, isLoading: formLoading, error: formError } = useApplicationForm(formId)
+  const { data: response, isPending: responseLoading, error: responseError } = useApplicationResponse(responseId)
+  const { data: form, isPending: formLoading, error: formError } = useApplicationForm(formId)
 
   const availableSections = useMemo(() => {
     return form?.sections

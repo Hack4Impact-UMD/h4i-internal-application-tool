@@ -15,7 +15,6 @@ import { useParams } from "react-router-dom";
 import Loading from "../Loading";
 import SuperReviewerApplicationsTable from "./SuperReviewerApplicationsTable";
 import useSearch from "@/hooks/useSearch";
-import Spinner from "../Spinner";
 
 export default function SuperReviewerApplicationsDashboard() {
   const { formId } = useParams<{ formId: string }>();
@@ -23,7 +22,7 @@ export default function SuperReviewerApplicationsDashboard() {
 
   const {
     data: apps,
-    isLoading,
+    isPending,
     error,
   } = useAllApplicationResponsesForForm(formId ?? "");
   const { search } = useSearch();
@@ -55,8 +54,8 @@ export default function SuperReviewerApplicationsDashboard() {
   }, [expandedSubmittedApps]);
 
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
-  if (isLoading || !apps || !expandedSubmittedApps) return <Loading />;
   if (error) return <p>Something went wrong: {error.message}</p>;
+  if (isPending || !expandedSubmittedApps) return <Loading />;
 
   return (
     <div>

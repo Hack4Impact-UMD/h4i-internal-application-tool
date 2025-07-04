@@ -7,7 +7,7 @@ import { PermissionRole, UserProfile } from "@/types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function UserRolePage() {
-  const { data: users, isLoading, error } = useUsers();
+  const { data: users, isPending, error } = useUsers();
   const queryClient = useQueryClient();
 
   const roleMutation = useMutation({
@@ -88,7 +88,7 @@ export default function UserRolePage() {
     },
   });
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
 
   function handleDelete(users: UserProfile[]) {
     deleteMutation.mutate(users);

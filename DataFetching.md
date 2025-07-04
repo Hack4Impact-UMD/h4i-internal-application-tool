@@ -17,7 +17,7 @@ Let's say you need to display a list of applicants in a component. We already ha
 so creating the corresponding Tanstack Query code for this is pretty simple:
 
 ```typescript
-const {data, isLoading, isError} = useQuery<UserProfile[]>({
+const {data, isPending, isError} = useQuery<UserProfile[]>({
   queryKey: ["applicants"],
   queryFn: getAllApplicants
 })
@@ -33,7 +33,7 @@ query key to identify this query, but some queries will have adiditional keys to
 For example, say we're creating a query to fetch a specific user profile based on the user ID:
 
 ```typescript
-const {data, isLoading, isError} = useQuery<UserProfile>({
+const {data, isPending, isError} = useQuery<UserProfile>({
   queryKey: ["profile", uid],
   queryFn: async () => {
     return await getUserById(uid)
@@ -46,7 +46,7 @@ passes in the UID for this specific profile query. This ensures that calling thi
 doesn't result in the cache for one profile query being used for another query for a different user.
 
 The `useQuery` hook returns multiple pieces of data at once. Usually, the one's you'll be most concerned about are `data` which is
-the result of the query function (the actual data you're fetching), `isLoading` which is a boolean that indicates whether the query
+the result of the query function (the actual data you're fetching), `isPending` which is a boolean that indicates whether the query
 is still loading, and `isError` which is a boolean that indicates whether the query experienced an error (the error itself can be 
 found in the `error` property). 
 
@@ -68,9 +68,9 @@ We can now use our new hook in a component:
 import { useApplicants } from "../../hooks/useApplicants";
 
 export default function AdminPlaceholderPage() {
-  const { data: applicants, isLoading, error } = useApplicants()
+  const { data: applicants, isPending, error } = useApplicants()
 
-  if (isLoading) return <p>Loading...</p>
+  if (isPending) return <p>Loading...</p>
   if (error) return <p>Error: {error.message}</p>
 
   return <div className="p-4">
@@ -82,7 +82,7 @@ export default function AdminPlaceholderPage() {
 }
 ```
 
-Using the `isLoading` and `error` state that our custom query hook returns, we first check if
+Using the `isPending` and `error` state that our custom query hook returns, we first check if
 our data is still loading and render a loading indicator if so:
 
 ![Screenshot From 2025-03-18 02-48-26](https://github.com/user-attachments/assets/e1e6284f-eba1-42e1-8442-e1a11d1b8a31)

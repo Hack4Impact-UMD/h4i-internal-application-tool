@@ -81,7 +81,7 @@ type ReviewerSearchPopoverProps = {
 function ReviewerSearchPopover({ role, responseId, onSelect }: ReviewerSearchPopoverProps) {
   const { formId } = useParams<{ formId: string }>()
 
-  const { data: reviewers, isLoading, error } = useReviewersForRole(role)
+  const { data: reviewers, isPending, error } = useReviewersForRole(role)
   const assignments = useQueries({
     queries: reviewers?.map(reviewer => ({
       queryKey: ["assignments", "id", formId!, reviewer.id],
@@ -102,7 +102,7 @@ function ReviewerSearchPopover({ role, responseId, onSelect }: ReviewerSearchPop
     })
   }, [reviewers, assignments, responseId])
 
-  if (isLoading) return <div className="flex items-center justify-center p-2 w-full">
+  if (isPending) return <div className="flex items-center justify-center p-2 w-full">
     <Spinner />
   </div>
 
@@ -126,9 +126,9 @@ function ReviewerSearchPopover({ role, responseId, onSelect }: ReviewerSearchPop
             >
               <p>
                 {reviewer.firstName} {reviewer.lastName} {
-                  assignments[index].isLoading ? <Spinner className="size-3 inline ml-2" /> :
-                    assignments[index]?.error ? ('N/A') :
-                      `(${assignments[index].data?.length ?? 'N/A'})`
+                  assignments[index].isPending ? <Spinner className="size-3 inline ml-2" /> :
+                    assignments[index].error ? ('N/A') :
+                      `(${assignments[index].data.length ?? 'N/A'})`
                 }
               </p>
               <div className="flex flex-wrap gap-1">

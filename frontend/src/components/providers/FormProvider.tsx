@@ -21,7 +21,7 @@ export default function FormProvider() {
   const queryClient = useQueryClient();
   const { formId, sectionId } = useParams();
   const { token, user } = useAuth();
-  const { data, isLoading, error } = useMyApplicationResponseAndForm(formId);
+  const { data, isPending, error } = useMyApplicationResponseAndForm(formId);
   const saveMutation = useMutation({
     mutationFn: async (r: ApplicationResponse) => {
       if (token) return await saveApplicationResponse(r, token);
@@ -82,7 +82,7 @@ export default function FormProvider() {
         setResponse(data.response);
       }
     }
-  }, [data]);
+  }, [data, response]);
 
   const SAVE_DEBOUNCE_SEC = 2;
 
@@ -101,7 +101,7 @@ export default function FormProvider() {
     return () => {
       clearTimeout(ref);
     };
-  }, [response]);
+  }, [response, save]);
 
   const sections = useMemo(() => {
     if (!data) return [];
@@ -116,10 +116,9 @@ export default function FormProvider() {
       .map((s) => s.sectionId);
   }, [selectedRoles, data]);
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
   if (error) return <p>Something went wrong: {error.message}</p>;
-  if (data == undefined) return <Loading />;
-  const { form, response: dbResponse } = data!;
+  const { form, response: dbResponse } = data;
 
   //NOTE: not sure if it's a good idea to put this here, this component might need to be reused
   //in a case where in-progress apps are allowed. But for now, this is the best way to prevent

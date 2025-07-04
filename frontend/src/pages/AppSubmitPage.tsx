@@ -17,7 +17,7 @@ import { throwErrorToast } from "../components/error/ErrorToast";
 export default function AppSubmitPage() {
   const { formId } = useParams();
   const navigate = useNavigate();
-  const { data, isLoading, error } = useMyApplicationResponseAndForm(formId);
+  const { data, isPending, error } = useMyApplicationResponseAndForm(formId);
   const { token } = useAuth();
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
     [],
@@ -28,10 +28,10 @@ export default function AppSubmitPage() {
       submitApplicationResponse(response, token!),
   });
 
-  if (isLoading) return <Loading />;
+  if (isPending) return <Loading />;
   if (error) return <p>Something went wrong: {error.message}</p>;
 
-  const { form, response } = data!;
+  const { form, response } = data;
 
   async function handleSubmit() {
     try {
@@ -110,7 +110,7 @@ export default function AppSubmitPage() {
                     (r) => r.sectionId == s.sectionId,
                   )!.questions
                 }
-                onChangeResponse={() => {}}
+                onChangeResponse={() => { }}
               />
             </div>
           ))}
