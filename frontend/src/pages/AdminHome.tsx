@@ -7,7 +7,7 @@ import { displayUserRoleName } from "@/utils/display";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function AdminHome() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
   const { user } = useAuth();
 
@@ -56,15 +56,18 @@ export default function AdminHome() {
           })}
         </ul>
       </div>
-      {user.role == PermissionRole.SuperReviewer &&
+      {user.role == PermissionRole.SuperReviewer && (
         <div className="max-w-5xl w-full p-4 bg-white rounded-md">
           <h1 className="text-xl">Or Manage Users </h1>
           <p className="text-muted-foreground">
-            View all registered users, grant reviewer access, edit roles, and delete user accounts.
+            View all registered users, grant reviewer access, edit roles, and
+            delete user accounts.
           </p>
-          <Button className="mt-4" onClick={() => navigate('/admin/dor/users')}>Manage Users</Button>
+          <Button className="mt-4" onClick={() => navigate("/admin/dor/users")}>
+            Manage Users
+          </Button>
         </div>
-      }
+      )}
     </div>
   );
 }

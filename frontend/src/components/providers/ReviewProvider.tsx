@@ -68,7 +68,7 @@ export default function ReviewProvider() {
       if (
         response == undefined ||
         response.dateSubmitted.toMillis() <
-        data.response.dateSubmitted.toMillis()
+          data.response.dateSubmitted.toMillis()
       ) {
         // first load, use existing response data on firebase
         setResponse(data.response);

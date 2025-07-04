@@ -20,20 +20,32 @@ const ApplicationPage: React.FC = () => {
     sectionId: string;
   }>();
 
-
-  const { data: response, isPending: responseLoading, error: responseError } = useApplicationResponse(responseId)
-  const { data: form, isPending: formLoading, error: formError } = useApplicationForm(formId)
+  const {
+    data: response,
+    isPending: responseLoading,
+    error: responseError,
+  } = useApplicationResponse(responseId);
+  const {
+    data: form,
+    isPending: formLoading,
+    error: formError,
+  } = useApplicationForm(formId);
 
   const availableSections = useMemo(() => {
-    return form?.sections
-      .filter((s) => {
-        if (s.forRoles) {
-          return s.forRoles.filter((r) => response?.rolesApplied?.includes(r)).length > 0;
-        } else {
-          return true;
-        }
-      })
-      .map((s) => s.sectionId) ?? [];
+    return (
+      form?.sections
+        .filter((s) => {
+          if (s.forRoles) {
+            return (
+              s.forRoles.filter((r) => response?.rolesApplied?.includes(r))
+                .length > 0
+            );
+          } else {
+            return true;
+          }
+        })
+        .map((s) => s.sectionId) ?? []
+    );
   }, [response?.rolesApplied, form]);
 
   const timelineItems = useMemo(
@@ -62,7 +74,7 @@ const ApplicationPage: React.FC = () => {
     );
   }, [response, currentSection]);
 
-  if (formLoading || responseLoading) return <Loading />
+  if (formLoading || responseLoading) return <Loading />;
   if (formError || !form) return <p>Failed to fetch form...</p>;
   if (responseError || !response) return <p>Failed to fetch response...</p>;
 
@@ -76,7 +88,7 @@ const ApplicationPage: React.FC = () => {
   }
 
   function nextSection() {
-    if (!form) return
+    if (!form) return;
     const idx = availableSections.findIndex((s) => s == sectionId);
     if (idx >= 0 && idx + 1 < availableSections.length) {
       return availableSections[idx + 1];
@@ -99,7 +111,9 @@ const ApplicationPage: React.FC = () => {
       (section) => section === sectionId,
     );
     if (currentIndex < form.sections.length - 1) {
-      navigate(`/admin/review/f/${formId}/${responseId}/${nextSection()}/${reviewDataId}`);
+      navigate(
+        `/admin/review/f/${formId}/${responseId}/${nextSection()}/${reviewDataId}`,
+      );
     } else {
       //TODO: Handle Submit
     }
@@ -107,7 +121,9 @@ const ApplicationPage: React.FC = () => {
 
   const handlePrevious = () => {
     console.log(previousSection());
-    navigate(`/admin/review/f/${formId}/${responseId}/${previousSection()}/${reviewDataId}`);
+    navigate(
+      `/admin/review/f/${formId}/${responseId}/${previousSection()}/${reviewDataId}`,
+    );
   };
 
   const currentStep = availableSections.findIndex(
