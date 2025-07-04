@@ -21,11 +21,6 @@ import {
 } from "@tanstack/react-query";
 import { getApplicantById } from "@/services/applicantService";
 import { getReviewDataForResponseRole } from "@/services/reviewDataService";
-import {
-  applicantRoleColor,
-  applicantRoleDarkColor,
-  displayApplicantRoleName,
-} from "@/utils/display";
 import { calculateReviewScore } from "@/utils/scores";
 import { getUserById } from "@/services/userService";
 import {
@@ -49,6 +44,7 @@ import Spinner from "../Spinner";
 import { useParams } from "react-router-dom";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../error/ErrorToast";
+import ApplicantRolePill from "../role-pill/RolePill";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -172,16 +168,11 @@ function ReviewerSearchPopover({
                   </p>
                   <div className="flex flex-wrap gap-1">
                     {reviewer.applicantRolePreferences.map((role) => (
-                      <span
+                      <ApplicantRolePill
                         key={role}
-                        style={{
-                          backgroundColor: applicantRoleColor(role),
-                          color: applicantRoleDarkColor(role),
-                        }}
-                        className={`text-xs rounded-full px-2 py-1`}
-                      >
-                        {displayApplicantRoleName(role)}
-                      </span>
+                        role={role}
+                        className="text-xs"
+                      />
                     ))}
                   </div>
                 </CommandItem>
@@ -313,12 +304,12 @@ export default function SuperReviewerApplicationsTable({
                 completedReviews == 0
                   ? 0
                   : (
-                      await Promise.all(
-                        reviews
-                          .filter((r) => r.submitted)
-                          .map(async (r) => await calculateReviewScore(r)),
-                      )
-                    ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                    await Promise.all(
+                      reviews
+                        .filter((r) => r.submitted)
+                        .map(async (r) => await calculateReviewScore(r)),
+                    )
+                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
 
               const row: ApplicationRow = {
                 index: 1 + pageIndex * rowCount + index,
@@ -500,17 +491,7 @@ export default function SuperReviewerApplicationsTable({
               </Button>
             );
           },
-          cell: ({ getValue }) => (
-            <span
-              style={{
-                backgroundColor: applicantRoleColor(getValue()),
-                color: applicantRoleDarkColor(getValue()),
-              }}
-              className={`rounded-full px-2 py-1`}
-            >
-              {displayApplicantRoleName(getValue())}
-            </span>
-          ),
+          cell: ({ getValue }) => <ApplicantRolePill role={getValue()} />,
           filterFn: (row, columnId, filterValue) => {
             const value = row.getValue(columnId);
 
