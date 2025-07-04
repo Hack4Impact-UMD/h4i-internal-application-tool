@@ -29,6 +29,7 @@ import { throwErrorToast } from "../error/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { calculateReviewScore } from "@/utils/scores";
+import ApplicantRolePill from "../role-pill/RolePill";
 
 type ReviewerApplicationsTableProps = {
   assignments: AppReviewAssignment[];
@@ -186,17 +187,7 @@ export default function ReviewerApplicationsTable({
               </Button>
             );
           },
-          cell: ({ getValue }) => (
-            <span
-              style={{
-                backgroundColor: applicantRoleColor(getValue()),
-                color: applicantRoleDarkColor(getValue()),
-              }}
-              className={`rounded-full px-2 py-1`}
-            >
-              {displayApplicantRoleName(getValue())}
-            </span>
-          ),
+          cell: ({ getValue }) => <ApplicantRolePill role={getValue()} />,
         }),
         columnHelper.accessor("score", {
           id: "score",

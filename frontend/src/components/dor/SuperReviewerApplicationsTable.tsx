@@ -49,6 +49,7 @@ import Spinner from "../Spinner";
 import { useParams } from "react-router-dom";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../error/ErrorToast";
+import ApplicantRolePill from "../role-pill/RolePill";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -172,16 +173,11 @@ function ReviewerSearchPopover({
                   </p>
                   <div className="flex flex-wrap gap-1">
                     {reviewer.applicantRolePreferences.map((role) => (
-                      <span
+                      <ApplicantRolePill
                         key={role}
-                        style={{
-                          backgroundColor: applicantRoleColor(role),
-                          color: applicantRoleDarkColor(role),
-                        }}
-                        className={`text-xs rounded-full px-2 py-1`}
-                      >
-                        {displayApplicantRoleName(role)}
-                      </span>
+                        role={role}
+                        className="text-xs"
+                      />
                     ))}
                   </div>
                 </CommandItem>
@@ -500,17 +496,7 @@ export default function SuperReviewerApplicationsTable({
               </Button>
             );
           },
-          cell: ({ getValue }) => (
-            <span
-              style={{
-                backgroundColor: applicantRoleColor(getValue()),
-                color: applicantRoleDarkColor(getValue()),
-              }}
-              className={`rounded-full px-2 py-1`}
-            >
-              {displayApplicantRoleName(getValue())}
-            </span>
-          ),
+          cell: ({ getValue }) => <ApplicantRolePill role={getValue()} />,
           filterFn: (row, columnId, filterValue) => {
             const value = row.getValue(columnId);
 

@@ -82,7 +82,7 @@ export default function FormProvider() {
         setResponse(data.response);
       }
     }
-  }, [data, response]);
+  }, [data]);
 
   const SAVE_DEBOUNCE_SEC = 2;
 
@@ -101,7 +101,7 @@ export default function FormProvider() {
     return () => {
       clearTimeout(ref);
     };
-  }, [response, save]);
+  }, [response]);
 
   const sections = useMemo(() => {
     if (!data) return [];
