@@ -29,7 +29,8 @@ export default function ReviewerDashboard() {
   const numReviewed = useMemo(
     () =>
       assignedApps?.filter((f) =>
-        reviews?.filter(r => r.submitted && r.forRole == f.forRole)
+        reviews
+          ?.filter((r) => r.submitted && r.forRole == f.forRole)
           ?.map((r) => r.applicationResponseId)
           .includes(f.applicationResponseId),
       ).length,

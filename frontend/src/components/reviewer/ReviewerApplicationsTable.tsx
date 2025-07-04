@@ -88,7 +88,9 @@ export default function ReviewerApplicationsTable({
                 role: assignment.forRole,
                 review: review,
                 score: {
-                  value: review ? await calculateReviewScore(review) : undefined,
+                  value: review
+                    ? await calculateReviewScore(review)
+                    : undefined,
                   outOf: 4, // NOTE: All scores are assummed to be out of 4
                 },
               };

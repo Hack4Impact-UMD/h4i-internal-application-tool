@@ -2,13 +2,10 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { twMerge } from "tailwind-merge";
 import { PermissionRole } from "@/types/types";
+import NavProfile from "./NavProfile";
 
 function Navbar({ className }: { className?: string }) {
-  const { isLoading, isAuthed, logout, user } = useAuth();
-
-  function handleSignout() {
-    logout();
-  }
+  const { isLoading, isAuthed, user } = useAuth();
 
   return (
     <div
@@ -17,31 +14,34 @@ function Navbar({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="flex flex-row h-full max-w-5xl w-full">
+      <div className="flex items-center flex-row h-full max-w-5xl w-full">
         <div className="flex gap-2 items-center">
-          <NavLink to="/">
+          <NavLink className="hidden sm:block" to="/">
             <img
               className="w-52"
               src="/h4i_umd_logo.png"
               alt="hack4impact-UMD"
             />
           </NavLink>
+          <span className="text-blue font-bold text-lg sm:hidden block">
+            H4I-UMD
+          </span>
           {user?.role && user.role != PermissionRole.Applicant && (
-            <span className="font-light mb-1">
-              |{" "}
-              {user.role == PermissionRole.Reviewer
-                ? "Reviewer"
-                : user.role == PermissionRole.SuperReviewer
-                  ? "Super Reviewer"
-                  : "Applicant"}
-            </span>
+            <>
+              <span className="font-light sm:mb-1">
+                |{" "}
+                {user.role == PermissionRole.Reviewer
+                  ? "Reviewer"
+                  : user.role == PermissionRole.SuperReviewer
+                    ? "Super Reviewer"
+                    : "Applicant"}
+              </span>
+            </>
           )}
         </div>
-        {!isLoading && isAuthed && (
-          <div className="ml-auto font-['Rubik'] text-right text-m font-extralight cursor-pointer flex flex-col justify-center ">
-            <p className="hover:underline" onClick={() => handleSignout()}>
-              Sign Out
-            </p>
+        {!isLoading && isAuthed && user && (
+          <div className="ml-auto">
+            <NavProfile user={user} />
           </div>
         )}
       </div>

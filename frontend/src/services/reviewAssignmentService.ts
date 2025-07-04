@@ -49,12 +49,10 @@ export async function assignReview(
   return reviewAssignment;
 }
 
-export async function removeReviewAssignment(
-  assignmentId: string
-) {
+export async function removeReviewAssignment(assignmentId: string) {
   const assignments = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
-  const assignment = doc(assignments, assignmentId)
-  await deleteDoc(assignment)
+  const assignment = doc(assignments, assignmentId);
+  await deleteDoc(assignment);
 }
 
 export async function getReviewAssignments(
