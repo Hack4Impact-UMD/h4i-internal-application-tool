@@ -18,11 +18,6 @@ import {
   createReviewData,
   getReviewDataForAssignemnt,
 } from "@/services/reviewDataService";
-import {
-  applicantRoleColor,
-  applicantRoleDarkColor,
-  displayApplicantRoleName,
-} from "@/utils/display";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { throwErrorToast } from "../error/ErrorToast";

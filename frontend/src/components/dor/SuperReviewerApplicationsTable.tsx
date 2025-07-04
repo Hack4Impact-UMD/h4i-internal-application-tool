@@ -21,11 +21,6 @@ import {
 } from "@tanstack/react-query";
 import { getApplicantById } from "@/services/applicantService";
 import { getReviewDataForResponseRole } from "@/services/reviewDataService";
-import {
-  applicantRoleColor,
-  applicantRoleDarkColor,
-  displayApplicantRoleName,
-} from "@/utils/display";
 import { calculateReviewScore } from "@/utils/scores";
 import { getUserById } from "@/services/userService";
 import {
@@ -309,12 +304,12 @@ export default function SuperReviewerApplicationsTable({
                 completedReviews == 0
                   ? 0
                   : (
-                      await Promise.all(
-                        reviews
-                          .filter((r) => r.submitted)
-                          .map(async (r) => await calculateReviewScore(r)),
-                      )
-                    ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                    await Promise.all(
+                      reviews
+                        .filter((r) => r.submitted)
+                        .map(async (r) => await calculateReviewScore(r)),
+                    )
+                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
 
               const row: ApplicationRow = {
                 index: 1 + pageIndex * rowCount + index,
