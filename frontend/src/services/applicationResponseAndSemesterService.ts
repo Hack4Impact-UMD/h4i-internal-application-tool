@@ -14,6 +14,7 @@ export const APPLICATION_FORMS_COLLECTION = "application-forms";
 
 export type ApplicationResponseWithSemester = ApplicationResponse & {
   semester: string;
+  active: boolean;
 };
 
 export async function getApplicationResponseAndSemester(
@@ -37,11 +38,13 @@ export async function getApplicationResponseAndSemester(
       (d) => d.data() as ApplicationForm,
     );
 
-    const semester = matchedForms[0]?.semester ?? "Unknown";
+    const form = matchedForms.length > 0 ? matchedForms[0] : undefined;
+    const semester = form?.semester ?? "Unknown";
 
     responsesWithSemester.push({
       ...response,
       semester,
+      active: form?.isActive
     });
   }
 

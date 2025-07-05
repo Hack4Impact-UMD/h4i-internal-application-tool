@@ -2,45 +2,89 @@ import { useMemo, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 
 import Timeline from "./Timeline.tsx";
-import { ApplicationResponse, ApplicationStatus } from "../../types/types.ts";
+import { ApplicantRole, ApplicationResponse, ApplicationStatus, ReviewStatus } from "../../types/types.ts";
 import { useApplicationResponsesAndSemesters } from "../../hooks/useApplicationResponseAndSemesters.ts";
 import { useApplicationForm } from "../../hooks/useApplicationForm.ts";
+import Spinner from "../Spinner.tsx";
+import { useMyApplicationStatus } from "@/hooks/useApplicationStatus.ts";
+import { statusDisplay } from "@/utils/status.ts";
+import ApplicantRolePill from "../role-pill/RolePill.tsx";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth.ts";
+import { getApplicationResponses } from "@/services/applicationResponsesService.ts";
+import { getApplicationResponseAndSemester } from "@/services/applicationResponseAndSemesterService.ts";
+import getApplicationStatus from "@/services/statusService.ts";
 
 const timelineItems = [
-  { label: "In Progress", id: ApplicationStatus.InProgress },
-  { label: "Submitted", id: ApplicationStatus.Submitted },
+  { label: "Not Reviewed", id: ReviewStatus.NotReviewed },
+  { label: "Under Review", id: ReviewStatus.UnderReview },
   { label: "Interview", id: ApplicationStatus.Interview },
-  { label: "Decided", id: ApplicationStatus.Decided },
+  { label: "Decided", id: 'decided' },
 ];
+
+function useTimelineStep() {
+  const { token, user } = useAuth()
+  return useQuery({
+    queryKey: ['timeline', token],
+    enabled: !!user && !!token,
+    queryFn: async () => {
+      const applications = await getApplicationResponseAndSemester(user!.id);
+      const appStatuses = await Promise.all(applications.filter(app => app.active).flatMap(app => app.rolesApplied.map(role => getApplicationStatus(token!, app.id, role))));
+
+      let step = 0
+
+      for (const appStatus of appStatuses) {
+        if (appStatus.status === 'decided'
+          || appStatus.status === ReviewStatus.Accepted
+          || appStatus.status === ReviewStatus.Waitlisted
+          || appStatus.status === ReviewStatus.Denied) {
+          step = 3
+          return step;
+        }
+      }
+
+      for (const appStatus of appStatuses) {
+        if (appStatus.status === ReviewStatus.Interview) {
+          step = 2
+          return step;
+        }
+      }
+
+      for (const appStatus of appStatuses) {
+        if (appStatus.status === ReviewStatus.UnderReview) {
+          step = 1
+          return step;
+        }
+      }
+
+      return step
+    }
+  })
+}
 
 function ApplicationResponseRow({
   response,
+  role
 }: {
   response: ApplicationResponse;
+  role: ApplicantRole;
 }) {
   const {
     data: form,
-    isPending,
-    error,
+    isPending: isFormPending,
+    error: formError,
   } = useApplicationForm(response.applicationFormId);
 
-  const getStatusDisplay = (status: ApplicationStatus) => {
-    switch (status) {
-      case ApplicationStatus.Submitted:
-        return { text: "Submitted", className: "bg-blue-100 text-gray-700" };
-      case ApplicationStatus.UnderReview:
-        return { text: "Under review", className: "bg-blue-100 text-blue-700" };
-      case ApplicationStatus.Decided:
-        return { text: "Decided", className: "bg-green-100 text-green-700" };
-      case ApplicationStatus.Interview:
-        return {
-          text: "Interview",
-          className: "bg-yellow-100 text-yellow-700",
-        };
-      default:
-        return { text: "Ended", className: "bg-gray-100 text-gray-700" };
-    }
-  };
+
+  const {
+    data: appStatus,
+    isPending: isStatusPending,
+    error: statusError
+  } = useMyApplicationStatus(response.id, role)
+
+  const status = appStatus?.status
+
+  const decided = useMemo(() => status == 'decided' || status == ReviewStatus.Accepted || status == ReviewStatus.Waitlisted || status == ReviewStatus.Denied, [status])
 
   const formatDate = (timestamp: Timestamp) => {
     if (timestamp && timestamp.toDate) {
@@ -53,35 +97,35 @@ function ApplicationResponseRow({
     return "-";
   };
 
-  if (isPending)
-    return <tr className="border-t border-gray-300">Loading...</tr>;
+  if (isFormPending || isStatusPending)
+    return <tr className="border-t border-gray-300"><td className="text-center py-4 px-2" colSpan={100}>< Spinner className="w-full" /></td></tr>;
 
-  if (error)
+  if (formError)
     return (
-      <tr className="border-t border-red-300 bg-red-300">
-        <p>Failed to load form data: {error.message}</p>
-      </tr>
+      <tr className="border-t border-gray-300"><td className="text-center py-4 px-2" colSpan={100}><p className="tex-center">{formError.message}</p></td></tr>
+    );
+
+  if (statusError)
+    return (
+      <tr className="border-t border-gray-300"><td className="text-center py-4 px-2" colSpan={100}><p className="tex-center">{statusError.message}</p></td></tr>
     );
 
   return (
     <tr className="border-t border-gray-300">
-      <td className="py-4 text-blue-500 font-bold">
-        {form.semester +
-          ": " +
-          response.rolesApplied
-            .map((role) => role.charAt(0).toUpperCase() + role.slice(1))
-            .join(", ")}
+      <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
+        {form.semester + " Appplication"}
+        <ApplicantRolePill role={role} />
       </td>
       <td className="text-center">
         <span
-          className={`px-3 py-1 rounded-full ${getStatusDisplay(response.status).className}`}
+          className={`px-3 py-1 rounded-full bg-lightblue`}
         >
-          {getStatusDisplay(response.status).text}
+          {decided ? 'Decided' : statusDisplay(status!)}
         </span>
       </td>
       <td className="text-center">{formatDate(response!.dateSubmitted)}</td>
       <td className="text-center">
-        {response.status == ApplicationStatus.Decided ? (
+        {decided ? (
           <span
             className="text-blue-500 cursor-pointer"
             onClick={() => window.open("/status/decision", "_self")}
@@ -89,7 +133,7 @@ function ApplicationResponseRow({
             View Decision
           </span>
         ) : (
-          "-"
+          '-'
         )}
       </td>
     </tr>
@@ -119,7 +163,7 @@ function StatusPage() {
   const inactiveApplications = useMemo(
     () =>
       applications.filter((app) =>
-        [ApplicationStatus.InActive].includes(app.status),
+        !app.active
       ),
     [applications],
   );
@@ -137,30 +181,20 @@ function StatusPage() {
     return map;
   }, new Map<string, ApplicationResponse[]>());
 
-  const currentTimelineStep = useMemo(() => {
-    if (activeApplications.length > 0) {
-      const activeStatus = activeApplications.sort(
-        (a, b) => a.dateSubmitted.toMillis() - b.dateSubmitted.toMillis(),
-      )[0].status;
-      return timelineItems.findIndex((i) => i.id == activeStatus);
-    } else {
-      return 0;
-    }
-  }, [activeApplications]);
+  const { data: currentTimelineStep } = useTimelineStep()
 
   return (
     <div className="flex flex-col">
-      <div className="h-screen bg-gray">
-        <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8">
+      <div className="h-screen bg-muted">
+        <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8 rounded-md shadow">
           <h1 className="text-xl mt-10 mb-10 font-semibold">My Applications</h1>
 
           <div className="border-b border-gray-300">
             <div className="flex gap-8">
               <button
                 onClick={() => setActiveTab("active")}
-                className={`relative pb-4 px-1 cursor-pointer ${
-                  activeTab === "active" ? "text-blue-500" : "text-gray-500"
-                }`}
+                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "active" ? "text-blue-500" : "text-gray-500"
+                  }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Active ({activeApplications.length})
@@ -170,9 +204,8 @@ function StatusPage() {
               </button>
               <button
                 onClick={() => setActiveTab("inactive")}
-                className={`relative pb-4 px-1 cursor-pointer ${
-                  activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
-                }`}
+                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
+                  }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Inactive ({inactiveApplications.length})
@@ -186,9 +219,9 @@ function StatusPage() {
           <div className="mt-5">
             {activeTab === "active" && (
               <Timeline
-                currentStep={currentTimelineStep}
+                currentStep={currentTimelineStep ?? 0}
                 items={timelineItems}
-                maxStepReached={2}
+                maxStepReached={3}
               />
             )}
           </div>
@@ -229,10 +262,13 @@ function StatusPage() {
                     </thead>
                     <tbody>
                       {apps.map((application) => (
-                        <ApplicationResponseRow
-                          key={application.id}
-                          response={application}
-                        />
+                        application.rolesApplied.map(role => (
+                          <ApplicationResponseRow
+                            key={application.id + role}
+                            response={application}
+                            role={role}
+                          />
+                        ))
                       ))}
                     </tbody>
                   </table>
@@ -258,10 +294,13 @@ function StatusPage() {
                 </thead>
                 <tbody>
                   {activeList.map((application) => (
-                    <ApplicationResponseRow
-                      key={application.id}
-                      response={application}
-                    />
+                    application.rolesApplied.map(role => (
+                      <ApplicationResponseRow
+                        key={application.id + role}
+                        response={application}
+                        role={role}
+                      />
+                    ))
                   ))}
                 </tbody>
               </table>

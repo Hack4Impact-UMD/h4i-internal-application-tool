@@ -7,16 +7,6 @@ export enum PermissionRole {
     Applicant = "applicant"
 }
 
-export enum ReviewStatus {
-    NotReviewed = 'not-reviewed',
-    Reviewed = "reviewed",
-    Interview = "interview",
-    Accepted = "accepted",
-    Denied = "denied",
-    Waitlisted = "waitlist",
-    // Released = "released"
-}
-
 export type UserProfile = {
     id: string;
     email: string;
@@ -49,7 +39,6 @@ export interface ApplicationReviewData {
         [scoreCategory in string]: number // between 0-4, each review category in the rubric will have a value here
     };
     reviewerNotes?: string[];
-    reviewStatus: ReviewStatus;
     forRole: ApplicantRole; // what role is this review for
 }
 
@@ -60,7 +49,6 @@ export const reviewSchema = z.object({
     applicantId: z.string(),
     applicantScores: z.record(z.string(), z.number().min(0).max(10)),
     reviewerNotes: z.array(z.string()).optional(),
-    reviewStatus: z.nativeEnum(ReviewStatus),
     forRole: z.nativeEnum(ApplicantRole)
 });
 

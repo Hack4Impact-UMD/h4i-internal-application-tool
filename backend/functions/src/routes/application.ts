@@ -7,12 +7,15 @@ import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { ApplicationForm } from "../models/appForm";
 import { PermissionRole } from "../models/appReview";
+import { InternalApplicationStatus, ReviewStatus } from "../models/appStatus";
+import { v4 as uuidv4 } from "uuid"
 // import * as admin from "firebase-admin"
 
 const router = Router();
 
 const APPLICATION_RESPONSE_COLLECTION = "application-responses"
 const APPLICATION_FORMS_COLLECTION = "application-forms"
+const APPLICATION_STATUS_COLLECTION = "app-status"
 
 interface QuestionMetadata {
   optional: boolean;
@@ -116,6 +119,7 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     // initialize connections to collections
     const applicationResponseCollection = db.collection(APPLICATION_RESPONSE_COLLECTION) as CollectionReference<ApplicationResponse>;
     const applicationFormCollection = db.collection(APPLICATION_FORMS_COLLECTION) as CollectionReference<ApplicationForm>;
+    const statusCollection = db.collection(APPLICATION_STATUS_COLLECTION) as CollectionReference<InternalApplicationStatus>
 
     // check that the correct user is updating the application
     const applicationDoc = await applicationResponseCollection.doc(applicationResponse.id).get();
@@ -159,6 +163,22 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
       dateSubmitted: Timestamp.now(),
     }
     await applicationResponseCollection.doc(applicationResponse.id).update(newApp);
+
+    for (const role of applicationResponse.rolesApplied) {
+      logger.info(`creating review status object for response ${applicationResponse.id} and role ${role}`);
+      const id = uuidv4()
+
+      const status: InternalApplicationStatus = {
+        id: id,
+        formId: applicationResponse.applicationFormId,
+        responseId: applicationResponse.id,
+        role: role,
+        status: ReviewStatus.UnderReview,
+        isQualified: false
+      }
+
+      await statusCollection.doc(status.id).set(status)
+    }
 
     logger.info("Successfully submitted form!")
     logger.info(newApp)
