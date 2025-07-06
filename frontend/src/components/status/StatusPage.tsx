@@ -22,7 +22,7 @@ import { getApplicationStatus } from "@/services/statusService.ts";
 const timelineItems = [
   { label: "Not Reviewed", id: ReviewStatus.NotReviewed },
   { label: "Under Review", id: ReviewStatus.UnderReview },
-  { label: "Interview", id: ApplicationStatus.Interview },
+  { label: "Interview", id: ReviewStatus.Interview },
   { label: "Decided", id: "decided" },
 ];
 
@@ -130,7 +130,7 @@ function ApplicationResponseRow({
     return (
       <tr className="border-t border-gray-300">
         <td className="text-center py-4 px-2" colSpan={100}>
-          <p className="tex-center">{formError.message}</p>
+          <p className="text-center">{formError.message}</p>
         </td>
       </tr>
     );
@@ -147,12 +147,12 @@ function ApplicationResponseRow({
   return (
     <tr className="border-t border-gray-300">
       <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
-        {form.semester + " Appplication"}
+        {form.semester + " Application"}
         <ApplicantRolePill role={role} />
       </td>
       <td className="text-center">
         <span className={`px-3 py-1 rounded-full bg-lightblue`}>
-          {decided ? "Decided" : statusDisplay(status!)}
+          {decided ? "Decided" : status ? statusDisplay(status) : "Unknown"}
         </span>
       </td>
       <td className="text-center">{formatDate(response!.dateSubmitted)}</td>
@@ -222,9 +222,8 @@ function StatusPage() {
             <div className="flex gap-8">
               <button
                 onClick={() => setActiveTab("active")}
-                className={`relative pb-4 px-1 cursor-pointer ${
-                  activeTab === "active" ? "text-blue-500" : "text-gray-500"
-                }`}
+                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "active" ? "text-blue-500" : "text-gray-500"
+                  }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Active ({activeApplications.length})
@@ -234,9 +233,8 @@ function StatusPage() {
               </button>
               <button
                 onClick={() => setActiveTab("inactive")}
-                className={`relative pb-4 px-1 cursor-pointer ${
-                  activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
-                }`}
+                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
+                  }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Inactive ({inactiveApplications.length})

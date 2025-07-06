@@ -311,18 +311,23 @@ export default function SuperReviewerApplicationsTable({
                 completedReviews == 0
                   ? 0
                   : (
-                      await Promise.all(
-                        reviews
-                          .filter((r) => r.submitted)
-                          .map(async (r) => await calculateReviewScore(r)),
-                      )
-                    ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                    await Promise.all(
+                      reviews
+                        .filter((r) => r.submitted)
+                        .map(async (r) => await calculateReviewScore(r)),
+                    )
+                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
+              let status: InternalApplicationStatus | undefined;
 
-              const status = await getApplicationStatusForResponseRole(
-                app.id,
-                app.rolesApplied[0],
-              );
-
+              try {
+                status = await getApplicationStatusForResponseRole(
+                  app.id,
+                  app.rolesApplied[0],
+                );
+              } catch (error) {
+                console.log(`Failed to fetch application status for application ${app.id}-${app.rolesApplied[0]}: ${error}`)
+                status = undefined
+              }
               const row: ApplicationRow = {
                 index: 1 + pageIndex * rowCount + index,
                 applicant: {
@@ -444,7 +449,7 @@ export default function SuperReviewerApplicationsTable({
                 ...row,
                 status: {
                   ...status,
-                  isQualified: !!status.isQualified,
+                  isQualified: !status.isQualified,
                 },
               };
             } else {
@@ -665,8 +670,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />

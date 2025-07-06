@@ -13,6 +13,7 @@ const APPLICATION_RESPONSE_COLLECTION = "application-responses"
 
 async function decisionsReleased(formId: string) {
 	const form = (await db.collection(APPLICATION_FORMS_COLLECTION).doc(formId).get()).data() as ApplicationForm
+	if (!form) throw new Error(`Form ${formId} not found!`)
 	return form.decisionsReleased
 }
 
@@ -22,6 +23,11 @@ router.get("/:responseId/:role", [isAuthenticated], async (req: Request, res: Re
 	const role = req.params.role;
 
 	const responseDoc = (await db.collection(APPLICATION_RESPONSE_COLLECTION).doc(response).get()).data() as ApplicationResponse
+
+	if (!responseDoc) {
+		res.status(404).send();
+		return;
+	}
 
 	if (req.token?.sub !== responseDoc.userId) {
 		res.status(401).send()
