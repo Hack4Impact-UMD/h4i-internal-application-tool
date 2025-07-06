@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 
 import Timeline from "./Timeline.tsx";
@@ -32,13 +32,15 @@ function useTimelineStep() {
     queryKey: ["timeline", token],
     enabled: !!user && !!token,
     queryFn: async () => {
-      const applications = await getApplicationResponseAndSemester(user!.id);
+      if (!user || !token) return 0;
+
+      const applications = await getApplicationResponseAndSemester(user.id);
       const appStatuses = await Promise.all(
         applications
           .filter((app) => app.active)
           .flatMap((app) =>
             app.rolesApplied.map((role) =>
-              getApplicationStatus(token!, app.id, role),
+              getApplicationStatus(token, app.id, role),
             ),
           ),
       );
@@ -139,7 +141,7 @@ function ApplicationResponseRow({
     return (
       <tr className="border-t border-gray-300">
         <td className="text-center py-4 px-2" colSpan={100}>
-          <p className="tex-center">{statusError.message}</p>
+          <p className="text-center">{statusError.message}</p>
         </td>
       </tr>
     );
@@ -181,14 +183,7 @@ function StatusPage() {
   } = useApplicationResponsesAndSemesters();
 
   const activeApplications = useMemo(
-    () =>
-      applications.filter((app) =>
-        [
-          ApplicationStatus.Submitted,
-          ApplicationStatus.UnderReview,
-          ApplicationStatus.Interview,
-        ].includes(app.status),
-      ),
+    () => applications.filter((app) => app.active),
     [applications],
   );
 
@@ -222,8 +217,9 @@ function StatusPage() {
             <div className="flex gap-8">
               <button
                 onClick={() => setActiveTab("active")}
-                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "active" ? "text-blue-500" : "text-gray-500"
-                  }`}
+                className={`relative pb-4 px-1 cursor-pointer ${
+                  activeTab === "active" ? "text-blue-500" : "text-gray-500"
+                }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Active ({activeApplications.length})
@@ -233,8 +229,9 @@ function StatusPage() {
               </button>
               <button
                 onClick={() => setActiveTab("inactive")}
-                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
-                  }`}
+                className={`relative pb-4 px-1 cursor-pointer ${
+                  activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
+                }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Inactive ({inactiveApplications.length})
@@ -290,15 +287,17 @@ function StatusPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {apps.map((application) =>
-                        application.rolesApplied.map((role) => (
-                          <ApplicationResponseRow
-                            key={application.id + role}
-                            response={application}
-                            role={role}
-                          />
-                        )),
-                      )}
+                      {apps.map((application) => (
+                        <Fragment key={application.id}>
+                          {application.rolesApplied.map((role) => (
+                            <ApplicationResponseRow
+                              key={application.id + role}
+                              response={application}
+                              role={role}
+                            />
+                          ))}
+                        </Fragment>
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -322,15 +321,17 @@ function StatusPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {activeList.map((application) =>
-                    application.rolesApplied.map((role) => (
-                      <ApplicationResponseRow
-                        key={application.id + role}
-                        response={application}
-                        role={role}
-                      />
-                    )),
-                  )}
+                  {activeList.map((application) => (
+                    <Fragment key={application.id}>
+                      {application.rolesApplied.map((role) => (
+                        <ApplicationResponseRow
+                          key={application.id + role}
+                          response={application}
+                          role={role}
+                        />
+                      ))}
+                    </Fragment>
+                  ))}
                 </tbody>
               </table>
             )}
