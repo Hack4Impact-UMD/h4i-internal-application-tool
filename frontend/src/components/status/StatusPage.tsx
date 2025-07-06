@@ -125,7 +125,7 @@ function ApplicationResponseRow({
 
   if (statusError)
     return (
-      <tr className="border-t border-gray-34300">
+      <tr className="border-t border-gray-300">
         <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
           {form.semester + " Application"}
           <ApplicantRolePill role={role} />
