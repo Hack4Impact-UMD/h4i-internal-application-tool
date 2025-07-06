@@ -126,30 +126,38 @@ function ApplicationResponseRow({
   if (statusError)
     return (
       <tr className="border-t border-gray-300">
-        <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
-          {form.semester + " Application"}
-          <ApplicantRolePill role={role} />
-        </td>
-        <td className="text-center">
-          <span className={`px-3 py-1 rounded-full bg-lightblue`}>
-            {decided ? "Decided" : status ? statusDisplay(status) : "Unknown"}
-          </span>
-        </td>
-        <td className="text-center">{formatDate(response.dateSubmitted)}</td>
-        <td className="text-center">
-          {decided ? (
-            <span
-              className="text-blue-500 cursor-pointer"
-              onClick={() => window.open("/status/decision", "_self")}
-            >
-              View Decision
-            </span>
-          ) : (
-            "-"
-          )}
+        <td className="text-center py-4 px-2" colSpan={4}>
+          <p className="text-center">{statusError.message}</p>
         </td>
       </tr>
     );
+
+  return (
+    <tr className="border-t border-gray-300">
+      <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
+        {form.semester + " Application"}
+        <ApplicantRolePill role={role} />
+      </td>
+      <td className="text-center">
+        <span className={`px-3 py-1 rounded-full bg-lightblue`}>
+          {decided ? "Decided" : status ? statusDisplay(status) : "Unknown"}
+        </span>
+      </td>
+      <td className="text-center">{formatDate(response.dateSubmitted)}</td>
+      <td className="text-center">
+        {decided ? (
+          <span
+            className="text-blue-500 cursor-pointer"
+            onClick={() => window.open("/status/decision", "_self")}
+          >
+            View Decision
+          </span>
+        ) : (
+          "-"
+        )}
+      </td>
+    </tr>
+  );
 }
 
 function StatusPage() {
