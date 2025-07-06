@@ -5,7 +5,6 @@ import Timeline from "./Timeline.tsx";
 import {
   ApplicantRole,
   ApplicationResponse,
-  ApplicationStatus,
   ReviewStatus,
 } from "../../types/types.ts";
 import { useApplicationResponsesAndSemesters } from "../../hooks/useApplicationResponseAndSemesters.ts";
@@ -45,8 +44,6 @@ function useTimelineStep() {
           ),
       );
 
-      let step = 0;
-
       for (const appStatus of appStatuses) {
         if (
           appStatus.status === "decided" ||
@@ -54,26 +51,15 @@ function useTimelineStep() {
           appStatus.status === ReviewStatus.Waitlisted ||
           appStatus.status === ReviewStatus.Denied
         ) {
-          step = 3;
-          return step;
+          return 3;
+        } else if (appStatus.status === ReviewStatus.Interview) {
+          return 2;
+        } else if (appStatus.status === ReviewStatus.UnderReview) {
+          return 1;
         }
       }
 
-      for (const appStatus of appStatuses) {
-        if (appStatus.status === ReviewStatus.Interview) {
-          step = 2;
-          return step;
-        }
-      }
-
-      for (const appStatus of appStatuses) {
-        if (appStatus.status === ReviewStatus.UnderReview) {
-          step = 1;
-          return step;
-        }
-      }
-
-      return step;
+      return 0;
     },
   });
 }
@@ -122,7 +108,7 @@ function ApplicationResponseRow({
   if (isFormPending || isStatusPending)
     return (
       <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={100}>
+        <td className="text-center py-4 px-2" colSpan={4}>
           <Spinner className="w-full" />
         </td>
       </tr>
@@ -131,7 +117,7 @@ function ApplicationResponseRow({
   if (formError)
     return (
       <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={100}>
+        <td className="text-center py-4 px-2" colSpan={4}>
           <p className="text-center">{formError.message}</p>
         </td>
       </tr>
@@ -139,39 +125,31 @@ function ApplicationResponseRow({
 
   if (statusError)
     return (
-      <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={100}>
-          <p className="text-center">{statusError.message}</p>
+      <tr className="border-t border-gray-34300">
+        <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
+          {form.semester + " Application"}
+          <ApplicantRolePill role={role} />
+        </td>
+        <td className="text-center">
+          <span className={`px-3 py-1 rounded-full bg-lightblue`}>
+            {decided ? "Decided" : status ? statusDisplay(status) : "Unknown"}
+          </span>
+        </td>
+        <td className="text-center">{formatDate(response.dateSubmitted)}</td>
+        <td className="text-center">
+          {decided ? (
+            <span
+              className="text-blue-500 cursor-pointer"
+              onClick={() => window.open("/status/decision", "_self")}
+            >
+              View Decision
+            </span>
+          ) : (
+            "-"
+          )}
         </td>
       </tr>
     );
-
-  return (
-    <tr className="border-t border-gray-300">
-      <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
-        {form.semester + " Application"}
-        <ApplicantRolePill role={role} />
-      </td>
-      <td className="text-center">
-        <span className={`px-3 py-1 rounded-full bg-lightblue`}>
-          {decided ? "Decided" : status ? statusDisplay(status) : "Unknown"}
-        </span>
-      </td>
-      <td className="text-center">{formatDate(response.dateSubmitted)}</td>
-      <td className="text-center">
-        {decided ? (
-          <span
-            className="text-blue-500 cursor-pointer"
-            onClick={() => window.open("/status/decision", "_self")}
-          >
-            View Decision
-          </span>
-        ) : (
-          "-"
-        )}
-      </td>
-    </tr>
-  );
 }
 
 function StatusPage() {
@@ -183,12 +161,12 @@ function StatusPage() {
   } = useApplicationResponsesAndSemesters();
 
   const activeApplications = useMemo(
-    () => applications.filter((app) => app.active),
+    () => applications.filter((app) => app.active) ?? [],
     [applications],
   );
 
   const inactiveApplications = useMemo(
-    () => applications.filter((app) => !app.active),
+    () => applications.filter((app) => !app.active) ?? [],
     [applications],
   );
 
@@ -264,44 +242,46 @@ function StatusPage() {
                 You don't have any {activeTab} applications. Go apply!
               </p>
             ) : activeTab == "inactive" ? (
-              Array.from(semesterGrouping.entries()).map(([semester, apps]) => (
-                <div>
-                  <h2 className="text-lg font-semibold mt-6 mb-2">
-                    Hack4Impact {semester} Application
-                  </h2>
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-t border-gray-300">
-                        <th className="pb-4 pt-4 text-left font-normal w-1/3">
-                          Application
-                        </th>
-                        <th className="pb-4 pt-4 text-center font-normal w-1/4">
-                          Application Status
-                        </th>
-                        <th className="pb-4 pt-4 text-center font-normal w-1/4">
-                          Date Submitted
-                        </th>
-                        <th className="pb-4 pt-4 text-center font-normal w-1/6">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {apps.map((application) => (
-                        <Fragment key={application.id}>
-                          {application.rolesApplied.map((role) => (
-                            <ApplicationResponseRow
-                              key={application.id + role}
-                              response={application}
-                              role={role}
-                            />
-                          ))}
-                        </Fragment>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ))
+              Array.from(semesterGrouping.entries()).map(
+                ([semester, apps], index) => (
+                  <div key={index}>
+                    <h2 className="text-lg font-semibold mt-6 mb-2">
+                      Hack4Impact {semester} Application
+                    </h2>
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-t border-gray-300">
+                          <th className="pb-4 pt-4 text-left font-normal w-1/3">
+                            Application
+                          </th>
+                          <th className="pb-4 pt-4 text-center font-normal w-1/4">
+                            Application Status
+                          </th>
+                          <th className="pb-4 pt-4 text-center font-normal w-1/4">
+                            Date Submitted
+                          </th>
+                          <th className="pb-4 pt-4 text-center font-normal w-1/6">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {apps.map((application) => (
+                          <Fragment key={application.id}>
+                            {application.rolesApplied.map((role) => (
+                              <ApplicationResponseRow
+                                key={application.id + role}
+                                response={application}
+                                role={role}
+                              />
+                            ))}
+                          </Fragment>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ),
+              )
             ) : (
               <table className="w-full">
                 <thead>
