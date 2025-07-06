@@ -10,21 +10,16 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import { DataTable } from "../DataTable";
-import { Button } from "../ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { getApplicantById } from "@/services/applicantService";
-import {
-  createReviewData,
-  getReviewDataForAssignemnt,
-} from "@/services/reviewDataService";
+import { DataTable } from "@/components/DataTable";
+import { Button } from "@/components/ui/button";
+import { createReviewData } from "@/services/reviewDataService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { throwErrorToast } from "../error/ErrorToast";
+import { throwErrorToast } from "@/components/error/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import { calculateReviewScore } from "@/utils/scores";
-import ApplicantRolePill from "../role-pill/RolePill";
+import ApplicantRolePill from "@/components/role-pill/RolePill";
+import { AssignmentRow, useRows } from "./useRows";
 
 type ReviewerApplicationsTableProps = {
   assignments: AppReviewAssignment[];
@@ -32,21 +27,6 @@ type ReviewerApplicationsTableProps = {
   rowCount?: number;
   statusFilter: "all" | "reviewed" | "pending";
   formId: string;
-};
-
-type AssignmentRow = {
-  index: number;
-  applicant: {
-    name: string;
-    id: string;
-  };
-  responseId: string;
-  role: ApplicantRole;
-  review?: ApplicationReviewData;
-  score: {
-    value?: number;
-    outOf?: number;
-  };
 };
 
 export default function ReviewerApplicationsTable({
@@ -58,45 +38,6 @@ export default function ReviewerApplicationsTable({
 }: ReviewerApplicationsTableProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  function useRows(pageIndex: number) {
-    return useQuery({
-      queryKey: ["my-assignment-rows", pageIndex],
-      placeholderData: (prev) => prev,
-      queryFn: async () => {
-        return Promise.all(
-          assignments
-            .slice(
-              pageIndex * rowCount,
-              Math.min(assignments.length, (pageIndex + 1) * rowCount),
-            )
-            .map(async (assignment, index) => {
-              const user = await getApplicantById(assignment.applicantId);
-              const review = await getReviewDataForAssignemnt(assignment);
-
-              const row: AssignmentRow = {
-                index: 1 + pageIndex * rowCount + index,
-                applicant: {
-                  id: user.id,
-                  name: `${user.firstName} ${user.lastName}`,
-                },
-                responseId: assignment.applicationResponseId,
-                role: assignment.forRole,
-                review: review,
-                score: {
-                  value: review
-                    ? await calculateReviewScore(review)
-                    : undefined,
-                  outOf: 4, // NOTE: All scores are assummed to be out of 4
-                },
-              };
-
-              return row;
-            }),
-        );
-      },
-    });
-  }
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -337,7 +278,11 @@ export default function ReviewerApplicationsTable({
     }
   }
 
-  const { data: rows, isPending, error } = useRows(pagination.pageIndex);
+  const {
+    data: rows,
+    isPending,
+    error,
+  } = useRows(assignments, pagination.pageIndex, rowCount);
 
   if (isPending || !rows) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

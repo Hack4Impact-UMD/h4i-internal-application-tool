@@ -25,7 +25,8 @@ export const ApplicationFormSchema = z.object({
   dueDate: z.date(),
   semester: z.string(),
   description: z.string(),
-  sections: z.array(ApplicationSectionSchema)
+  sections: z.array(ApplicationSectionSchema),
+  decisionsReleased: z.boolean().default(false)
 })
 
 export type ApplicationSection = z.infer<typeof ApplicationSectionSchema>;

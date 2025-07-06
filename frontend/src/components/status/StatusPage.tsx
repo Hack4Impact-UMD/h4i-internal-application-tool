@@ -1,46 +1,98 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 
 import Timeline from "./Timeline.tsx";
-import { ApplicationResponse, ApplicationStatus } from "../../types/types.ts";
+import {
+  ApplicantRole,
+  ApplicationResponse,
+  ReviewStatus,
+} from "../../types/types.ts";
 import { useApplicationResponsesAndSemesters } from "../../hooks/useApplicationResponseAndSemesters.ts";
 import { useApplicationForm } from "../../hooks/useApplicationForm.ts";
+import Spinner from "../Spinner.tsx";
+import { useMyApplicationStatus } from "@/hooks/useApplicationStatus.ts";
+import { statusDisplay } from "@/utils/status.ts";
+import ApplicantRolePill from "../role-pill/RolePill.tsx";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth.ts";
+import { getApplicationResponseAndSemester } from "@/services/applicationResponseAndSemesterService.ts";
+import { getApplicationStatus } from "@/services/statusService.ts";
 
 const timelineItems = [
-  { label: "In Progress", id: ApplicationStatus.InProgress },
-  { label: "Submitted", id: ApplicationStatus.Submitted },
-  { label: "Interview", id: ApplicationStatus.Interview },
-  { label: "Decided", id: ApplicationStatus.Decided },
+  { label: "Not Reviewed", id: ReviewStatus.NotReviewed },
+  { label: "Under Review", id: ReviewStatus.UnderReview },
+  { label: "Interview", id: ReviewStatus.Interview },
+  { label: "Decided", id: "decided" },
 ];
+
+function useTimelineStep() {
+  const { token, user } = useAuth();
+  return useQuery({
+    queryKey: ["timeline", token],
+    enabled: !!user && !!token,
+    queryFn: async () => {
+      if (!user || !token) return 0;
+
+      const applications = await getApplicationResponseAndSemester(user.id);
+      const appStatuses = await Promise.all(
+        applications
+          .filter((app) => app.active)
+          .flatMap((app) =>
+            app.rolesApplied.map((role) =>
+              getApplicationStatus(token, app.id, role),
+            ),
+          ),
+      );
+
+      for (const appStatus of appStatuses) {
+        if (
+          appStatus.status === "decided" ||
+          appStatus.status === ReviewStatus.Accepted ||
+          appStatus.status === ReviewStatus.Waitlisted ||
+          appStatus.status === ReviewStatus.Denied
+        ) {
+          return 3;
+        } else if (appStatus.status === ReviewStatus.Interview) {
+          return 2;
+        } else if (appStatus.status === ReviewStatus.UnderReview) {
+          return 1;
+        }
+      }
+
+      return 0;
+    },
+  });
+}
 
 function ApplicationResponseRow({
   response,
+  role,
 }: {
   response: ApplicationResponse;
+  role: ApplicantRole;
 }) {
   const {
     data: form,
-    isPending,
-    error,
+    isPending: isFormPending,
+    error: formError,
   } = useApplicationForm(response.applicationFormId);
 
-  const getStatusDisplay = (status: ApplicationStatus) => {
-    switch (status) {
-      case ApplicationStatus.Submitted:
-        return { text: "Submitted", className: "bg-blue-100 text-gray-700" };
-      case ApplicationStatus.UnderReview:
-        return { text: "Under review", className: "bg-blue-100 text-blue-700" };
-      case ApplicationStatus.Decided:
-        return { text: "Decided", className: "bg-green-100 text-green-700" };
-      case ApplicationStatus.Interview:
-        return {
-          text: "Interview",
-          className: "bg-yellow-100 text-yellow-700",
-        };
-      default:
-        return { text: "Ended", className: "bg-gray-100 text-gray-700" };
-    }
-  };
+  const {
+    data: appStatus,
+    isPending: isStatusPending,
+    error: statusError,
+  } = useMyApplicationStatus(response.id, role);
+
+  const status = appStatus?.status;
+
+  const decided = useMemo(
+    () =>
+      status == "decided" ||
+      status == ReviewStatus.Accepted ||
+      status == ReviewStatus.Waitlisted ||
+      status == ReviewStatus.Denied,
+    [status],
+  );
 
   const formatDate = (timestamp: Timestamp) => {
     if (timestamp && timestamp.toDate) {
@@ -53,35 +105,47 @@ function ApplicationResponseRow({
     return "-";
   };
 
-  if (isPending)
-    return <tr className="border-t border-gray-300">Loading...</tr>;
-
-  if (error)
+  if (isFormPending || isStatusPending)
     return (
-      <tr className="border-t border-red-300 bg-red-300">
-        <p>Failed to load form data: {error.message}</p>
+      <tr className="border-t border-gray-300">
+        <td className="text-center py-4 px-2" colSpan={4}>
+          <Spinner className="w-full" />
+        </td>
+      </tr>
+    );
+
+  if (formError)
+    return (
+      <tr className="border-t border-gray-300">
+        <td className="text-center py-4 px-2" colSpan={4}>
+          <p className="text-center">{formError.message}</p>
+        </td>
+      </tr>
+    );
+
+  if (statusError)
+    return (
+      <tr className="border-t border-gray-300">
+        <td className="text-center py-4 px-2" colSpan={4}>
+          <p className="text-center">{statusError.message}</p>
+        </td>
       </tr>
     );
 
   return (
     <tr className="border-t border-gray-300">
-      <td className="py-4 text-blue-500 font-bold">
-        {form.semester +
-          ": " +
-          response.rolesApplied
-            .map((role) => role.charAt(0).toUpperCase() + role.slice(1))
-            .join(", ")}
+      <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
+        {form.semester + " Application"}
+        <ApplicantRolePill role={role} />
       </td>
       <td className="text-center">
-        <span
-          className={`px-3 py-1 rounded-full ${getStatusDisplay(response.status).className}`}
-        >
-          {getStatusDisplay(response.status).text}
+        <span className={`px-3 py-1 rounded-full bg-lightblue`}>
+          {decided ? "Decided" : status ? statusDisplay(status) : "Unknown"}
         </span>
       </td>
-      <td className="text-center">{formatDate(response!.dateSubmitted)}</td>
+      <td className="text-center">{formatDate(response.dateSubmitted)}</td>
       <td className="text-center">
-        {response.status == ApplicationStatus.Decided ? (
+        {decided ? (
           <span
             className="text-blue-500 cursor-pointer"
             onClick={() => window.open("/status/decision", "_self")}
@@ -105,22 +169,12 @@ function StatusPage() {
   } = useApplicationResponsesAndSemesters();
 
   const activeApplications = useMemo(
-    () =>
-      applications.filter((app) =>
-        [
-          ApplicationStatus.Submitted,
-          ApplicationStatus.UnderReview,
-          ApplicationStatus.Interview,
-        ].includes(app.status),
-      ),
+    () => applications.filter((app) => app.active) ?? [],
     [applications],
   );
 
   const inactiveApplications = useMemo(
-    () =>
-      applications.filter((app) =>
-        [ApplicationStatus.InActive].includes(app.status),
-      ),
+    () => applications.filter((app) => !app.active) ?? [],
     [applications],
   );
 
@@ -137,21 +191,12 @@ function StatusPage() {
     return map;
   }, new Map<string, ApplicationResponse[]>());
 
-  const currentTimelineStep = useMemo(() => {
-    if (activeApplications.length > 0) {
-      const activeStatus = activeApplications.sort(
-        (a, b) => a.dateSubmitted.toMillis() - b.dateSubmitted.toMillis(),
-      )[0].status;
-      return timelineItems.findIndex((i) => i.id == activeStatus);
-    } else {
-      return 0;
-    }
-  }, [activeApplications]);
+  const { data: currentTimelineStep } = useTimelineStep();
 
   return (
     <div className="flex flex-col">
-      <div className="h-screen bg-gray">
-        <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8">
+      <div className="h-screen bg-muted">
+        <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8 rounded-md shadow">
           <h1 className="text-xl mt-10 mb-10 font-semibold">My Applications</h1>
 
           <div className="border-b border-gray-300">
@@ -186,9 +231,9 @@ function StatusPage() {
           <div className="mt-5">
             {activeTab === "active" && (
               <Timeline
-                currentStep={currentTimelineStep}
+                currentStep={currentTimelineStep ?? 0}
                 items={timelineItems}
-                maxStepReached={2}
+                maxStepReached={3}
               />
             )}
           </div>
@@ -205,39 +250,46 @@ function StatusPage() {
                 You don't have any {activeTab} applications. Go apply!
               </p>
             ) : activeTab == "inactive" ? (
-              Array.from(semesterGrouping.entries()).map(([semester, apps]) => (
-                <div>
-                  <h2 className="text-lg font-semibold mt-6 mb-2">
-                    Hack4Impact {semester} Application
-                  </h2>
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-t border-gray-300">
-                        <th className="pb-4 pt-4 text-left font-normal w-1/3">
-                          Application
-                        </th>
-                        <th className="pb-4 pt-4 text-center font-normal w-1/4">
-                          Application Status
-                        </th>
-                        <th className="pb-4 pt-4 text-center font-normal w-1/4">
-                          Date Submitted
-                        </th>
-                        <th className="pb-4 pt-4 text-center font-normal w-1/6">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {apps.map((application) => (
-                        <ApplicationResponseRow
-                          key={application.id}
-                          response={application}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ))
+              Array.from(semesterGrouping.entries()).map(
+                ([semester, apps], index) => (
+                  <div key={index}>
+                    <h2 className="text-lg font-semibold mt-6 mb-2">
+                      Hack4Impact {semester} Application
+                    </h2>
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-t border-gray-300">
+                          <th className="pb-4 pt-4 text-left font-normal w-1/3">
+                            Application
+                          </th>
+                          <th className="pb-4 pt-4 text-center font-normal w-1/4">
+                            Application Status
+                          </th>
+                          <th className="pb-4 pt-4 text-center font-normal w-1/4">
+                            Date Submitted
+                          </th>
+                          <th className="pb-4 pt-4 text-center font-normal w-1/6">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {apps.map((application) => (
+                          <Fragment key={application.id}>
+                            {application.rolesApplied.map((role) => (
+                              <ApplicationResponseRow
+                                key={application.id + role}
+                                response={application}
+                                role={role}
+                              />
+                            ))}
+                          </Fragment>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ),
+              )
             ) : (
               <table className="w-full">
                 <thead>
@@ -258,10 +310,15 @@ function StatusPage() {
                 </thead>
                 <tbody>
                   {activeList.map((application) => (
-                    <ApplicationResponseRow
-                      key={application.id}
-                      response={application}
-                    />
+                    <Fragment key={application.id}>
+                      {application.rolesApplied.map((role) => (
+                        <ApplicationResponseRow
+                          key={application.id + role}
+                          response={application}
+                          role={role}
+                        />
+                      ))}
+                    </Fragment>
                   ))}
                 </tbody>
               </table>

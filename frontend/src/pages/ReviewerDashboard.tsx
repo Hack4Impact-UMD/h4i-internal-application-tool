@@ -1,5 +1,5 @@
 import Loading from "@/components/Loading";
-import ReviewerApplicationsTable from "@/components/reviewer/ReviewerApplicationsTable";
+import { ReviewerApplicationsTable } from "@/components/reviewer/ReviewerApplicationsTable";
 import { Button } from "@/components/ui/button";
 import { useMyReviewAssignments } from "@/hooks/useReviewAssignments";
 import { useMyReviews } from "@/hooks/useReviewData";

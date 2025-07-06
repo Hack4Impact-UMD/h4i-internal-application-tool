@@ -26,12 +26,12 @@ export enum ApplicationStatus {
 
 export enum ReviewStatus {
   NotReviewed = "not-reviewed",
+  UnderReview = "under-review",
   Reviewed = "reviewed",
   Interview = "interview",
   Accepted = "accepted",
   Denied = "denied",
   Waitlisted = "waitlist",
-  // Released = "released"
 }
 
 export enum QuestionType {
@@ -110,9 +110,8 @@ export interface ApplicationForm {
   dueDate: Timestamp;
   semester: string;
   description: string;
-  // metadata: {};
   sections: ApplicationSection[];
-  // reviewerRubrics: RoleReviewRubric[];
+  decisionReleased: boolean;
 }
 
 // One of these per review. Reviews tie together an application, role, and reviewer.
@@ -128,10 +127,19 @@ export interface ApplicationReviewData {
   reviewerNotes: {
     [rubricId in string]: string; // each rubric has a section for comments which should be saved here
   };
-  reviewStatus: ReviewStatus;
+  // reviewStatus: ReviewStatus;
   forRole: ApplicantRole; // what role is this review for
   submitted: boolean;
 }
+
+export type InternalApplicationStatus = {
+  id: string;
+  formId: string;
+  role: ApplicantRole;
+  responseId: string;
+  status: ReviewStatus;
+  isQualified: boolean;
+};
 
 export interface ApplicationInterviewData {
   id: string;
