@@ -1,5 +1,3 @@
 import ReviewerApplicationsTable from "./ReviewerApplicationsTable";
 
-export {
-	ReviewerApplicationsTable
-}
+export { ReviewerApplicationsTable };

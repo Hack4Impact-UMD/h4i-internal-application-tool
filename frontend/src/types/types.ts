@@ -133,13 +133,13 @@ export interface ApplicationReviewData {
 }
 
 export type InternalApplicationStatus = {
-  id: string,
-  formId: string,
-  role: ApplicantRole,
-  responseId: string,
-  status: ReviewStatus,
-  isQualified: boolean,
-}
+  id: string;
+  formId: string;
+  role: ApplicantRole;
+  responseId: string;
+  status: ReviewStatus;
+  isQualified: boolean;
+};
 
 export interface ApplicationInterviewData {
   id: string;

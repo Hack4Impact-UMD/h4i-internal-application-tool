@@ -2,7 +2,12 @@ import { useMemo, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 
 import Timeline from "./Timeline.tsx";
-import { ApplicantRole, ApplicationResponse, ApplicationStatus, ReviewStatus } from "../../types/types.ts";
+import {
+  ApplicantRole,
+  ApplicationResponse,
+  ApplicationStatus,
+  ReviewStatus,
+} from "../../types/types.ts";
 import { useApplicationResponsesAndSemesters } from "../../hooks/useApplicationResponseAndSemesters.ts";
 import { useApplicationForm } from "../../hooks/useApplicationForm.ts";
 import Spinner from "../Spinner.tsx";
@@ -18,52 +23,62 @@ const timelineItems = [
   { label: "Not Reviewed", id: ReviewStatus.NotReviewed },
   { label: "Under Review", id: ReviewStatus.UnderReview },
   { label: "Interview", id: ApplicationStatus.Interview },
-  { label: "Decided", id: 'decided' },
+  { label: "Decided", id: "decided" },
 ];
 
 function useTimelineStep() {
-  const { token, user } = useAuth()
+  const { token, user } = useAuth();
   return useQuery({
-    queryKey: ['timeline', token],
+    queryKey: ["timeline", token],
     enabled: !!user && !!token,
     queryFn: async () => {
       const applications = await getApplicationResponseAndSemester(user!.id);
-      const appStatuses = await Promise.all(applications.filter(app => app.active).flatMap(app => app.rolesApplied.map(role => getApplicationStatus(token!, app.id, role))));
+      const appStatuses = await Promise.all(
+        applications
+          .filter((app) => app.active)
+          .flatMap((app) =>
+            app.rolesApplied.map((role) =>
+              getApplicationStatus(token!, app.id, role),
+            ),
+          ),
+      );
 
-      let step = 0
+      let step = 0;
 
       for (const appStatus of appStatuses) {
-        if (appStatus.status === 'decided'
-          || appStatus.status === ReviewStatus.Accepted
-          || appStatus.status === ReviewStatus.Waitlisted
-          || appStatus.status === ReviewStatus.Denied) {
-          step = 3
+        if (
+          appStatus.status === "decided" ||
+          appStatus.status === ReviewStatus.Accepted ||
+          appStatus.status === ReviewStatus.Waitlisted ||
+          appStatus.status === ReviewStatus.Denied
+        ) {
+          step = 3;
           return step;
         }
       }
 
       for (const appStatus of appStatuses) {
         if (appStatus.status === ReviewStatus.Interview) {
-          step = 2
+          step = 2;
           return step;
         }
       }
 
       for (const appStatus of appStatuses) {
         if (appStatus.status === ReviewStatus.UnderReview) {
-          step = 1
+          step = 1;
           return step;
         }
       }
 
-      return step
-    }
-  })
+      return step;
+    },
+  });
 }
 
 function ApplicationResponseRow({
   response,
-  role
+  role,
 }: {
   response: ApplicationResponse;
   role: ApplicantRole;
@@ -74,16 +89,22 @@ function ApplicationResponseRow({
     error: formError,
   } = useApplicationForm(response.applicationFormId);
 
-
   const {
     data: appStatus,
     isPending: isStatusPending,
-    error: statusError
-  } = useMyApplicationStatus(response.id, role)
+    error: statusError,
+  } = useMyApplicationStatus(response.id, role);
 
-  const status = appStatus?.status
+  const status = appStatus?.status;
 
-  const decided = useMemo(() => status == 'decided' || status == ReviewStatus.Accepted || status == ReviewStatus.Waitlisted || status == ReviewStatus.Denied, [status])
+  const decided = useMemo(
+    () =>
+      status == "decided" ||
+      status == ReviewStatus.Accepted ||
+      status == ReviewStatus.Waitlisted ||
+      status == ReviewStatus.Denied,
+    [status],
+  );
 
   const formatDate = (timestamp: Timestamp) => {
     if (timestamp && timestamp.toDate) {
@@ -97,16 +118,30 @@ function ApplicationResponseRow({
   };
 
   if (isFormPending || isStatusPending)
-    return <tr className="border-t border-gray-300"><td className="text-center py-4 px-2" colSpan={100}>< Spinner className="w-full" /></td></tr>;
+    return (
+      <tr className="border-t border-gray-300">
+        <td className="text-center py-4 px-2" colSpan={100}>
+          <Spinner className="w-full" />
+        </td>
+      </tr>
+    );
 
   if (formError)
     return (
-      <tr className="border-t border-gray-300"><td className="text-center py-4 px-2" colSpan={100}><p className="tex-center">{formError.message}</p></td></tr>
+      <tr className="border-t border-gray-300">
+        <td className="text-center py-4 px-2" colSpan={100}>
+          <p className="tex-center">{formError.message}</p>
+        </td>
+      </tr>
     );
 
   if (statusError)
     return (
-      <tr className="border-t border-gray-300"><td className="text-center py-4 px-2" colSpan={100}><p className="tex-center">{statusError.message}</p></td></tr>
+      <tr className="border-t border-gray-300">
+        <td className="text-center py-4 px-2" colSpan={100}>
+          <p className="tex-center">{statusError.message}</p>
+        </td>
+      </tr>
     );
 
   return (
@@ -116,10 +151,8 @@ function ApplicationResponseRow({
         <ApplicantRolePill role={role} />
       </td>
       <td className="text-center">
-        <span
-          className={`px-3 py-1 rounded-full bg-lightblue`}
-        >
-          {decided ? 'Decided' : statusDisplay(status!)}
+        <span className={`px-3 py-1 rounded-full bg-lightblue`}>
+          {decided ? "Decided" : statusDisplay(status!)}
         </span>
       </td>
       <td className="text-center">{formatDate(response!.dateSubmitted)}</td>
@@ -132,7 +165,7 @@ function ApplicationResponseRow({
             View Decision
           </span>
         ) : (
-          '-'
+          "-"
         )}
       </td>
     </tr>
@@ -160,10 +193,7 @@ function StatusPage() {
   );
 
   const inactiveApplications = useMemo(
-    () =>
-      applications.filter((app) =>
-        !app.active
-      ),
+    () => applications.filter((app) => !app.active),
     [applications],
   );
 
@@ -180,7 +210,7 @@ function StatusPage() {
     return map;
   }, new Map<string, ApplicationResponse[]>());
 
-  const { data: currentTimelineStep } = useTimelineStep()
+  const { data: currentTimelineStep } = useTimelineStep();
 
   return (
     <div className="flex flex-col">
@@ -192,8 +222,9 @@ function StatusPage() {
             <div className="flex gap-8">
               <button
                 onClick={() => setActiveTab("active")}
-                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "active" ? "text-blue-500" : "text-gray-500"
-                  }`}
+                className={`relative pb-4 px-1 cursor-pointer ${
+                  activeTab === "active" ? "text-blue-500" : "text-gray-500"
+                }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Active ({activeApplications.length})
@@ -203,8 +234,9 @@ function StatusPage() {
               </button>
               <button
                 onClick={() => setActiveTab("inactive")}
-                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
-                  }`}
+                className={`relative pb-4 px-1 cursor-pointer ${
+                  activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
+                }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Inactive ({inactiveApplications.length})
@@ -260,15 +292,15 @@ function StatusPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {apps.map((application) => (
-                        application.rolesApplied.map(role => (
+                      {apps.map((application) =>
+                        application.rolesApplied.map((role) => (
                           <ApplicationResponseRow
                             key={application.id + role}
                             response={application}
                             role={role}
                           />
-                        ))
-                      ))}
+                        )),
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -292,15 +324,15 @@ function StatusPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {activeList.map((application) => (
-                    application.rolesApplied.map(role => (
+                  {activeList.map((application) =>
+                    application.rolesApplied.map((role) => (
                       <ApplicationResponseRow
                         key={application.id + role}
                         response={application}
                         role={role}
                       />
-                    ))
-                  ))}
+                    )),
+                  )}
                 </tbody>
               </table>
             )}

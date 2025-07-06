@@ -46,7 +46,10 @@ import { useParams } from "react-router-dom";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../error/ErrorToast";
 import ApplicantRolePill from "../role-pill/RolePill";
-import { getApplicationStatusForResponseRole, updateApplicationStatus } from "@/services/statusService";
+import {
+  getApplicationStatusForResponseRole,
+  updateApplicationStatus,
+} from "@/services/statusService";
 import { Checkbox } from "@/components/ui/checkbox";
 
 type SuperReviewerApplicationsTableProps = {
@@ -308,14 +311,17 @@ export default function SuperReviewerApplicationsTable({
                 completedReviews == 0
                   ? 0
                   : (
-                    await Promise.all(
-                      reviews
-                        .filter((r) => r.submitted)
-                        .map(async (r) => await calculateReviewScore(r)),
-                    )
-                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                      await Promise.all(
+                        reviews
+                          .filter((r) => r.submitted)
+                          .map(async (r) => await calculateReviewScore(r)),
+                      )
+                    ).reduce((acc, v) => acc + v, 0) / completedReviews;
 
-              const status = await getApplicationStatusForResponseRole(app.id, app.rolesApplied[0])
+              const status = await getApplicationStatusForResponseRole(
+                app.id,
+                app.rolesApplied[0],
+              );
 
               const row: ApplicationRow = {
                 index: 1 + pageIndex * rowCount + index,
@@ -343,7 +349,7 @@ export default function SuperReviewerApplicationsTable({
                   ),
                 },
                 assignments: assignments,
-                status: status
+                status: status,
               };
 
               return row;
@@ -417,39 +423,53 @@ export default function SuperReviewerApplicationsTable({
   const toggleQualifiedMutation = useMutation({
     mutationFn: async ({ status }: { status: InternalApplicationStatus }) => {
       return await updateApplicationStatus(status.id, {
-        isQualified: !status.isQualified
-      })
+        isQualified: !status.isQualified,
+      });
     },
     onMutate: async ({ status }) => {
-      await queryClient.cancelQueries({ queryKey: ["all-apps-rows", pagination.pageIndex] })
-      const oldRows = queryClient.getQueryData(["all-apps-rows", pagination.pageIndex])
+      await queryClient.cancelQueries({
+        queryKey: ["all-apps-rows", pagination.pageIndex],
+      });
+      const oldRows = queryClient.getQueryData([
+        "all-apps-rows",
+        pagination.pageIndex,
+      ]);
 
-      queryClient.setQueryData(["all-apps-rows", pagination.pageIndex], (old: ApplicationRow[]) => old.map(row => {
-        if (row.status?.id === status.id) {
-          return {
-            ...row,
-            status: {
-              ...status,
-              isQualified: !!status.isQualified
+      queryClient.setQueryData(
+        ["all-apps-rows", pagination.pageIndex],
+        (old: ApplicationRow[]) =>
+          old.map((row) => {
+            if (row.status?.id === status.id) {
+              return {
+                ...row,
+                status: {
+                  ...status,
+                  isQualified: !!status.isQualified,
+                },
+              };
+            } else {
+              return row;
             }
-          }
-        } else {
-          return row
-        }
-      }))
+          }),
+      );
 
       return {
-        oldRows
-      }
+        oldRows,
+      };
     },
     onError: (error, _resp, ctx) => {
-      queryClient.setQueryData(["all-apps-rows", pagination.pageIndex], ctx?.oldRows)
-      throwErrorToast("Failed to update qualified status: " + error)
+      queryClient.setQueryData(
+        ["all-apps-rows", pagination.pageIndex],
+        ctx?.oldRows,
+      );
+      throwErrorToast("Failed to update qualified status: " + error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["all-apps-rows", pagination.pageIndex] })
-    }
-  })
+      queryClient.invalidateQueries({
+        queryKey: ["all-apps-rows", pagination.pageIndex],
+      });
+    },
+  });
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -633,28 +653,34 @@ export default function SuperReviewerApplicationsTable({
             return getValue();
           },
         }),
-        columnHelper.accessor('status.isQualified', {
-          id: 'qualified',
+        columnHelper.accessor("status.isQualified", {
+          id: "qualified",
           cell: ({ getValue, row }) => {
-            const status = row.original.status
+            const status = row.original.status;
             return (
               <div className="flex items-center justify-center">
                 <Checkbox
                   className="size-5"
                   checked={getValue()}
-                  onClick={() => status ? toggleQualifiedMutation.mutate({
-                    status: status
-                  }) : throwErrorToast("No status available!")}
+                  onClick={() =>
+                    status
+                      ? toggleQualifiedMutation.mutate({
+                          status: status,
+                        })
+                      : throwErrorToast("No status available!")
+                  }
                 />
               </div>
             );
           },
           header: () => {
-            return <div className="flex items-center justify-center">
-              <span className="text-center mx-auto">QUALIFIED</span>
-            </div>
+            return (
+              <div className="flex items-center justify-center">
+                <span className="text-center mx-auto">QUALIFIED</span>
+              </div>
+            );
           },
-        })
+        }),
       ] as ColumnDef<ApplicationRow>[],
     [columnHelper],
   );

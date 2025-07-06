@@ -44,7 +44,7 @@ export async function getApplicationResponseAndSemester(
     responsesWithSemester.push({
       ...response,
       semester,
-      active: form?.isActive
+      active: form?.isActive,
     });
   }
 

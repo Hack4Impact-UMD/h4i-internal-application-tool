@@ -29,7 +29,6 @@ type ReviewerApplicationsTableProps = {
   formId: string;
 };
 
-
 export default function ReviewerApplicationsTable({
   assignments,
   search,
@@ -279,7 +278,11 @@ export default function ReviewerApplicationsTable({
     }
   }
 
-  const { data: rows, isPending, error } = useRows(assignments, pagination.pageIndex, rowCount);
+  const {
+    data: rows,
+    isPending,
+    error,
+  } = useRows(assignments, pagination.pageIndex, rowCount);
 
   if (isPending || !rows) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
