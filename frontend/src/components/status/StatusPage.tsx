@@ -11,9 +11,8 @@ import { statusDisplay } from "@/utils/status.ts";
 import ApplicantRolePill from "../role-pill/RolePill.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth.ts";
-import { getApplicationResponses } from "@/services/applicationResponsesService.ts";
 import { getApplicationResponseAndSemester } from "@/services/applicationResponseAndSemesterService.ts";
-import getApplicationStatus from "@/services/statusService.ts";
+import { getApplicationStatus } from "@/services/statusService.ts";
 
 const timelineItems = [
   { label: "Not Reviewed", id: ReviewStatus.NotReviewed },

@@ -133,6 +133,7 @@ export interface ApplicationReviewData {
 }
 
 export type InternalApplicationStatus = {
+  id: string,
   formId: string,
   role: ApplicantRole,
   responseId: string,

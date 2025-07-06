@@ -47,7 +47,7 @@ export default function SuperReviewerApplicationsDashboard() {
     const freqs: Map<ApplicantRole, number> = new Map();
     expandedSubmittedApps?.forEach((app) => {
       const role = app.rolesApplied[0];
-      freqs.set(role, freqs.get(role) ?? 0 + 1);
+      freqs.set(role, (freqs.get(role) ?? 0) + 1);
     });
 
     return freqs;

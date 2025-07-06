@@ -1,7 +1,7 @@
 import { ApplicantRole } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
-import getApplicationStatus from "@/services/statusService";
+import { getApplicationStatus } from "@/services/statusService";
 
 export function useMyApplicationStatus(responseId: string, role: ApplicantRole) {
 	const { token } = useAuth()
