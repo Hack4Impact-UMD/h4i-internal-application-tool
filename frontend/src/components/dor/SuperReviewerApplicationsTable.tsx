@@ -203,7 +203,7 @@ function ReviewerSelect({
   const [showPopover, setShowPopover] = useState(false);
 
   return (
-    <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll">
+    <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
       {reviewers.map((reviewer, index) => (
         <div
           key={reviewer.id}
