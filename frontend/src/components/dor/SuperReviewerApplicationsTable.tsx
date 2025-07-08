@@ -724,7 +724,7 @@ export default function SuperReviewerApplicationsTable({
       <div className="flex flex-row gap-2">
         <span>
           Page {pagination.pageIndex + 1} of{" "}
-          {Math.ceil(applications.length / rowCount)}
+          {Math.max(Math.ceil(applications.length / rowCount), 1)}
         </span>
         <div className="ml-auto">
           <Button
