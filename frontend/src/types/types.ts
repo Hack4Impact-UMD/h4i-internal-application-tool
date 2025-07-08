@@ -114,6 +114,14 @@ export interface ApplicationForm {
   decisionReleased: boolean;
 }
 
+// all possible scoreCategory values; should be comprehensive for every semester so old reviews don't break
+export enum ScoreCategory {
+  Club = "club",
+  SocialGood = "social-good",
+  NpoExpertise = "npo-expertise",
+  Communication = "communication",
+  Technical = "technical",
+}
 // One of these per review. Reviews tie together an application, role, and reviewer.
 export interface ApplicationReviewData {
   id: string;
@@ -122,7 +130,7 @@ export interface ApplicationReviewData {
   applicationResponseId: string;
   applicantId: string;
   applicantScores: {
-    [scoreCategory in string]: number; // between 0-4, each review category in the rubric will have a value here
+    [category in ScoreCategory]: number; // between 0-4, each review category in the rubric will have a value here
   };
   reviewerNotes: {
     [rubricId in string]: string; // each rubric has a section for comments which should be saved here
