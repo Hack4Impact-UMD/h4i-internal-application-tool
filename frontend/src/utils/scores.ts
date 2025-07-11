@@ -1,115 +1,45 @@
-import { ApplicantRole, ApplicationReviewData, ScoreCategory } from "@/types/types";
+import { getApplicationForm } from "@/services/applicationFormsService";
+import { ApplicantRole, ApplicationForm, ApplicationReviewData } from "@/types/types";
 
 export async function calculateReviewScore(
   review: ApplicationReviewData,
 ): Promise<number> {
   const scores = Object.keys(review.applicantScores);
   if (scores.length == 0) return 0;
-  const res = getScoreForApplicationAndRole(
-    review.applicationFormId, 
-    review.forRole, 
+
+  const form: ApplicationForm = await getApplicationForm(review.applicationFormId);
+  if (!validateScoreCategoriesForFormAndRole(
+    form.scoreWeights[review.forRole], 
     review.applicantScores
-  )
-  // const res =
-  //   scores.reduce((acc, v) => acc + review.applicantScores[v], 0) /
-  //   scores.length;
-  console.log("score: ", res);
-  return res == -1 ? Promise.reject(res) : Promise.resolve(res);
-}
+  )) {
+    return Promise.reject(-1) // TODO: find a more permanent solution for rejection
+  };
+  const score = calculateScoreForFormAndRole(
+    form.scoreWeights[review.forRole], 
+    review.applicantScores
+  );
+  return roundScore(score, 2);
+} 
 
-// this will route requests to a semester/form-specific scoring + validation 
-// functions, which will be needed to preserve calculations from previous semesters
-function getScoreForApplicationAndRole(
-  applicationFormId: string, 
-  forRole: ApplicantRole, 
-  applicantScores: Record<ScoreCategory, number>
-): number {
-  switch(applicationFormId) {
-    case "sample-form":
-    case "sample-form2":
-    default: {
-      const score = calculateScoreForRoleFall2025(forRole, applicantScores);
-      const roundedScore = roundScore(score, 2)
-      return roundedScore
-    }
-  }
-}
-
-function calculateScoreForRoleFall2025(
-  role: ApplicantRole, 
-  scores: Record<ScoreCategory, number>
-): number {
-  if (!validateScoresFall2025(role, scores)) {
-    console.warn(`Invalid score keys or values for role ${role}, returning -1`);
-    return -1;  
-  }
-
-  switch (role) {
-    case ApplicantRole.Bootcamp: {
-      return scores[ScoreCategory.Club] * 0.5 + scores[ScoreCategory.SocialGood] * 0.5;
-    }
-    case ApplicantRole.Sourcing: {
-      return (
-        scores[ScoreCategory.Club] * 0.3 + 
-        scores[ScoreCategory.SocialGood] * 0.3 + 
-        scores[ScoreCategory.NpoExpertise] * 0.3 +
-        scores[ScoreCategory.Technical] * 0.1
-      );
-    }
-    case ApplicantRole.Engineer:
-    case ApplicantRole.Designer:
-    case ApplicantRole.Product:
-    case ApplicantRole.TechLead:
-    default: {
-      return (
-        scores[ScoreCategory.Club] * 0.25 + 
-        scores[ScoreCategory.SocialGood] * 0.2 + 
-        scores[ScoreCategory.Technical] * 0.55
-      );
-    }
-  }
-}
-
-function validateScoresFall2025(
-  role: ApplicantRole,
-  scores: Record<ScoreCategory, number>
+function validateScoreCategoriesForFormAndRole(
+  scoreWeightsForRole: ApplicationForm["scoreWeights"][ApplicantRole], 
+  applicantScores: ApplicationReviewData["applicantScores"]
 ): boolean {
-  let requiredKeys: ScoreCategory[];
-
-  switch (role) {
-    case ApplicantRole.Bootcamp:
-      requiredKeys = [ScoreCategory.Club, ScoreCategory.SocialGood];
-      break;
-    case ApplicantRole.Sourcing:
-      requiredKeys = [
-        ScoreCategory.Club,
-        ScoreCategory.SocialGood,
-        ScoreCategory.NpoExpertise,
-        ScoreCategory.Communication,
-      ];
-      break;
-    case ApplicantRole.Engineer:
-    case ApplicantRole.Designer:
-    case ApplicantRole.Product:
-    case ApplicantRole.TechLead:
-      requiredKeys = [
-        ScoreCategory.Club,
-        ScoreCategory.SocialGood,
-        ScoreCategory.Technical,
-      ];
-      break;
-    default:
-      console.warn(`Unknown role: ${role}`);
-      return false;
-  }
-
-  return requiredKeys.every(
-    (key) =>
-      typeof scores[key] === "number" &&
-      scores[key]! >= 1 &&
-      scores[key]! <= 4
+  return (Object.keys(scoreWeightsForRole).every(
+    (weight) => weight in applicantScores)
   );
 }
+
+function calculateScoreForFormAndRole(
+  scoreWeightsForRole: ApplicationForm["scoreWeights"][ApplicantRole],
+  applicantScores: ApplicationReviewData["applicantScores"]
+): number {
+  return Object.keys(scoreWeightsForRole).reduce((acc, scoreCategory) => {
+    const weight = scoreWeightsForRole[scoreCategory] ?? 0;
+    const score = applicantScores[scoreCategory] ?? 0;
+    return acc + weight * score;
+  }, 0);
+} 
 
 // TODO: need to check if this would be useful for avg. score/elsewhere
 function roundScore(score: number, decimalPlaces: number) {
