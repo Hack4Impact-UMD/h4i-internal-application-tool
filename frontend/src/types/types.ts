@@ -99,7 +99,7 @@ export interface ApplicationResponse {
   rolesApplied: ApplicantRole[];
   sectionResponses: SectionResponse[];
   status: ApplicationStatus;
-  dateSubmitted: Timestamp;
+  dateSubmitted: Timestamp; // if not submitted, this will be the Timestamp of the last save
   decisionLetterId?: string;
 }
 
