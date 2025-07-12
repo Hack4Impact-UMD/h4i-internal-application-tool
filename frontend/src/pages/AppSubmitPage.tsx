@@ -115,8 +115,7 @@ export default function AppSubmitPage() {
           className="rounded-full"
           onClick={() => handleSubmit()}
         >
-          {" "}
-          Submit{" "}
+          Submit
         </Button>
       </div>
     </div>
