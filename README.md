@@ -110,5 +110,5 @@ For instructions on setting up the Firebase emulators, see the [Firebase Emulato
 
 | Name | Role | Contact |
 |------|------|---------|
-| **Ramy Kaddouri** | Tech Lead | [rkaddour@terpmail.umd.edu] |
-| **Lance Uymatiao** | Tech Lead | [lpu@terpmail.umd.edu] |
+| **Ramy Kaddouri** | Tech Lead | [Slack](https://hack4impact.slack.com/) |
+| **Lance Uymatiao** | Tech Lead | [Slack](https://hack4impact.slack.com/) |
