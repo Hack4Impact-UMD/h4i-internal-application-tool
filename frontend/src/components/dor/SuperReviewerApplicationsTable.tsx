@@ -21,7 +21,10 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { getApplicantById } from "@/services/applicantService";
-import { getReviewDataForAssignemnt, getReviewDataForResponseRole } from "@/services/reviewDataService";
+import {
+  getReviewDataForAssignemnt,
+  getReviewDataForResponseRole,
+} from "@/services/reviewDataService";
 import { calculateReviewScore } from "@/utils/scores";
 import { getUserById } from "@/services/userService";
 import {
@@ -31,7 +34,13 @@ import {
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ArrowDown, ArrowUp, ArrowUpDown, EllipsisVertical, Eye } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  EllipsisVertical,
+  Eye,
+} from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -51,7 +60,12 @@ import {
   updateApplicationStatus,
 } from "@/services/statusService";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -271,7 +285,12 @@ function ReviewerSelect({
     </div>
   );
 }
-function useRows(pageIndex: number, applications: ApplicationResponse[], rowCount: number, formId: string) {
+function useRows(
+  pageIndex: number,
+  applications: ApplicationResponse[],
+  rowCount: number,
+  formId: string,
+) {
   return useQuery({
     queryKey: ["all-apps-rows", pageIndex],
     placeholderData: (prev) => prev,
@@ -293,19 +312,17 @@ function useRows(pageIndex: number, applications: ApplicationResponse[], rowCoun
               await getReviewAssignmentsForApplication(app.id)
             ).filter((a) => a.forRole === app.rolesApplied[0]);
 
-            const completedReviews = reviews.filter(
-              (r) => r.submitted,
-            ).length;
+            const completedReviews = reviews.filter((r) => r.submitted).length;
             const avgScore =
               completedReviews == 0
                 ? 0
                 : (
-                  await Promise.all(
-                    reviews
-                      .filter((r) => r.submitted)
-                      .map(async (r) => await calculateReviewScore(r)),
-                  )
-                ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                    await Promise.all(
+                      reviews
+                        .filter((r) => r.submitted)
+                        .map(async (r) => await calculateReviewScore(r)),
+                    )
+                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
             let status: InternalApplicationStatus | undefined;
 
             try {
@@ -354,8 +371,6 @@ function useRows(pageIndex: number, applications: ApplicationResponse[], rowCoun
     },
   });
 }
-
-
 
 export default function SuperReviewerApplicationsTable({
   applications,
@@ -409,14 +424,19 @@ export default function SuperReviewerApplicationsTable({
       assignment: AppReviewAssignment;
       pageIndex: number;
     }) => {
-      if (await getReviewDataForAssignemnt(assignment) !== undefined) throw new Error("The reviewer has already started their review for this assignemnt. It is not possible to delete it.")
+      if ((await getReviewDataForAssignemnt(assignment)) !== undefined)
+        throw new Error(
+          "The reviewer has already started their review for this assignemnt. It is not possible to delete it.",
+        );
       return await removeReviewAssignment(assignment.id);
     },
     onSuccess: () => {
       throwSuccessToast("Successfully removed reviewer assignment!");
     },
     onError: (error) => {
-      throwErrorToast(`Failed to remove reviewer assignment! (${error.message})`);
+      throwErrorToast(
+        `Failed to remove reviewer assignment! (${error.message})`,
+      );
       console.log(error);
     },
     onSettled: (_data, _err, variables) => {
@@ -676,8 +696,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                        status: status,
-                      })
+                          status: status,
+                        })
                       : throwErrorToast("No status available!")
                   }
                 />
@@ -693,35 +713,43 @@ export default function SuperReviewerApplicationsTable({
           },
         }),
         columnHelper.display({
-          id: 'actions',
-          header: () => <div className="flex items-center justify-center">
-            <span className="text-center mx-auto">ACTIONS</span>
-          </div>,
-          cell: ({ row }) => <div className="flex items-center justify-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost">
-                  <EllipsisVertical />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => {
-                    navigate("/admin/dor/reviews/" + row.original.responseId)
-                  }}
-                >
-                  View Reviews
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        })
+          id: "actions",
+          header: () => (
+            <div className="flex items-center justify-center">
+              <span className="text-center mx-auto">ACTIONS</span>
+            </div>
+          ),
+          cell: ({ row }) => (
+            <div className="flex items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost">
+                    <EllipsisVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate("/admin/dor/reviews/" + row.original.responseId);
+                    }}
+                  >
+                    View Reviews
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ),
+        }),
       ] as ColumnDef<ApplicationRow>[],
     [columnHelper],
   );
 
-  const { data: rows, isPending, error } = useRows(pagination.pageIndex, applications, rowCount, formId);
+  const {
+    data: rows,
+    isPending,
+    error,
+  } = useRows(pagination.pageIndex, applications, rowCount, formId);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

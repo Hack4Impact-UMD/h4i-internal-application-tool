@@ -97,14 +97,15 @@ function App() {
               ></Route>
             </Route>
 
-            <Route
-              path="/admin"
-            >
-              <Route index element={
-                <RequireAuth>
-                  <AdminHome />
-                </RequireAuth>
-              }></Route>
+            <Route path="/admin">
+              <Route
+                index
+                element={
+                  <RequireAuth>
+                    <AdminHome />
+                  </RequireAuth>
+                }
+              ></Route>
 
               <Route
                 path="dor/"
@@ -130,11 +131,14 @@ function App() {
                 />
               </Route>
 
-              <Route path='dor/reviews/:responseId' element={
-                <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                  <AssignedReviewsPage />
-                </RequireAuth>
-              } />
+              <Route
+                path="dor/reviews/:responseId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <AssignedReviewsPage />
+                  </RequireAuth>
+                }
+              />
 
               <Route
                 path="dor/users"
