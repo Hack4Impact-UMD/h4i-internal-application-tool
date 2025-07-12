@@ -2,7 +2,7 @@
 
 # 📝 Hack4Impact-UMD Application Portal
 
-This repository contains the source code for the Hack4Impact-UMD application portal. The project includes both the frontend for applicants to submit and view the status of their applications and tools designed to make review applications efficiently, accurately, and rapidly.
+This repository contains the source code for the Hack4Impact-UMD application portal. The project includes both the frontend for applicants to submit and view the status of their applications and tools designed to make reviewing applications more efficient for club members.
 
 ## 📂 Directory Structure
 
