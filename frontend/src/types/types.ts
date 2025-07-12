@@ -99,7 +99,7 @@ export interface ApplicationResponse {
   rolesApplied: ApplicantRole[];
   sectionResponses: SectionResponse[];
   status: ApplicationStatus;
-  dateSubmitted: Timestamp;
+  dateSubmitted: Timestamp; // if not submitted, this will be the Timestamp of the last save
   decisionLetterId?: string;
 }
 
@@ -112,6 +112,11 @@ export interface ApplicationForm {
   description: string;
   sections: ApplicationSection[];
   decisionReleased: boolean;
+  scoreWeights: {
+    [role in ApplicantRole]: { 
+      [score in string]: number // weight for role + score category, between 0-1
+    } 
+  }
 }
 
 // One of these per review. Reviews tie together an application, role, and reviewer.
@@ -122,7 +127,7 @@ export interface ApplicationReviewData {
   applicationResponseId: string;
   applicantId: string;
   applicantScores: {
-    [scoreCategory in string]: number; // between 0-4, each review category in the rubric will have a value here
+    [category in string]: number; // between 0-4, each review category in the rubric will have a value here
   };
   reviewerNotes: {
     [rubricId in string]: string; // each rubric has a section for comments which should be saved here

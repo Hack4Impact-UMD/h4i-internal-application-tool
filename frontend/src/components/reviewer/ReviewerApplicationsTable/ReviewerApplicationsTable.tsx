@@ -314,7 +314,7 @@ export default function ReviewerApplicationsTable({
       <div className="flex flex-row gap-2">
         <span>
           Page {pagination.pageIndex + 1} of{" "}
-          {Math.ceil(assignments.length / rowCount)}
+          {Math.max(Math.ceil(assignments.length / rowCount), 1)}
         </span>
         <div className="ml-auto">
           <Button

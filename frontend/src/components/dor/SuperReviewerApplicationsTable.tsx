@@ -203,7 +203,7 @@ function ReviewerSelect({
   const [showPopover, setShowPopover] = useState(false);
 
   return (
-    <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll">
+    <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
       {reviewers.map((reviewer, index) => (
         <div
           key={reviewer.id}
@@ -724,7 +724,7 @@ export default function SuperReviewerApplicationsTable({
       <div className="flex flex-row gap-2">
         <span>
           Page {pagination.pageIndex + 1} of{" "}
-          {Math.ceil(applications.length / rowCount)}
+          {Math.max(Math.ceil(applications.length / rowCount), 1)}
         </span>
         <div className="ml-auto">
           <Button

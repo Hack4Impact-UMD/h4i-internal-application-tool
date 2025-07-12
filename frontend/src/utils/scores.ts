@@ -1,14 +1,48 @@
-import { ApplicationReviewData } from "@/types/types";
+import { getApplicationForm } from "@/services/applicationFormsService";
+import { ApplicantRole, ApplicationForm, ApplicationReviewData } from "@/types/types";
 
-//TODO: When scoring formulas are implemented this function should be changed!
 export async function calculateReviewScore(
   review: ApplicationReviewData,
 ): Promise<number> {
   const scores = Object.keys(review.applicantScores);
   if (scores.length == 0) return 0;
-  const res =
-    scores.reduce((acc, v) => acc + review.applicantScores[v], 0) /
-    scores.length;
-  console.log("score: ", res);
-  return Promise.resolve(res);
+
+  const form: ApplicationForm = await getApplicationForm(review.applicationFormId);
+  if (!validateScoreCategoriesForFormAndRole(
+    form.scoreWeights[review.forRole], 
+    review.applicantScores
+  )) {
+    return Promise.reject(-1) // TODO: find a more permanent solution for rejection
+  };
+  const score = calculateScoreForFormAndRole(
+    form.scoreWeights[review.forRole], 
+    review.applicantScores
+  );
+  return roundScore(score, 2);
+} 
+
+function validateScoreCategoriesForFormAndRole(
+  scoreWeightsForRole: ApplicationForm["scoreWeights"][ApplicantRole], 
+  applicantScores: ApplicationReviewData["applicantScores"]
+): boolean {
+  return (Object.keys(scoreWeightsForRole).every(
+    (weight) => weight in applicantScores)
+  );
+}
+
+function calculateScoreForFormAndRole(
+  scoreWeightsForRole: ApplicationForm["scoreWeights"][ApplicantRole],
+  applicantScores: ApplicationReviewData["applicantScores"]
+): number {
+  return Object.keys(scoreWeightsForRole).reduce((acc, scoreCategory) => {
+    const weight = scoreWeightsForRole[scoreCategory] ?? 0;
+    const score = applicantScores[scoreCategory] ?? 0;
+    return acc + weight * score;
+  }, 0);
+} 
+
+// TODO: need to check if this would be useful for avg. score/elsewhere
+function roundScore(score: number, decimalPlaces: number) {
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.round((score + Number.EPSILON) * factor) / factor;
 }
