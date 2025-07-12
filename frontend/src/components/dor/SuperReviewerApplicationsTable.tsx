@@ -31,7 +31,7 @@ import {
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, EllipsisVertical, Eye } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -51,6 +51,7 @@ import {
   updateApplicationStatus,
 } from "@/services/statusService";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -270,6 +271,91 @@ function ReviewerSelect({
     </div>
   );
 }
+function useRows(pageIndex: number, applications: ApplicationResponse[], rowCount: number, formId: string) {
+  return useQuery({
+    queryKey: ["all-apps-rows", pageIndex],
+    placeholderData: (prev) => prev,
+    queryFn: async () => {
+      return Promise.all(
+        applications
+          .slice(
+            pageIndex * rowCount,
+            Math.min(applications.length, (pageIndex + 1) * rowCount),
+          )
+          .map(async (app, index) => {
+            const user = await getApplicantById(app.userId);
+            const reviews = await getReviewDataForResponseRole(
+              formId,
+              app.id,
+              app.rolesApplied[0],
+            );
+            const assignments = (
+              await getReviewAssignmentsForApplication(app.id)
+            ).filter((a) => a.forRole === app.rolesApplied[0]);
+
+            const completedReviews = reviews.filter(
+              (r) => r.submitted,
+            ).length;
+            const avgScore =
+              completedReviews == 0
+                ? 0
+                : (
+                  await Promise.all(
+                    reviews
+                      .filter((r) => r.submitted)
+                      .map(async (r) => await calculateReviewScore(r)),
+                  )
+                ).reduce((acc, v) => acc + v, 0) / completedReviews;
+            let status: InternalApplicationStatus | undefined;
+
+            try {
+              status = await getApplicationStatusForResponseRole(
+                app.id,
+                app.rolesApplied[0],
+              );
+            } catch (error) {
+              console.log(
+                `Failed to fetch application status for application ${app.id}-${app.rolesApplied[0]}: ${error}`,
+              );
+              status = undefined;
+            }
+            const row: ApplicationRow = {
+              index: 1 + pageIndex * rowCount + index,
+              applicant: {
+                id: user.id,
+                name: `${user.firstName} ${user.lastName}`,
+              },
+              responseId: app.id,
+              role: app.rolesApplied[0], //These have already been expanded into their separate roles
+              reviews: {
+                assigned: assignments.length,
+                completed: reviews.filter((r) => r.submitted).length,
+                assignments: assignments,
+                averageScore: avgScore,
+                reviewData: reviews,
+              },
+              reviewers: {
+                assigned: await Promise.all(
+                  assignments.map(
+                    async (assignment) =>
+                      (await getUserById(
+                        assignment.reviewerId,
+                      )) as ReviewerUserProfile,
+                  ),
+                ),
+              },
+              assignments: assignments,
+              status: status,
+            };
+
+            return row;
+          }),
+      );
+    },
+  });
+}
+
+
 
 export default function SuperReviewerApplicationsTable({
   applications,
@@ -281,90 +367,6 @@ export default function SuperReviewerApplicationsTable({
   // const navigate = useNavigate();
   // const { user } = useAuth();
   const queryClient = useQueryClient();
-
-  function useRows(pageIndex: number) {
-    return useQuery({
-      queryKey: ["all-apps-rows", pageIndex],
-      placeholderData: (prev) => prev,
-      queryFn: async () => {
-        return Promise.all(
-          applications
-            .slice(
-              pageIndex * rowCount,
-              Math.min(applications.length, (pageIndex + 1) * rowCount),
-            )
-            .map(async (app, index) => {
-              const user = await getApplicantById(app.userId);
-              const reviews = await getReviewDataForResponseRole(
-                formId,
-                app.id,
-                app.rolesApplied[0],
-              );
-              const assignments = (
-                await getReviewAssignmentsForApplication(app.id)
-              ).filter((a) => a.forRole === app.rolesApplied[0]);
-
-              const completedReviews = reviews.filter(
-                (r) => r.submitted,
-              ).length;
-              const avgScore =
-                completedReviews == 0
-                  ? 0
-                  : (
-                      await Promise.all(
-                        reviews
-                          .filter((r) => r.submitted)
-                          .map(async (r) => await calculateReviewScore(r)),
-                      )
-                    ).reduce((acc, v) => acc + v, 0) / completedReviews;
-              let status: InternalApplicationStatus | undefined;
-
-              try {
-                status = await getApplicationStatusForResponseRole(
-                  app.id,
-                  app.rolesApplied[0],
-                );
-              } catch (error) {
-                console.log(
-                  `Failed to fetch application status for application ${app.id}-${app.rolesApplied[0]}: ${error}`,
-                );
-                status = undefined;
-              }
-              const row: ApplicationRow = {
-                index: 1 + pageIndex * rowCount + index,
-                applicant: {
-                  id: user.id,
-                  name: `${user.firstName} ${user.lastName}`,
-                },
-                responseId: app.id,
-                role: app.rolesApplied[0], //These have already been expanded into their separate roles
-                reviews: {
-                  assigned: assignments.length,
-                  completed: reviews.filter((r) => r.submitted).length,
-                  assignments: assignments,
-                  averageScore: avgScore,
-                  reviewData: reviews,
-                },
-                reviewers: {
-                  assigned: await Promise.all(
-                    assignments.map(
-                      async (assignment) =>
-                        (await getUserById(
-                          assignment.reviewerId,
-                        )) as ReviewerUserProfile,
-                    ),
-                  ),
-                },
-                assignments: assignments,
-                status: status,
-              };
-
-              return row;
-            }),
-        );
-      },
-    });
-  }
 
   const addReviewerMutation = useMutation({
     mutationFn: async ({
@@ -672,8 +674,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />
@@ -688,11 +690,36 @@ export default function SuperReviewerApplicationsTable({
             );
           },
         }),
+        columnHelper.display({
+          id: 'actions',
+          header: () => <div className="flex items-center justify-center">
+            <span className="text-center mx-auto">ACTIONS</span>
+          </div>,
+          cell: () => <div className="flex items-center justify-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">
+                  <EllipsisVertical />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => {
+
+                  }}
+                >
+                  View Reviews
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        })
       ] as ColumnDef<ApplicationRow>[],
     [columnHelper],
   );
 
-  const { data: rows, isPending, error } = useRows(pagination.pageIndex);
+  const { data: rows, isPending, error } = useRows(pagination.pageIndex, applications, rowCount, formId);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

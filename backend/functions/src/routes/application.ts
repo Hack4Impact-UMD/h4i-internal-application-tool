@@ -148,7 +148,7 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
         return res.status(400).json({
           status: "error",
           validationErrors: errors
-        }).send()
+        })
       }
     } catch (err) {
       logger.error("Validation error: ")
@@ -186,7 +186,7 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     return res.status(200).json({
       status: "success",
       application: newApp
-    }).send();
+    });
   } catch (error) {
     logger.error("Error submitting application:", error);
     return res.status(500).send("Internal server error.");

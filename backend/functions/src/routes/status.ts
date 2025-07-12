@@ -30,7 +30,7 @@ router.get("/:responseId/:role", [isAuthenticated], async (req: Request, res: Re
 	}
 
 	if (req.token?.sub !== responseDoc.userId) {
-		res.status(401).send()
+		res.status(401).send();
 		return
 	}
 
@@ -48,7 +48,7 @@ router.get("/:responseId/:role", [isAuthenticated], async (req: Request, res: Re
 			status: data.status,
 			role: data.role,
 			released: true
-		}).send()
+		})
 	} else {
 		let publicStatus: ReviewStatus.UnderReview | ReviewStatus.Interview | "decided"
 		if (data.status == ReviewStatus.Interview) {
@@ -63,7 +63,7 @@ router.get("/:responseId/:role", [isAuthenticated], async (req: Request, res: Re
 			status: publicStatus,
 			role: data.role,
 			released: false
-		}).send()
+		})
 	}
 })
 
