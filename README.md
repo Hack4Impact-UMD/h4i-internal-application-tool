@@ -1,8 +1,8 @@
 <p align="center"><img src="frontend/public/h4i-logo.png" alt="Hack4Impact Logo" width="200"/></p>
 
-# Hack4Impact-UMD Application Portal
+# 📝 Hack4Impact-UMD Application Portal
 
-This repository contains the source code for the Hack4Impact-UMD application portal.
+This repository contains the source code for the Hack4Impact-UMD application portal. The project includes both the frontend for applicants to submit and view the status of their applications and tools designed to make review applications efficiently, accurately, and rapidly.
 
 ## 📂 Directory Structure
 
@@ -76,3 +76,11 @@ For instructions on setting up the Firebase emulators, see the [Firebase Emulato
     ```bash
     npm run serve
     ```
+## 🖼️ Screenshots
+<img width="1913" height="1014" alt="Screenshot From 2025-07-05 23-40-49" src="https://github.com/user-attachments/assets/e5c5c1d7-3b83-4b98-b67d-5e2fefe64bd3" />
+
+<img width="1920" height="1012" alt="Screenshot From 2025-07-05 20-14-49" src="https://github.com/user-attachments/assets/5a77712f-4936-4a8c-95d8-0cb7e3a0e33a" />
+
+<img width="1920" height="1017" alt="Screenshot From 2025-06-29 21-31-37" src="https://github.com/user-attachments/assets/57dbd6c1-2bbb-4cc0-913c-ea0a6eadd7ed" />
+
+<img width="1920" height="1013" alt="Screenshot From 2025-05-20 21-41-19" src="https://github.com/user-attachments/assets/ae3580eb-3b5b-495c-9d4e-5e2ecea3121d" />
