@@ -84,3 +84,10 @@ For instructions on setting up the Firebase emulators, see the [Firebase Emulato
 <img width="1920" height="1017" alt="Screenshot From 2025-06-29 21-31-37" src="https://github.com/user-attachments/assets/57dbd6c1-2bbb-4cc0-913c-ea0a6eadd7ed" />
 
 <img width="1920" height="1013" alt="Screenshot From 2025-05-20 21-41-19" src="https://github.com/user-attachments/assets/ae3580eb-3b5b-495c-9d4e-5e2ecea3121d" />
+
+## 📞 Team Contacts
+
+| Name | Role | Contact |
+|------|------|---------|
+| **Ramy Kaddouri** | Tech Lead | [rkaddour@terpmail.umd.edu] |
+| **Lance Uymatiao** | Tech Lead | [lpu@terpmail.umd.edu] |
