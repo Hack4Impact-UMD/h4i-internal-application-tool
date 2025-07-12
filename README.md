@@ -1,47 +1,93 @@
-# H4I-InternalTools
+<p align="center"><img src="frontend/public/h4i-logo.png" alt="Hack4Impact Logo" width="200"/></p>
 
-> [!Tip]
-> For data fetching best practices using React/Tanstack Query, see [DataFetching.md](DataFetching.md)
+# 📝 Hack4Impact-UMD Application Portal
 
-## Getting Started
+This repository contains the source code for the Hack4Impact-UMD application portal. The project includes both the frontend for applicants to submit and view the status of their applications and tools designed to make reviewing applications more efficient for club members.
 
-Prerequisites
- - Git: https://git-scm.com/
- - Node: https://nodejs.org/en
-   - _You may have to add node to your path variable: https://stackoverflow.com/a/27864253_
+## 📂 Directory Structure
 
 ### Frontend
 
-1) Use `git clone` to make a local copy of the repository.
-
 ```
-git clone https://github.com/Hack4Impact-UMD/h4i-internal-application-tool.git
+frontend/
+├── public/              # Static assets
+└── src/
+    ├── components/      # Reusable React components
+    ├── config/          # Firebase and React Query configuration
+    ├── contexts/        # React contexts for state management
+    ├── hooks/           # Custom React hooks
+    ├── lib/             # Utility functions
+    ├── pages/           # Top-level page components
+    ├── services/        # Services for interacting with the backend
+    ├── types/           # TypeScript type definitions
+    └── utils/           # Miscellaneous utility functions
 ```
-
-2) 'Change directory' to the project's frontend files.
-
-```
-cd h4i-internal-application-tool/frontend/
-```
-
-3) Run the following command to install project dependencies.
-
-```
-npm install
-```
-
-4) Still within the frontend directory, run:
-
-```
-npm run dev
-```
-then navigate to the generated URL
-
-![alt text](readme-localhost.png)
-
-![alt text](readme-landingscreen.png)
 
 ### Backend
 
-> [!Tip]
-> For Firebase emulator setup, see the backend [README](backend/README.md)
+```
+backend/
+└── functions/
+    ├── src/
+    │   ├── middleware/  # Express middleware
+    │   ├── models/      # Data models
+    │   ├── routes/      # API routes
+    │   ├── types/       # TypeScript type definitions
+    │   └── utils/       # Utility functions
+    └── lib/             # Compiled JavaScript code
+```
+
+## 🚀 Building and Running Locally
+
+### Frontend
+
+1.  Navigate to the `frontend` directory:
+    ```bash
+    cd frontend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Run the development server:
+    ```bash
+    npm run dev
+    ```
+
+For more information on fetching data from the backend, see the [Data Fetching Guide](./DataFetching.md).
+
+### Backend
+
+For instructions on setting up the Firebase emulators, see the [Firebase Emulator Setup Guide](./backend/README.md).
+
+1.  Navigate to the `backend/functions` directory:
+    ```bash
+    cd backend/functions
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Build the project:
+    ```bash
+    npm run build
+    ```
+4.  Run the Firebase emulators:
+    ```bash
+    npm run serve
+    ```
+## 🖼️ Screenshots
+<img width="1913" height="1014" alt="Screenshot From 2025-07-05 23-40-49" src="https://github.com/user-attachments/assets/e5c5c1d7-3b83-4b98-b67d-5e2fefe64bd3" />
+
+<img width="1920" height="1012" alt="Screenshot From 2025-07-05 20-14-49" src="https://github.com/user-attachments/assets/5a77712f-4936-4a8c-95d8-0cb7e3a0e33a" />
+
+<img width="1920" height="1017" alt="Screenshot From 2025-06-29 21-31-37" src="https://github.com/user-attachments/assets/57dbd6c1-2bbb-4cc0-913c-ea0a6eadd7ed" />
+
+<img width="1920" height="1013" alt="Screenshot From 2025-05-20 21-41-19" src="https://github.com/user-attachments/assets/ae3580eb-3b5b-495c-9d4e-5e2ecea3121d" />
+
+## 📞 Team Contacts
+
+| Name | Role | Contact |
+|------|------|---------|
+| **Ramy Kaddouri** | Tech Lead | [Slack](https://hack4impact.slack.com/) |
+| **Lance Uymatiao** | Tech Lead | [Slack](https://hack4impact.slack.com/) |
