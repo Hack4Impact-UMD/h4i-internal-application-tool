@@ -21,7 +21,10 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { getApplicantById } from "@/services/applicantService";
-import { getReviewDataForResponseRole } from "@/services/reviewDataService";
+import {
+  getReviewDataForAssignment,
+  getReviewDataForResponseRole,
+} from "@/services/reviewDataService";
 import { calculateReviewScore } from "@/utils/scores";
 import { getUserById } from "@/services/userService";
 import {
@@ -31,7 +34,12 @@ import {
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  EllipsisVertical,
+} from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -42,7 +50,7 @@ import {
 } from "../ui/command";
 import { useReviewersForRole } from "@/hooks/useReviewers";
 import Spinner from "../Spinner";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../error/ErrorToast";
 import ApplicantRolePill from "../role-pill/RolePill";
@@ -51,6 +59,12 @@ import {
   updateApplicationStatus,
 } from "@/services/statusService";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -270,6 +284,92 @@ function ReviewerSelect({
     </div>
   );
 }
+function useRows(
+  pageIndex: number,
+  applications: ApplicationResponse[],
+  rowCount: number,
+  formId: string,
+) {
+  return useQuery({
+    queryKey: ["all-apps-rows", pageIndex],
+    placeholderData: (prev) => prev,
+    queryFn: async () => {
+      return Promise.all(
+        applications
+          .slice(
+            pageIndex * rowCount,
+            Math.min(applications.length, (pageIndex + 1) * rowCount),
+          )
+          .map(async (app, index) => {
+            const user = await getApplicantById(app.userId);
+            const reviews = await getReviewDataForResponseRole(
+              formId,
+              app.id,
+              app.rolesApplied[0],
+            );
+            const assignments = (
+              await getReviewAssignmentsForApplication(app.id)
+            ).filter((a) => a.forRole === app.rolesApplied[0]);
+
+            const completedReviews = reviews.filter((r) => r.submitted).length;
+            const avgScore =
+              completedReviews == 0
+                ? 0
+                : (
+                  await Promise.all(
+                    reviews
+                      .filter((r) => r.submitted)
+                      .map(async (r) => await calculateReviewScore(r)),
+                  )
+                ).reduce((acc, v) => acc + v, 0) / completedReviews;
+            let status: InternalApplicationStatus | undefined;
+
+            try {
+              status = await getApplicationStatusForResponseRole(
+                app.id,
+                app.rolesApplied[0],
+              );
+            } catch (error) {
+              console.log(
+                `Failed to fetch application status for application ${app.id}-${app.rolesApplied[0]}: ${error}`,
+              );
+              status = undefined;
+            }
+            const row: ApplicationRow = {
+              index: 1 + pageIndex * rowCount + index,
+              applicant: {
+                id: user.id,
+                name: `${user.firstName} ${user.lastName}`,
+              },
+              responseId: app.id,
+              role: app.rolesApplied[0], //These have already been expanded into their separate roles
+              reviews: {
+                assigned: assignments.length,
+                completed: reviews.filter((r) => r.submitted).length,
+                assignments: assignments,
+                averageScore: avgScore,
+                reviewData: reviews,
+              },
+              reviewers: {
+                assigned: await Promise.all(
+                  assignments.map(
+                    async (assignment) =>
+                      (await getUserById(
+                        assignment.reviewerId,
+                      )) as ReviewerUserProfile,
+                  ),
+                ),
+              },
+              assignments: assignments,
+              status: status,
+            };
+
+            return row;
+          }),
+      );
+    },
+  });
+}
 
 export default function SuperReviewerApplicationsTable({
   applications,
@@ -281,90 +381,7 @@ export default function SuperReviewerApplicationsTable({
   // const navigate = useNavigate();
   // const { user } = useAuth();
   const queryClient = useQueryClient();
-
-  function useRows(pageIndex: number) {
-    return useQuery({
-      queryKey: ["all-apps-rows", pageIndex],
-      placeholderData: (prev) => prev,
-      queryFn: async () => {
-        return Promise.all(
-          applications
-            .slice(
-              pageIndex * rowCount,
-              Math.min(applications.length, (pageIndex + 1) * rowCount),
-            )
-            .map(async (app, index) => {
-              const user = await getApplicantById(app.userId);
-              const reviews = await getReviewDataForResponseRole(
-                formId,
-                app.id,
-                app.rolesApplied[0],
-              );
-              const assignments = (
-                await getReviewAssignmentsForApplication(app.id)
-              ).filter((a) => a.forRole === app.rolesApplied[0]);
-
-              const completedReviews = reviews.filter(
-                (r) => r.submitted,
-              ).length;
-              const avgScore =
-                completedReviews == 0
-                  ? 0
-                  : (
-                      await Promise.all(
-                        reviews
-                          .filter((r) => r.submitted)
-                          .map(async (r) => await calculateReviewScore(r)),
-                      )
-                    ).reduce((acc, v) => acc + v, 0) / completedReviews;
-              let status: InternalApplicationStatus | undefined;
-
-              try {
-                status = await getApplicationStatusForResponseRole(
-                  app.id,
-                  app.rolesApplied[0],
-                );
-              } catch (error) {
-                console.log(
-                  `Failed to fetch application status for application ${app.id}-${app.rolesApplied[0]}: ${error}`,
-                );
-                status = undefined;
-              }
-              const row: ApplicationRow = {
-                index: 1 + pageIndex * rowCount + index,
-                applicant: {
-                  id: user.id,
-                  name: `${user.firstName} ${user.lastName}`,
-                },
-                responseId: app.id,
-                role: app.rolesApplied[0], //These have already been expanded into their separate roles
-                reviews: {
-                  assigned: assignments.length,
-                  completed: reviews.filter((r) => r.submitted).length,
-                  assignments: assignments,
-                  averageScore: avgScore,
-                  reviewData: reviews,
-                },
-                reviewers: {
-                  assigned: await Promise.all(
-                    assignments.map(
-                      async (assignment) =>
-                        (await getUserById(
-                          assignment.reviewerId,
-                        )) as ReviewerUserProfile,
-                    ),
-                  ),
-                },
-                assignments: assignments,
-                status: status,
-              };
-
-              return row;
-            }),
-        );
-      },
-    });
-  }
+  const navigate = useNavigate();
 
   const addReviewerMutation = useMutation({
     mutationFn: async ({
@@ -401,18 +418,24 @@ export default function SuperReviewerApplicationsTable({
 
   const removeReviewerMutation = useMutation({
     mutationFn: async ({
-      assignmentId,
+      assignment,
     }: {
-      assignmentId: string;
+      assignment: AppReviewAssignment;
       pageIndex: number;
     }) => {
-      return await removeReviewAssignment(assignmentId);
+      if ((await getReviewDataForAssignment(assignment)) !== undefined)
+        throw new Error(
+          "The reviewer has already started their review for this assignment. It is not possible to delete it.",
+        );
+      return await removeReviewAssignment(assignment.id);
     },
     onSuccess: () => {
       throwSuccessToast("Successfully removed reviewer assignment!");
     },
     onError: (error) => {
-      throwErrorToast("Failed to remove reviewer assignment!");
+      throwErrorToast(
+        `Failed to remove reviewer assignment! (${error.message})`,
+      );
       console.log(error);
     },
     onSettled: (_data, _err, variables) => {
@@ -591,7 +614,7 @@ export default function SuperReviewerApplicationsTable({
                 onDelete={(_reviewer, assignment) =>
                   removeReviewerMutation.mutate({
                     pageIndex: pagination.pageIndex,
-                    assignmentId: assignment.id,
+                    assignment: assignment,
                   })
                 }
                 responseId={row.original.responseId}
@@ -672,8 +695,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />
@@ -688,11 +711,44 @@ export default function SuperReviewerApplicationsTable({
             );
           },
         }),
+        columnHelper.display({
+          id: "actions",
+          header: () => (
+            <div className="flex items-center justify-center">
+              <span className="text-center mx-auto">ACTIONS</span>
+            </div>
+          ),
+          cell: ({ row }) => (
+            <div className="flex items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost">
+                    <EllipsisVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate("/admin/dor/reviews/" + row.original.responseId);
+                    }}
+                  >
+                    View Reviews
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ),
+        }),
       ] as ColumnDef<ApplicationRow>[],
     [columnHelper],
   );
 
-  const { data: rows, isPending, error } = useRows(pagination.pageIndex);
+  const {
+    data: rows,
+    isPending,
+    error,
+  } = useRows(pagination.pageIndex, applications, rowCount, formId);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
@@ -742,7 +798,7 @@ export default function SuperReviewerApplicationsTable({
           <Button
             variant="outline"
             disabled={
-              (pagination.pageIndex + 1) * rowCount >= applications.length - 1
+              (pagination.pageIndex + 1) * rowCount >= applications.length
             }
             onClick={() =>
               setPagination({

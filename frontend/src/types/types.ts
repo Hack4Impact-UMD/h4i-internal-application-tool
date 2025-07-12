@@ -113,10 +113,10 @@ export interface ApplicationForm {
   sections: ApplicationSection[];
   decisionReleased: boolean;
   scoreWeights: {
-    [role in ApplicantRole]: { 
-      [score in string]: number // weight for role + score category, between 0-1
-    } 
-  }
+    [role in ApplicantRole]: {
+      [score in string]: number; // weight for role + score category, between 0-1
+    };
+  };
 }
 
 // One of these per review. Reviews tie together an application, role, and reviewer.

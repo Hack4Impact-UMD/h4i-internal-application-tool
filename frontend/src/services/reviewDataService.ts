@@ -66,7 +66,7 @@ export async function getReviewDataForApplicantRole(
   return result.docs.map((doc) => doc.data() as ApplicationReviewData);
 }
 
-export async function getReviewDataForAssignemnt(
+export async function getReviewDataForAssignment(
   assignment: AppReviewAssignment,
 ) {
   const reviewData = collection(db, REVIEW_DATA_COLLECTION);

@@ -1,9 +1,4 @@
-import {
-  ApplicantRole,
-  ApplicationReviewData,
-  AppReviewAssignment,
-  ReviewStatus,
-} from "@/types/types";
+import { ApplicationReviewData, AppReviewAssignment } from "@/types/types";
 import {
   ColumnDef,
   createColumnHelper,
@@ -12,16 +7,14 @@ import {
 import { useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
-import { createReviewData } from "@/services/reviewDataService";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { throwErrorToast } from "@/components/error/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
-import { AssignmentRow, useRows } from "./useRows";
+import { AssignedAppRow, useRows } from "./useRows";
+import { throwErrorToast } from "@/components/error/ErrorToast";
 
-type ReviewerApplicationsTableProps = {
+type AssignedReviewsTableProps = {
   assignments: AppReviewAssignment[];
   search: string;
   rowCount?: number;
@@ -29,22 +22,21 @@ type ReviewerApplicationsTableProps = {
   formId: string;
 };
 
-export default function ReviewerApplicationsTable({
+export default function AssignedReviewsTable({
   assignments,
   search,
   formId,
   rowCount = 20,
   statusFilter = "all",
-}: ReviewerApplicationsTableProps) {
+}: AssignedReviewsTableProps) {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: rowCount,
   });
 
-  const columnHelper = createColumnHelper<AssignmentRow>();
+  const columnHelper = createColumnHelper<AssignedAppRow>();
   const cols = useMemo(
     () =>
       [
@@ -74,8 +66,8 @@ export default function ReviewerApplicationsTable({
           },
           cell: ({ getValue }) => getValue(),
         }),
-        columnHelper.accessor("applicant.name", {
-          id: "applicant-name",
+        columnHelper.accessor("reviewerName", {
+          id: "reviewer",
           header: ({ column }) => {
             return (
               <Button
@@ -86,7 +78,7 @@ export default function ReviewerApplicationsTable({
                 }
               >
                 <span className="flex items-center flex-row gap-1">
-                  APPLICANT
+                  REVIEWER
                   {column.getIsSorted() === false ? (
                     <ArrowUpDown />
                   ) : column.getIsSorted() === "desc" ? (
@@ -149,10 +141,9 @@ export default function ReviewerApplicationsTable({
               </Button>
             );
           },
-          cell: ({ getValue, row }) => {
-            const review = row.original.review;
+          cell: ({ getValue }) => {
             const score = getValue();
-            if (!review?.submitted) {
+            if (!score) {
               return "INC";
             } else {
               return score.value && score.outOf
@@ -188,41 +179,20 @@ export default function ReviewerApplicationsTable({
           cell: ({ getValue, row }) => {
             const review = getValue();
             const rowData = row.original;
-            if (review) {
+            if (review?.submitted) {
               return (
                 <Button
-                  disabled={rowData.review?.submitted}
-                  onClick={() =>
-                    handleReview(
-                      review,
-                      rowData.applicant.id,
-                      rowData.responseId,
-                      rowData.role,
-                    )
-                  }
+                  onClick={() => handleReview(review, rowData.responseId)}
                   variant="outline"
                   className="border-2 rounded-full"
                 >
-                  Edit
+                  View Review
                 </Button>
               );
+            } else if (review) {
+              return "Review In Progress";
             } else {
-              return (
-                <Button
-                  onClick={() =>
-                    handleReview(
-                      review,
-                      rowData.applicant.id,
-                      rowData.responseId,
-                      rowData.role,
-                    )
-                  }
-                  variant="outline"
-                  className="border-2 rounded-full"
-                >
-                  Review
-                </Button>
-              );
+              return "Not Reviewed";
             }
           },
           filterFn: (row, columnId, filterValue) => {
@@ -231,50 +201,29 @@ export default function ReviewerApplicationsTable({
               | undefined;
 
             if (filterValue == "all") return true;
-            else if (filterValue == "pending") return !value;
-            else if (filterValue == "reviewed") return !!value;
+            else if (filterValue == "pending")
+              return !(value?.submitted ?? false);
+            else if (filterValue == "reviewed")
+              return value?.submitted ?? false;
             else return true;
           },
         }),
-      ] as ColumnDef<AssignmentRow>[],
+      ] as ColumnDef<AssignedAppRow>[],
     [columnHelper],
   );
 
   async function handleReview(
     appReviewData: ApplicationReviewData | undefined,
-    applicantId: string,
     responseId: string,
-    role: ApplicantRole,
   ) {
     const form = await getApplicationForm(formId);
     if (appReviewData) {
       // there's an existing review, edit it
-      if (appReviewData.submitted) {
-        throwErrorToast("This review has already been submitted!");
-      } else {
-        navigate(
-          `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
-        );
-      }
-    } else {
-      const review = {
-        applicantScores: {},
-        applicantId: applicantId,
-        applicationFormId: formId,
-        applicationResponseId: responseId,
-        forRole: role,
-        reviewStatus: ReviewStatus.NotReviewed,
-        reviewerId: user!.id,
-        reviewerNotes: {},
-        submitted: false,
-      };
-
-      console.log(review);
-
-      const newReview = await createReviewData(review);
       navigate(
-        `/admin/review/f/${newReview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newReview.id}`,
+        `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}?edit=false`,
       );
+    } else {
+      throwErrorToast("Review data does not exist!");
     }
   }
 
