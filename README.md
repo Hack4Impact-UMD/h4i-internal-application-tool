@@ -1,3 +1,5 @@
+<p align="center"><img src="frontend/public/h4i-logo.png" alt="Hack4Impact Logo" width="200"/></p>
+
 # Hack4Impact-UMD Application Portal
 
 This repository contains the source code for the Hack4Impact-UMD application portal.
