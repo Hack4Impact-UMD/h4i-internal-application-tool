@@ -1,4 +1,4 @@
-import { getReviewDataForAssignemnt } from "@/services/reviewDataService";
+import { getReviewDataForAssignment } from "@/services/reviewDataService";
 import { getUserById } from "@/services/userService";
 import {
   ApplicantRole,
@@ -46,7 +46,7 @@ export function useRows(
             if (!reviewer || reviewer.role !== PermissionRole.Reviewer)
               throw new Error("Invalid reviewer!");
 
-            const review = await getReviewDataForAssignemnt(assignment);
+            const review = await getReviewDataForAssignment(assignment);
 
             const row: AssignedAppRow = {
               reviewer: reviewer,

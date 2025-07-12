@@ -316,12 +316,12 @@ function useRows(
               completedReviews == 0
                 ? 0
                 : (
-                  await Promise.all(
-                    reviews
-                      .filter((r) => r.submitted)
-                      .map(async (r) => await calculateReviewScore(r)),
-                  )
-                ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                    await Promise.all(
+                      reviews
+                        .filter((r) => r.submitted)
+                        .map(async (r) => await calculateReviewScore(r)),
+                    )
+                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
             let status: InternalApplicationStatus | undefined;
 
             try {
@@ -695,8 +695,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                        status: status,
-                      })
+                          status: status,
+                        })
                       : throwErrorToast("No status available!")
                   }
                 />

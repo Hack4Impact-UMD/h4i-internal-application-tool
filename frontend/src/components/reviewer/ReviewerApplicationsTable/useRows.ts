@@ -1,5 +1,5 @@
 import { getApplicantById } from "@/services/applicantService";
-import { getReviewDataForAssignemnt } from "@/services/reviewDataService";
+import { getReviewDataForAssignment } from "@/services/reviewDataService";
 import {
   ApplicantRole,
   ApplicationReviewData,
@@ -40,7 +40,7 @@ export function useRows(
           )
           .map(async (assignment, index) => {
             const user = await getApplicantById(assignment.applicantId);
-            const review = await getReviewDataForAssignemnt(assignment);
+            const review = await getReviewDataForAssignment(assignment);
 
             const row: AssignmentRow = {
               index: 1 + pageIndex * rowCount + index,
