@@ -28,6 +28,7 @@ import SearchProvider from "./components/providers/SearchProvider";
 import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerApplicationsDashboard";
 import NotFoundPage from "./pages/NotFound";
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
+import AppRevisitPage from "./pages/AppRevisitPage";
 
 function App() {
   return (
@@ -68,6 +69,14 @@ function App() {
                 element={
                   <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                     <StatusPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path ="revisit/:formId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                    <AppRevisitPage />
                   </RequireAuth>
                 }
               />

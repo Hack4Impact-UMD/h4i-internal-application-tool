@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { getApplicationResponseAndSemester } from "@/services/applicationResponseAndSemesterService.ts";
 import { getApplicationStatus } from "@/services/statusService.ts";
+import { Link } from "react-router-dom";
 
 const timelineItems = [
   { label: "Not Reviewed", id: ReviewStatus.NotReviewed },
@@ -135,7 +136,12 @@ function ApplicationResponseRow({
   return (
     <tr className="border-t border-gray-300">
       <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
-        {form.semester + " Application"}
+        <Link
+          className="text-blue-500 cursor-pointer"
+          to={"/apply/revisit/" + response.applicationFormId}
+        >
+          {form.semester + " Application"}
+        </Link>
         <ApplicantRolePill role={role} />
       </td>
       <td className="text-center">
@@ -146,12 +152,13 @@ function ApplicationResponseRow({
       <td className="text-center">{formatDate(response.dateSubmitted)}</td>
       <td className="text-center">
         {decided ? (
-          <span
+          <Link
             className="text-blue-500 cursor-pointer"
-            onClick={() => window.open("/status/decision", "_self")}
+            to={"/apply/revisit/" + "/apply/status/decision"}
           >
+            {form.semester + " Application"}
             View Decision
-          </span>
+          </Link>
         ) : (
           "-"
         )}
