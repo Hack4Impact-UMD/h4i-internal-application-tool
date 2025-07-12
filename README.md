@@ -4,6 +4,27 @@
 
 This repository contains the source code for the Hack4Impact-UMD application portal. The project includes both the frontend for applicants to submit and view the status of their applications and tools designed to make reviewing applications more efficient for club members.
 
+## ✨ Tech Stack
+
+### Frontend
+
+- **Framework:** [React](https://reactjs.org/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** [shadcn/ui](https://ui.shadcn.com/), [Radix UI](https://www.radix-ui.com/)
+- **Data Fetching:** [TanStack Query](https://tanstack.com/query/latest)
+- **Routing:** [React Router](https://reactrouter.com/)
+- **Schema Validation:** [Zod](https://zod.dev/)
+
+### Backend
+
+- **Runtime:** [Node.js](https://nodejs.org/)
+- **Framework:** [Express](https://expressjs.com/)
+- **Platform:** [Firebase](https://firebase.google.com/) (Cloud Functions, Firestore, Authentication, Storage)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Schema Validation:** [Zod](https://zod.dev/)
+
 ## 📂 Directory Structure
 
 ### Frontend
