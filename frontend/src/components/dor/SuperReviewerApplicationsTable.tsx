@@ -798,7 +798,7 @@ export default function SuperReviewerApplicationsTable({
           <Button
             variant="outline"
             disabled={
-              (pagination.pageIndex + 1) * rowCount >= applications.length - 1
+              (pagination.pageIndex + 1) * rowCount >= applications.length
             }
             onClick={() =>
               setPagination({

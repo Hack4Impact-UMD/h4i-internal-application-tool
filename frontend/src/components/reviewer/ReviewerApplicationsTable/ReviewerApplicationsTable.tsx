@@ -332,7 +332,7 @@ export default function ReviewerApplicationsTable({
           <Button
             variant="outline"
             disabled={
-              (pagination.pageIndex + 1) * rowCount >= assignments.length - 1
+              (pagination.pageIndex + 1) * rowCount >= assignments.length
             }
             onClick={() =>
               setPagination({
