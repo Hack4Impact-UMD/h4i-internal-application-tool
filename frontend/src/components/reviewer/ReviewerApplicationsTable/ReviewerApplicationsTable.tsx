@@ -27,6 +27,7 @@ type ReviewerApplicationsTableProps = {
   rowCount?: number;
   statusFilter: "all" | "reviewed" | "pending";
   formId: string;
+  allowNewReviews?: boolean,
 };
 
 export default function ReviewerApplicationsTable({
@@ -35,6 +36,7 @@ export default function ReviewerApplicationsTable({
   formId,
   rowCount = 20,
   statusFilter = "all",
+  allowNewReviews = true,
 }: ReviewerApplicationsTableProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -208,7 +210,7 @@ export default function ReviewerApplicationsTable({
               );
             } else {
               return (
-                <Button
+                allowNewReviews ? <Button
                   onClick={() =>
                     handleReview(
                       review,
@@ -221,7 +223,7 @@ export default function ReviewerApplicationsTable({
                   className="border-2 rounded-full"
                 >
                   Review
-                </Button>
+                </Button> : "Not Reviewed"
               );
             }
           },

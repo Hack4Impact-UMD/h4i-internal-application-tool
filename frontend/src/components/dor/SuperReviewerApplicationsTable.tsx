@@ -21,7 +21,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { getApplicantById } from "@/services/applicantService";
-import { getReviewDataForResponseRole } from "@/services/reviewDataService";
+import { getReviewDataForAssignemnt, getReviewDataForResponseRole } from "@/services/reviewDataService";
 import { calculateReviewScore } from "@/utils/scores";
 import { getUserById } from "@/services/userService";
 import {
@@ -42,7 +42,7 @@ import {
 } from "../ui/command";
 import { useReviewersForRole } from "@/hooks/useReviewers";
 import Spinner from "../Spinner";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../error/ErrorToast";
 import ApplicantRolePill from "../role-pill/RolePill";
@@ -367,6 +367,7 @@ export default function SuperReviewerApplicationsTable({
   // const navigate = useNavigate();
   // const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const addReviewerMutation = useMutation({
     mutationFn: async ({
@@ -403,18 +404,19 @@ export default function SuperReviewerApplicationsTable({
 
   const removeReviewerMutation = useMutation({
     mutationFn: async ({
-      assignmentId,
+      assignment,
     }: {
-      assignmentId: string;
+      assignment: AppReviewAssignment;
       pageIndex: number;
     }) => {
-      return await removeReviewAssignment(assignmentId);
+      if (await getReviewDataForAssignemnt(assignment) !== undefined) throw new Error("The reviewer has already started their review for this assignemnt. It is not possible to delete it.")
+      return await removeReviewAssignment(assignment.id);
     },
     onSuccess: () => {
       throwSuccessToast("Successfully removed reviewer assignment!");
     },
     onError: (error) => {
-      throwErrorToast("Failed to remove reviewer assignment!");
+      throwErrorToast(`Failed to remove reviewer assignment! (${error.message})`);
       console.log(error);
     },
     onSettled: (_data, _err, variables) => {
@@ -593,7 +595,7 @@ export default function SuperReviewerApplicationsTable({
                 onDelete={(_reviewer, assignment) =>
                   removeReviewerMutation.mutate({
                     pageIndex: pagination.pageIndex,
-                    assignmentId: assignment.id,
+                    assignment: assignment,
                   })
                 }
                 responseId={row.original.responseId}
@@ -695,7 +697,7 @@ export default function SuperReviewerApplicationsTable({
           header: () => <div className="flex items-center justify-center">
             <span className="text-center mx-auto">ACTIONS</span>
           </div>,
-          cell: () => <div className="flex items-center justify-center">
+          cell: ({ row }) => <div className="flex items-center justify-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
@@ -706,7 +708,7 @@ export default function SuperReviewerApplicationsTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() => {
-
+                    navigate("/admin/dor/reviews/" + row.original.responseId)
                   }}
                 >
                   View Reviews

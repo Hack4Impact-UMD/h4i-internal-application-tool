@@ -1,4 +1,4 @@
-import { getReviewAssignments } from "@/services/reviewAssignmentService";
+import { getReviewAssignments, getReviewAssignmentsForApplication } from "@/services/reviewAssignmentService";
 import { AppReviewAssignment } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
@@ -18,4 +18,12 @@ export function useMyReviewAssignments(formId: string) {
     enabled: user ? true : false,
     queryFn: () => getReviewAssignments(formId, user!.id),
   });
+}
+
+export function useReviewAssignmentsForResponse(responseId: string) {
+  return useQuery<AppReviewAssignment[]>({
+    queryKey: ["assignments", "response", responseId],
+    enabled: !!responseId,
+    queryFn: () => getReviewAssignmentsForApplication(responseId)
+  })
 }
