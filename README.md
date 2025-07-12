@@ -52,7 +52,11 @@ backend/
     npm run dev
     ```
 
+For more information on fetching data from the backend, see the [Data Fetching Guide](./DataFetching.md).
+
 ### Backend
+
+For instructions on setting up the Firebase emulators, see the [Firebase Emulator Setup Guide](./backend/README.md).
 
 1.  Navigate to the `backend/functions` directory:
     ```bash
