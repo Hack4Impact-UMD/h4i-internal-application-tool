@@ -4,6 +4,7 @@ import {
   ApplicantRole,
   ApplicationReviewData,
   AppReviewAssignment,
+  PermissionRole,
   ReviewerUserProfile,
 } from "@/types/types";
 import { calculateReviewScore } from "@/utils/scores";
@@ -40,9 +41,11 @@ export function useRows(
             Math.min(assignments.length, (pageIndex + 1) * rowCount),
           )
           .map(async (assignment, index) => {
-            const reviewer = (await getUserById(
-              assignment.reviewerId,
-            )) as ReviewerUserProfile;
+            const reviewer = await getUserById(assignment.reviewerId);
+
+            if (!reviewer || reviewer.role !== PermissionRole.Reviewer)
+              throw new Error("Invalid reviewer!");
+
             const review = await getReviewDataForAssignemnt(assignment);
 
             const row: AssignedAppRow = {

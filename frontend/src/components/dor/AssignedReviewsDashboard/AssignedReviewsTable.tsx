@@ -8,13 +8,13 @@ import { useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { throwErrorToast } from "@/components/error/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { AssignedAppRow, useRows } from "./useRows";
+import { throwErrorToast } from "@/components/error/ErrorToast";
 
-type ReviewerApplicationsTableProps = {
+type AssignedReviewsTableProps = {
   assignments: AppReviewAssignment[];
   search: string;
   rowCount?: number;
@@ -28,7 +28,7 @@ export default function AssignedReviewsTable({
   formId,
   rowCount = 20,
   statusFilter = "all",
-}: ReviewerApplicationsTableProps) {
+}: AssignedReviewsTableProps) {
   const navigate = useNavigate();
 
   const [pagination, setPagination] = useState({
@@ -222,6 +222,8 @@ export default function AssignedReviewsTable({
       navigate(
         `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}?edit=false`,
       );
+    } else {
+      throwErrorToast("Review data does not exist!");
     }
   }
 

@@ -22,7 +22,7 @@ import {
 } from "@tanstack/react-query";
 import { getApplicantById } from "@/services/applicantService";
 import {
-  getReviewDataForAssignemnt,
+  getReviewDataForAssignment,
   getReviewDataForResponseRole,
 } from "@/services/reviewDataService";
 import { calculateReviewScore } from "@/utils/scores";
@@ -39,7 +39,6 @@ import {
   ArrowUp,
   ArrowUpDown,
   EllipsisVertical,
-  Eye,
 } from "lucide-react";
 import {
   Command,
@@ -424,7 +423,7 @@ export default function SuperReviewerApplicationsTable({
       assignment: AppReviewAssignment;
       pageIndex: number;
     }) => {
-      if ((await getReviewDataForAssignemnt(assignment)) !== undefined)
+      if ((await getReviewDataForAssignment(assignment)) !== undefined)
         throw new Error(
           "The reviewer has already started their review for this assignemnt. It is not possible to delete it.",
         );

@@ -153,7 +153,7 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     } catch (err) {
       logger.error("Validation error: ")
       logger.error(err)
-      res.status(500).send();
+      return res.status(500).send();
     }
 
     // Proceed with updating submission status
