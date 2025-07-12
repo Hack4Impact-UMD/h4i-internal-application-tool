@@ -4,7 +4,7 @@ import Loading from "../components/Loading";
 import Section from "../components/form/Section";
 import { Button } from "../components/ui/button";
 import { ApplicationStatus } from "@/types/types";
-import NotFoundPage from "./NotFound";
+import ErrorPage from "./ErrorPage";
 
 export default function AppRevisitPage() {
   const { formId } = useParams();
@@ -16,7 +16,13 @@ export default function AppRevisitPage() {
 
   const { form, response } = data;
 
-  if (response.status == ApplicationStatus.InProgress) return <NotFoundPage></NotFoundPage>
+  if (response.status == ApplicationStatus.InProgress) {
+    return (
+      <ErrorPage 
+        errorCode={403}
+        errorDescription="You are trying to revisit an application that is still in-progress."
+      />
+  )};
 
   return (
     <div className="w-full flex flex-col items-center p-4 pt-8">
