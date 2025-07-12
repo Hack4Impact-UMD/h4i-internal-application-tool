@@ -61,14 +61,10 @@ export default function AppSubmitPage() {
         {form.sections
           .filter((s) => {
             if (s.forRoles) {
-              if (s.forRoles) {
-                return (
-                  s.forRoles.filter((r) => response.rolesApplied.includes(r))
-                    .length > 0
-                );
-              } else {
-                return true;
-              }
+              return (
+                s.forRoles.filter((r) => response.rolesApplied.includes(r))
+                  .length > 0
+              );
             } else {
               return true;
             }
