@@ -21,16 +21,16 @@ interface SectionProps {
   disabled?: boolean;
   validationErrors?: ValidationError[];
   onChangeResponse?: (questionId: string, value: string | string[]) => void;
-  responseId: string
+  responseId: string;
 }
 
 const Section: React.FC<SectionProps> = ({
   section,
   responses,
-  onChangeResponse = () => { },
+  onChangeResponse = () => {},
   validationErrors,
   disabled = false,
-  responseId
+  responseId,
 }) => {
   const { setSelectedRoles } = useForm();
   return (

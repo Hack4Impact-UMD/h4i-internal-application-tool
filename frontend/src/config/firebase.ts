@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
-import { connectStorageEmulator, getStorage } from "firebase/storage"
+import { connectStorageEmulator, getStorage } from "firebase/storage";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyB7FYsjDJiszoQaUnFADEZxPPTQJ2px8W0",
@@ -27,7 +27,7 @@ const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
-export const storage = getStorage(app)
+export const storage = getStorage(app);
 
 if (import.meta.env.MODE == "development") {
   console.log(`CONNECTING TO LOCAL FIREBASE EMULATORS!`);

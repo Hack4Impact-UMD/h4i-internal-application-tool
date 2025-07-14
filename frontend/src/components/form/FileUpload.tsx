@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { DownloadIcon } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getFileMetadata, getFileURL, uploadFile } from "@/services/storageService";
+import {
+  getFileMetadata,
+  getFileURL,
+  uploadFile,
+} from "@/services/storageService";
 import { throwErrorToast } from "../error/ErrorToast";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { Progress } from "../ui/progress";
@@ -19,77 +23,102 @@ type FileUploadProps = {
   value: string;
   onChange: (fileName: string) => void;
   secondaryText?: string;
-  fileId: string,
-  responseId: string
+  fileId: string;
+  responseId: string;
 };
 
 function useStorageFileMetadata(path: string) {
   return useQuery({
-    queryKey: ['storage', 'file', 'path', path],
+    queryKey: ["storage", "file", "path", path],
     enabled: !!path,
     queryFn: async () => {
-      const meta = await getFileMetadata(path)
-      const url = await getFileURL(path)
+      const meta = await getFileMetadata(path);
+      const url = await getFileURL(path);
       return {
         ...meta,
-        downloadUrl: url
-      }
-    }
-  })
+        downloadUrl: url,
+      };
+    },
+  });
 }
 
 export default function FileUpload(props: FileUploadProps) {
-  const { data: fileMetadata, isPending } = useStorageFileMetadata(props.value)
-  const [uploadProgess, setUploadProgess] = useState(0)
-  const { user } = useAuth()
+  const { data: fileMetadata, isPending } = useStorageFileMetadata(props.value);
+  const [uploadProgess, setUploadProgess] = useState(0);
+  const { user } = useAuth();
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const fileUploadMutation = useMutation({
-    mutationFn: async ({ file, onProgress }: {
-      file: File,
-      onProgress: (progress: number) => void
+    mutationFn: async ({
+      file,
+      onProgress,
+    }: {
+      file: File;
+      onProgress: (progress: number) => void;
     }) => {
-      return await uploadFile(file, props.fileId + "/" + props.responseId, onProgress, {
-        customMetadata: {
-          name: file.name,
-          ownerId: user!.id
-        }
-      })
+      return await uploadFile(
+        file,
+        props.fileId + "/" + props.responseId,
+        onProgress,
+        {
+          customMetadata: {
+            name: file.name,
+            ownerId: user!.id,
+          },
+        },
+      );
     },
     onMutate: async ({ file }) => {
-      await queryClient.cancelQueries({ queryKey: ['storage', 'file', 'path', props.fileId + "/" + props.responseId] })
+      await queryClient.cancelQueries({
+        queryKey: [
+          "storage",
+          "file",
+          "path",
+          props.fileId + "/" + props.responseId,
+        ],
+      });
 
-      queryClient.setQueryData(['storage', 'file', 'path', props.fileId + "/" + props.responseId], (old: FullMetadata) => ({
-        ...old,
-        customMetadata: {
-          ...old?.customMetadata,
-          name: file.name
-        }
-      }))
+      queryClient.setQueryData(
+        ["storage", "file", "path", props.fileId + "/" + props.responseId],
+        (old: FullMetadata) => ({
+          ...old,
+          customMetadata: {
+            ...old?.customMetadata,
+            name: file.name,
+          },
+        }),
+      );
     },
     onSuccess: (data) => {
-      setUploadProgess(1)
-      props.onChange(data)
-      throwSuccessToast("File upload successfull!")
+      setUploadProgess(1);
+      props.onChange(data);
+      throwSuccessToast("File upload successfull!");
     },
     onError: (err) => {
       console.log(err);
-      throwErrorToast("File upload failed!")
+      throwErrorToast("File upload failed!");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['storage', 'file', 'path', props.fileId + "/" + props.responseId] })
-    }
-  })
+      queryClient.invalidateQueries({
+        queryKey: [
+          "storage",
+          "file",
+          "path",
+          props.fileId + "/" + props.responseId,
+        ],
+      });
+    },
+  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setUploadProgess(0)
+      setUploadProgess(0);
       fileUploadMutation.mutate({
         file: file,
-        onProgress: (prog) => setUploadProgess(prog)
-      })
+        onProgress: (prog) => setUploadProgess(prog),
+      });
     }
   };
 
@@ -118,35 +147,41 @@ export default function FileUpload(props: FileUploadProps) {
           </div>
 
           <div className="flex flex-col text-left w-full justify-between min-h-[70px]">
-            {
-              isPending && props.value !== "" ? <Spinner /> :
-                <>
-                  <span className="font-semibold text-lg text-gray-900">
-                    {props.question}
-                  </span>
-                  {props.secondaryText ? (
-                    <div className="font-light text-xs text-gray-600">
-                      {" "}
-                      {props.secondaryText}{" "}
-                    </div>
-                  ) : (
-                    <div></div>
-                  )}
-                  {fileMetadata && (
-                    <div className="w-full flex flex-row">
-                      <span className="text-lg grow text-blue">{fileMetadata.customMetadata?.name}</span>
-                      <Button asChild>
-                        <Link download to={fileMetadata.downloadUrl} target="_blank">
-                          View
-                          <DownloadIcon />
-                        </Link>
-                      </Button>
-                    </div>
-                  )}
-                </>
-            }
+            {isPending && props.value !== "" ? (
+              <Spinner />
+            ) : (
+              <>
+                <span className="font-semibold text-lg text-gray-900">
+                  {props.question}
+                </span>
+                {props.secondaryText ? (
+                  <div className="font-light text-xs text-gray-600">
+                    {" "}
+                    {props.secondaryText}{" "}
+                  </div>
+                ) : (
+                  <div></div>
+                )}
+                {fileMetadata && (
+                  <div className="w-full flex flex-row">
+                    <span className="text-lg grow text-blue">
+                      {fileMetadata.customMetadata?.name}
+                    </span>
+                    <Button asChild>
+                      <Link
+                        download
+                        to={fileMetadata.downloadUrl}
+                        target="_blank"
+                      >
+                        View
+                        <DownloadIcon />
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
-
 
           <input
             id="resume-upload"
@@ -158,7 +193,9 @@ export default function FileUpload(props: FileUploadProps) {
             onChange={handleFileChange}
           />
         </label>
-        {fileUploadMutation.isPending && <Progress value={uploadProgess * 100} />}
+        {fileUploadMutation.isPending && (
+          <Progress value={uploadProgess * 100} />
+        )}
       </div>
       {props.errorMessage && (
         <p className="text-red-600">{props.errorMessage}</p>
