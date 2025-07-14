@@ -144,6 +144,7 @@ const ApplicationPage: React.FC = () => {
       <div className="flex justify-center items-start">
         <div className="flex flex-col justify-self-center m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white min-w-[600px] max-w-60">
           <Section
+            responseId={response.id}
             section={currentSection}
             responses={responses}
             disabled={true}

@@ -18,18 +18,19 @@ export default function AppRevisitPage() {
 
   if (response.status == ApplicationStatus.InProgress) {
     return (
-      <ErrorPage 
+      <ErrorPage
         errorCode={403}
         errorDescription="You are trying to revisit an application that is still in-progress."
       />
-  )};
+    )
+  };
 
   return (
-    <div className="w-full flex flex-col items-center p-4 pt-8">
+    <div className="w-full flex flex-col bg-muted items-center p-4 pt-8">
       <div className="max-w-3xl w-full flex flex-col gap-2">
-        <div>
+        <div className="mb-2">
           <h1 className="text-3xl font-bold">Your {form.semester} Application</h1>
-          <p>Application responses are final once submitted.</p>
+          <p className="text-muted-foreground">Application responses are final once submitted.</p>
         </div>
         {form.sections
           .filter((s) => {
@@ -44,10 +45,11 @@ export default function AppRevisitPage() {
           })
           .map((s) => (
             <div
-              className="shadow border border-gray-400 rounded-md p-4"
+              className="shadow border border-gray-200 rounded-md p-4"
               key={s.sectionId}
             >
               <Section
+                responseId={response.id}
                 key={s.sectionId}
                 disabled={true}
                 section={s}
@@ -56,7 +58,7 @@ export default function AppRevisitPage() {
                     (r) => r.sectionId == s.sectionId,
                   )!.questions
                 }
-                onChangeResponse={() => {}}
+                onChangeResponse={() => { }}
               />
             </div>
           ))}

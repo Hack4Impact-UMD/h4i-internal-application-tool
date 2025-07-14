@@ -54,9 +54,11 @@ function App() {
               ></Route>
               <Route
                 element={
-                  <RequireAuth requireRoles={[PermissionRole.Applicant]}>
-                    <FormProvider />
-                  </RequireAuth>
+                  <div className="w-full h-full bg-muted">
+                    <RequireAuth requireRoles={[PermissionRole.Applicant]}>
+                      <FormProvider />
+                    </RequireAuth>
+                  </div>
                 }
               >
                 <Route
@@ -73,7 +75,7 @@ function App() {
                 }
               />
               <Route
-                path ="revisit/:formId"
+                path="revisit/:formId"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                     <AppRevisitPage />
@@ -217,13 +219,13 @@ function App() {
           <Route path="/resetpassword" element={<ResetPassCard />}></Route>
 
           {/*WARN:MAKE SURE THIS IS THE LAST ROUTE*/}
-          <Route 
-            path="*" 
+          <Route
+            path="*"
             element={
-              <ErrorPage 
-                errorCode={404} 
+              <ErrorPage
+                errorCode={404}
                 errorDescription="The page you're looking for doesn't exist."
-              /> 
+              />
             }
           />
         </Routes>
