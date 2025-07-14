@@ -57,17 +57,21 @@ export default function FileUpload(props: FileUploadProps) {
       file: File;
       onProgress: (progress: number) => void;
     }) => {
-      return await uploadFile(
-        file,
-        props.fileId + "/" + props.responseId,
-        onProgress,
-        {
-          customMetadata: {
-            name: file.name,
-            ownerId: user!.id,
+      if (user) {
+        return await uploadFile(
+          file,
+          props.fileId + "/" + props.responseId,
+          onProgress,
+          {
+            customMetadata: {
+              name: file.name,
+              ownerId: user.id,
+            },
           },
-        },
-      );
+        );
+      } else {
+        throw new Error("Not authenticated!");
+      }
     },
     onMutate: async ({ file }) => {
       await queryClient.cancelQueries({
@@ -82,7 +86,7 @@ export default function FileUpload(props: FileUploadProps) {
       queryClient.setQueryData(
         ["storage", "file", "path", props.fileId + "/" + props.responseId],
         (old: FullMetadata) => ({
-          ...old,
+          ...(old || {}),
           customMetadata: {
             ...old?.customMetadata,
             name: file.name,
@@ -93,7 +97,7 @@ export default function FileUpload(props: FileUploadProps) {
     onSuccess: (data) => {
       setUploadProgess(1);
       props.onChange(data);
-      throwSuccessToast("File upload successfull!");
+      throwSuccessToast("File upload successful!");
     },
     onError: (err) => {
       console.log(err);
@@ -114,6 +118,12 @@ export default function FileUpload(props: FileUploadProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSizeInBytes) {
+        throwErrorToast("File size exceeds 10MB limit");
+        return;
+      }
+
       setUploadProgess(0);
       fileUploadMutation.mutate({
         file: file,
