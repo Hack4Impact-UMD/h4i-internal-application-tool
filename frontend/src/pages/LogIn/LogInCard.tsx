@@ -5,7 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { validEmail, validPassword } from "../../utils/verification";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { throwErrorToast } from "../../components/error/ErrorToast";
+import { throwErrorToast } from "../../components/toasts/ErrorToast";
 
 export default function LogInCard() {
   const { login } = useAuth();

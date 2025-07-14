@@ -12,7 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { ApplicationResponse, ValidationError } from "../types/types";
 import { AxiosError } from "axios";
 import { useState } from "react";
-import { throwErrorToast } from "../components/error/ErrorToast";
+import { throwErrorToast } from "../components/toasts/ErrorToast";
 
 export default function AppSubmitPage() {
   const { formId } = useParams();

@@ -6,7 +6,7 @@ import {
   getFileURL,
   uploadFile,
 } from "@/services/storageService";
-import { throwErrorToast } from "../error/ErrorToast";
+import { throwErrorToast } from "../toasts/ErrorToast";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { Progress } from "../ui/progress";
 import { useAuth } from "@/hooks/useAuth";

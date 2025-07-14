@@ -11,7 +11,7 @@ import { auth } from "../../config/firebase";
 import { AuthContext } from "../../contexts/authContext";
 import ReviewerRoleSelectDialog from "../reviewer/ReviewerRoleSelectDialog";
 import { useMutation } from "@tanstack/react-query";
-import { throwErrorToast } from "../error/ErrorToast";
+import { throwErrorToast } from "../toasts/ErrorToast";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 
 interface AuthProviderProps {

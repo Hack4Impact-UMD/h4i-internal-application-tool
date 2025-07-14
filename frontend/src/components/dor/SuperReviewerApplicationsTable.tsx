@@ -52,7 +52,7 @@ import { useReviewersForRole } from "@/hooks/useReviewers";
 import Spinner from "../Spinner";
 import { useNavigate, useParams } from "react-router-dom";
 import { throwSuccessToast } from "../toasts/SuccessToast";
-import { throwErrorToast } from "../error/ErrorToast";
+import { throwErrorToast } from "../toasts/ErrorToast";
 import ApplicantRolePill from "../role-pill/RolePill";
 import {
   getApplicationStatusForResponseRole,

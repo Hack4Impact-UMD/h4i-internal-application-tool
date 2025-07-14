@@ -1,5 +1,5 @@
 import UserTable from "@/components/admin/UserTable";
-import { throwErrorToast } from "@/components/error/ErrorToast";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import Loading from "@/components/Loading";
 import { useUsers } from "@/hooks/useUsers";
 import { deleteUsers, updateUserRoles } from "@/services/userService";
