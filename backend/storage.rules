@@ -4,9 +4,38 @@ rules_version = '2';
 // allow write: if firestore.get(
 //    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
+  function isAuthed() {
+    return request.auth != null && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid));
+  }
+  
+  function getCurrentUser() {
+    return firestore.get(/databases/(default)/documents/users/$(request.auth.uid));
+  }
+  
+  function hasID(id) {
+    return request.auth.uid == id;
+  }
+  
+  function isApplicant() {
+    return isAuthed() && getCurrentUser().data.role == "applicant";
+  }
+  
+  function isReviewer() {
+    return isAuthed() && (getCurrentUser().data.role == "reviewer" || isSuperReviewer());
+  }
+
+  function isReviewerOnly() {
+    return isAuthed() && isReviewer() && !isSuperReviewer();
+  }
+  
+  function isSuperReviewer() {
+    return isAuthed() && getCurrentUser().data.role == "super-reviewer";
+  }
   match /b/{bucket}/o {
     match /{allPaths=**} {
-      allow read, write: if false;
+      allow read: if isReviewer() || hasID(resource.metadata.ownerId);
+      allow create: if isAuthed();
+      allow update: if isReviewer() || hasID(resource.metadata.ownerId);
     }
   }
 }

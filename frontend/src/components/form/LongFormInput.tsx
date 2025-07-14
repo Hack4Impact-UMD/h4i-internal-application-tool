@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
+import { Textarea } from "../ui/textarea";
 
 interface LongFormInputProps {
   question: string;
@@ -60,18 +61,15 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
       ) : (
         <></>
       )}
-      <textarea
+      <Textarea
         className={twMerge(
-          "p-2 h-32 w-full rounded-md outline outline-black",
-          disabled
-            ? "bg-[#DADADA] cursor-not-allowed text-[#202020B2]"
-            : "bg-white",
+          "p-2 h-32 w-full rounded-md border-2 disabled:bg-[#DADADA] disabled:cursor-not-allowed disabled:opacity-100",
         )}
         required={isRequired}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-      ></textarea>
+      ></Textarea>
       <p className="text-xs mt-1 font-light">
         {wordCount} word{wordCount != 1 && "s"}
       </p>

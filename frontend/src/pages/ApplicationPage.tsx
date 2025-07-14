@@ -105,6 +105,7 @@ const ApplicationPage: React.FC = () => {
       </div>
       <div className="flex flex-col justify-self-center w-full max-w-3xl m-3 p-4 md:pt-16 md:pb-8 md:px-16 rounded-xl shadow-sm border border-gray-200 bg-white">
         <Section
+          responseId={response.id}
           section={currentSection}
           responses={responses}
           onChangeResponse={handleResponseChange}

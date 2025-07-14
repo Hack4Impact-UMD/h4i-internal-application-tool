@@ -1,4 +1,5 @@
 import { twMerge } from "tailwind-merge";
+import { Input } from "../ui/input";
 
 interface OneLineInputProps {
   question: string;
@@ -26,28 +27,26 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
   return (
     <main
       className={twMerge(
-        "flex flex-col max-w-60 hover:brightness-95 transition",
+        "flex flex-col max-w-96 hover:brightness-95 transition",
         className,
       )}
     >
       <span className="text-xl font-normal">
-        {question}{" "}
+        {question}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
 
       <span className="mb-2.5 text-xs font-light">{label}</span>
-      <input
+      <Input
         className={twMerge(
-          "mt-auto p-1 w-full bg-white rounded-md outline outline-black",
-          disabled
-            ? "bg-[#DADADA] cursor-not-allowed text-[#202020B2]"
-            : "bg-white",
+          "mt-auto p-2 w-full bg-white rounded-md outline outline-black border-2 disabled:cursor-not-allowed disabled:bg-[#DADADA] disabled:opacity-100",
         )}
         required={isRequired}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-      ></input>
+        placeholder="Enter your response..."
+      ></Input>
 
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
     </main>
