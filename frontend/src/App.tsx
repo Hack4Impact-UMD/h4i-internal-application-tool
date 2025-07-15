@@ -29,6 +29,7 @@ import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerAp
 import ErrorPage from "./pages/ErrorPage";
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
+import QualifiedTab from "./components/dor/QualifiedTab";
 
 function App() {
   return (
@@ -132,7 +133,7 @@ function App() {
                 />
                 <Route
                   path="dashboard/:formId/qualified"
-                  element={<p>Qualified</p>}
+                  element={<QualifiedTab />}
                 />
                 <Route
                   path="dashboard/:formId/reviewers"
