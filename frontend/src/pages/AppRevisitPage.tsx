@@ -1,10 +1,9 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, ErrorResponse } from "react-router-dom";
 import { useMyApplicationResponseAndForm } from "../hooks/useApplicationResponses";
 import Loading from "../components/Loading";
 import Section from "../components/form/Section";
 import { Button } from "../components/ui/button";
 import { ApplicationStatus } from "@/types/types";
-import ErrorPage from "./ErrorPage";
 
 export default function AppRevisitPage() {
   const { formId } = useParams();
@@ -16,13 +15,12 @@ export default function AppRevisitPage() {
 
   const { form, response } = data;
 
-  if (response.status == ApplicationStatus.InProgress) {
-    return (
-      <ErrorPage
-        errorCode={403}
-        errorDescription="You are trying to revisit an application that is still in-progress."
-      />
-    );
+  if (response.status !== ApplicationStatus.InProgress) {
+    throw {
+      status: 403,
+      statusText: "Forbidden",
+      data: "You cannot revisit an incomplete application.",
+    } as ErrorResponse;
   }
 
   return (

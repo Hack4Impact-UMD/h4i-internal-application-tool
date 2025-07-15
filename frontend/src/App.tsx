@@ -26,9 +26,9 @@ import AdminHome from "./pages/AdminHome";
 import SuperReviewerDashboardShell from "./pages/SuperReviewerDashboardShell";
 import SearchProvider from "./components/providers/SearchProvider";
 import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerApplicationsDashboard";
-import ErrorPage from "./pages/ErrorPage";
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -219,15 +219,7 @@ function App() {
           <Route path="/resetpassword" element={<ResetPassCard />}></Route>
 
           {/*WARN:MAKE SURE THIS IS THE LAST ROUTE*/}
-          <Route
-            path="*"
-            element={
-              <ErrorPage
-                errorCode={404}
-                errorDescription="The page you're looking for doesn't exist."
-              />
-            }
-          />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AuthProvider>
     </QueryClientProvider>
