@@ -129,7 +129,7 @@ export default function QualifiedApplicationsDashboard() {
           const active = roleFilter === role;
           return (
             <Button
-            className={`h-28 min-w-40 p-4 flex flex-col items-start`}
+            className="h-24 min-w-32 p-3 flex flex-col items-start text-sm"
             style={{
                 backgroundColor: active ? dark : light,
                 color: active ? light : dark,
