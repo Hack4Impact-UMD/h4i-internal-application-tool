@@ -23,7 +23,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { displayApplicantRoleName, displayUserRoleName } from "@/utils/display";
-import { throwErrorToast } from "../error/ErrorToast";
+import { throwErrorToast } from "../toasts/ErrorToast";
 import { Timestamp } from "firebase/firestore";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 

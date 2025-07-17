@@ -13,7 +13,7 @@ import ChoiceGroup from "./ChoiceGroup";
 import MultiSelectGroup from "./MultiSelectGroup";
 import useForm from "../../hooks/useForm";
 import FileUpload from "./FileUpload";
-import { displayApplicantRoleName, displayUserRoleName } from "@/utils/display";
+import { displayApplicantRoleName } from "@/utils/display";
 
 interface SectionProps {
   section: ApplicationSection;
@@ -21,6 +21,7 @@ interface SectionProps {
   disabled?: boolean;
   validationErrors?: ValidationError[];
   onChangeResponse?: (questionId: string, value: string | string[]) => void;
+  responseId: string;
 }
 
 const Section: React.FC<SectionProps> = ({
@@ -29,6 +30,7 @@ const Section: React.FC<SectionProps> = ({
   onChangeResponse = () => {},
   validationErrors,
   disabled = false,
+  responseId,
 }) => {
   const { setSelectedRoles } = useForm();
   return (
@@ -100,6 +102,7 @@ const Section: React.FC<SectionProps> = ({
               />
             ) : question.questionType === QuestionType.FileUpload ? (
               <FileUpload
+                fileId={question.fileId}
                 question={question.questionText}
                 secondaryText={question.secondaryText}
                 errorMessage={validationError?.message}
@@ -108,6 +111,8 @@ const Section: React.FC<SectionProps> = ({
                 }
                 disabled={disabled}
                 required={!question.optional}
+                responseId={responseId}
+                value={response as string}
               />
             ) : question.questionType == QuestionType.RoleSelect ? (
               <MultiSelectGroup
