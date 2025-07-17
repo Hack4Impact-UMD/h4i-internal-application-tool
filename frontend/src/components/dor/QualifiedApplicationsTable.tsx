@@ -10,6 +10,8 @@ import RolePill from "../role-pill/RolePill";
 import { calculateReviewScore } from "@/utils/scores";
 import { getUserById } from "@/services/userService";
 
+// TODO: add interviewer-related logic once the related service functions are written 
+
 function useRows(
   pageIndex: number,
   applications: ApplicationResponse[],
