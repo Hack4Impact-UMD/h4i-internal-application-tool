@@ -52,7 +52,11 @@ export function useMyApplicationResponseAndForm(formId?: string) {
 export function useAllApplicationResponsesForForm(formId: string | undefined) {
   return useQuery<ApplicationResponse[]>({
     queryKey: ["responses", "form", formId],
-    queryFn: () => getAllApplicationResponsesByFormId(formId!),
+    enabled: !!formId,
+    queryFn: () => {
+      if (!formId) throw new Error("formId is required");
+      return getAllApplicationResponsesByFormId(formId);
+    },
   });
 }
 
