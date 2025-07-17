@@ -28,7 +28,7 @@ import SearchProvider from "./components/providers/SearchProvider";
 import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerApplicationsDashboard";
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
-import QualifiedTab from "./components/dor/QualifiedTab";
+import QualifiedApplicationsDashboard from "./components/dor/QualifiedApplicationsDashboard";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
@@ -135,7 +135,7 @@ function App() {
                 />
                 <Route
                   path="dashboard/:formId/qualified"
-                  element={<QualifiedTab />}
+                  element={<QualifiedApplicationsDashboard />}
                 />
                 <Route
                   path="dashboard/:formId/reviewers"

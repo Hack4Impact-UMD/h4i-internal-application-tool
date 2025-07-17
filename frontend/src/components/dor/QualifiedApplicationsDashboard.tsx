@@ -33,7 +33,7 @@ async function getQualifiedStatusesForForm(formId: string) {
   }
 }
 
-export default function QualifiedTab() {
+export default function QualifiedApplicationsDashboard() {
   const { formId } = useParams<{ formId: string }>();
   const [roleFilter, setRoleFilter] = useState<"all" | ApplicantRole>("all");
   const { search } = useSearch();
@@ -129,8 +129,8 @@ export default function QualifiedTab() {
           const active = roleFilter === role;
           return (
             <Button
-              className="h-24 min-w-32 p-3 flex flex-col items-start text-sm"
-              style={{
+            className={`h-28 min-w-40 p-4 flex flex-col items-start`}
+            style={{
                 backgroundColor: active ? dark : light,
                 color: active ? light : dark,
               }}
