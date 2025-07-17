@@ -1,10 +1,9 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, ErrorResponse } from "react-router-dom";
 import { useMyApplicationResponseAndForm } from "../hooks/useApplicationResponses";
 import Loading from "../components/Loading";
 import Section from "../components/form/Section";
 import { Button } from "../components/ui/button";
 import { ApplicationStatus } from "@/types/types";
-import ErrorPage from "./ErrorPage";
 
 export default function AppRevisitPage() {
   const { formId } = useParams();
@@ -16,20 +15,24 @@ export default function AppRevisitPage() {
 
   const { form, response } = data;
 
-  if (response.status == ApplicationStatus.InProgress) {
-    return (
-      <ErrorPage 
-        errorCode={403}
-        errorDescription="You are trying to revisit an application that is still in-progress."
-      />
-  )};
+  if (response.status !== ApplicationStatus.InProgress) {
+    throw {
+      status: 403,
+      statusText: "Forbidden",
+      data: "You cannot revisit an incomplete application.",
+    } as ErrorResponse;
+  }
 
   return (
-    <div className="w-full flex flex-col items-center p-4 pt-8">
+    <div className="w-full flex flex-col bg-muted items-center p-4 pt-8">
       <div className="max-w-3xl w-full flex flex-col gap-2">
-        <div>
-          <h1 className="text-3xl font-bold">Your {form.semester} Application</h1>
-          <p>Application responses are final once submitted.</p>
+        <div className="mb-2">
+          <h1 className="text-3xl font-bold">
+            Your {form.semester} Application
+          </h1>
+          <p className="text-muted-foreground">
+            Application responses are final once submitted.
+          </p>
         </div>
         {form.sections
           .filter((s) => {
@@ -44,10 +47,11 @@ export default function AppRevisitPage() {
           })
           .map((s) => (
             <div
-              className="shadow border border-gray-400 rounded-md p-4"
+              className="shadow border border-gray-200 rounded-md p-4"
               key={s.sectionId}
             >
               <Section
+                responseId={response.id}
                 key={s.sectionId}
                 disabled={true}
                 section={s}

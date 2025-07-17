@@ -17,7 +17,7 @@ import {
   ReviewerUserProfile,
   UserProfile,
 } from "../types/types";
-import { throwErrorToast } from "../components/error/ErrorToast";
+import { throwErrorToast } from "../components/toasts/ErrorToast";
 
 export const USER_COLLECTION = "users";
 

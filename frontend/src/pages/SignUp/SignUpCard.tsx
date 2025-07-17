@@ -5,7 +5,7 @@ import { registerUser } from "../../services/userService";
 import { AxiosError } from "axios";
 import { validEmail, validPassword } from "../../utils/verification";
 import { useMutation } from "@tanstack/react-query";
-import { throwErrorToast } from "../../components/error/ErrorToast";
+import { throwErrorToast } from "../../components/toasts/ErrorToast";
 
 export default function SignUpCard() {
   const signUpMutation = useMutation({

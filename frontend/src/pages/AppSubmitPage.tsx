@@ -12,7 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { ApplicationResponse, ValidationError } from "../types/types";
 import { AxiosError } from "axios";
 import { useState } from "react";
-import { throwErrorToast } from "../components/error/ErrorToast";
+import { throwErrorToast } from "../components/toasts/ErrorToast";
 
 export default function AppSubmitPage() {
   const { formId } = useParams();
@@ -52,7 +52,7 @@ export default function AppSubmitPage() {
   }
 
   return (
-    <div className="w-full flex flex-col items-center p-4 pt-8">
+    <div className="w-full flex flex-col items-center p-4 pt-8 bg-muted">
       <div className="max-w-3xl w-full flex flex-col gap-2">
         <div>
           <h1 className="text-3xl font-bold">Almost there!</h1>
@@ -71,7 +71,7 @@ export default function AppSubmitPage() {
           })
           .map((s) => (
             <div
-              className="shadow border border-gray-400 rounded-md p-4"
+              className="shadow border border-gray-200 bg-white rounded-md p-4"
               key={s.sectionId}
             >
               <Link
@@ -97,6 +97,7 @@ export default function AppSubmitPage() {
                 </div>
               </Link>
               <Section
+                responseId={response.id}
                 key={s.sectionId}
                 validationErrors={validationErrors}
                 disabled={true}

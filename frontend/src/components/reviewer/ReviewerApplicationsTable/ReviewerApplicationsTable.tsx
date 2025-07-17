@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { createReviewData } from "@/services/reviewDataService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { throwErrorToast } from "@/components/error/ErrorToast";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import ApplicantRolePill from "@/components/role-pill/RolePill";

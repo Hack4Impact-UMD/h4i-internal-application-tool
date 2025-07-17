@@ -14,7 +14,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { saveApplicationResponse } from "../../services/applicationResponsesService";
 import { useAuth } from "../../hooks/useAuth";
 import { Timestamp } from "firebase/firestore";
-import { throwErrorToast } from "../error/ErrorToast";
+import { throwErrorToast } from "../toasts/ErrorToast";
 import { Button } from "../ui/button";
 
 export default function FormProvider() {
