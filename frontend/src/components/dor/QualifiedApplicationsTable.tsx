@@ -87,8 +87,19 @@ export default function QualifiedApplicationsTable({
     pageSize: rowCount,
   });
 
-  const columnHelper = createColumnHelper<any>();
-  const cols = useMemo<ColumnDef<any, any>[]>(
+  interface QualifiedApplicationRow {
+    index: number;
+    name: string;
+    role: ApplicantRole;
+    interviewer1: string;
+    score1: string;
+    interviewer2: string;
+    score2: string;
+    total: string;
+  }
+
+  const columnHelper = createColumnHelper<QualifiedApplicationRow>();
+  const cols = useMemo<ColumnDef<QualifiedApplicationRow, any>[]>(
     () => [
       columnHelper.accessor("index", {
         id: "number",
@@ -105,8 +116,8 @@ export default function QualifiedApplicationsTable({
         cell: ({ getValue }) => <RolePill role={getValue()} />,
         filterFn: (row, columnId, filterValue) => {
           const value = row.getValue(columnId);
-          if (filterValue == "all") return true;
-          else return filterValue == value;
+          if (filterValue === "all") return true;
+          else return filterValue === value;
         },
       }),
       columnHelper.accessor("interviewer1", {

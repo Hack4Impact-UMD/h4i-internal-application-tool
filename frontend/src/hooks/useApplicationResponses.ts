@@ -49,10 +49,10 @@ export function useMyApplicationResponseAndForm(formId?: string) {
 }
 
 //gets all application responses for a given form, includes in-progress submissions
-export function useAllApplicationResponsesForForm(formId: string) {
+export function useAllApplicationResponsesForForm(formId: string | undefined) {
   return useQuery<ApplicationResponse[]>({
     queryKey: ["responses", "form", formId],
-    queryFn: () => getAllApplicationResponsesByFormId(formId),
+    queryFn: () => getAllApplicationResponsesByFormId(formId!),
   });
 }
 

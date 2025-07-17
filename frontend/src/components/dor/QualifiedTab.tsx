@@ -22,10 +22,15 @@ import { InternalApplicationStatus } from "@/types/types";
 
 // Helper to fetch all qualified statuses for a form
 async function getQualifiedStatusesForForm(formId: string) {
-  const statusCollection = collection(db, "app-status");
-  const q = query(statusCollection, where("formId", "==", formId), where("isQualified", "==", true));
-  const docsSnap = await getDocs(q);
-  return docsSnap.docs.map((d) => d.data() as InternalApplicationStatus);
+  try {
+    const statusCollection = collection(db, "app-status");
+    const q = query(statusCollection, where("formId", "==", formId), where("isQualified", "==", true));
+    const docsSnap = await getDocs(q);
+    return docsSnap.docs.map((d) => d.data() as InternalApplicationStatus);
+  } catch (error) {
+    console.error("Failed to fetch qualified statuses:", error);
+    throw error;
+  }
 }
 
 export default function QualifiedTab() {
@@ -41,7 +46,10 @@ export default function QualifiedTab() {
   } = useQuery({
     queryKey: ["qualified-statuses", formId],
     enabled: !!formId,
-    queryFn: () => getQualifiedStatusesForForm(formId!),
+    queryFn: () => {
+      if (!formId) throw new Error("formId is required");
+      return getQualifiedStatusesForForm(formId);
+    },
     refetchOnWindowFocus: true, // Refetch when user switches back to this tab
   });
 
@@ -50,7 +58,7 @@ export default function QualifiedTab() {
     data: apps,
     isPending: appsPending,
     error: appsError,
-  } = useAllApplicationResponsesForForm(formId ?? "");
+  } = useAllApplicationResponsesForForm(formId);
 
   // Expand apps by role, as in SuperReviewerApplicationsDashboard
   const expandedSubmittedApps = useMemo(() =>
@@ -109,7 +117,7 @@ export default function QualifiedTab() {
       <div className="overflow-x-scroll flex flex-row gap-2 items-center min-h-28 justify-stretch mt-4 no-scrollbar">
         <Button
           className={`h-24 min-w-32 text-sm p-3 flex flex-col items-start \
-          ${roleFilter == "all" ? "bg-[#4A280D] hover:bg-[#4A280D]/90 text-[#F1D5C4]" : "bg-[#F1D5C4] hover:bg-[#F1D5C4]/90 text-[#4A280D]"}`}
+          ${roleFilter === "all" ? "bg-[#4A280D] hover:bg-[#4A280D]/90 text-[#F1D5C4]" : "bg-[#F1D5C4] hover:bg-[#F1D5C4]/90 text-[#4A280D]"}`}
           onClick={() => setRoleFilter("all")}
         >
           <span className="text-3xl">{qualifiedApps.length}</span>
@@ -118,7 +126,7 @@ export default function QualifiedTab() {
         {roleOrder.map((role) => {
           const dark = applicantRoleDarkColor(role) ?? "#000000";
           const light = applicantRoleColor(role) ?? "#FFFFFF";
-          const active = roleFilter == role;
+          const active = roleFilter === role;
           return (
             <Button
               className="h-24 min-w-32 p-3 flex flex-col items-start text-sm"
