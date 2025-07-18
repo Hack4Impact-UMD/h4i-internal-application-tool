@@ -152,8 +152,12 @@ export interface ApplicationInterviewData {
   applicationFormId: string;
   applicationResponseId: string;
   applicantId: string;
+  applicantScores: {
+    [category in string]: number; // talking with PMs about the format for this
+  };
   interviewNotes: string;
-  interviewComplete: boolean;
+  forRole: ApplicantRole;
+  submitted: boolean;
 }
 
 export interface ApplicationSection {
