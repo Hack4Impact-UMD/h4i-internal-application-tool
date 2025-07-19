@@ -52,7 +52,7 @@ import { getReviewDataForReviewer } from "@/services/reviewDataService";
     formId: string,
   ) {
     return useQuery({
-      queryKey: ["all-apps-rows", pageIndex],
+      queryKey: ["all-reviewers-rows", pageIndex],
       placeholderData: (prev) => prev,
       queryFn: async () => {
         return Promise.all(
