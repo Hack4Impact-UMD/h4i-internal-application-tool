@@ -73,7 +73,7 @@ export function AssignedReviewsPage() {
   if (responseError)
     return <p>Failed to fetch response: {responseError.message}</p>;
   if (reviewsError)
-    return <p>Failed to fetch response: {reviewsError.message}</p>;
+    return <p>Failed to fetch reviws: {reviewsError.message}</p>;
   if (!response) return <p>Failed to fetch response</p>;
 
   return (
