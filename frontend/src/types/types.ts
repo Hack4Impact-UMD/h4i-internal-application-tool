@@ -78,6 +78,7 @@ export type InterviewAssignment = {
   interviewerId: string;
   applicantId: string; // the applicant that was assigned for review
   applicationResponseId: string; // the submitted application that was assigned for review
+  forRole: ApplicantRole;
 };
 
 export type AppReviewAssignment = {
@@ -90,7 +91,7 @@ export type AppReviewAssignment = {
   forRole: ApplicantRole;
 };
 
-export type ReviewerAssignment = AppReviewAssignment | InterviewAssignment;
+export type Assignment = AppReviewAssignment | InterviewAssignment;
 // stores the actual user submitted application responses
 export interface ApplicationResponse {
   id: string;
