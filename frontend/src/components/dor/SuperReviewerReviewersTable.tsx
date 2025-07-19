@@ -25,6 +25,12 @@ import {
   import { useNavigate } from "react-router-dom";
 import { getReviewAssignments } from "@/services/reviewAssignmentService";
 import { getReviewDataForReviewer } from "@/services/reviewDataService";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
   
   type SuperReviewerReviewersTableProps = {
     reviewers: ReviewerUserProfile[];
@@ -200,6 +206,35 @@ import { getReviewDataForReviewer } from "@/services/reviewDataService";
                 </Button>
               );
             },
+          }),
+          columnHelper.display({
+            id: "actions",
+            header: () => (
+              <div className="flex items-center justify-center">
+                <span className="text-center mx-auto">ACTIONS</span>
+              </div>
+            ),
+            cell: ({ row }) => (
+              <div className="flex items-center justify-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost">
+                      <EllipsisVertical />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => {
+                        navigate("/admin/dor/applications/" + formId + "/" + row.original.reviewer.id)
+                      }}
+                    >
+                      View Applications
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ),
           }),
         ] as ColumnDef<ReviewerRow>[],
       [columnHelper],
