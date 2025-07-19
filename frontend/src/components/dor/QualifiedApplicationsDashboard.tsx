@@ -97,15 +97,8 @@ export default function QualifiedApplicationsDashboard() {
     return freqs;
   }, [qualifiedApps]);
 
-  // Custom order for role filter tabs
-  const roleOrder: ApplicantRole[] = [
-    ApplicantRole.Product,
-    ApplicantRole.Designer,
-    ApplicantRole.TechLead,
-    ApplicantRole.Engineer,
-    ApplicantRole.Sourcing,
-    ApplicantRole.Bootcamp,
-  ];
+  // Use the same order as SuperReviewerApplicationsDashboard
+  const roleOrder = Object.values(ApplicantRole);
 
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
   if (statusesError) return <p>Something went wrong: {statusesError.message}</p>;
@@ -116,29 +109,32 @@ export default function QualifiedApplicationsDashboard() {
     <div>
       <div className="overflow-x-scroll flex flex-row gap-2 items-center min-h-28 justify-stretch mt-4 no-scrollbar">
         <Button
-          className={`h-24 min-w-32 text-sm p-3 flex flex-col items-start \
-          ${roleFilter === "all" ? "bg-[#4A280D] hover:bg-[#4A280D]/90 text-[#F1D5C4]" : "bg-[#F1D5C4] hover:bg-[#F1D5C4]/90 text-[#4A280D]"}`}
+          className={`h-28 min-w-40 text-white p-4 flex flex-col items-start 
+					${roleFilter == "all" ? "bg-[#4A280D] hover:bg-[#4A280D]/90 text-[#F1D5C4]" : "bg-[#F1D5C4] hover:bg-[#F1D5C4]/90 text-[#4A280D]"}`}
           onClick={() => setRoleFilter("all")}
         >
           <span className="text-3xl">{qualifiedApps.length}</span>
-          <span className="mt-auto">Total Applicants</span>
+          <span className="mt-auto">Total Applications</span>
         </Button>
         {roleOrder.map((role) => {
           const dark = applicantRoleDarkColor(role) ?? "#000000";
           const light = applicantRoleColor(role) ?? "#FFFFFF";
-          const active = roleFilter === role;
+          const active = roleFilter == role;
+
           return (
             <Button
-            className="h-24 min-w-32 p-3 flex flex-col items-start text-sm"
-            style={{
+              className={`h-28 min-w-40 p-4 flex flex-col items-start`}
+              style={{
                 backgroundColor: active ? dark : light,
                 color: active ? light : dark,
               }}
               onClick={() => setRoleFilter(role)}
               key={role}
             >
-              <span className="text-3xl">{applicationsByRole.get(role) ?? 0}</span>
-              <span className="mt-auto">{role === ApplicantRole.Product ? "Product Managers" : displayApplicantRoleName(role)}</span>
+              <span className="text-3xl">
+                {applicationsByRole.get(role) ?? 0}
+              </span>
+              <span className="mt-auto">{displayApplicantRoleName(role)}</span>
             </Button>
           );
         })}

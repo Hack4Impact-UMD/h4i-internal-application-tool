@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import RolePill from "../role-pill/RolePill";
 import { calculateReviewScore } from "@/utils/scores";
 import { getUserById } from "@/services/userService";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 // TODO: add interviewer-related logic once the related service functions are written 
 
@@ -105,16 +106,79 @@ export default function QualifiedApplicationsTable({
     () => [
       columnHelper.accessor("index", {
         id: "number",
-        header: "S.NO",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                S.NO
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
+        },
         cell: ({ getValue }) => getValue(),
       }),
       columnHelper.accessor("name", {
         id: "name",
-        header: "NAME",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                NAME
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
+        },
       }),
       columnHelper.accessor("role", {
         id: "role",
-        header: "ROLES",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                ROLES
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
+        },
         cell: ({ getValue }) => <RolePill role={getValue()} />,
         filterFn: (row, columnId, filterValue) => {
           const value = row.getValue(columnId);
@@ -128,7 +192,37 @@ export default function QualifiedApplicationsTable({
       }),
       columnHelper.accessor("score1", {
         id: "score1",
-        header: "SCORE",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                SCORE
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
+        },
+        cell: ({ getValue, row }) => {
+          const score = getValue();
+          // Check if the review is submitted by looking at the score format
+          // If it's "-", it means no review data, if it's "INC", it's incomplete
+          if (score === "-") {
+            return "INC";
+          }
+          return score;
+        },
       }),
       columnHelper.accessor("interviewer2", {
         id: "interviewer2",
@@ -136,11 +230,70 @@ export default function QualifiedApplicationsTable({
       }),
       columnHelper.accessor("score2", {
         id: "score2",
-        header: "SCORE",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                SCORE
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
+        },
+        cell: ({ getValue, row }) => {
+          const score = getValue();
+          // Check if the review is submitted by looking at the score format
+          // If it's "-", it means no review data, if it's "INC", it's incomplete
+          if (score === "-") {
+            return "INC";
+          }
+          return score;
+        },
       }),
       columnHelper.accessor("total", {
         id: "total",
-        header: "TOTAL",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              className="p-0"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              <span className="items-center flex flex-row gap-1">
+                TOTAL
+                {column.getIsSorted() === false ? (
+                  <ArrowUpDown />
+                ) : column.getIsSorted() === "desc" ? (
+                  <ArrowUp />
+                ) : (
+                  <ArrowDown />
+                )}
+              </span>
+            </Button>
+          );
+        },
+        cell: ({ getValue, row }) => {
+          const total = getValue();
+          // Check if the total is "-", which means no review data
+          if (total === "-") {
+            return "INC";
+          }
+          return total;
+        },
       }),
     ],
     [columnHelper],
@@ -175,9 +328,6 @@ export default function QualifiedApplicationsTable({
                 id: "role",
                 value: roleFilter,
               },
-            ],
-            sorting: [
-              { id: "number", desc: false },
             ],
           },
         }}
