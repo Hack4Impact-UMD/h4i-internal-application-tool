@@ -29,6 +29,7 @@ import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerAp
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import SuperReviewerReviewersDashboard from "./components/dor/SuperReviewerReviewersDashboard";
 
 function App() {
   return (
@@ -138,7 +139,7 @@ function App() {
                 />
                 <Route
                   path="dashboard/:formId/reviewers"
-                  element={<p>Reviewers</p>}
+                  element={<SuperReviewerReviewersDashboard />}
                 />
               </Route>
 
