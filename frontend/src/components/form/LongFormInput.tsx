@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { Textarea } from "../ui/textarea";
+import FormMarkdown from "./FormMarkdown";
 
 interface LongFormInputProps {
   question: string;
@@ -44,7 +45,7 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
         {question}{" "}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
-      <span className="text-xs font-light">{label}</span>
+      <FormMarkdown>{label}</FormMarkdown>
       {minWordCount && maxWordCount ? (
         <p className="mb-1 text-xs">
           Minimum: {minWordCount} word{minWordCount != 1 && "s"}. Maximum:{" "}
