@@ -154,7 +154,7 @@ function ApplicationResponseRow({
         {decided ? (
           <Link
             className="text-blue-500 cursor-pointer"
-            to={"/apply/revisit/" + "/apply/status/decision"}
+            to={"/apply/status/decision"}
           >
             {form.semester + " Application"}
             View Decision

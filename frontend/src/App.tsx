@@ -29,7 +29,7 @@ import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerAp
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import ViewApplciationPage from "./pages/ViewApplicationPage";
+import ViewApplicationPage from "./pages/ViewApplicationPage";
 
 function App() {
   return (
@@ -147,7 +147,7 @@ function App() {
                 path="dor/application/:formId/:responseId"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                    <ViewApplciationPage />
+                    <ViewApplicationPage />
                   </RequireAuth>
                 }
               />

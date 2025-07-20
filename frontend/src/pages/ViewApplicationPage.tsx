@@ -48,7 +48,7 @@ function UserHeader({ applicantId, form, response }: UserHeaderProps) {
   );
 }
 
-export default function ViewApplciationPage() {
+export default function ViewApplicationPage() {
   const { responseId, formId } = useParams<{
     responseId: string;
     formId: string;
@@ -105,7 +105,7 @@ export default function ViewApplciationPage() {
                 responses={
                   response.sectionResponses.find(
                     (r) => r.sectionId == s.sectionId,
-                  )!.questions
+                  )?.questions ?? []
                 }
                 onChangeResponse={() => {}}
               />
