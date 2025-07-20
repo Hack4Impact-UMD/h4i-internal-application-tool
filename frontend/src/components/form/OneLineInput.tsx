@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { Input } from "../ui/input";
+import FormMarkdown from "./FormMarkdown";
 
 interface OneLineInputProps {
   question: string;
@@ -27,7 +28,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
   return (
     <main
       className={twMerge(
-        "flex flex-col max-w-96 hover:brightness-95 transition",
+        "flex flex-col hover:brightness-95 transition",
         className,
       )}
     >
@@ -36,10 +37,11 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
 
-      <span className="mb-2.5 text-xs font-light">{label}</span>
+      <FormMarkdown>{label}</FormMarkdown>
+
       <Input
         className={twMerge(
-          "mt-auto p-2 w-full bg-white rounded-md outline outline-black border-2 disabled:cursor-not-allowed disabled:bg-[#DADADA] disabled:opacity-100",
+          "max-w-96 mt-auto p-2 w-full bg-white rounded-md outline outline-black border-2 disabled:cursor-not-allowed disabled:bg-[#DADADA] disabled:opacity-100",
         )}
         required={isRequired}
         value={value}
@@ -49,7 +51,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
       ></Input>
 
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
-    </main>
+    </main >
   );
 };
 

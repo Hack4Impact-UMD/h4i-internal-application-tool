@@ -14,6 +14,7 @@ import MultiSelectGroup from "./MultiSelectGroup";
 import useForm from "../../hooks/useForm";
 import FileUpload from "./FileUpload";
 import { displayApplicantRoleName } from "@/utils/display";
+import FormMarkdown from "./FormMarkdown";
 
 interface SectionProps {
   section: ApplicationSection;
@@ -27,7 +28,7 @@ interface SectionProps {
 const Section: React.FC<SectionProps> = ({
   section,
   responses,
-  onChangeResponse = () => {},
+  onChangeResponse = () => { },
   validationErrors,
   disabled = false,
   responseId,
@@ -35,7 +36,10 @@ const Section: React.FC<SectionProps> = ({
   const { setSelectedRoles } = useForm();
   return (
     <div className="mt-2 mb-2 flex flex-col gap-5">
-      <h1 className="font-bold text-xl">{section.sectionName}</h1>
+      <div>
+        <h1 className="font-bold text-xl">{section.sectionName}</h1>
+        <FormMarkdown>{section.description}</FormMarkdown>
+      </div>
       {section.questions.map((question) => {
         const response =
           responses.find((r) => r.questionId === question.questionId)
