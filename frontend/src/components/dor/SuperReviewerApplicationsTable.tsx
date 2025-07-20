@@ -214,20 +214,28 @@ function ReviewerSelect({
   responseId,
   disabled = false,
   assignments,
-  reviews
+  reviews,
 }: ReviewerSelectProps) {
   const [showPopover, setShowPopover] = useState(false);
 
-  const complete = useCallback((reviewer: ReviewerUserProfile) => {
-    return reviews.find(review => review.submitted && review.reviewerId === reviewer.id && review.forRole === role)
-  }, [reviews, role])
+  const complete = useCallback(
+    (reviewer: ReviewerUserProfile) => {
+      return reviews.find(
+        (review) =>
+          review.submitted &&
+          review.reviewerId === reviewer.id &&
+          review.forRole === role,
+      );
+    },
+    [reviews, role],
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
       {reviewers.map((reviewer, index) => (
         <div
           key={reviewer.id}
-          className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(reviewer) ? 'bg-green-200 text-green-800 border-green-100' : 'bg-muted'}`}
+          className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(reviewer) ? "bg-green-200 text-green-800 border-green-100" : "bg-muted"}`}
         >
           <span className="text-sm">
             {reviewer.firstName} {reviewer.lastName}
@@ -254,8 +262,7 @@ function ReviewerSelect({
             </svg>
           </Button>
         </div>
-      ))
-      }
+      ))}
       <Popover open={showPopover} onOpenChange={setShowPopover}>
         <PopoverTrigger asChild>
           <Button
@@ -288,7 +295,7 @@ function ReviewerSelect({
           />
         </PopoverContent>
       </Popover>
-    </div >
+    </div>
   );
 }
 function useRows(
@@ -323,12 +330,12 @@ function useRows(
               completedReviews == 0
                 ? 0
                 : (
-                  await Promise.all(
-                    reviews
-                      .filter((r) => r.submitted)
-                      .map(async (r) => await calculateReviewScore(r)),
-                  )
-                ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                    await Promise.all(
+                      reviews
+                        .filter((r) => r.submitted)
+                        .map(async (r) => await calculateReviewScore(r)),
+                    )
+                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
             let status: InternalApplicationStatus | undefined;
 
             try {
@@ -703,8 +710,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                        status: status,
-                      })
+                          status: status,
+                        })
                       : throwErrorToast("No status available!")
                   }
                 />
@@ -746,7 +753,9 @@ export default function SuperReviewerApplicationsTable({
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => {
-                      navigate(`/admin/dor/application/${formId}/${row.original.responseId}`)
+                      navigate(
+                        `/admin/dor/application/${formId}/${row.original.responseId}`,
+                      );
                     }}
                   >
                     View Application
@@ -757,7 +766,15 @@ export default function SuperReviewerApplicationsTable({
           ),
         }),
       ] as ColumnDef<ApplicationRow>[],
-    [addReviewerMutation, columnHelper, formId, navigate, pagination.pageIndex, removeReviewerMutation, toggleQualifiedMutation],
+    [
+      addReviewerMutation,
+      columnHelper,
+      formId,
+      navigate,
+      pagination.pageIndex,
+      removeReviewerMutation,
+      toggleQualifiedMutation,
+    ],
   );
 
   const {

@@ -210,8 +210,9 @@ function StatusPage() {
             <div className="flex gap-8">
               <button
                 onClick={() => setActiveTab("active")}
-                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "active" ? "text-blue-500" : "text-gray-500"
-                  }`}
+                className={`relative pb-4 px-1 cursor-pointer ${
+                  activeTab === "active" ? "text-blue-500" : "text-gray-500"
+                }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Active ({activeApplications.length})
@@ -221,8 +222,9 @@ function StatusPage() {
               </button>
               <button
                 onClick={() => setActiveTab("inactive")}
-                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
-                  }`}
+                className={`relative pb-4 px-1 cursor-pointer ${
+                  activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
+                }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Inactive ({inactiveApplications.length})
