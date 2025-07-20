@@ -8,7 +8,7 @@ export default function FormMarkdown({ children, components }: Options) {
       <Markdown
         components={{
           a: (opts) => (
-            <a className="underline text-blue" href={opts.href} target="_blank">
+            <a className="underline text-blue" href={opts.href} target="_blank" rel="noopener noreferrer">
               {opts.children}
             </a>
           ),
