@@ -166,9 +166,7 @@ export default function FileUpload(props: FileUploadProps) {
                   {props.question}
                 </span>
                 {props.secondaryText ? (
-                  <FormMarkdown>
-                    {props.secondaryText}
-                  </FormMarkdown>
+                  <FormMarkdown>{props.secondaryText}</FormMarkdown>
                 ) : (
                   <></>
                 )}

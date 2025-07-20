@@ -28,7 +28,7 @@ interface SectionProps {
 const Section: React.FC<SectionProps> = ({
   section,
   responses,
-  onChangeResponse = () => { },
+  onChangeResponse = () => {},
   validationErrors,
   disabled = false,
   responseId,

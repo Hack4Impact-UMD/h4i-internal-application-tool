@@ -51,7 +51,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
       ></Input>
 
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
-    </main >
+    </main>
   );
 };
 
