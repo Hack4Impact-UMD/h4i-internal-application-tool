@@ -193,17 +193,10 @@ function App() {
               >
                 <Route
                   path="apps"
-                  element={
-                    <ReviewerApplicationsDashboard />
-                  }
+                  element={<ReviewerApplicationsDashboard />}
                 />
 
-                <Route
-                  path="interviews"
-                  element={
-                    <p>Interviews</p>
-                  }
-                />
+                <Route path="interviews" element={<p>Interviews</p>} />
               </Route>
               <Route
                 element={
