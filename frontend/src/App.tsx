@@ -21,7 +21,7 @@ import AppReviewPage from "./pages/AppReviewPage";
 import { ToastContainer } from "react-toastify";
 import { queryClient } from "./config/query";
 import UserRolePage from "./pages/UserRolePage";
-import ReviewerDashboard from "./pages/ReviewerDashboard";
+import ReviewerApplicationsDashboard from "./pages/ReviewerApplicationsDashboard";
 import AdminHome from "./pages/AdminHome";
 import SuperReviewerDashboardShell from "./pages/SuperReviewerDashboardShell";
 import SearchProvider from "./components/providers/SearchProvider";
@@ -30,6 +30,8 @@ import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ViewApplicationPage from "./pages/ViewApplicationPage";
+import { Search } from "lucide-react";
+import ReviewerDashboardShell from "./pages/ReviewerDashboardShell";
 
 function App() {
   return (
@@ -180,13 +182,29 @@ function App() {
               />
 
               <Route
-                path="reviewer/dashboard/:formId"
+                path="reviewer/dashboard/:formId/"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.Reviewer]}>
-                    <ReviewerDashboard />
+                    <SearchProvider>
+                      <ReviewerDashboardShell />
+                    </SearchProvider>
                   </RequireAuth>
                 }
-              />
+              >
+                <Route
+                  path="apps"
+                  element={
+                    <ReviewerApplicationsDashboard />
+                  }
+                />
+
+                <Route
+                  path="interviews"
+                  element={
+                    <p>Interviews</p>
+                  }
+                />
+              </Route>
               <Route
                 element={
                   <RequireAuth
