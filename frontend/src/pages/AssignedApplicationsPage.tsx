@@ -121,12 +121,12 @@ export function AssignedApplicationsPage() {
             <span className="mt-auto">Pending</span>
           </Button>
         </div>
-        {/* <AssignedApplicationsTable
+        <AssignedApplicationsTable
           assignments={assignedApps}
           formId={formId}
           search=""
           statusFilter={statusFilter}
-        /> */}
+        />
       </div>
     </div>
   );
