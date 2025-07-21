@@ -123,7 +123,7 @@ export function AssignedApplicationsPage() {
         </div>
         <AssignedApplicationsTable
           assignments={assignedApps}
-          formId={formId}
+          formId={formId!}
           search=""
           statusFilter={statusFilter}
         />
