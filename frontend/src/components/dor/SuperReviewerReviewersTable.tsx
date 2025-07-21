@@ -35,7 +35,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../toasts/ErrorToast";
 import { setReviewerRolePreferences } from "@/services/userService";
-import { displayApplicantRoleName } from "@/utils/display";
+import { applicantRoleColor, applicantRoleDarkColor, displayApplicantRoleName } from "@/utils/display";
 import { getReviewerById, getRolePreferencesForReviewer } from "@/services/reviewersService";
   
   type SuperReviewerReviewersTableProps = {
@@ -85,6 +85,10 @@ import { getReviewerById, getRolePreferencesForReviewer } from "@/services/revie
           // TODO: have this use the role pill
           <div
             key={role}
+            style={{
+              backgroundColor: applicantRoleColor(role),
+              color: applicantRoleDarkColor(role),
+            }}
             className={`rounded-full border h-7 px-2 py-1 bg-muted text-sm flex flex-row gap-1 items-center`}
           >
             <span className="text-sm">
