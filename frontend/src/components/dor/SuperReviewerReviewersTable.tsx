@@ -31,6 +31,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { throwSuccessToast } from "../toasts/SuccessToast";
+import { throwErrorToast } from "../toasts/ErrorToast";
+import { setReviewerRolePreferences } from "@/services/userService";
+import { displayApplicantRoleName } from "@/utils/display";
+import { getReviewerById, getRolePreferencesForReviewer } from "@/services/reviewersService";
   
   type SuperReviewerReviewersTableProps = {
     reviewers: ReviewerUserProfile[];
@@ -39,18 +45,109 @@ import {
     formId: string;
   };
   
-  // todo: definitely wrong, just trying to understand code rn
+  // todo: definitely incomplete, just trying to understand code rn
   type ReviewerRow = {
     index: number;
     reviewer: {
       name: string;
       id: string;
     };
-    rolesReviewing: ApplicantRole[];
+    rolePreferences: ApplicantRole[];
     assignments: number;
     pendingAssignments: number;
   };
+
+  type RoleSelectProps = {
+    // onAdd: (role: ApplicantRole) => void;
+    onDelete: (
+      role: ApplicantRole,
+      reviewerId: string,
+    ) => void;
+    // role: ApplicantRole;
+    rolePreferences: ApplicantRole[];
+    reviewerId: string;
+    disabled?: boolean;
+  };
+
+  function RoleSelect({
+    // onAdd,
+    onDelete,
+    // role,
+    rolePreferences,
+    reviewerId,
+    disabled = false,
+  }: RoleSelectProps) {
+    const [showPopover, setShowPopover] = useState(false);
   
+    return (
+      <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
+        {rolePreferences.map((role, index) => (
+          // TODO: have this use the role pill
+          <div
+            key={role}
+            className={`rounded-full border h-7 px-2 py-1 bg-muted text-sm flex flex-row gap-1 items-center`}
+          >
+            <span className="text-sm">
+              {displayApplicantRoleName(role)}
+            </span>
+            <Button
+              disabled={disabled}
+              variant="ghost"
+              className="size-3"
+              onClick={() => onDelete(role, reviewerId)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-3"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </Button>
+          </div>
+        ))}
+        {/* <Popover open={showPopover} onOpenChange={setShowPopover}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="default"
+              className="rounded-full text-sm h-7 font-normal p-0"
+              disabled={disabled}
+            >
+              Assign
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-3"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="p-0 max-h-32">
+            <ReviewerSearchPopover
+              responseId={responseId}
+              role={role}
+              onSelect={onAdd}
+            />
+          </PopoverContent>
+        </Popover> */}
+      </div>
+    );
+  }
   function useRows(
     pageIndex: number,
     reviewers: ReviewerUserProfile[],
@@ -77,7 +174,7 @@ import {
                   id: reviewer.id,
                   name: `${reviewer.firstName} ${reviewer.lastName}`,
                 },
-                rolesReviewing: [],
+                rolePreferences: (await getRolePreferencesForReviewer(reviewer.id)),
                 assignments: assignments.length,
                 pendingAssignments: reviewData.filter((data) => {data.submitted == false}).length,
               };
@@ -97,6 +194,35 @@ import {
   }: SuperReviewerReviewersTableProps) {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+
+    const removeRolePreferenceMutation = useMutation({
+      mutationFn: async ({
+        roleToRemove,
+        reviewerId
+      }: {
+        roleToRemove: ApplicantRole;
+        reviewerId: string;
+        pageIndex: number;
+      }) => {
+        const prevRolePreferences = (await getReviewerById(reviewerId)).applicantRolePreferences 
+        const newRolePreferences = prevRolePreferences.filter(role => role != roleToRemove);
+        return await setReviewerRolePreferences(reviewerId, newRolePreferences)
+      },
+      onSuccess: () => {
+        throwSuccessToast("Successfully removed role preference!");
+      },
+      onError: (error) => {
+        throwErrorToast(
+          `Failed to remove role preference! (${error.message})`,
+        );
+        console.log(error);
+      },
+      onSettled: (_data, _err, variables) => {
+        queryClient.invalidateQueries({
+          queryKey: ["all-reviewers-rows", variables.pageIndex],
+        });
+      },
+    });
   
     const [pagination, setPagination] = useState({
       pageIndex: 0,
@@ -154,6 +280,33 @@ import {
                     )}
                   </span>
                 </Button>
+              );
+            },
+          }),
+          columnHelper.accessor("rolePreferences", {
+            id: "role-preferences",
+            header: "ROLES REVIEWING",
+            cell: ({ getValue, row }) => {
+              return (
+                <RoleSelect
+                  rolePreferences={getValue()}
+                  // onAdd={(reviewer) =>
+                  //   addReviewerMutation.mutate({
+                  //     pageIndex: pagination.pageIndex,
+                  //     reviewer: reviewer,
+                  //     responseId: rowData.responseId,
+                  //     role: role,
+                  //   })
+                  // }
+                  onDelete={(role, reviewerId) =>
+                    removeRolePreferenceMutation.mutate({
+                      pageIndex: pagination.pageIndex,
+                      roleToRemove: role,
+                      reviewerId: reviewerId,
+                    })
+                  }
+                  reviewerId={row.original.reviewer.id}
+                />
               );
             },
           }),
