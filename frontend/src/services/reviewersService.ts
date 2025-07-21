@@ -20,6 +20,17 @@ export async function getReviewerById(
   }
 }
 
+export async function getRolePreferencesForReviewer(
+  reviewerId: string,
+): Promise<ApplicantRole[]> {
+  const user = await getUserById(reviewerId);
+  if (user.role == PermissionRole.Reviewer) {
+    return (user as ReviewerUserProfile).applicantRolePreferences;
+  } else {
+    throw new Error("user is not a reviewer");
+  }
+}
+
 export async function getAllReviewers(): Promise<ReviewerUserProfile[]> {
   const users = collection(db, USERS_COLLECTION);
   const q = query(users, where("role", "==", PermissionRole.Reviewer));
