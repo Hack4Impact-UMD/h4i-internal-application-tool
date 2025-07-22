@@ -7,11 +7,7 @@ import { useAllReviewers } from "@/hooks/useReviewers";
 export default function SuperReviewerReviewersDashboard() {
   const { formId } = useParams<{ formId: string }>();
 
-  const {
-    data: reviewers,
-    isPending,
-    error,
-  } = useAllReviewers();
+  const { data: reviewers, isPending, error } = useAllReviewers();
   const { search } = useSearch();
 
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
@@ -20,11 +16,7 @@ export default function SuperReviewerReviewersDashboard() {
 
   return (
     <div>
-      <ReviewersTable
-        reviewers={reviewers}
-        formId={formId}
-        search={search}
-      />
+      <ReviewersTable reviewers={reviewers} formId={formId} search={search} />
     </div>
   );
 }

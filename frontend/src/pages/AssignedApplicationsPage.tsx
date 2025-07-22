@@ -25,7 +25,10 @@ export function AssignedApplicationsPage() {
   const [statusFilter, setStatusFilter] = useState<
     "reviewed" | "pending" | "all"
   >("all");
-  const { formId, reviewerId } = useParams<{ formId: string, reviewerId: string }>();
+  const { formId, reviewerId } = useParams<{
+    formId: string;
+    reviewerId: string;
+  }>();
 
   const {
     data: assignedApps,
@@ -63,7 +66,7 @@ export function AssignedApplicationsPage() {
   if (reviewerError)
     return <p>Failed to fetch applicant: {reviewerError.message}</p>;
   // if (responseError)
-    // return <p>Failed to fetch response: {responseError.message}</p>;
+  // return <p>Failed to fetch response: {responseError.message}</p>;
   if (reviewsError)
     return <p>Failed to fetch reviews: {reviewsError.message}</p>;
   if (!reviewer) return <p>Failed to fetch reviewer</p>;
@@ -73,7 +76,8 @@ export function AssignedApplicationsPage() {
       <div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
         <div className="flex flex-row items-start pb-4 border-b">
           <span className="text-center w-full font-bold text-muted-foreground">
-            You are viewing all assigned applications for reviewer {reviewer.firstName} 
+            You are viewing all assigned applications for reviewer{" "}
+            {reviewer.firstName}
             {reviewer.lastName}
           </span>
         </div>

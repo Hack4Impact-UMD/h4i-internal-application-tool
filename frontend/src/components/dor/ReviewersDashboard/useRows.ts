@@ -32,8 +32,11 @@ export function useRows(
             Math.min(reviewers.length, (pageIndex + 1) * rowCount),
           )
           .map(async (reviewer, index) => {
-            const assignments = (await getReviewAssignments(formId, reviewer.id));
-            const reviewData = (await getReviewDataForReviewer(formId, reviewer.id))
+            const assignments = await getReviewAssignments(formId, reviewer.id);
+            const reviewData = await getReviewDataForReviewer(
+              formId,
+              reviewer.id,
+            );
 
             const row: ReviewerRow = {
               index: 1 + pageIndex * rowCount + index,
@@ -41,11 +44,13 @@ export function useRows(
                 id: reviewer.id,
                 name: `${reviewer.firstName} ${reviewer.lastName}`,
               },
-              rolePreferences: (await getRolePreferencesForReviewer(reviewer.id)),
+              rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
               assignments: assignments.length,
-              pendingAssignments: reviewData.filter((data) => {data.submitted == false}).length,
+              pendingAssignments: reviewData.filter((data) => {
+                data.submitted == false;
+              }).length,
             };
-  
+
             return row;
           }),
       );
