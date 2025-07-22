@@ -2,7 +2,6 @@ import { AssignedApplicationsTable } from "@/components/dor/AssignedApplications
 import Loading from "@/components/Loading";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { Button } from "@/components/ui/button";
-import { useApplicationResponse } from "@/hooks/useApplicationResponses";
 import { useReviewAssignments } from "@/hooks/useReviewAssignments";
 import { useReviewDataForReviewer } from "@/hooks/useReviewData";
 import { getReviewerById } from "@/services/reviewersService";
