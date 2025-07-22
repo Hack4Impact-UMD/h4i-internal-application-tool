@@ -164,6 +164,7 @@ export interface ApplicationInterviewData {
 export interface ApplicationSection {
   sectionId: string; //no spaces, alphanumeric, unique (used as a route param)
   sectionName: string;
+  description?: string;
   forRoles?: ApplicantRole[]; // some sections are role specific
   questions: ApplicationQuestion[];
 }

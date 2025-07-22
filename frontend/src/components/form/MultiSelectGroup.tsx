@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import OptionButton from "./OptionButton";
 import { twMerge } from "tailwind-merge";
+import FormMarkdown from "./FormMarkdown";
 
 interface MultiSelectGroupProps {
   question: string;
@@ -51,7 +52,7 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
 
-      <span className="mb-2.5 text-xs font-light">{label}</span>
+      <FormMarkdown>{label}</FormMarkdown>
 
       <div className="flex flex-wrap gap-1 mt-2">
         {options.map((option) => (

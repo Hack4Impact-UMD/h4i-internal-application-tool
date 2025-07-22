@@ -14,6 +14,7 @@ import { FullMetadata } from "firebase/storage";
 import Spinner from "../Spinner";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
+import FormMarkdown from "./FormMarkdown";
 
 type FileUploadProps = {
   question: string;
@@ -165,12 +166,9 @@ export default function FileUpload(props: FileUploadProps) {
                   {props.question}
                 </span>
                 {props.secondaryText ? (
-                  <div className="font-light text-xs text-gray-600">
-                    {" "}
-                    {props.secondaryText}{" "}
-                  </div>
+                  <FormMarkdown>{props.secondaryText}</FormMarkdown>
                 ) : (
-                  <div></div>
+                  <></>
                 )}
                 {fileMetadata && (
                   <div className="w-full flex flex-row">

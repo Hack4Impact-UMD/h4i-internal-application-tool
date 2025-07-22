@@ -11,7 +11,7 @@ import {
   createColumnHelper,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "../DataTable";
 import { Button } from "../ui/button";
 import {
@@ -107,6 +107,7 @@ type ReviewerSelectProps = {
   assignments: AppReviewAssignment[];
   responseId: string;
   disabled?: boolean;
+  reviews: ApplicationReviewData[];
 };
 
 type ReviewerSearchPopoverProps = {
@@ -213,15 +214,28 @@ function ReviewerSelect({
   responseId,
   disabled = false,
   assignments,
+  reviews,
 }: ReviewerSelectProps) {
   const [showPopover, setShowPopover] = useState(false);
+
+  const complete = useCallback(
+    (reviewer: ReviewerUserProfile) => {
+      return reviews.find(
+        (review) =>
+          review.submitted &&
+          review.reviewerId === reviewer.id &&
+          review.forRole === role,
+      );
+    },
+    [reviews, role],
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
       {reviewers.map((reviewer, index) => (
         <div
           key={reviewer.id}
-          className={`rounded-full border h-7 px-2 py-1 bg-muted text-sm flex flex-row gap-1 items-center`}
+          className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(reviewer) ? "bg-green-200 text-green-800 border-green-100" : "bg-muted"}`}
         >
           <span className="text-sm">
             {reviewer.firstName} {reviewer.lastName}
@@ -229,7 +243,7 @@ function ReviewerSelect({
           <Button
             disabled={disabled}
             variant="ghost"
-            className="size-3"
+            className="size-3 hover:bg-transparent"
             onClick={() => onDelete(reviewer, assignments[index])}
           >
             <svg
@@ -602,6 +616,7 @@ export default function SuperReviewerApplicationsTable({
             return (
               <ReviewerSelect
                 reviewers={getValue()}
+                reviews={row.original.reviews.reviewData}
                 onAdd={(reviewer) =>
                   addReviewerMutation.mutate({
                     pageIndex: pagination.pageIndex,
@@ -735,13 +750,31 @@ export default function SuperReviewerApplicationsTable({
                   >
                     View Reviews
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate(
+                        `/admin/dor/application/${formId}/${row.original.responseId}`,
+                      );
+                    }}
+                  >
+                    View Application
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           ),
         }),
       ] as ColumnDef<ApplicationRow>[],
-    [columnHelper],
+    [
+      addReviewerMutation,
+      columnHelper,
+      formId,
+      navigate,
+      pagination.pageIndex,
+      removeReviewerMutation,
+      toggleQualifiedMutation,
+    ],
   );
 
   const {

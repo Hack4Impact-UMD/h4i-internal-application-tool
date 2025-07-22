@@ -30,6 +30,7 @@ import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import { AssignedApplicationsPage } from "./pages/AssignedApplicationsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import ViewApplicationPage from "./pages/ViewApplicationPage";
 import SuperReviewerReviewersDashboard from "./components/dor/SuperReviewerReviewersDashboard";
 
 function App() {
@@ -145,6 +146,15 @@ function App() {
               </Route>
 
               <Route
+                path="dor/application/:formId/:responseId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <ViewApplicationPage />
+                  </RequireAuth>
+                }
+              />
+
+              <Route
                 path="dor/reviews/:responseId"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
@@ -167,6 +177,15 @@ function App() {
                 element={
                   <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                     <UserRolePage></UserRolePage>
+                  </RequireAuth>
+                }
+              />
+
+              <Route
+                path="dor/response/:responseId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <AppRevisitPage />
                   </RequireAuth>
                 }
               />

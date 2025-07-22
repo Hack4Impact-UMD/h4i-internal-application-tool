@@ -1,7 +1,4 @@
-import {
-  ApplicantRole,
-  AppReviewAssignment,
-} from "@/types/types";
+import { ApplicantRole, AppReviewAssignment } from "@/types/types";
 import { getApplicationResponseById } from "./applicationResponsesService";
 import {
   and,
