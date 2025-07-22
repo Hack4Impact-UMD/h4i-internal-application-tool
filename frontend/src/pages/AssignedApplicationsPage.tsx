@@ -56,7 +56,6 @@ export function AssignedApplicationsPage() {
   if (
     assignmentsPending ||
     applicantPending ||
-    // responsePending ||
     reviewsPending
   )
     return <Loading />;
@@ -65,8 +64,6 @@ export function AssignedApplicationsPage() {
     return <p>Failed to fetch assignments: {assignmentsError.message}</p>;
   if (reviewerError)
     return <p>Failed to fetch applicant: {reviewerError.message}</p>;
-  // if (responseError)
-  // return <p>Failed to fetch response: {responseError.message}</p>;
   if (reviewsError)
     return <p>Failed to fetch reviews: {reviewsError.message}</p>;
   if (!reviewer) return <p>Failed to fetch reviewer</p>;
