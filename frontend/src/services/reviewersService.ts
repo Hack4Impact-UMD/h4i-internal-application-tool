@@ -13,7 +13,7 @@ export async function getReviewerById(
   id: string,
 ): Promise<ReviewerUserProfile> {
   const user = await getUserById(id);
-  if (user.role == PermissionRole.Reviewer) {
+  if (user.role === PermissionRole.Reviewer) {
     return user as ReviewerUserProfile;
   } else {
     throw new Error("user is not a reviewer");
@@ -24,7 +24,7 @@ export async function getRolePreferencesForReviewer(
   reviewerId: string,
 ): Promise<ApplicantRole[]> {
   const user = await getUserById(reviewerId);
-  if (user.role == PermissionRole.Reviewer) {
+  if (user.role === PermissionRole.Reviewer) {
     return (user as ReviewerUserProfile).applicantRolePreferences;
   } else {
     throw new Error("user is not a reviewer");
