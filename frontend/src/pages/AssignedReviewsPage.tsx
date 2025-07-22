@@ -74,7 +74,7 @@ export function AssignedReviewsPage() {
     return <p>Failed to fetch response: {responseError.message}</p>;
   if (reviewsError)
     return <p>Failed to fetch reviws: {reviewsError.message}</p>;
-  if (!response) return <p>Failed to fetch response</p>;
+  if (!response) return <p>Failed to fetch reviews</p>;
 
   return (
     <div className="w-full h-full bg-lightgray flex flex-col items-center p-2 py-4">
