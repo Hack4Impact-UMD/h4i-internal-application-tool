@@ -185,7 +185,7 @@ function ReviewerSearchPopover({
                     ) : assignments[index].error ? (
                       "N/A"
                     ) : (
-                      `(${assignments[index].data.length ?? "N/A"})`
+                      `(${assignments[index].data?.length ?? "N/A"})`
                     )}
                   </p>
                   <div className="flex flex-wrap gap-1">
