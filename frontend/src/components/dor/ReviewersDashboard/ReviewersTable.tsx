@@ -53,10 +53,10 @@ export default function ReviewersTable({
       reviewerId: string;
       pageIndex: number;
     }) => {
-      const rolePreferences = (await getReviewerById(reviewerId))
+      const prevRolePreferences = (await getReviewerById(reviewerId))
         .applicantRolePreferences;
-      rolePreferences.push(roleToAdd);
-      return await setReviewerRolePreferences(reviewerId, rolePreferences);
+      const newRolePreferences = [...prevRolePreferences, roleToAdd];
+      return await setReviewerRolePreferences(reviewerId, newRolePreferences);
     },
     onSuccess: () => {
       throwSuccessToast("Successfully added role preference!");
