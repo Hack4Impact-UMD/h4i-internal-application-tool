@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import Loading from "../Loading";
-import SuperReviewerReviewersTable from "./SuperReviewerReviewersTable";
+import Loading from "../components/Loading";
+import ReviewersTable from "../components/dor/ReviewersDashboard/ReviewersTable";
 import useSearch from "@/hooks/useSearch";
 import { useAllReviewers } from "@/hooks/useReviewers";
 
@@ -20,7 +20,7 @@ export default function SuperReviewerReviewersDashboard() {
 
   return (
     <div>
-      <SuperReviewerReviewersTable
+      <ReviewersTable
         reviewers={reviewers}
         formId={formId}
         search={search}

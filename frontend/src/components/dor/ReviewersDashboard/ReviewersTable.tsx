@@ -1,5 +1,5 @@
 import {
-    ApplicantRole,
+  ApplicantRole,
     ReviewerUserProfile,
   } from "@/types/types";
   import {
@@ -8,12 +8,10 @@ import {
     getPaginationRowModel,
   } from "@tanstack/react-table";
   import { useMemo, useState } from "react";
-  import { DataTable } from "../DataTable";
-  import { Button } from "../ui/button";
+  import { DataTable } from "../../DataTable";
+  import { Button } from "../../ui/button";
   import {
     useMutation,
-    useQueries,
-    useQuery,
     useQueryClient,
   } from "@tanstack/react-query";
   import {
@@ -22,246 +20,33 @@ import {
     ArrowUpDown,
     EllipsisVertical,
   } from "lucide-react";
-  import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-  } from "../ui/command";
   import { useNavigate } from "react-router-dom";
-import { getReviewAssignments } from "@/services/reviewAssignmentService";
-import { getReviewDataForReviewer } from "@/services/reviewDataService";
 import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { throwSuccessToast } from "../toasts/SuccessToast";
-import { throwErrorToast } from "../toasts/ErrorToast";
+} from "../../ui/dropdown-menu";
+import { ReviewerRow, useRows } from "./useRows";
+import { RoleSelect } from "./RoleSelect";
+import { getReviewerById } from "@/services/reviewersService";
 import { setReviewerRolePreferences } from "@/services/userService";
-import { applicantRoleColor, applicantRoleDarkColor, displayApplicantRoleName } from "@/utils/display";
-import { getReviewerById, getRolePreferencesForReviewer } from "@/services/reviewersService";
-import Spinner from "../Spinner";
-import { useRolePreferencesForReviewer } from "@/hooks/useReviewers";
-import ApplicantRolePill from "../role-pill/RolePill";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
   
-  type SuperReviewerReviewersTableProps = {
-    reviewers: ReviewerUserProfile[];
-    search: string;
-    rowCount?: number;
-    formId: string;
-  };
+type ReviewersTableProps = {
+  reviewers: ReviewerUserProfile[];
+  search: string;
+  rowCount?: number;
+  formId: string;
+};
   
-  // todo: definitely incomplete, just trying to understand code rn
-  type ReviewerRow = {
-    index: number;
-    reviewer: {
-      name: string;
-      id: string;
-    };
-    rolePreferences: ApplicantRole[];
-    assignments: number;
-    pendingAssignments: number;
-  };
-
-  type RoleSelectProps = {
-    onAdd: (
-      role: ApplicantRole, 
-      reviewerId: string,
-    ) => void;
-    onDelete: (
-      role: ApplicantRole,
-      reviewerId: string,
-    ) => void;
-    rolePreferences: ApplicantRole[];
-    reviewerId: string;
-    disabled?: boolean;
-  };
-
-  type RoleSearchPopoverProps = {
-    reviewerId: string;
-    onSelect: (
-      role: ApplicantRole,
-      reviewerId: string,
-    ) => void;
-  };
-  
-  function RoleSearchPopover({
-    reviewerId,
-    onSelect,
-  }: RoleSearchPopoverProps) {  
-    const { data: rolePreferences, isPending, error } = useRolePreferencesForReviewer(reviewerId);
-    const roles = Object.values(ApplicantRole)
-  
-    if (isPending)
-      return (
-        <div className="flex items-center justify-center p-2 w-full">
-          <Spinner />
-        </div>
-      );
-  
-    if (error)
-      return (
-        <div className="flex items-center justify-center p-2 w-full">
-          <p>Failed to fetch roles preferences: {error.message}</p>
-        </div>
-      );
-  
-    return (
-      <Command>
-        <CommandInput placeholder="Search Roles..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup>
-            {roles
-              ?.filter((r) => !rolePreferences.includes(r))
-              .map((role) => {
-                return (
-                  <CommandItem
-                    key={role}
-                    value={displayApplicantRoleName(role)}
-                    className="cursor-pointer flex flex-col gap-1 items-start"
-                    onSelect={() => onSelect(role, reviewerId)}
-                  >
-                    <ApplicantRolePill role={role} />
-                  </CommandItem>
-                );
-              })}
-          </CommandGroup>
-        </CommandList>
-      </Command>
-    );
-  }
-
-  function RoleSelect({
-    onAdd,
-    onDelete,
-    rolePreferences,
-    reviewerId,
-    disabled = false,
-  }: RoleSelectProps) {
-    const [showPopover, setShowPopover] = useState(false);
-  
-    return (
-      <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
-        {rolePreferences.map((role, _) => (
-          // TODO: have this use the role pill
-          <div
-            key={role}
-            style={{
-              backgroundColor: applicantRoleColor(role),
-              color: applicantRoleDarkColor(role),
-            }}
-            className={`rounded-full h-7 px-2 py-1 bg-muted text-sm flex flex-row gap-1 items-center`}
-          >
-            <span className="text-sm">
-              {displayApplicantRoleName(role)}
-            </span>
-            <Button
-              disabled={disabled}
-              variant="ghost"
-              className="size-3"
-              onClick={() => onDelete(role, reviewerId)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-3"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18 18 6M6 6l12 12"
-                />
-              </svg>
-            </Button>
-          </div>
-        ))}
-        <Popover open={showPopover} onOpenChange={setShowPopover}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="default"
-              className="rounded-full text-sm h-7 font-normal p-0"
-              disabled={disabled}
-            >
-              Assign
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-3"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="p-0 max-h-32">
-            <RoleSearchPopover
-              reviewerId={reviewerId}
-              onSelect={onAdd}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-    );
-  }
-  function useRows(
-    pageIndex: number,
-    reviewers: ReviewerUserProfile[],
-    rowCount: number,
-    formId: string,
-  ) {
-    return useQuery({
-      queryKey: ["all-reviewers-rows", pageIndex],
-      placeholderData: (prev) => prev,
-      queryFn: async () => {
-        return Promise.all(
-          reviewers
-            .slice(
-              pageIndex * rowCount,
-              Math.min(reviewers.length, (pageIndex + 1) * rowCount),
-            )
-            .map(async (reviewer, index) => {
-              const assignments = (await getReviewAssignments(formId, reviewer.id));
-              const reviewData = (await getReviewDataForReviewer(formId, reviewer.id))
-
-              const row: ReviewerRow = {
-                index: 1 + pageIndex * rowCount + index,
-                reviewer: {
-                  id: reviewer.id,
-                  name: `${reviewer.firstName} ${reviewer.lastName}`,
-                },
-                rolePreferences: (await getRolePreferencesForReviewer(reviewer.id)),
-                assignments: assignments.length,
-                pendingAssignments: reviewData.filter((data) => {data.submitted == false}).length,
-              };
-  
-              return row;
-            }),
-        );
-      },
-    });
-  }
-  
-  export default function SuperReviewerReviewersTable({
+  export default function ReviewersTable({
     reviewers,
     search,
     formId,
     rowCount = 20,
-  }: SuperReviewerReviewersTableProps) {
+  }: ReviewersTableProps) {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
@@ -293,7 +78,7 @@ import ApplicantRolePill from "../role-pill/RolePill";
         });
       },
     });
-
+  
     const removeRolePreferenceMutation = useMutation({
       mutationFn: async ({
         roleToRemove,
@@ -555,4 +340,3 @@ import ApplicantRolePill from "../role-pill/RolePill";
       </div>
     );
   }
-  

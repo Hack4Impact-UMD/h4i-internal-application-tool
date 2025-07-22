@@ -31,7 +31,7 @@ import { AssignedApplicationsPage } from "./pages/AssignedApplicationsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ViewApplicationPage from "./pages/ViewApplicationPage";
-import SuperReviewerReviewersDashboard from "./components/dor/SuperReviewerReviewersDashboard";
+import SuperReviewerReviewersDashboard from "./pages/SuperReviewerReviewersDashboard";
 
 function App() {
   return (
