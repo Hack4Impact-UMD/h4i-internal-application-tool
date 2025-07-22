@@ -69,12 +69,14 @@ import ApplicantRolePill from "../role-pill/RolePill";
   };
 
   type RoleSelectProps = {
-    // onAdd: (role: ApplicantRole) => void;
+    onAdd: (
+      role: ApplicantRole, 
+      reviewerId: string,
+    ) => void;
     onDelete: (
       role: ApplicantRole,
       reviewerId: string,
     ) => void;
-    // role: ApplicantRole;
     rolePreferences: ApplicantRole[];
     reviewerId: string;
     disabled?: boolean;
@@ -82,7 +84,10 @@ import ApplicantRolePill from "../role-pill/RolePill";
 
   type RoleSearchPopoverProps = {
     reviewerId: string;
-    onSelect?: (role: ApplicantRole) => void;
+    onSelect: (
+      role: ApplicantRole,
+      reviewerId: string,
+    ) => void;
   };
   
   function RoleSearchPopover({
@@ -120,7 +125,7 @@ import ApplicantRolePill from "../role-pill/RolePill";
                     key={role}
                     value={displayApplicantRoleName(role)}
                     className="cursor-pointer flex flex-col gap-1 items-start"
-                    // onSelect={() => onSelect(role)}
+                    onSelect={() => onSelect(role, reviewerId)}
                   >
                     <ApplicantRolePill role={role} />
                   </CommandItem>
@@ -133,9 +138,8 @@ import ApplicantRolePill from "../role-pill/RolePill";
   }
 
   function RoleSelect({
-    // onAdd,
+    onAdd,
     onDelete,
-    // role,
     rolePreferences,
     reviewerId,
     disabled = false,
@@ -207,7 +211,7 @@ import ApplicantRolePill from "../role-pill/RolePill";
           <PopoverContent className="p-0 max-h-32">
             <RoleSearchPopover
               reviewerId={reviewerId}
-              // onSelect={onAdd}
+              onSelect={onAdd}
             />
           </PopoverContent>
         </Popover>
@@ -260,6 +264,35 @@ import ApplicantRolePill from "../role-pill/RolePill";
   }: SuperReviewerReviewersTableProps) {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+
+    const addRolePreferenceMutation = useMutation({
+      mutationFn: async ({
+        roleToAdd,
+        reviewerId
+      }: {
+        roleToAdd: ApplicantRole;
+        reviewerId: string;
+        pageIndex: number;
+      }) => {
+        const rolePreferences = (await getReviewerById(reviewerId)).applicantRolePreferences 
+        rolePreferences.push(roleToAdd);
+        return await setReviewerRolePreferences(reviewerId, rolePreferences)
+      },
+      onSuccess: () => {
+        throwSuccessToast("Successfully added role preference!");
+      },
+      onError: (error) => {
+        throwErrorToast(
+          `Failed to add role preference! (${error.message})`,
+        );
+        console.log(error);
+      },
+      onSettled: (_data, _err, variables) => {
+        queryClient.invalidateQueries({
+          queryKey: ["all-reviewers-rows", variables.pageIndex],
+        });
+      },
+    });
 
     const removeRolePreferenceMutation = useMutation({
       mutationFn: async ({
@@ -356,14 +389,13 @@ import ApplicantRolePill from "../role-pill/RolePill";
               return (
                 <RoleSelect
                   rolePreferences={getValue()}
-                  // onAdd={(reviewer) =>
-                  //   addReviewerMutation.mutate({
-                  //     pageIndex: pagination.pageIndex,
-                  //     reviewer: reviewer,
-                  //     responseId: rowData.responseId,
-                  //     role: role,
-                  //   })
-                  // }
+                  onAdd={(role, reviewerId) =>
+                    addRolePreferenceMutation.mutate({
+                      pageIndex: pagination.pageIndex,
+                      roleToAdd: role,
+                      reviewerId: reviewerId,
+                    })
+                  }
                   onDelete={(role, reviewerId) =>
                     removeRolePreferenceMutation.mutate({
                       pageIndex: pagination.pageIndex,
