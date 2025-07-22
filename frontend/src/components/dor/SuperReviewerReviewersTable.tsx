@@ -22,6 +22,14 @@ import {
     ArrowUpDown,
     EllipsisVertical,
   } from "lucide-react";
+  import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+  } from "../ui/command";
   import { useNavigate } from "react-router-dom";
 import { getReviewAssignments } from "@/services/reviewAssignmentService";
 import { getReviewDataForReviewer } from "@/services/reviewDataService";
@@ -31,12 +39,15 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../toasts/ErrorToast";
 import { setReviewerRolePreferences } from "@/services/userService";
 import { applicantRoleColor, applicantRoleDarkColor, displayApplicantRoleName } from "@/utils/display";
 import { getReviewerById, getRolePreferencesForReviewer } from "@/services/reviewersService";
+import Spinner from "../Spinner";
+import { useRolePreferencesForReviewer } from "@/hooks/useReviewers";
+import ApplicantRolePill from "../role-pill/RolePill";
   
   type SuperReviewerReviewersTableProps = {
     reviewers: ReviewerUserProfile[];
@@ -69,6 +80,58 @@ import { getReviewerById, getRolePreferencesForReviewer } from "@/services/revie
     disabled?: boolean;
   };
 
+  type RoleSearchPopoverProps = {
+    reviewerId: string;
+    onSelect?: (role: ApplicantRole) => void;
+  };
+  
+  function RoleSearchPopover({
+    reviewerId,
+    onSelect,
+  }: RoleSearchPopoverProps) {  
+    const { data: rolePreferences, isPending, error } = useRolePreferencesForReviewer(reviewerId);
+    const roles = Object.values(ApplicantRole)
+  
+    if (isPending)
+      return (
+        <div className="flex items-center justify-center p-2 w-full">
+          <Spinner />
+        </div>
+      );
+  
+    if (error)
+      return (
+        <div className="flex items-center justify-center p-2 w-full">
+          <p>Failed to fetch roles preferences: {error.message}</p>
+        </div>
+      );
+  
+    return (
+      <Command>
+        <CommandInput placeholder="Search Roles..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup>
+            {roles
+              ?.filter((r) => !rolePreferences.includes(r))
+              .map((role) => {
+                return (
+                  <CommandItem
+                    key={role}
+                    value={displayApplicantRoleName(role)}
+                    className="cursor-pointer flex flex-col gap-1 items-start"
+                    // onSelect={() => onSelect(role)}
+                  >
+                    <ApplicantRolePill role={role} />
+                  </CommandItem>
+                );
+              })}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    );
+  }
+
   function RoleSelect({
     // onAdd,
     onDelete,
@@ -81,7 +144,7 @@ import { getReviewerById, getRolePreferencesForReviewer } from "@/services/revie
   
     return (
       <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
-        {rolePreferences.map((role, index) => (
+        {rolePreferences.map((role, _) => (
           // TODO: have this use the role pill
           <div
             key={role}
@@ -89,7 +152,7 @@ import { getReviewerById, getRolePreferencesForReviewer } from "@/services/revie
               backgroundColor: applicantRoleColor(role),
               color: applicantRoleDarkColor(role),
             }}
-            className={`rounded-full border h-7 px-2 py-1 bg-muted text-sm flex flex-row gap-1 items-center`}
+            className={`rounded-full h-7 px-2 py-1 bg-muted text-sm flex flex-row gap-1 items-center`}
           >
             <span className="text-sm">
               {displayApplicantRoleName(role)}
@@ -117,7 +180,7 @@ import { getReviewerById, getRolePreferencesForReviewer } from "@/services/revie
             </Button>
           </div>
         ))}
-        {/* <Popover open={showPopover} onOpenChange={setShowPopover}>
+        <Popover open={showPopover} onOpenChange={setShowPopover}>
           <PopoverTrigger asChild>
             <Button
               variant="default"
@@ -142,13 +205,12 @@ import { getReviewerById, getRolePreferencesForReviewer } from "@/services/revie
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-0 max-h-32">
-            <ReviewerSearchPopover
-              responseId={responseId}
-              role={role}
-              onSelect={onAdd}
+            <RoleSearchPopover
+              reviewerId={reviewerId}
+              // onSelect={onAdd}
             />
           </PopoverContent>
-        </Popover> */}
+        </Popover>
       </div>
     );
   }
