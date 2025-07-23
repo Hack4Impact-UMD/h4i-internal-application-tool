@@ -22,6 +22,7 @@ import { removeInterviewAssignment } from "@/services/interviewAssignmentService
 import type { InterviewAssignment } from "@/types/types";
 import Spinner from "../Spinner";
 import { useParams } from "react-router-dom";
+import { ApplicationInterviewData } from "@/types/types";
 
 // TODO: add interviewer-related logic once the related service functions are written 
 
@@ -98,7 +99,7 @@ function InterviewerSelect({
   assignments: InterviewAssignment[];
   responseId: string;
   disabled?: boolean;
-  interviews: any[];
+  interviews: ApplicationInterviewData[];
 }) {
   const [showPopover, setShowPopover] = useState(false);
   // Check if interview is complete for a given interviewer
@@ -296,7 +297,7 @@ export default function QualifiedApplicationsTable({
     },
   });
   const removeInterviewerMutation = useMutation({
-    mutationFn: async ({ assignment, interviews }: { assignment: InterviewAssignment; interviews: any[] }) => {
+    mutationFn: async ({ assignment, interviews }: { assignment: InterviewAssignment; interviews: ApplicationInterviewData[]; }) => {
       // Prevent removal if interview has started
       if (interviews.find((i) => i.interviewerId === assignment.interviewerId && i.submitted)) {
         throw new Error("The interviewer has already started their interview for this assignment. It is not possible to delete it.");
