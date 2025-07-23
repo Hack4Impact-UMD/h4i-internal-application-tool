@@ -154,7 +154,7 @@ function ApplicationResponseRow({
         {decided ? (
           <Link
             className="text-blue-500 cursor-pointer"
-            to={"/apply/revisit/" + "/apply/status/decision"}
+            to={"/apply/status/decision"}
           >
             {form.semester + " Application"}
             View Decision
@@ -201,8 +201,8 @@ function StatusPage() {
   const { data: currentTimelineStep } = useTimelineStep();
 
   return (
-    <div className="flex flex-col">
-      <div className="h-screen bg-muted">
+    <div className="flex h-full flex-col">
+      <div className="h-full bg-muted">
         <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8 rounded shadow">
           <h1 className="text-xl mt-10 mb-10 font-semibold">My Applications</h1>
 

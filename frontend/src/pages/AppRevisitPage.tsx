@@ -15,7 +15,7 @@ export default function AppRevisitPage() {
 
   const { form, response } = data;
 
-  if (response.status !== ApplicationStatus.InProgress) {
+  if (response.status === ApplicationStatus.InProgress) {
     throw {
       status: 403,
       statusText: "Forbidden",

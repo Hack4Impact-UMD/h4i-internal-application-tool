@@ -78,6 +78,7 @@ export type InterviewAssignment = {
   interviewerId: string;
   applicantId: string; // the applicant that was assigned for review
   applicationResponseId: string; // the submitted application that was assigned for review
+  forRole: ApplicantRole;
 };
 
 export type AppReviewAssignment = {
@@ -90,7 +91,7 @@ export type AppReviewAssignment = {
   forRole: ApplicantRole;
 };
 
-export type ReviewerAssignment = AppReviewAssignment | InterviewAssignment;
+export type Assignment = AppReviewAssignment | InterviewAssignment;
 // stores the actual user submitted application responses
 export interface ApplicationResponse {
   id: string;
@@ -152,13 +153,18 @@ export interface ApplicationInterviewData {
   applicationFormId: string;
   applicationResponseId: string;
   applicantId: string;
+  applicantScores: {
+    [category in string]: number; // talking with PMs about the format for this
+  };
   interviewNotes: string;
-  interviewComplete: boolean;
+  forRole: ApplicantRole;
+  submitted: boolean;
 }
 
 export interface ApplicationSection {
   sectionId: string; //no spaces, alphanumeric, unique (used as a route param)
   sectionName: string;
+  description?: string;
   forRoles?: ApplicantRole[]; // some sections are role specific
   questions: ApplicationQuestion[];
 }

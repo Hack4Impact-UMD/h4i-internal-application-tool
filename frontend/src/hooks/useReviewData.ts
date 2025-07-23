@@ -17,6 +17,15 @@ export function useReviewDataForApplicant(formId: string, applicantId: string) {
   });
 }
 
+export function useReviewDataForReviewer(formId: string, reviewerId: string) {
+  return useQuery<ApplicationReviewData[]>({
+    queryKey: ["review-data", "reviewer", formId, reviewerId],
+    queryFn: () => {
+      return getReviewDataForReviewer(formId, reviewerId);
+    },
+  });
+}
+
 export function useReviewDataForApplicantAndRole(
   formId: string,
   applicantId: string,

@@ -27,9 +27,12 @@ import SuperReviewerDashboardShell from "./pages/SuperReviewerDashboardShell";
 import SearchProvider from "./components/providers/SearchProvider";
 import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerApplicationsDashboard";
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
+import { AssignedApplicationsPage } from "./pages/AssignedApplicationsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
 import QualifiedApplicationsDashboard from "./components/dor/QualifiedApplicationsDashboard";
 import NotFoundPage from "./pages/NotFoundPage";
+import ViewApplicationPage from "./pages/ViewApplicationPage";
+import SuperReviewerReviewersDashboard from "./pages/SuperReviewerReviewersDashboard";
 
 function App() {
   return (
@@ -139,9 +142,18 @@ function App() {
                 />
                 <Route
                   path="dashboard/:formId/reviewers"
-                  element={<p>Reviewers</p>}
+                  element={<SuperReviewerReviewersDashboard />}
                 />
               </Route>
+
+              <Route
+                path="dor/application/:formId/:responseId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <ViewApplicationPage />
+                  </RequireAuth>
+                }
+              />
 
               <Route
                 path="dor/reviews/:responseId"
@@ -153,10 +165,28 @@ function App() {
               />
 
               <Route
+                path="dor/applications/:formId/:reviewerId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <AssignedApplicationsPage />
+                  </RequireAuth>
+                }
+              />
+
+              <Route
                 path="dor/users"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                     <UserRolePage></UserRolePage>
+                  </RequireAuth>
+                }
+              />
+
+              <Route
+                path="dor/response/:responseId"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <AppRevisitPage />
                   </RequireAuth>
                 }
               />

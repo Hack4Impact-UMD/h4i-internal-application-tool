@@ -1,13 +1,8 @@
-import {
-  ApplicantRole,
-  AppReviewAssignment,
-  ReviewerAssignment,
-} from "@/types/types";
+import { ApplicantRole, AppReviewAssignment } from "@/types/types";
 import { getApplicationResponseById } from "./applicationResponsesService";
 import {
   and,
   collection,
-  CollectionReference,
   deleteDoc,
   doc,
   getDoc,
@@ -33,7 +28,7 @@ export async function assignReview(
       `Attempting to assign reviewer to non-existent response with id ${responseId}`,
     );
 
-  const reviewAssignment: ReviewerAssignment = {
+  const reviewAssignment: AppReviewAssignment = {
     id: uuidv4(),
     assignmentType: "review",
     applicantId: response.userId,
@@ -76,11 +71,11 @@ export async function getReviewAssignments(
 
 export async function getReviewAssignmentById(
   assignmentId: string,
-): Promise<ReviewerAssignment | undefined> {
+): Promise<AppReviewAssignment | undefined> {
   const assignments = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
   const docRef = doc(assignments, assignmentId);
 
-  return (await getDoc(docRef)).data() as ReviewerAssignment | undefined;
+  return (await getDoc(docRef)).data() as AppReviewAssignment | undefined;
 }
 
 export async function getReviewAssignmentsForApplication(
