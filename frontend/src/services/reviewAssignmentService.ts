@@ -92,10 +92,7 @@ export async function getReviewAssignmentsForApplication(
 
 export async function getReviewAssignmentsForForm(formId: string) {
   const assignments = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
-  const q = query(
-    assignments,
-    where("formId", "==", formId),
-  );
+  const q = query(assignments, where("formId", "==", formId));
 
   return (await getDocs(q)).docs.map((d) => d.data() as AppReviewAssignment);
 }

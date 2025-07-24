@@ -27,7 +27,9 @@ export default function FormProvider() {
       if (token) return await saveApplicationResponse(r, token);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ predicate: q => q.queryKey.includes("responses") });
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey.includes("responses"),
+      });
     },
   });
   const [response, setResponse] = useState<ApplicationResponse | undefined>();
