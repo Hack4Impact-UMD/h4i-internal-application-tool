@@ -158,3 +158,17 @@ export async function getReviewDataForResponseRole(
 
   return result.docs.map((doc) => doc.data() as ApplicationReviewData);
 }
+
+export async function getReviewDataForForm(
+  formId: string,
+) {
+  const reviewData = collection(db, REVIEW_DATA_COLLECTION);
+  const q = query(
+    reviewData,
+    where("applicationFormId", "==", formId),
+  );
+  const result = await getDocs(q);
+
+  return result.docs.map((doc) => doc.data() as ApplicationReviewData);
+}
+
