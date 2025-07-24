@@ -40,22 +40,22 @@ export default function SuperReviewerReviewersDashboard() {
 
   return (
     <div>
-      <div className="overflow-x-scroll flex flex-row gap-228 justify-stretch mt-4 no-scrollbar">
+      <div className="overflow-x-scroll flex flex-row gap-2 justify-stretch mt-4 no-scrollbar">
         <Button
           className={`h-28 min-w-40 text-white p-4 flex flex-col items-start 
 					${statusFilter == "all" ? "bg-[#17476B] hover:bg-[#17476B]/90 text-[#D5E7F2]" : "bg-[#D5E7F2] hover:bg-[#D5E7F2]/90 text-[#17476B]"}`}
           onClick={() => setStatusFilter("all")}
         >
           <span className="text-3xl">{reviewers.length}</span>
-          <span className="mt-auto">Total Applications</span>
+          <span className="mt-auto">Reviewers</span>
         </Button>
         <Button
-          className={`h-28 min-w-40 p-4 flex flex-col items-start 
+          className={`h-28  min-w-40 p-4 flex flex-col items-start 
 					${statusFilter != "complete" ? "bg-[#DCEBDD] hover:bg-[#DCEBDD]/90 text-[#1D3829]" : "bg-[#1D3829] hover:bg-[#1D3829]/90 text-[#DCEBDD]"}`}
           onClick={() => setStatusFilter("complete")}
         >
           <span className="text-3xl">{numComplete}</span>
-          <span className="mt-auto">Reviewed</span>
+          <span className="mt-auto">Completed</span>
         </Button>
         <Button
           className={`h-28 min-w-40 p-4 flex flex-col items-start 
@@ -68,7 +68,7 @@ export default function SuperReviewerReviewersDashboard() {
           <span className="mt-auto">Pending</span>
         </Button>
       </div>
-      <ReviewersTable reviewers={reviewers} formId={formId} search={search} />
+      <ReviewersTable reviewers={reviewers} formId={formId} search={search} statusFilter={statusFilter} />
     </div>
   );
 }

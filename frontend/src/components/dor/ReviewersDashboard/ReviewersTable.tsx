@@ -33,6 +33,7 @@ type ReviewersTableProps = {
   search: string;
   rowCount?: number;
   formId: string;
+  statusFilter: "all" | "complete" | "pending";
 };
 
 export default function ReviewersTable({
@@ -40,6 +41,7 @@ export default function ReviewersTable({
   search,
   formId,
   rowCount = 20,
+  statusFilter
 }: ReviewersTableProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -236,6 +238,13 @@ export default function ReviewersTable({
               </Button>
             );
           },
+          filterFn: ({ original }, _, filterValue) => {
+            console.log("filter: ", filterValue);
+            if (filterValue === "all") return true;
+            else if (filterValue === "complete") return original.pendingAssignments === 0;
+            else if (filterValue === "pending") return original.pendingAssignments > 0;
+            else return true;
+          }
         }),
         columnHelper.display({
           id: "actions",
@@ -258,9 +267,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.reviewer.id,
+                        formId +
+                        "/" +
+                        row.original.reviewer.id,
                       );
                     }}
                   >
@@ -296,9 +305,16 @@ export default function ReviewersTable({
           onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
+          enableColumnFilters: true,
           state: {
             globalFilter: search,
             pagination,
+            columnFilters: [
+              {
+                id: "pending-assignments",
+                value: statusFilter,
+              },
+            ],
           },
         }}
       />

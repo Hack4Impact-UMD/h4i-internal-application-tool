@@ -46,7 +46,7 @@ export function useRows(
               },
               rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
               assignments: assignments.length,
-              pendingAssignments: reviewData.filter(data => data.submitted === false).length,
+              pendingAssignments: assignments.length - reviewData.filter(data => data.submitted).length,
             };
 
             return row;
