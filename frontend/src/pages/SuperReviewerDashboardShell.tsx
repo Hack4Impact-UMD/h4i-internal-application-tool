@@ -13,7 +13,7 @@ export default function SuperReviewerDashboardShell() {
             className={({ isActive }) =>
               isActive
                 ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue/90 hover:text-white"
             }
             to={`/admin/dor/dashboard/${formId}/all`}
           >
@@ -23,7 +23,7 @@ export default function SuperReviewerDashboardShell() {
             className={({ isActive }) =>
               isActive
                 ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue/90 hover:text-white"
             }
             to={`/admin/dor/dashboard/${formId}/qualified`}
           >
@@ -33,7 +33,7 @@ export default function SuperReviewerDashboardShell() {
             className={({ isActive }) =>
               isActive
                 ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue/90 hover:text-white"
             }
             to={`/admin/dor/dashboard/${formId}/reviewers`}
           >
