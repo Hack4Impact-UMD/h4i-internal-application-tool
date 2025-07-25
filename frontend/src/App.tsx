@@ -143,6 +143,10 @@ function App() {
                   path="dashboard/:formId/reviewers"
                   element={<SuperReviewerReviewersDashboard />}
                 />
+                <Route
+                  path="dashboard/:formId/interviewers"
+                  element={<p>Interviewers</p>}
+                />
               </Route>
 
               <Route

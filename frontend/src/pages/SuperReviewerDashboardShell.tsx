@@ -39,6 +39,16 @@ export default function SuperReviewerDashboardShell() {
           >
             Reviewers
           </NavLink>
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? "p-2 bg-blue text-white rounded text-sm"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue/90 hover:text-white"
+            }
+            to={`/admin/dor/dashboard/${formId}/interviewers`}
+          >
+            Interviewers
+          </NavLink>
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
