@@ -1,5 +1,3 @@
 import ReviewerInterviewsTable from "./ReviewerInterviewsTable";
 
-export {
-	ReviewerInterviewsTable
-};
+export { ReviewerInterviewsTable };

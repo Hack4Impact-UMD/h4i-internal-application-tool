@@ -59,9 +59,9 @@ export async function loginUser(
 }
 
 export async function logoutUser() {
-  await queryClient.cancelQueries()
-  await queryClient.invalidateQueries()
-  queryClient.clear()
+  await queryClient.cancelQueries();
+  await queryClient.invalidateQueries();
+  queryClient.clear();
   await signOut(auth);
 }
 
@@ -147,5 +147,5 @@ export function onAuthStateChange(
 }
 
 export function authStateSnapshot() {
-  return auth.currentUser
+  return auth.currentUser;
 }

@@ -1,7 +1,11 @@
 import Markdown, { Options } from "react-markdown";
 import { twMerge } from "tailwind-merge";
 
-export default function FormMarkdown({ children, components, className = "" }: Options & { className?: string }) {
+export default function FormMarkdown({
+  children,
+  components,
+  className = "",
+}: Options & { className?: string }) {
   if (!children) return <></>;
 
   return (

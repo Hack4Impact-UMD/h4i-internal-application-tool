@@ -1,7 +1,18 @@
-import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
-import { ApplicantRole, ApplicationInterviewData, InterviewAssignment } from "../types/types";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import {
+  ApplicantRole,
+  ApplicationInterviewData,
+  InterviewAssignment,
+} from "../types/types";
 import { db } from "../config/firebase";
-import { v4 as uuidv4 } from "uuid"
+import { v4 as uuidv4 } from "uuid";
 
 export const INTERVIEW_DATA_COLLECTION = "interview-data";
 

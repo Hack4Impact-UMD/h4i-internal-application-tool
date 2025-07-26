@@ -59,7 +59,7 @@ export default function AppRevisitPage() {
                     (r) => r.sectionId == s.sectionId,
                   )!.questions
                 }
-                onChangeResponse={() => { }}
+                onChangeResponse={() => {}}
               />
             </div>
           ))}

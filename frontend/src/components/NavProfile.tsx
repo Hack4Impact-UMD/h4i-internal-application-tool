@@ -24,7 +24,7 @@ type NavProfileProps = {
 export default function NavProfile({ user, className = "" }: NavProfileProps) {
   const { logout } = useAuth();
   const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return (
     <>
@@ -59,18 +59,15 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
             <DropdownMenuLabel>Advanced</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={async () => {
-                await queryClient.cancelQueries()
-                await queryClient.invalidateQueries()
-                queryClient.clear()
+                await queryClient.cancelQueries();
+                await queryClient.invalidateQueries();
+                queryClient.clear();
               }}
               className="cursor-pointer"
             >
               Clear Cache
             </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={true}
-              className="cursor-pointer"
-            >
+            <DropdownMenuItem disabled={true} className="cursor-pointer">
               Report an Issue
             </DropdownMenuItem>
           </DropdownMenuGroup>

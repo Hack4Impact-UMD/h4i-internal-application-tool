@@ -211,7 +211,10 @@ function App() {
                   element={<ReviewerApplicationsDashboard />}
                 />
 
-                <Route path="interviews" element={<ReviewerInterviewsDashboard />} />
+                <Route
+                  path="interviews"
+                  element={<ReviewerInterviewsDashboard />}
+                />
               </Route>
               <Route
                 element={

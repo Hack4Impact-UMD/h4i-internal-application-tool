@@ -24,7 +24,6 @@ export default function ReviewerInterviewsDashboard() {
     "all" | "completed" | "pending"
   >("all");
 
-
   const numReviewed = useMemo(
     () =>
       assignedInterviews?.filter((f) =>
@@ -38,9 +37,12 @@ export default function ReviewerInterviewsDashboard() {
 
   if (!formId) return <p>Form ID not provided!</p>;
 
-  if (assignmentsLoading || reviewsLoading) return <div className="flex items-center justify-center p-4 w-full h-full">
-    <Spinner />
-  </div>;
+  if (assignmentsLoading || reviewsLoading)
+    return (
+      <div className="flex items-center justify-center p-4 w-full h-full">
+        <Spinner />
+      </div>
+    );
   if (assignmentsError)
     return (
       <p>Failed to fetch assigned applications: {assignmentsError.message}</p>

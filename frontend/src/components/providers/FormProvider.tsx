@@ -163,7 +163,9 @@ export default function FormProvider() {
       throwErrorToast("Failed to save your application!");
     }
     await queryClient.invalidateQueries({
-      predicate: (q) => q.queryKey.includes("responses") || q.queryKey.includes("responses-and-semester"),
+      predicate: (q) =>
+        q.queryKey.includes("responses") ||
+        q.queryKey.includes("responses-and-semester"),
     });
   }
 
