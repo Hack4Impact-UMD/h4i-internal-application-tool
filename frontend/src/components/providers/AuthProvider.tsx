@@ -38,8 +38,7 @@ export default function AuthProvider(props: AuthProviderProps) {
   const submitMutation = useMutation({
     mutationFn: (roles: ApplicantRole[]) =>
       setReviewerRolePreferences(authState.user?.id ?? "", roles),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSuccess: (_data, vars, _ctx) => {
+    onSuccess: (_data, vars) => {
       if (authState.user?.role == PermissionRole.Reviewer) {
         setAuthState({
           ...authState,
@@ -101,7 +100,7 @@ export default function AuthProvider(props: AuthProviderProps) {
           open={
             !authState.user.applicantRolePreferences ||
             authState.user.applicantRolePreferences.length <
-              MIN_REVIEWER_ROLE_PREFS
+            MIN_REVIEWER_ROLE_PREFS
           }
           minRoles={MIN_REVIEWER_ROLE_PREFS}
           onSubmit={(roles) => submitMutation.mutate(roles)}

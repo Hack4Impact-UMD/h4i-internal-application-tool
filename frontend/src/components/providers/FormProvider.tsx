@@ -26,11 +26,6 @@ export default function FormProvider() {
     mutationFn: async (r: ApplicationResponse) => {
       if (token) return await saveApplicationResponse(r, token);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("responses"),
-      });
-    },
   });
   const [response, setResponse] = useState<ApplicationResponse | undefined>();
   const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>([]);
@@ -167,6 +162,9 @@ export default function FormProvider() {
       console.error(err);
       throwErrorToast("Failed to save your application!");
     }
+    await queryClient.invalidateQueries({
+      predicate: (q) => q.queryKey.includes("responses") || q.queryKey.includes("responses-and-semester"),
+    });
   }
 
   return (

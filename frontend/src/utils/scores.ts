@@ -2,6 +2,7 @@ import { getApplicationForm } from "@/services/applicationFormsService";
 import {
   ApplicantRole,
   ApplicationForm,
+  ApplicationInterviewData,
   ApplicationReviewData,
 } from "@/types/types";
 
@@ -36,7 +37,12 @@ export async function calculateReviewScore(
   return roundScore(score, 2);
 }
 
-function averageScore(review: ApplicationReviewData) {
+//TODO: implement better
+export async function calculateInterviewScore(interviewData: ApplicationInterviewData) {
+  return Promise.resolve(averageScore(interviewData))
+}
+
+function averageScore(review: ApplicationReviewData | ApplicationInterviewData) {
   if (Object.values(review.applicantScores).length == 0) return 0;
   const scores = Object.values(review.applicantScores);
   return scores.reduce((acc, s) => acc + s, 0) / scores.length;

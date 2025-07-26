@@ -1,19 +1,19 @@
-import { ReviewerApplicationsTable } from "@/components/reviewer/ReviewerApplicationsTable";
+import { ReviewerInterviewsTable } from "@/components/reviewer/ReviewerInterviewsTable";
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
-import { useMyReviewAssignments } from "@/hooks/useReviewAssignments";
+import { useMyInterviewAssignments } from "@/hooks/useInterviewAssignments";
 import { useMyReviews } from "@/hooks/useReviewData";
 import useSearch from "@/hooks/useSearch";
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
-export default function ReviewerApplicationsDashboard() {
+export default function ReviewerInterviewsDashboard() {
   const { formId } = useParams();
   const {
-    data: assignedApps,
+    data: assignedInterviews,
     isPending: assignmentsLoading,
     error: assignmentsError,
-  } = useMyReviewAssignments(formId ?? "");
+  } = useMyInterviewAssignments(formId ?? "");
   const {
     data: reviews,
     isPending: reviewsLoading,
@@ -21,21 +21,19 @@ export default function ReviewerApplicationsDashboard() {
   } = useMyReviews(formId ?? "");
   const { search } = useSearch();
   const [statusFilter, setStatusFilter] = useState<
-    "all" | "reviewed" | "pending"
+    "all" | "completed" | "pending"
   >("all");
 
-  //NOTE: Just for testing, duplicates a bunch of rows
-  // const rows = useMemo(() => assignedApps?.flatMap(row => Array.from({ length: 100 }, () => row)) ?? [], [assignedApps])
 
   const numReviewed = useMemo(
     () =>
-      assignedApps?.filter((f) =>
+      assignedInterviews?.filter((f) =>
         reviews
           ?.filter((r) => r.submitted && r.forRole == f.forRole)
           ?.map((r) => r.applicationResponseId)
           .includes(f.applicationResponseId),
       ).length,
-    [reviews, assignedApps],
+    [reviews, assignedInterviews],
   );
 
   if (!formId) return <p>Form ID not provided!</p>;
@@ -58,16 +56,16 @@ export default function ReviewerApplicationsDashboard() {
 					${statusFilter == "all" ? "bg-[#17476B] hover:bg-[#17476B]/90 text-[#D5E7F2]" : "bg-[#D5E7F2] hover:bg-[#D5E7F2]/90 text-[#17476B]"}`}
           onClick={() => setStatusFilter("all")}
         >
-          <span className="text-3xl">{assignedApps.length}</span>
-          <span className="mt-auto">Total Applications</span>
+          <span className="text-3xl">{assignedInterviews.length}</span>
+          <span className="mt-auto">Interviews</span>
         </Button>
         <Button
           className={`h-28 min-w-40 p-4 flex flex-col items-start 
-					${statusFilter != "reviewed" ? "bg-[#DCEBDD] hover:bg-[#DCEBDD]/90 text-[#1D3829]" : "bg-[#1D3829] hover:bg-[#1D3829]/90 text-[#DCEBDD]"}`}
-          onClick={() => setStatusFilter("reviewed")}
+					${statusFilter != "completed" ? "bg-[#DCEBDD] hover:bg-[#DCEBDD]/90 text-[#1D3829]" : "bg-[#1D3829] hover:bg-[#1D3829]/90 text-[#DCEBDD]"}`}
+          onClick={() => setStatusFilter("completed")}
         >
           <span className="text-3xl">{numReviewed}</span>
-          <span className="mt-auto">Reviewed</span>
+          <span className="mt-auto">Completed</span>
         </Button>
         <Button
           className={`h-28 min-w-40 p-4 flex flex-col items-start 
@@ -75,16 +73,16 @@ export default function ReviewerApplicationsDashboard() {
           onClick={() => setStatusFilter("pending")}
         >
           <span className="text-3xl">
-            {assignedApps.length - (numReviewed ?? 0)}
+            {assignedInterviews.length - (numReviewed ?? 0)}
           </span>
           <span className="mt-auto">Pending</span>
         </Button>
       </div>
-      <ReviewerApplicationsTable
+      <ReviewerInterviewsTable
         formId={formId}
         statusFilter={statusFilter}
         search={search}
-        assignments={assignedApps}
+        assignments={assignedInterviews}
       />
     </div>
   );

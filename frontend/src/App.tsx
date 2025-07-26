@@ -33,6 +33,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ViewApplicationPage from "./pages/ViewApplicationPage";
 import ReviewerDashboardShell from "./pages/ReviewerDashboardShell";
 import SuperReviewerReviewersDashboard from "./pages/SuperReviewerReviewersDashboard";
+import ReviewerInterviewsDashboard from "./pages/ReviewerInterviewsDashboard";
 
 function App() {
   return (
@@ -206,7 +207,7 @@ function App() {
                   element={<ReviewerApplicationsDashboard />}
                 />
 
-                <Route path="interviews" element={<p>Interviews</p>} />
+                <Route path="interviews" element={<ReviewerInterviewsDashboard />} />
               </Route>
               <Route
                 element={

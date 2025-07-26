@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 
 type NavProfileProps = {
   user: UserProfile;
@@ -23,6 +24,7 @@ type NavProfileProps = {
 export default function NavProfile({ user, className = "" }: NavProfileProps) {
   const { logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient()
 
   return (
     <>
@@ -51,7 +53,29 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
             <DropdownMenuItem className="cursor-pointer">
               Edit Profile
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Advanced</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={async () => {
+                await queryClient.cancelQueries()
+                await queryClient.invalidateQueries()
+                queryClient.clear()
+              }}
+              className="cursor-pointer"
+            >
+              Clear Cache
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={true}
+              className="cursor-pointer"
+            >
+              Report an Issue
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
             <DropdownMenuItem
               onClick={logout}
               variant="destructive"
