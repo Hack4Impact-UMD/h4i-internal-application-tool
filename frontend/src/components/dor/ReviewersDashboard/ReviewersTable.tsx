@@ -21,12 +21,13 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import { ReviewerRow, useRows } from "./useRows";
+import { ReviewerRow, flattenRows, useRows } from "./useRows";
 import { RoleSelect } from "./RoleSelect";
 import { getReviewerById } from "@/services/reviewersService";
 import { setReviewerRolePreferences } from "@/services/userService";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { ExportButton } from "@/components/ExportButton";
 
 type ReviewersTableProps = {
   reviewers: ReviewerUserProfile[];
@@ -297,6 +298,7 @@ export default function ReviewersTable({
 
   return (
     <div className="flex flex-col w-full gap-2">
+      <ExportButton data={flattenRows(rows)} filename="h4i_reviewers" />
       <DataTable
         columns={cols}
         data={rows ?? []}

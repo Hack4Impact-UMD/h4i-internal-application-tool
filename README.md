@@ -111,7 +111,7 @@ _Note: Some of these may be outdated_
 
 ## 📞 Team Contacts
 
-| Name | Role | Contact |
-|------|------|---------|
-| **Ramy Kaddouri** | Tech Lead | [Slack](https://hack4impact.slack.com/) |
-| **Lance Uymatiao** | Tech Lead | [Slack](https://hack4impact.slack.com/) |
+| Name | Role | Contact | Email |
+|------|------|---------|-------|
+| **Ramy Kaddouri** | Tech Lead | [Slack](https://hack4impact.slack.com/) | [TODO](mailto:lanceu0128@gmail.com) |
+| **Lance Uymatiao** | Tech Lead | [Slack](https://hack4impact.slack.com/) | [lanceu0128@gmail.com](mailto:lanceu0128@gmail.com) |
