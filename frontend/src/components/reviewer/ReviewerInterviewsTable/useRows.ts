@@ -28,7 +28,7 @@ export function useRows(
   rowCount: number,
 ) {
   return useQuery({
-    queryKey: ["all-interview-assignments", pageIndex],
+    queryKey: ["all-interview-assignments", pageIndex, rowCount],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

@@ -3,7 +3,6 @@ import {
   ApplicationInterviewData,
   ApplicationReviewData,
   InterviewAssignment,
-  ReviewStatus,
 } from "@/types/types";
 import {
   ColumnDef,
@@ -13,15 +12,13 @@ import {
 import { useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
-import { createReviewData } from "@/services/reviewDataService";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import { getApplicationForm } from "@/services/applicationFormsService";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { InterviewAssignmentRow, useRows } from "./useRows";
 import { createInterviewData } from "@/services/interviewDataService";
+import SortableHeader from "@/components/tables/SortableHeader";
 
 type ReviewerApplicationsTableProps = {
   assignments: InterviewAssignment[];
@@ -38,7 +35,6 @@ export default function ReviewerInterviewsTable({
   rowCount = 20,
   statusFilter = "all",
 }: ReviewerApplicationsTableProps) {
-  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [pagination, setPagination] = useState({
@@ -53,103 +49,27 @@ export default function ReviewerInterviewsTable({
         columnHelper.accessor("index", {
           id: "number",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  S. NO
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>S. NO</SortableHeader>;
           },
           cell: ({ getValue }) => getValue(),
         }),
         columnHelper.accessor("applicantName", {
           id: "applicant-name",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  APPLICANT
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>APPLICANT</SortableHeader>;
           },
         }),
         columnHelper.accessor("role", {
           id: "role",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  ROLE
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>ROLE</SortableHeader>;
           },
           cell: ({ getValue }) => <ApplicantRolePill role={getValue()} />,
         }),
         columnHelper.accessor("score", {
           id: "score",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  SCORE
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>SCORE</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
             const review = row.original.interviewReviewData;
@@ -166,26 +86,7 @@ export default function ReviewerInterviewsTable({
         columnHelper.accessor("interviewReviewData", {
           id: "review-status",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  ACTION
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>ACTION</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
             const review = getValue();
@@ -229,7 +130,7 @@ export default function ReviewerInterviewsTable({
           },
           filterFn: (row, columnId, filterValue) => {
             const value = row.getValue(columnId) as
-              | ApplicationReviewData
+              | ApplicationInterviewData
               | undefined;
 
             if (filterValue == "all") return true;

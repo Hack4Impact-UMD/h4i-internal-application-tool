@@ -15,6 +15,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 type NavProfileProps = {
   user: UserProfile;
@@ -57,18 +58,28 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuLabel>Advanced</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={async () => {
-                await queryClient.cancelQueries();
-                await queryClient.invalidateQueries();
-                queryClient.clear();
-              }}
-              className="cursor-pointer"
-            >
-              Clear Cache
-            </DropdownMenuItem>
-            <DropdownMenuItem disabled={true} className="cursor-pointer">
-              Report an Issue
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    await queryClient.cancelQueries();
+                    await queryClient.invalidateQueries();
+                    queryClient.clear();
+                  }}
+                  className="cursor-pointer"
+                >
+                  Clear Cache
+                </DropdownMenuItem>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  This can fix issues with stale data or abnormally long loading
+                  times. Refreshing after clearing is recommended.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+            <DropdownMenuItem className="cursor-pointer">
+              <a href="mailto:umd@hack4impact.org">Report an Issue</a>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

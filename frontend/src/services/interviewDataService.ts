@@ -40,7 +40,7 @@ export async function getInterviewDataForAssignment(
   const q = query(
     reviewData,
     where("applicantId", "==", assignment.applicantId),
-    where("forRole", "==", assignment.forRole.toString()),
+    where("forRole", "==", assignment.forRole),
     where("applicationFormId", "==", assignment.formId),
     where("interviewerId", "==", assignment.interviewerId),
   );

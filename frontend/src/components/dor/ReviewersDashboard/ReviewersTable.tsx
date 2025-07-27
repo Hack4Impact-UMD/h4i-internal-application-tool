@@ -28,6 +28,7 @@ import { setReviewerRolePreferences } from "@/services/userService";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { ExportButton } from "@/components/ExportButton";
+import SortableHeader from "@/components/tables/SortableHeader";
 
 type ReviewersTableProps = {
   reviewers: ReviewerUserProfile[];
@@ -117,51 +118,13 @@ export default function ReviewersTable({
         columnHelper.accessor("index", {
           id: "number",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  S. NO
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>S. NO</SortableHeader>;
           },
         }),
         columnHelper.accessor("reviewer.name", {
           id: "reviewer-name",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  REVIEWER
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>REVIEWER</SortableHeader>;
           },
         }),
         columnHelper.accessor("rolePreferences", {
@@ -193,51 +156,13 @@ export default function ReviewersTable({
         columnHelper.accessor("assignments", {
           id: "assignments",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  ASSIGNMENTS
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>ASSIGNMENTS</SortableHeader>;
           },
         }),
         columnHelper.accessor("pendingAssignments", {
           id: "pending-assignments",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  PENDING
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>PENDING</SortableHeader>;
           },
           filterFn: ({ original }, _, filterValue) => {
             console.log("filter: ", filterValue);

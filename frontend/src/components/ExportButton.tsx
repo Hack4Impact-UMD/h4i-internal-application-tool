@@ -2,14 +2,17 @@ import { mkConfig, generateCsv, download } from "export-to-csv";
 import { Button } from "./ui/button";
 import { throwErrorToast } from "./toasts/ErrorToast";
 
-interface CsvButtonProps<T> {
-  data: T[]; // this requires a "flattened" list of objects, i.e. no inner objects or lists
+type Primitive = string | number | boolean | undefined | null;
+type FlatRecord = Record<string, Primitive>;
+
+interface CsvButtonProps<FlatRecord> {
+  data: FlatRecord[]; // this requires a "flattened" list of objects, i.e. no inner objects or lists
   filename?: string;
   label?: string;
   className?: string;
 }
 
-export function ExportButton<T>({
+export function ExportButton<T extends FlatRecord>({
   data,
   filename = "h4i",
   label = "Export as CSV",
@@ -26,7 +29,7 @@ export function ExportButton<T>({
       filename,
     });
 
-    const csv = generateCsv(csvConfig)(data as any);
+    const csv = generateCsv(csvConfig)(data);
     download(csvConfig)(csv);
   };
 
