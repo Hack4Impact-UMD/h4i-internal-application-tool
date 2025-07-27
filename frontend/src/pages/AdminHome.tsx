@@ -57,16 +57,27 @@ export default function AdminHome() {
         </ul>
       </div>
       {user.role == PermissionRole.SuperReviewer && (
-        <div className="max-w-5xl w-full p-4 bg-white rounded-md">
-          <h1 className="text-xl">Or Manage Users </h1>
-          <p className="text-muted-foreground">
-            View all registered users, grant reviewer access, edit roles, and
-            delete user accounts.
-          </p>
-          <Button className="mt-4" onClick={() => navigate("/admin/dor/users")}>
-            Manage Users
-          </Button>
-        </div>
+        <>
+          <div className="max-w-5xl w-full p-4 bg-white rounded-md">
+            <h1 className="text-xl">Or Manage Users </h1>
+            <p className="text-muted-foreground">
+              View all registered users, grant reviewer access, edit roles, and
+              delete user accounts.
+            </p>
+            <Button className="mt-4" onClick={() => navigate("/admin/dor/users")}>
+              Manage Users
+            </Button>
+          </div>
+          <div className="max-w-5xl w-full p-4 bg-white rounded-md">
+            <h1 className="text-xl">Or Manage Forms </h1>
+            <p className="text-muted-foreground">
+              Validate your form before uploading to Firestore.
+            </p>
+            <Button className="mt-4" onClick={() => navigate("/admin/dor/forms")}>
+              Form Validator
+            </Button>
+          </div>
+        </>
       )}
     </div>
   );

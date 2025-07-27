@@ -32,6 +32,7 @@ import AppRevisitPage from "./pages/AppRevisitPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ViewApplicationPage from "./pages/ViewApplicationPage";
 import SuperReviewerReviewersDashboard from "./pages/SuperReviewerReviewersDashboard";
+import { FormValidationPage } from "./pages/FormValidationPage";
 
 function App() {
   return (
@@ -181,6 +182,15 @@ function App() {
                 element={
                   <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                     <UserRolePage></UserRolePage>
+                  </RequireAuth>
+                }
+              />
+
+              <Route
+                path="dor/forms"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <FormValidationPage />
                   </RequireAuth>
                 }
               />
