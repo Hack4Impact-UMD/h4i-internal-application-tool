@@ -165,9 +165,11 @@ export default function ReviewersTable({
             console.log("filter: ", filterValue);
             if (filterValue === "all") return true;
             else if (filterValue === "complete")
-              return original.pendingAssignments === 0;
+              return original.pendingAssignments === 0 && original.assignments > 0 ;
             else if (filterValue === "pending")
               return original.pendingAssignments > 0;
+            else if (filterValue === "unassigned")
+              return original.pendingAssignments === 0 && original.assignments === 0 ;
             else return true;
           },
         }),
