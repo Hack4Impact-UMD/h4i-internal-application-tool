@@ -17,7 +17,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { AssignmentRow, useRows } from "./useRows";
 import SortableHeader from "@/components/tables/SortableHeader";

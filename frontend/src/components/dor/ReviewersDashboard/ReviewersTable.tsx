@@ -9,9 +9,6 @@ import { DataTable } from "../../DataTable";
 import { Button } from "../../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
   EllipsisVertical,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -195,9 +192,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.reviewer.id,
+                        formId +
+                        "/" +
+                        row.original.reviewer.id,
                       );
                     }}
                   >

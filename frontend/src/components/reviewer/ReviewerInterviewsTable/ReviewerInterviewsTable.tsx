@@ -1,7 +1,6 @@
 import {
   ApplicantRole,
   ApplicationInterviewData,
-  ApplicationReviewData,
   InterviewAssignment,
 } from "@/types/types";
 import {
@@ -14,7 +13,6 @@ import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { InterviewAssignmentRow, useRows } from "./useRows";
 import { createInterviewData } from "@/services/interviewDataService";

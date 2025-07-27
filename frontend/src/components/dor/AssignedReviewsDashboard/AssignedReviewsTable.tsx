@@ -9,7 +9,6 @@ import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { getApplicationForm } from "@/services/applicationFormsService";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { AssignedAppRow, useRows } from "./useRows";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
