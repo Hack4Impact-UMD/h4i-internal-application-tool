@@ -35,6 +35,7 @@ import ReviewerDashboardShell from "./pages/ReviewerDashboardShell";
 import SuperReviewerReviewersDashboard from "./pages/SuperReviewerReviewersDashboard";
 import ReviewerInterviewsDashboard from "./pages/ReviewerInterviewsDashboard";
 import { FormValidationPage } from "./pages/FormValidationPage";
+import SuperReviewerInterviewersDashboard from "./pages/SuperReviewerInterviewersDashboard";
 
 function App() {
   return (
@@ -148,7 +149,7 @@ function App() {
                 />
                 <Route
                   path="dashboard/:formId/interviewers"
-                  element={<p>Interviewers</p>}
+                  element={<SuperReviewerInterviewersDashboard />}
                 />
               </Route>
 
