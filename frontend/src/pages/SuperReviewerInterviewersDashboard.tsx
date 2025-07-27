@@ -1,31 +1,31 @@
 import { useParams } from "react-router-dom";
 import Loading from "../components/Loading";
-import ReviewersTable from "../components/dor/ReviewersDashboard/ReviewersTable";
 import useSearch from "@/hooks/useSearch";
-import { useAllReviewers } from "@/hooks/useReviewers";
-import { useReviewDataForForm } from "@/hooks/useReviewData";
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
-import { useReviewAssignmentsForForm } from "@/hooks/useReviewAssignments";
+import { useAllReviewers } from "@/hooks/useReviewers";
+import { useInterviewDataForForm } from "@/hooks/useInterviewData";
+import { useInterviewAssignmentsForForm } from "@/hooks/useInterviewAssignments";
+import { InterviewersTable } from "@/components/dor/InterviewersDashboard";
 
-export default function SuperReviewerReviewersDashboard() {
+export default function SuperReviewerInterviewersDashboard() {
   const { formId } = useParams<{ formId: string }>();
 
   const {
-    data: reviewers,
-    isPending: reviewersPending,
-    error: reviewersError,
-  } = useAllReviewers();
+    data: interviewers,
+    isPending: interviewersPending,
+    error: interviewersError,
+  } = useAllReviewers(); // all reviewers are eligible for interviews, but some will never be assigned interviews 
   const {
-    data: reviewData,
+    data: interviewData,
     isPending: dataPending,
     error: dataError,
-  } = useReviewDataForForm(formId!);
+  } = useInterviewDataForForm(formId!);
   const {
     data: assignments,
     isPending: assignmentsPending,
     error: assignmentsError,
-  } = useReviewAssignmentsForForm(formId!);
+  } = useInterviewAssignmentsForForm(formId!);
 
   const { search } = useSearch();
 
@@ -35,17 +35,17 @@ export default function SuperReviewerReviewersDashboard() {
 
   const numComplete = useMemo(
     () =>
-      reviewers?.reduce((acc, reviewer) => {
+      interviewers?.reduce((acc, interviewer) => {
         const data =
-          reviewData?.filter((d) => d.reviewerId === reviewer.id) ?? [];
+          interviewData?.filter((d) => d.interviewerId === interviewer.id) ?? [];
         const assigned =
-          assignments?.filter((a) => a.reviewerId === reviewer.id) ?? [];
+          assignments?.filter((a) => a.interviewerId === interviewer.id) ?? [];
 
         if (data.length === 0 && assigned.length === 0) return acc;
 
         if (
           data.reduce(
-            (acc, review) => (review.submitted ? acc + 1 : acc),
+            (acc, interview) => (interview.submitted ? acc + 1 : acc),
             0,
           ) === assigned.length
         ) {
@@ -54,32 +54,32 @@ export default function SuperReviewerReviewersDashboard() {
           return acc;
         }
       }, 0),
-    [assignments, reviewData, reviewers],
+    [assignments, interviewData, interviewers],
   );
-
+  
   const numNoAssignments = useMemo(
     () =>
-      reviewers?.reduce((acc, reviewer) => {
+      interviewers?.reduce((acc, interviewer) => {
         const data =
-          reviewData?.filter((d) => d.reviewerId === reviewer.id) ?? [];
+          interviewData?.filter((d) => d.interviewerId === interviewer.id) ?? [];
         const assigned =
-          assignments?.filter((a) => a.reviewerId === reviewer.id) ?? [];
+          assignments?.filter((a) => a.interviewerId === interviewer.id) ?? [];
 
         if (data.length === 0 && assigned.length === 0) return acc + 1;
         else return acc;
       }, 0),
-    [assignments, reviewData, reviewers],
+    [assignments, interviewData, interviewers],
   );
 
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
-  if (reviewersError)
-    return <p>Failed to fetch reviewers: {reviewersError.message}</p>;
-  if (dataError) return <p>Failed to fetch review data: {dataError.message}</p>;
+  if (interviewersError)
+    return <p>Failed to fetch interviewers: {interviewersError.message}</p>;
+  if (dataError) return <p>Failed to fetch interview data: {dataError.message}</p>;
   if (assignmentsError)
     return (
-      <p>Failed to fetch review assignments: {assignmentsError.message}</p>
+      <p>Failed to fetch interview assignments: {assignmentsError.message}</p>
     );
-  if (reviewersPending || dataPending || assignmentsPending || !reviewers)
+  if (interviewersPending || dataPending || assignmentsPending || !interviewers)
     return <Loading />;
 
   return (
@@ -90,8 +90,8 @@ export default function SuperReviewerReviewersDashboard() {
 					${statusFilter == "all" ? "bg-[#17476B] hover:bg-[#17476B]/90 text-[#D5E7F2]" : "bg-[#D5E7F2] hover:bg-[#D5E7F2]/90 text-[#17476B]"}`}
           onClick={() => setStatusFilter("all")}
         >
-          <span className="text-3xl">{reviewers.length}</span>
-          <span className="mt-auto">Reviewers</span>
+          <span className="text-3xl">{interviewers.length}</span>
+          <span className="mt-auto">Interviewers</span>
         </Button>
         <Button
           className={`h-28  min-w-40 p-4 flex flex-col items-start 
@@ -107,7 +107,7 @@ export default function SuperReviewerReviewersDashboard() {
           onClick={() => setStatusFilter("pending")}
         >
           <span className="text-3xl">
-            {reviewers.length - (numComplete ?? 0) - (numNoAssignments ?? 0)}
+            {interviewers.length - (numComplete ?? 0) - (numNoAssignments ?? 0)}
           </span>
           <span className="mt-auto">Pending</span>
         </Button>
@@ -122,8 +122,8 @@ export default function SuperReviewerReviewersDashboard() {
           <span className="mt-auto">No Assignments</span>
         </Button>
       </div>
-      <ReviewersTable
-        reviewers={reviewers}
+      <InterviewersTable
+        interviewers={interviewers}
         formId={formId}
         search={search}
         statusFilter={statusFilter}

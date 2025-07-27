@@ -66,3 +66,26 @@ export async function createInterviewData(
 
   return reviewDoc;
 }
+
+export async function getInterviewDataForForm(formId: string) {
+  const interviewData = collection(db, INTERVIEW_DATA_COLLECTION);
+  const q = query(interviewData, where("applicationFormId", "==", formId));
+  const result = await getDocs(q);
+
+  return result.docs.map((doc) => doc.data() as ApplicationInterviewData);
+}
+
+export async function getInterviewDataForInterviewer(
+  formId: string,
+  interviewerId: string,
+) {
+  const interviewData = collection(db, INTERVIEW_DATA_COLLECTION);
+  const q = query(
+    interviewData,
+    where("interviewerId", "==", interviewerId),
+    where("applicationFormId", "==", formId),
+  );
+  const result = await getDocs(q);
+
+  return result.docs.map((doc) => doc.data() as ApplicationInterviewData);
+}
