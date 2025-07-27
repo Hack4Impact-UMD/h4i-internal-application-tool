@@ -18,7 +18,10 @@ const TextQuestion = BaseQuestion.extend({
 });
 
 const OptionQuestion = BaseQuestion.extend({
-  questionType: z.enum([QuestionType.MultipleChoice, QuestionType.MultipleSelect]),
+  questionType: z.enum([
+    QuestionType.MultipleChoice,
+    QuestionType.MultipleSelect,
+  ]),
   multipleSelect: z.boolean(),
   questionOptions: z.array(z.string()),
 });
@@ -39,22 +42,22 @@ export const ApplicationQuestionSchema = z.discriminatedUnion("questionType", [
   FileUploadQuestion,
   RoleSelectQuestion,
 ]);
-  
+
 export const ApplicationSectionSchema = z.object({
-    sectionName: z.string(),
-    sectionId: z.string(),
-    forRoles: z.array(ApplicantRoleSchema).optional(),
-    questions: z.array(ApplicationQuestionSchema)
-})
-  
+  sectionName: z.string(),
+  sectionId: z.string(),
+  forRoles: z.array(ApplicantRoleSchema).optional(),
+  questions: z.array(ApplicationQuestionSchema),
+});
+
 export const ApplicationFormSchema = z.object({
-    id: z.string().nonempty(),
-    isActive: z.boolean(),
-    dueDate: z.date(),
-    semester: z.string(),
-    description: z.string(),
-    sections: z.array(ApplicationSectionSchema),
-    decisionReleased: z.boolean().default(false)
-})
+  id: z.string().nonempty(),
+  isActive: z.boolean(),
+  dueDate: z.date(),
+  semester: z.string(),
+  description: z.string(),
+  sections: z.array(ApplicationSectionSchema),
+  decisionReleased: z.boolean().default(false),
+});
 
 export type ApplicationFormData = z.infer<typeof ApplicationFormSchema>;

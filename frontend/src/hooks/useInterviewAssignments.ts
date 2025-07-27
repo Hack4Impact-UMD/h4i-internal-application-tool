@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
 import { InterviewAssignment } from "@/types/types";
-import { getInterviewAssignments, getInterviewAssignmentsForForm } from "@/services/interviewAssignmentService";
+import {
+  getInterviewAssignments,
+  getInterviewAssignmentsForForm,
+} from "@/services/interviewAssignmentService";
 
 export function useInterviewAssignmentsForForm(formId: string) {
   return useQuery<InterviewAssignment[]>({

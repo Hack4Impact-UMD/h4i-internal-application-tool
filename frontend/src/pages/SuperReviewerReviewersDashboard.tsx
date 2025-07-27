@@ -116,9 +116,7 @@ export default function SuperReviewerReviewersDashboard() {
 					${statusFilter != "unassigned" ? "bg-[#F8E6BA] hover:bg-[#F8E6BA]/90 text-[#402C1B]" : "bg-[#402C1B] hover:bg-[#402C1B]/90 text-[#F8E6BA]"}`}
           onClick={() => setStatusFilter("unassigned")}
         >
-          <span className="text-3xl">
-            {numNoAssignments}
-          </span>
+          <span className="text-3xl">{numNoAssignments}</span>
           <span className="mt-auto">No Assignments</span>
         </Button>
       </div>

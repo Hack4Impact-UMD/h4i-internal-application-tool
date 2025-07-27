@@ -8,9 +8,7 @@ import { useMemo, useState } from "react";
 import { DataTable } from "../../DataTable";
 import { Button } from "../../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  EllipsisVertical,
-} from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -41,63 +39,63 @@ export default function InterviewersTable({
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-//   const addRolePreferenceMutation = useMutation({
-//     mutationFn: async ({
-//       roleToAdd,
-//       reviewerId,
-//     }: {
-//       roleToAdd: ApplicantRole;
-//       reviewerId: string;
-//       pageIndex: number;
-//     }) => {
-//       const prevRolePreferences = (await getReviewerById(reviewerId))
-//         .applicantRolePreferences;
-//       const newRolePreferences = [...prevRolePreferences, roleToAdd];
-//       return await setReviewerRolePreferences(reviewerId, newRolePreferences);
-//     },
-//     onSuccess: () => {
-//       throwSuccessToast("Successfully added role preference!");
-//     },
-//     onError: (error) => {
-//       throwErrorToast(`Failed to add role preference! (${error.message})`);
-//       console.log(error);
-//     },
-//     onSettled: (_data, _err, variables) => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["all-reviewers-rows", variables.pageIndex],
-//       });
-//     },
-//   });
+  //   const addRolePreferenceMutation = useMutation({
+  //     mutationFn: async ({
+  //       roleToAdd,
+  //       reviewerId,
+  //     }: {
+  //       roleToAdd: ApplicantRole;
+  //       reviewerId: string;
+  //       pageIndex: number;
+  //     }) => {
+  //       const prevRolePreferences = (await getReviewerById(reviewerId))
+  //         .applicantRolePreferences;
+  //       const newRolePreferences = [...prevRolePreferences, roleToAdd];
+  //       return await setReviewerRolePreferences(reviewerId, newRolePreferences);
+  //     },
+  //     onSuccess: () => {
+  //       throwSuccessToast("Successfully added role preference!");
+  //     },
+  //     onError: (error) => {
+  //       throwErrorToast(`Failed to add role preference! (${error.message})`);
+  //       console.log(error);
+  //     },
+  //     onSettled: (_data, _err, variables) => {
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["all-reviewers-rows", variables.pageIndex],
+  //       });
+  //     },
+  //   });
 
-//   const removeRolePreferenceMutation = useMutation({
-//     mutationFn: async ({
-//       roleToRemove,
-//       reviewerId,
-//     }: {
-//       roleToRemove: ApplicantRole;
-//       reviewerId: string;
-//       pageIndex: number;
-//     }) => {
-//       const prevRolePreferences = (await getReviewerById(reviewerId))
-//         .applicantRolePreferences;
-//       const newRolePreferences = prevRolePreferences.filter(
-//         (role) => role != roleToRemove,
-//       );
-//       return await setReviewerRolePreferences(reviewerId, newRolePreferences);
-//     },
-//     onSuccess: () => {
-//       throwSuccessToast("Successfully removed role preference!");
-//     },
-//     onError: (error) => {
-//       throwErrorToast(`Failed to remove role preference! (${error.message})`);
-//       console.log(error);
-//     },
-//     onSettled: (_data, _err, variables) => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["all-reviewers-rows", variables.pageIndex],
-//       });
-//     },
-//   });
+  //   const removeRolePreferenceMutation = useMutation({
+  //     mutationFn: async ({
+  //       roleToRemove,
+  //       reviewerId,
+  //     }: {
+  //       roleToRemove: ApplicantRole;
+  //       reviewerId: string;
+  //       pageIndex: number;
+  //     }) => {
+  //       const prevRolePreferences = (await getReviewerById(reviewerId))
+  //         .applicantRolePreferences;
+  //       const newRolePreferences = prevRolePreferences.filter(
+  //         (role) => role != roleToRemove,
+  //       );
+  //       return await setReviewerRolePreferences(reviewerId, newRolePreferences);
+  //     },
+  //     onSuccess: () => {
+  //       throwSuccessToast("Successfully removed role preference!");
+  //     },
+  //     onError: (error) => {
+  //       throwErrorToast(`Failed to remove role preference! (${error.message})`);
+  //       console.log(error);
+  //     },
+  //     onSettled: (_data, _err, variables) => {
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["all-reviewers-rows", variables.pageIndex],
+  //       });
+  //     },
+  //   });
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -161,11 +159,15 @@ export default function InterviewersTable({
             console.log("filter: ", filterValue);
             if (filterValue === "all") return true;
             else if (filterValue === "complete")
-              return original.pendingAssignments === 0 && original.assignments !== 0 ;
+              return (
+                original.pendingAssignments === 0 && original.assignments !== 0
+              );
             else if (filterValue === "pending")
               return original.pendingAssignments > 0;
             else if (filterValue === "unassigned")
-              return original.pendingAssignments === 0 && original.assignments === 0 ;
+              return (
+                original.pendingAssignments === 0 && original.assignments === 0
+              );
             else return true;
           },
         }),
@@ -190,9 +192,9 @@ export default function InterviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                        formId +
-                        "/" +
-                        row.original.interviewer.id,
+                          formId +
+                          "/" +
+                          row.original.interviewer.id,
                       );
                     }}
                   >
@@ -262,7 +264,9 @@ export default function InterviewersTable({
           </Button>
           <Button
             variant="outline"
-            disabled={(pagination.pageIndex + 1) * rowCount >= interviewers.length}
+            disabled={
+              (pagination.pageIndex + 1) * rowCount >= interviewers.length
+            }
             onClick={() =>
               setPagination({
                 ...pagination,

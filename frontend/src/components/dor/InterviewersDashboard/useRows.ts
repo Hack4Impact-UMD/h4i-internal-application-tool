@@ -9,7 +9,7 @@ export type InterviewerRow = {
     name: string;
     id: string;
   };
-//   rolePreferences: ApplicantRole[]; TODO turn this into an interview assignment column once Qualified is merged
+  //   rolePreferences: ApplicantRole[]; TODO turn this into an interview assignment column once Qualified is merged
   assignments: number;
   pendingAssignments: number;
 };
@@ -18,7 +18,7 @@ export type FlatInterviewerRow = {
   index: number;
   interviewer_name: string;
   interviewer_id: string;
-//   rolePreferences: string;
+  //   rolePreferences: string;
   assignments: number;
   pendingAssignments: number;
 };
@@ -40,7 +40,10 @@ export function useRows(
             Math.min(interviewers.length, (pageIndex + 1) * rowCount),
           )
           .map(async (interviewer, index) => {
-            const assignments = await getInterviewAssignments(formId, interviewer.id);
+            const assignments = await getInterviewAssignments(
+              formId,
+              interviewer.id,
+            );
             const reviewData = await getInterviewDataForInterviewer(
               formId,
               interviewer.id,
@@ -52,7 +55,7 @@ export function useRows(
                 id: interviewer.id,
                 name: `${interviewer.firstName} ${interviewer.lastName}`,
               },
-            //   rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
+              //   rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
               assignments: assignments.length,
               pendingAssignments:
                 assignments.length -
@@ -72,7 +75,7 @@ export function flattenRows(rows: InterviewerRow[]): FlatInterviewerRow[] {
       index: row.index,
       interviewer_name: row.interviewer.name,
       interviewer_id: row.interviewer.id,
-    //   rolePreferences: row.rolePreferences.join(";"),
+      //   rolePreferences: row.rolePreferences.join(";"),
       assignments: row.assignments,
       pendingAssignments: row.pendingAssignments,
     }),

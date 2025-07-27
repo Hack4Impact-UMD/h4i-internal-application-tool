@@ -15,7 +15,7 @@ export default function SuperReviewerInterviewersDashboard() {
     data: interviewers,
     isPending: interviewersPending,
     error: interviewersError,
-  } = useAllReviewers(); // all reviewers are eligible for interviews, but some will never be assigned interviews 
+  } = useAllReviewers(); // all reviewers are eligible for interviews, but some will never be assigned interviews
   const {
     data: interviewData,
     isPending: dataPending,
@@ -37,7 +37,8 @@ export default function SuperReviewerInterviewersDashboard() {
     () =>
       interviewers?.reduce((acc, interviewer) => {
         const data =
-          interviewData?.filter((d) => d.interviewerId === interviewer.id) ?? [];
+          interviewData?.filter((d) => d.interviewerId === interviewer.id) ??
+          [];
         const assigned =
           assignments?.filter((a) => a.interviewerId === interviewer.id) ?? [];
 
@@ -56,12 +57,13 @@ export default function SuperReviewerInterviewersDashboard() {
       }, 0),
     [assignments, interviewData, interviewers],
   );
-  
+
   const numNoAssignments = useMemo(
     () =>
       interviewers?.reduce((acc, interviewer) => {
         const data =
-          interviewData?.filter((d) => d.interviewerId === interviewer.id) ?? [];
+          interviewData?.filter((d) => d.interviewerId === interviewer.id) ??
+          [];
         const assigned =
           assignments?.filter((a) => a.interviewerId === interviewer.id) ?? [];
 
@@ -74,7 +76,8 @@ export default function SuperReviewerInterviewersDashboard() {
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
   if (interviewersError)
     return <p>Failed to fetch interviewers: {interviewersError.message}</p>;
-  if (dataError) return <p>Failed to fetch interview data: {dataError.message}</p>;
+  if (dataError)
+    return <p>Failed to fetch interview data: {dataError.message}</p>;
   if (assignmentsError)
     return (
       <p>Failed to fetch interview assignments: {assignmentsError.message}</p>
@@ -116,9 +119,7 @@ export default function SuperReviewerInterviewersDashboard() {
 					${statusFilter != "unassigned" ? "bg-[#F8E6BA] hover:bg-[#F8E6BA]/90 text-[#402C1B]" : "bg-[#402C1B] hover:bg-[#402C1B]/90 text-[#F8E6BA]"}`}
           onClick={() => setStatusFilter("unassigned")}
         >
-          <span className="text-3xl">
-            {numNoAssignments}
-          </span>
+          <span className="text-3xl">{numNoAssignments}</span>
           <span className="mt-auto">No Assignments</span>
         </Button>
       </div>

@@ -8,9 +8,7 @@ import { useMemo, useState } from "react";
 import { DataTable } from "../../DataTable";
 import { Button } from "../../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  EllipsisVertical,
-} from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -165,11 +163,15 @@ export default function ReviewersTable({
             console.log("filter: ", filterValue);
             if (filterValue === "all") return true;
             else if (filterValue === "complete")
-              return original.pendingAssignments === 0 && original.assignments > 0 ;
+              return (
+                original.pendingAssignments === 0 && original.assignments > 0
+              );
             else if (filterValue === "pending")
               return original.pendingAssignments > 0;
             else if (filterValue === "unassigned")
-              return original.pendingAssignments === 0 && original.assignments === 0 ;
+              return (
+                original.pendingAssignments === 0 && original.assignments === 0
+              );
             else return true;
           },
         }),
@@ -194,9 +196,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                        formId +
-                        "/" +
-                        row.original.reviewer.id,
+                          formId +
+                          "/" +
+                          row.original.reviewer.id,
                       );
                     }}
                   >
