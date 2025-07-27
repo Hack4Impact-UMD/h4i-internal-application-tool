@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useMyApplicationResponses } from "@/hooks/useApplicationResponses";
 import { ApplicationStatus } from "@/types/types";
+import FormMarkdown from "@/components/form/FormMarkdown";
 
 const Overview: React.FC = () => {
   const {
@@ -79,7 +80,7 @@ const Overview: React.FC = () => {
         }
       </div>
       <div className="font-[Karla] text-sm font-normal leading-tight text-justify [text-justify:inter-word]">
-        <p>{form.description}</p>
+        <FormMarkdown className="text-black">{form.description}</FormMarkdown>
       </div>
     </div>
   );

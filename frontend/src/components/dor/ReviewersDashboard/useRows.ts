@@ -55,7 +55,9 @@ export function useRows(
               },
               rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
               assignments: assignments.length,
-              pendingAssignments: reviewData.filter(data => data.submitted === false).length,
+              pendingAssignments:
+                assignments.length -
+                reviewData.filter((data) => data.submitted).length,
             };
 
             return row;
@@ -66,12 +68,14 @@ export function useRows(
 }
 
 export function flattenRows(rows: ReviewerRow[]): FlatReviewerRow[] {
-  return rows.map((row): FlatReviewerRow => ({
-    index: row.index,
-    reviewer_name: row.reviewer.name,
-    reviewer_id: row.reviewer.id,
-    rolePreferences: row.rolePreferences.join(","),
-    assignments: row.assignments,
-    pendingAssignments: row.pendingAssignments,
-  }));
+  return rows.map(
+    (row): FlatReviewerRow => ({
+      index: row.index,
+      reviewer_name: row.reviewer.name,
+      reviewer_id: row.reviewer.id,
+      rolePreferences: row.rolePreferences.join(";"),
+      assignments: row.assignments,
+      pendingAssignments: row.pendingAssignments,
+    }),
+  );
 }

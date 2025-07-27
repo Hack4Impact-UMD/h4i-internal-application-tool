@@ -2,6 +2,7 @@ import { getApplicationForm } from "@/services/applicationFormsService";
 import {
   ApplicantRole,
   ApplicationForm,
+  ApplicationInterviewData,
   ApplicationReviewData,
 } from "@/types/types";
 
@@ -17,6 +18,7 @@ export async function calculateReviewScore(
 
   if (!form.scoreWeights) {
     // fallback to simple average
+    console.log("NO WEIGHTS");
     return roundScore(averageScore(review), 2);
   }
 
@@ -35,7 +37,56 @@ export async function calculateReviewScore(
   return roundScore(score, 2);
 }
 
-function averageScore(review: ApplicationReviewData) {
+export async function calculateInterviewScore(
+  interviewData: ApplicationInterviewData,
+): Promise<number> {
+  const scores = Object.keys(interviewData.applicantScores);
+  if (scores.length === 0) {
+    return 0;
+  }
+
+  const form: ApplicationForm = await getApplicationForm(
+    interviewData.applicationFormId,
+  );
+
+  if (!form.interviewScoreWeights) {
+    /**
+     * If the interview form does not have weights, we fall back to a simple average.
+     * This might be because weights have not been configured for this form, or
+     * this semester's interviews are not using weighted scores.
+     */
+    return roundScore(averageScore(interviewData), 2);
+  }
+
+  const weightsForRole = form.interviewScoreWeights[interviewData.forRole];
+  if (!weightsForRole) {
+    // Fallback to simple average if no weights for the specific role
+    return roundScore(averageScore(interviewData), 2);
+  }
+
+  if (
+    !validateScoreCategoriesForFormAndRole(
+      weightsForRole,
+      interviewData.applicantScores,
+    )
+  ) {
+    // TODO: find a more permanent solution for rejection
+    return Promise.reject(
+      new Error("Interview scores do not match weighted categories."),
+    );
+  }
+
+  const score = calculateScoreForFormAndRole(
+    weightsForRole,
+    interviewData.applicantScores,
+  );
+
+  return roundScore(score, 2);
+}
+
+function averageScore(
+  review: ApplicationReviewData | ApplicationInterviewData,
+) {
   if (Object.values(review.applicantScores).length == 0) return 0;
   const scores = Object.values(review.applicantScores);
   return scores.reduce((acc, s) => acc + s, 0) / scores.length;

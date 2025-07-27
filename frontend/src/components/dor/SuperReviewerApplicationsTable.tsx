@@ -35,9 +35,6 @@ import {
 } from "@/services/reviewAssignmentService";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
   EllipsisVertical,
 } from "lucide-react";
 import {
@@ -65,6 +62,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import SortableHeader from "../tables/SortableHeader";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -330,12 +328,12 @@ function useRows(
               completedReviews == 0
                 ? 0
                 : (
-                    await Promise.all(
-                      reviews
-                        .filter((r) => r.submitted)
-                        .map(async (r) => await calculateReviewScore(r)),
-                    )
-                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                  await Promise.all(
+                    reviews
+                      .filter((r) => r.submitted)
+                      .map(async (r) => await calculateReviewScore(r)),
+                  )
+                ).reduce((acc, v) => acc + v, 0) / completedReviews;
             let status: InternalApplicationStatus | undefined;
 
             try {
@@ -527,77 +525,20 @@ export default function SuperReviewerApplicationsTable({
         columnHelper.accessor("index", {
           id: "number",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  S. NO
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>S. NO</SortableHeader>;
           },
           cell: ({ getValue }) => getValue(),
         }),
         columnHelper.accessor("applicant.name", {
           id: "applicant-name",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  APPLICANT
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>APPLICANT</SortableHeader>;
           },
         }),
         columnHelper.accessor("role", {
           id: "role",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  ROLE
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>ROLE</SortableHeader>;
           },
           cell: ({ getValue }) => <ApplicantRolePill role={getValue()} />,
           filterFn: (row, columnId, filterValue) => {
@@ -642,24 +583,7 @@ export default function SuperReviewerApplicationsTable({
           id: "assigned-reviews",
           header: ({ column }) => {
             return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  REV. COMPLETE
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
+              <SortableHeader column={column}>REV. COMPLETE</SortableHeader>
             );
           },
           cell: ({ getValue, row }) => {
@@ -673,24 +597,7 @@ export default function SuperReviewerApplicationsTable({
           id: "avg-score",
           header: ({ column }) => {
             return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  AVG. SCORE
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
+              <SortableHeader column={column}>REV. COMPLETE</SortableHeader>
             );
           },
           cell: ({ getValue, row }) => {
@@ -710,8 +617,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />

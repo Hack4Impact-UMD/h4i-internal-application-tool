@@ -14,6 +14,8 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 type NavProfileProps = {
   user: UserProfile;
@@ -23,6 +25,7 @@ type NavProfileProps = {
 export default function NavProfile({ user, className = "" }: NavProfileProps) {
   const { logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   return (
     <>
@@ -51,7 +54,36 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
             <DropdownMenuItem className="cursor-pointer">
               Edit Profile
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Advanced</DropdownMenuLabel>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    await queryClient.cancelQueries();
+                    await queryClient.invalidateQueries();
+                    queryClient.clear();
+                  }}
+                  className="cursor-pointer"
+                >
+                  Clear Cache
+                </DropdownMenuItem>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  This can fix issues with stale data or abnormally long loading
+                  times. Refreshing after clearing is recommended.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+            <DropdownMenuItem className="cursor-pointer">
+              <a href="mailto:umd@hack4impact.org">Report an Issue</a>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
             <DropdownMenuItem
               onClick={logout}
               variant="destructive"

@@ -52,11 +52,7 @@ export function AssignedApplicationsPage() {
     [reviews],
   );
 
-  if (
-    assignmentsPending ||
-    applicantPending ||
-    reviewsPending
-  )
+  if (assignmentsPending || applicantPending || reviewsPending)
     return <Loading />;
 
   if (assignmentsError)

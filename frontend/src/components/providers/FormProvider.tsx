@@ -20,16 +20,11 @@ import { Button } from "../ui/button";
 export default function FormProvider() {
   const queryClient = useQueryClient();
   const { formId, sectionId } = useParams();
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const { data, isPending, error } = useMyApplicationResponseAndForm(formId);
   const saveMutation = useMutation({
     mutationFn: async (r: ApplicationResponse) => {
       if (token) return await saveApplicationResponse(r, token);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["responses", user?.id, formId],
-      });
     },
   });
   const [response, setResponse] = useState<ApplicationResponse | undefined>();
@@ -167,6 +162,11 @@ export default function FormProvider() {
       console.error(err);
       throwErrorToast("Failed to save your application!");
     }
+    await queryClient.invalidateQueries({
+      predicate: (q) =>
+        q.queryKey.includes("responses") ||
+        q.queryKey.includes("responses-and-semester"),
+    });
   }
 
   return (

@@ -4,6 +4,7 @@ import {
   getReviewDataForApplicant,
   getReviewDataForApplicantRole,
   getReviewDataForApplication,
+  getReviewDataForForm,
   getReviewDataForReviewer,
 } from "../services/reviewDataService";
 import { useAuth } from "./useAuth";
@@ -54,5 +55,13 @@ export function useMyReviews(formId: string) {
     queryKey: ["review-data", "me", formId, user?.id],
     enabled: !!user,
     queryFn: () => getReviewDataForReviewer(formId, user!.id),
+  });
+}
+
+export function useReviewDataForForm(formId: string) {
+  return useQuery<ApplicationReviewData[]>({
+    queryKey: ["review-data", "form", formId],
+    enabled: !!formId,
+    queryFn: () => getReviewDataForForm(formId),
   });
 }
