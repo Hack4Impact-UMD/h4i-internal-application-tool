@@ -2,62 +2,30 @@ import LongFormInput from "@/components/form/LongFormInput";
 import { Button } from "@/components/ui/button";
 import { ApplicationFormData, ApplicationFormSchema } from "@/utils/form-schema";
 import { useState } from "react";
-import { twMerge } from "tailwind-merge";
 
 enum ValidationStatus {
     PENDING = "Pending",
-    SUCCESS = "Success",
-    FAILURE = "Failure",
-}
-
-function statusColor(status: ValidationStatus) {
-    if (status == ValidationStatus.PENDING) return "white"; 
-    else if (status == ValidationStatus.SUCCESS) return "black";
-    else if (status == ValidationStatus.FAILURE) return "#FBDED9";
-}
-
-function statusDarkColor(status: ValidationStatus) {
-    if (status == ValidationStatus.PENDING) return "#17476B"; 
-    else if (status == ValidationStatus.SUCCESS) return "#DCFCE7";
-    else if (status == ValidationStatus.FAILURE) return "#9F0712";
-}
-
-function StatusPill({ status, className = "" }: { status: ValidationStatus, className?: string }) {
-    return (
-      <p
-        style={{
-          backgroundColor: statusDarkColor(status),
-          color: statusColor(status)
-        }}
-        className={twMerge(
-          `rounded-full px-2 flex items-center max-w-fit justify-center`,
-          className,
-        )}
-      >
-        {status}
-      </p>
-    );
+    JSON_FAILURE = "Failed while converting to JSON",
+    DATE_FAILURE = "Failed while parsing dueDate field",
+    FORM_FAILURE = "Failed while converting to ApplicationForm",
+    SUCCESS = "Form Parsed Successfully",    
 }
   
 export function FormValidationPage() {
     const [ text, setText ] = useState("");
-    const [ jsonParseStatus, setJsonParseStatus ] = useState(ValidationStatus.PENDING)
-    const [ jsonParseStatusMessage, setJsonParseStatusMessage ] = useState("None!")
-    const [ formParseStatus, setFormParseStatus ] = useState(ValidationStatus.PENDING)
-    const [ formParseStatusMessage, setFormParseStatusMessage ] = useState("None!")
-    const [ parsedFormContent, setParsedFormContent ] = useState("None!")
+    const [ parseStatus, setParseStatus ] = useState(ValidationStatus.PENDING)
+    const [ parseStatusMessage, setParseStatusMessage ] = useState("None!")
 
     function validate(text: string) {
         // attempt JSON parse first
         let parsedJson: object;
         try {
             parsedJson = JSON.parse(text);
-            setJsonParseStatus(ValidationStatus.SUCCESS)
         } catch (e) {
             if (e instanceof Error) {
-                setJsonParseStatusMessage(e.message)
+                setParseStatus(ValidationStatus.JSON_FAILURE)
+                setParseStatusMessage(e.message)
             }
-            setJsonParseStatus(ValidationStatus.FAILURE)
             return
         }
 
@@ -71,11 +39,13 @@ export function FormValidationPage() {
             if (!isNaN(date.getTime())) {
                 parsedJson.dueDate = date;
             } else {
-                setFormParseStatusMessage("Could not parse dueDate field into TypeScript Date object")
+                setParseStatus(ValidationStatus.DATE_FAILURE)
+                setParseStatusMessage("Could not parse dueDate field into TypeScript Date object.")
                 return
             }
         } else {
-            setFormParseStatusMessage("No dueDate field present in parsed JSON")
+            setParseStatus(ValidationStatus.DATE_FAILURE)
+            setParseStatusMessage("Could not find dueDate field in parsed JSON.")
             return
         }
 
@@ -84,15 +54,14 @@ export function FormValidationPage() {
         try {
             parsedForm = ApplicationFormSchema.parse(parsedJson)
             console.log("Parsed data: " + parsedForm)
-            setFormParseStatus(ValidationStatus.SUCCESS)
-            setParsedFormContent(JSON.stringify(parsedForm, null, 2))
+            setParseStatus(ValidationStatus.SUCCESS)
+            setParseStatusMessage(JSON.stringify(parsedForm, null, 2))
         } catch (e) {
             if (e instanceof Error) {
-                setFormParseStatusMessage(e.message)
+                setParseStatus(ValidationStatus.FORM_FAILURE)
+                setParseStatusMessage(e.message)
             }
-            setFormParseStatus(ValidationStatus.FAILURE)
         }
-
     }
 
     return (
@@ -102,16 +71,15 @@ export function FormValidationPage() {
 
             <p className="mb-5">Refer to <a className="text-blue" href="https://github.com/Hack4Impact-UMD/h4i-internal-application-tool/blob/main/frontend/src/types/formBuilderTypes.ts">formBuilderTypes</a> or contact Tech Leads for information on form validation issues.</p>
 
+            <p className="mb-5">The "Validate Form" button will try: converting your input to valid JSON, then converting a provided dueDate field to a valid timestamp, and finally converting the object to an ApplicationForm.</p>
+
             <LongFormInput
                 question={"Enter your form here as JSON:"}
                 value={text}
                 onChange={(newText) => {
                     setText(newText);
-                    setJsonParseStatus(ValidationStatus.PENDING);
-                    setJsonParseStatusMessage("None!")
-                    setFormParseStatus(ValidationStatus.PENDING);
-                    setFormParseStatusMessage("None!")
-                    setParsedFormContent("None!")
+                    setParseStatus(ValidationStatus.PENDING)
+                    setParseStatusMessage("None!")
                 }}
                 isRequired={true}
                 className="mb-5"
@@ -122,24 +90,12 @@ export function FormValidationPage() {
             </Button>
 
             <div className="flex mb-5">
-                <p className="mr-2" >Parsed as JSON: </p>
-                <StatusPill status={jsonParseStatus} />
+                <p className="mr-2" >Parse Status: </p>
+                {parseStatus}
             </div>
 
-
-            <p className="">JSON Parse Error: </p>
-            <pre className="mb-5 !font-mono bg-gray-100 px-2">{jsonParseStatusMessage}</pre>
-
-            <div className="flex mb-5">
-                <p className="mr-2" >Parsed as ApplicationForm: </p>
-                <StatusPill status={formParseStatus} />
-            </div>
-
-            <p className="">Form Parse Error: </p>
-            <pre className="mb-5 !font-mono bg-gray-100 px-2">{formParseStatusMessage}</pre>
-
-            <p className="">Parsed Form Content: </p>
-            <pre className="mb-5 !font-mono bg-gray-100 px-2">{parsedFormContent}</pre>
+            <p className="">{parseStatus === ValidationStatus.SUCCESS ? "Parsed Content:" : "Error Message:" }</p>
+            <pre className="mb-5 !font-mono bg-gray-100 px-2">{parseStatusMessage}</pre>
           </div>
         </div>
     );
