@@ -73,7 +73,7 @@ export function flattenRows(rows: ReviewerRow[]): FlatReviewerRow[] {
       index: row.index,
       reviewer_name: row.reviewer.name,
       reviewer_id: row.reviewer.id,
-      rolePreferences: row.rolePreferences.join(","),
+      rolePreferences: row.rolePreferences.join(";"),
       assignments: row.assignments,
       pendingAssignments: row.pendingAssignments,
     }),
