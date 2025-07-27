@@ -56,6 +56,20 @@ export default function SuperReviewerInterviewersDashboard() {
       }, 0),
     [assignments, interviewData, interviewers],
   );
+  
+  const numNoAssignments = useMemo(
+    () =>
+      interviewers?.reduce((acc, interviewer) => {
+        const data =
+          interviewData?.filter((d) => d.interviewerId === interviewer.id) ?? [];
+        const assigned =
+          assignments?.filter((a) => a.interviewerId === interviewer.id) ?? [];
+
+        if (data.length === 0 && assigned.length === 0) return acc + 1;
+        else return acc;
+      }, 0),
+    [assignments, interviewData, interviewers],
+  );
 
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
   if (interviewersError)
@@ -93,9 +107,19 @@ export default function SuperReviewerInterviewersDashboard() {
           onClick={() => setStatusFilter("pending")}
         >
           <span className="text-3xl">
-            {interviewers.length - (numComplete ?? 0)}
+            {interviewers.length - (numComplete ?? 0) - (numNoAssignments ?? 0)}
           </span>
           <span className="mt-auto">Pending</span>
+        </Button>
+        <Button
+          className={`h-28 min-w-40 p-4 flex flex-col items-start 
+					${statusFilter != "unassigned" ? "bg-[#F8E6BA] hover:bg-[#F8E6BA]/90 text-[#402C1B]" : "bg-[#402C1B] hover:bg-[#402C1B]/90 text-[#F8E6BA]"}`}
+          onClick={() => setStatusFilter("unassigned")}
+        >
+          <span className="text-3xl">
+            {numNoAssignments}
+          </span>
+          <span className="mt-auto">No Assignments</span>
         </Button>
       </div>
       <InterviewersTable

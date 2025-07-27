@@ -30,7 +30,7 @@ export default function SuperReviewerReviewersDashboard() {
   const { search } = useSearch();
 
   const [statusFilter, setStatusFilter] = useState<
-    "all" | "complete" | "pending"
+    "all" | "complete" | "pending" | "unassigned"
   >("all");
 
   const numComplete = useMemo(
@@ -53,6 +53,20 @@ export default function SuperReviewerReviewersDashboard() {
         } else {
           return acc;
         }
+      }, 0),
+    [assignments, reviewData, reviewers],
+  );
+
+  const numNoAssignments = useMemo(
+    () =>
+      reviewers?.reduce((acc, reviewer) => {
+        const data =
+          reviewData?.filter((d) => d.reviewerId === reviewer.id) ?? [];
+        const assigned =
+          assignments?.filter((a) => a.reviewerId === reviewer.id) ?? [];
+
+        if (data.length === 0 && assigned.length === 0) return acc + 1;
+        else return acc;
       }, 0),
     [assignments, reviewData, reviewers],
   );
@@ -93,9 +107,19 @@ export default function SuperReviewerReviewersDashboard() {
           onClick={() => setStatusFilter("pending")}
         >
           <span className="text-3xl">
-            {reviewers.length - (numComplete ?? 0)}
+            {reviewers.length - (numComplete ?? 0) - (numNoAssignments ?? 0)}
           </span>
           <span className="mt-auto">Pending</span>
+        </Button>
+        <Button
+          className={`h-28 min-w-40 p-4 flex flex-col items-start 
+					${statusFilter != "unassigned" ? "bg-[#F8E6BA] hover:bg-[#F8E6BA]/90 text-[#402C1B]" : "bg-[#402C1B] hover:bg-[#402C1B]/90 text-[#F8E6BA]"}`}
+          onClick={() => setStatusFilter("unassigned")}
+        >
+          <span className="text-3xl">
+            {numNoAssignments}
+          </span>
+          <span className="mt-auto">No Assignments</span>
         </Button>
       </div>
       <ReviewersTable

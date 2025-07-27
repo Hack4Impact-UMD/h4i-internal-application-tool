@@ -32,7 +32,7 @@ type ReviewersTableProps = {
   search: string;
   rowCount?: number;
   formId: string;
-  statusFilter: "all" | "complete" | "pending";
+  statusFilter: "all" | "complete" | "pending" | "unassigned";
 };
 
 export default function ReviewersTable({
