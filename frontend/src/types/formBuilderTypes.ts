@@ -28,7 +28,12 @@ export interface ApplicationForm {
   sections: ApplicationSection[];
   decisionReleased: boolean;
   scoreWeights: {
-    [role in appl]: {
+    [role in ApplicantRole]: {
+      [score in string]: number; // weight for role + score category, between 0-1
+    };
+  };
+  interviewScoreWeights?: {
+    [role in ApplicantRole]: {
       [score in string]: number; // weight for role + score category, between 0-1
     };
   };

@@ -18,6 +18,7 @@ import {
   UserProfile,
 } from "../types/types";
 import { throwErrorToast } from "../components/toasts/ErrorToast";
+import { queryClient } from "@/config/query";
 
 export const USER_COLLECTION = "users";
 
@@ -58,6 +59,9 @@ export async function loginUser(
 }
 
 export async function logoutUser() {
+  await queryClient.cancelQueries();
+  await queryClient.invalidateQueries();
+  queryClient.clear();
   await signOut(auth);
 }
 
@@ -140,4 +144,8 @@ export function onAuthStateChange(
   return auth.onAuthStateChanged((userInfo) => {
     handler(userInfo);
   });
+}
+
+export function authStateSnapshot() {
+  return auth.currentUser;
 }

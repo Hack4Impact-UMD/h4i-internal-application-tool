@@ -1,9 +1,8 @@
-import { useParams, useNavigate, ErrorResponse } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMyApplicationResponseAndForm } from "../hooks/useApplicationResponses";
 import Loading from "../components/Loading";
 import Section from "../components/form/Section";
 import { Button } from "../components/ui/button";
-import { ApplicationStatus } from "@/types/types";
 
 export default function AppRevisitPage() {
   const { formId } = useParams();
@@ -15,13 +14,13 @@ export default function AppRevisitPage() {
 
   const { form, response } = data;
 
-  if (response.status === ApplicationStatus.InProgress) {
-    throw {
-      status: 403,
-      statusText: "Forbidden",
-      data: "You cannot revisit an incomplete application.",
-    } as ErrorResponse;
-  }
+  // if (response.status === ApplicationStatus.InProgress) {
+  //   throw {
+  //     status: 403,
+  //     statusText: "Forbidden",
+  //     data: "You cannot revisit an incomplete application.",
+  //   } as ErrorResponse;
+  // }
 
   return (
     <div className="w-full flex flex-col bg-muted items-center p-4 pt-8">

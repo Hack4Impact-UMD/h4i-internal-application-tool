@@ -1,6 +1,7 @@
 import {
   getReviewAssignments,
   getReviewAssignmentsForApplication,
+  getReviewAssignmentsForForm,
 } from "@/services/reviewAssignmentService";
 import { AppReviewAssignment } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +11,13 @@ export function useReviewAssignments(formId: string, reviewerId: string) {
   return useQuery<AppReviewAssignment[]>({
     queryKey: ["assignments", "id", formId, reviewerId],
     queryFn: () => getReviewAssignments(formId, reviewerId),
+  });
+}
+
+export function useReviewAssignmentsForForm(formId: string) {
+  return useQuery<AppReviewAssignment[]>({
+    queryKey: ["assignments", "form", formId],
+    queryFn: () => getReviewAssignmentsForForm(formId),
   });
 }
 
