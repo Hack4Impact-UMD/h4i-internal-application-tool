@@ -122,9 +122,7 @@ export interface ApplicationInterviewData {
   applicationFormId: string;
   applicationResponseId: string;
   applicantId: string;
-  applicantScores: {
-    [category in string]: number; // talking with PMs about the format for this
-  };
+  interviewScore: number;
   interviewNotes: string;
   forRole: ApplicantRole;
   submitted: boolean;

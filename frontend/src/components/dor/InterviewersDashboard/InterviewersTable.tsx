@@ -16,97 +16,93 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import { ReviewerRow, flattenRows, useRows } from "./useRows";
-import { RoleSelect } from "./RoleSelect";
-import { getReviewerById } from "@/services/reviewersService";
-import { setReviewerRolePreferences } from "@/services/userService";
-import { throwSuccessToast } from "@/components/toasts/SuccessToast";
-import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { InterviewerRow, flattenRows, useRows } from "./useRows";
+// import { RoleSelect } from "./RoleSelect";
 import { ExportButton } from "@/components/ExportButton";
 import SortableHeader from "@/components/tables/SortableHeader";
 
-type ReviewersTableProps = {
-  reviewers: ReviewerUserProfile[];
+type InterviewersTableProps = {
+  interviewers: ReviewerUserProfile[];
   search: string;
   rowCount?: number;
   formId: string;
   statusFilter: "all" | "complete" | "pending" | "unassigned";
 };
 
-export default function ReviewersTable({
-  reviewers,
+export default function InterviewersTable({
+  interviewers,
   search,
   formId,
   rowCount = 20,
   statusFilter,
-}: ReviewersTableProps) {
+}: InterviewersTableProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const addRolePreferenceMutation = useMutation({
-    mutationFn: async ({
-      roleToAdd,
-      reviewerId,
-    }: {
-      roleToAdd: ApplicantRole;
-      reviewerId: string;
-      pageIndex: number;
-    }) => {
-      const prevRolePreferences = (await getReviewerById(reviewerId))
-        .applicantRolePreferences;
-      const newRolePreferences = [...prevRolePreferences, roleToAdd];
-      return await setReviewerRolePreferences(reviewerId, newRolePreferences);
-    },
-    onSuccess: () => {
-      throwSuccessToast("Successfully added role preference!");
-    },
-    onError: (error) => {
-      throwErrorToast(`Failed to add role preference! (${error.message})`);
-      console.log(error);
-    },
-    onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["all-reviewers-rows", variables.pageIndex],
-      });
-    },
-  });
+  //   const addRolePreferenceMutation = useMutation({
+  //     mutationFn: async ({
+  //       roleToAdd,
+  //       reviewerId,
+  //     }: {
+  //       roleToAdd: ApplicantRole;
+  //       reviewerId: string;
+  //       pageIndex: number;
+  //     }) => {
+  //       const prevRolePreferences = (await getReviewerById(reviewerId))
+  //         .applicantRolePreferences;
+  //       const newRolePreferences = [...prevRolePreferences, roleToAdd];
+  //       return await setReviewerRolePreferences(reviewerId, newRolePreferences);
+  //     },
+  //     onSuccess: () => {
+  //       throwSuccessToast("Successfully added role preference!");
+  //     },
+  //     onError: (error) => {
+  //       throwErrorToast(`Failed to add role preference! (${error.message})`);
+  //       console.log(error);
+  //     },
+  //     onSettled: (_data, _err, variables) => {
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["all-reviewers-rows", variables.pageIndex],
+  //       });
+  //     },
+  //   });
 
-  const removeRolePreferenceMutation = useMutation({
-    mutationFn: async ({
-      roleToRemove,
-      reviewerId,
-    }: {
-      roleToRemove: ApplicantRole;
-      reviewerId: string;
-      pageIndex: number;
-    }) => {
-      const prevRolePreferences = (await getReviewerById(reviewerId))
-        .applicantRolePreferences;
-      const newRolePreferences = prevRolePreferences.filter(
-        (role) => role != roleToRemove,
-      );
-      return await setReviewerRolePreferences(reviewerId, newRolePreferences);
-    },
-    onSuccess: () => {
-      throwSuccessToast("Successfully removed role preference!");
-    },
-    onError: (error) => {
-      throwErrorToast(`Failed to remove role preference! (${error.message})`);
-      console.log(error);
-    },
-    onSettled: (_data, _err, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["all-reviewers-rows", variables.pageIndex],
-      });
-    },
-  });
+  //   const removeRolePreferenceMutation = useMutation({
+  //     mutationFn: async ({
+  //       roleToRemove,
+  //       reviewerId,
+  //     }: {
+  //       roleToRemove: ApplicantRole;
+  //       reviewerId: string;
+  //       pageIndex: number;
+  //     }) => {
+  //       const prevRolePreferences = (await getReviewerById(reviewerId))
+  //         .applicantRolePreferences;
+  //       const newRolePreferences = prevRolePreferences.filter(
+  //         (role) => role != roleToRemove,
+  //       );
+  //       return await setReviewerRolePreferences(reviewerId, newRolePreferences);
+  //     },
+  //     onSuccess: () => {
+  //       throwSuccessToast("Successfully removed role preference!");
+  //     },
+  //     onError: (error) => {
+  //       throwErrorToast(`Failed to remove role preference! (${error.message})`);
+  //       console.log(error);
+  //     },
+  //     onSettled: (_data, _err, variables) => {
+  //       queryClient.invalidateQueries({
+  //         queryKey: ["all-reviewers-rows", variables.pageIndex],
+  //       });
+  //     },
+  //   });
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: rowCount,
   });
 
-  const columnHelper = createColumnHelper<ReviewerRow>();
+  const columnHelper = createColumnHelper<InterviewerRow>();
   const cols = useMemo(
     () =>
       [
@@ -116,38 +112,38 @@ export default function ReviewersTable({
             return <SortableHeader column={column}>S. NO</SortableHeader>;
           },
         }),
-        columnHelper.accessor("reviewer.name", {
-          id: "reviewer-name",
+        columnHelper.accessor("interviewer.name", {
+          id: "interviewer-name",
           header: ({ column }) => {
-            return <SortableHeader column={column}>REVIEWER</SortableHeader>;
+            return <SortableHeader column={column}>INTERVIEWER</SortableHeader>;
           },
         }),
-        columnHelper.accessor("rolePreferences", {
-          id: "role-preferences",
-          header: "ROLES REVIEWING",
-          cell: ({ getValue, row }) => {
-            return (
-              <RoleSelect
-                rolePreferences={getValue()}
-                onAdd={(role, reviewerId) =>
-                  addRolePreferenceMutation.mutate({
-                    pageIndex: pagination.pageIndex,
-                    roleToAdd: role,
-                    reviewerId: reviewerId,
-                  })
-                }
-                onDelete={(role, reviewerId) =>
-                  removeRolePreferenceMutation.mutate({
-                    pageIndex: pagination.pageIndex,
-                    roleToRemove: role,
-                    reviewerId: reviewerId,
-                  })
-                }
-                reviewerId={row.original.reviewer.id}
-              />
-            );
-          },
-        }),
+        // columnHelper.accessor("rolePreferences", {
+        //   id: "role-preferences",
+        //   header: "ROLES REVIEWING",
+        //   cell: ({ getValue, row }) => {
+        //     return (
+        //       <RoleSelect
+        //         rolePreferences={getValue()}
+        //         onAdd={(role, reviewerId) =>
+        //           addRolePreferenceMutation.mutate({
+        //             pageIndex: pagination.pageIndex,
+        //             roleToAdd: role,
+        //             reviewerId: reviewerId,
+        //           })
+        //         }
+        //         onDelete={(role, reviewerId) =>
+        //           removeRolePreferenceMutation.mutate({
+        //             pageIndex: pagination.pageIndex,
+        //             roleToRemove: role,
+        //             reviewerId: reviewerId,
+        //           })
+        //         }
+        //         reviewerId={row.original.reviewer.id}
+        //       />
+        //     );
+        //   },
+        // }),
         columnHelper.accessor("assignments", {
           id: "assignments",
           header: ({ column }) => {
@@ -164,7 +160,7 @@ export default function ReviewersTable({
             if (filterValue === "all") return true;
             else if (filterValue === "complete")
               return (
-                original.pendingAssignments === 0 && original.assignments > 0
+                original.pendingAssignments === 0 && original.assignments !== 0
               );
             else if (filterValue === "pending")
               return original.pendingAssignments > 0;
@@ -198,7 +194,7 @@ export default function ReviewersTable({
                         "/admin/dor/applications/" +
                           formId +
                           "/" +
-                          row.original.reviewer.id,
+                          row.original.interviewer.id,
                       );
                     }}
                   >
@@ -209,7 +205,7 @@ export default function ReviewersTable({
             </div>
           ),
         }),
-      ] as ColumnDef<ReviewerRow>[],
+      ] as ColumnDef<InterviewerRow>[],
     [columnHelper],
   );
 
@@ -217,14 +213,14 @@ export default function ReviewersTable({
     data: rows,
     isPending,
     error,
-  } = useRows(pagination.pageIndex, reviewers, rowCount, formId);
+  } = useRows(pagination.pageIndex, interviewers, rowCount, formId);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
 
   return (
     <div className="flex flex-col w-full gap-2">
-      <ExportButton data={flattenRows(rows)} filename="h4i_reviewers" />
+      <ExportButton data={flattenRows(rows)} filename="h4i_interviewers" />
       <DataTable
         columns={cols}
         data={rows ?? []}
@@ -251,7 +247,7 @@ export default function ReviewersTable({
       <div className="flex flex-row gap-2">
         <span>
           Page {pagination.pageIndex + 1} of{" "}
-          {Math.max(Math.ceil(reviewers.length / rowCount), 1)}
+          {Math.max(Math.ceil(interviewers.length / rowCount), 1)}
         </span>
         <div className="ml-auto">
           <Button
@@ -268,7 +264,9 @@ export default function ReviewersTable({
           </Button>
           <Button
             variant="outline"
-            disabled={(pagination.pageIndex + 1) * rowCount >= reviewers.length}
+            disabled={
+              (pagination.pageIndex + 1) * rowCount >= interviewers.length
+            }
             onClick={() =>
               setPagination({
                 ...pagination,
