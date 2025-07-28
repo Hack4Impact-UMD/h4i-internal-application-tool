@@ -28,7 +28,7 @@ export async function calculateReviewScore(
       review.applicantScores,
     )
   ) {
-    return Promise.reject(-1); // TODO: find a more permanent solution for rejection
+    return Promise.reject(-1);
   }
   const score = calculateScoreForFormAndRole(
     form.scoreWeights[review.forRole],
@@ -71,7 +71,6 @@ function calculateScoreForFormAndRole(
   }, 0);
 }
 
-// TODO: need to check if this would be useful for avg. score/elsewhere
 function roundScore(score: number, decimalPlaces: number) {
   const factor = Math.pow(10, decimalPlaces);
   return Math.round((score + Number.EPSILON) * factor) / factor;

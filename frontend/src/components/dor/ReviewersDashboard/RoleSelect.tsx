@@ -96,7 +96,6 @@ export function RoleSelect({
   return (
     <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
       {rolePreferences.map((role, _) => (
-        // TODO: have this use the role pill
         <div
           key={role}
           style={{
