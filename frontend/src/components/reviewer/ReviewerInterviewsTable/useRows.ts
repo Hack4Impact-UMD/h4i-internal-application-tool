@@ -26,9 +26,10 @@ export function useRows(
   interviewAssignments: InterviewAssignment[],
   pageIndex: number,
   rowCount: number,
+  formId: string,
 ) {
   return useQuery({
-    queryKey: ["all-interview-assignments", pageIndex, rowCount],
+    queryKey: ["all-interview-assignments", pageIndex, rowCount, formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

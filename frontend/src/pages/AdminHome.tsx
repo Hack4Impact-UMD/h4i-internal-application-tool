@@ -64,7 +64,10 @@ export default function AdminHome() {
               View all registered users, grant reviewer access, edit roles, and
               delete user accounts.
             </p>
-            <Button className="mt-4" onClick={() => navigate("/admin/dor/users")}>
+            <Button
+              className="mt-4"
+              onClick={() => navigate("/admin/dor/users")}
+            >
               Manage Users
             </Button>
           </div>
@@ -73,7 +76,10 @@ export default function AdminHome() {
             <p className="text-muted-foreground">
               Validate your form before uploading to Firestore.
             </p>
-            <Button className="mt-4" onClick={() => navigate("/admin/dor/forms")}>
+            <Button
+              className="mt-4"
+              onClick={() => navigate("/admin/dor/forms")}
+            >
               Form Validator
             </Button>
           </div>

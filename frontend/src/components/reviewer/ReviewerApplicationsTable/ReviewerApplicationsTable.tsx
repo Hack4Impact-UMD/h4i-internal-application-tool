@@ -187,7 +187,7 @@ export default function ReviewerApplicationsTable({
     data: rows,
     isPending,
     error,
-  } = useRows(assignments, pagination.pageIndex, rowCount);
+  } = useRows(assignments, pagination.pageIndex, rowCount, formId);
 
   if (isPending || !rows) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
