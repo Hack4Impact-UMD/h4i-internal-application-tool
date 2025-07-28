@@ -160,7 +160,7 @@ export default function ReviewerInterviewsTable({
       }
     } else {
       const review: Omit<ApplicationInterviewData, "id"> = {
-        applicantScores: {},
+        interviewScore: 0,
         applicantId: applicantId,
         applicationFormId: formId,
         applicationResponseId: responseId,

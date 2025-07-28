@@ -1,4 +1,4 @@
-import { ApplicantRole, ReviewerUserProfile } from "@/types/types";
+import { ReviewerUserProfile } from "@/types/types";
 import {
   ColumnDef,
   createColumnHelper,
@@ -7,7 +7,6 @@ import {
 import { useMemo, useState } from "react";
 import { DataTable } from "../../DataTable";
 import { Button } from "../../ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EllipsisVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -36,7 +35,6 @@ export default function InterviewersTable({
   rowCount = 20,
   statusFilter,
 }: InterviewersTableProps) {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   //   const addRolePreferenceMutation = useMutation({
@@ -192,9 +190,9 @@ export default function InterviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.interviewer.id,
+                        formId +
+                        "/" +
+                        row.original.interviewer.id,
                       );
                     }}
                   >

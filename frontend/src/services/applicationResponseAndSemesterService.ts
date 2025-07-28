@@ -41,11 +41,13 @@ export async function getApplicationResponseAndSemester(
     const form = matchedForms.length > 0 ? matchedForms[0] : undefined;
     const semester = form?.semester ?? "Unknown";
 
-    responsesWithSemester.push({
-      ...response,
-      semester,
-      active: form?.isActive,
-    });
+    if (form) {
+      responsesWithSemester.push({
+        ...response,
+        semester,
+        active: form.isActive,
+      });
+    }
   }
 
   return responsesWithSemester;
