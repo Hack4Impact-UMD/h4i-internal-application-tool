@@ -1,24 +1,30 @@
 import { useMemo, useState, useCallback } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
-import { ApplicantRole, ApplicationResponse, ReviewerUserProfile } from "@/types/types";
+import {
+  ApplicantRole,
+  ApplicationResponse,
+  ReviewerUserProfile,
+  ReviewStatus,
+  InternalApplicationStatus,
+} from "@/types/types";
 import { createColumnHelper, getPaginationRowModel, ColumnDef } from "@tanstack/react-table";
 import RolePill from "@/components/role-pill/RolePill";
 import { getInterviewAssignmentsForApplication } from "@/services/interviewAssignmentService";
 import { useReviewersForRole } from "@/hooks/useReviewers";
-import { assignInterview } from "@/services/interviewAssignmentService";
-import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { assignInterview, removeInterviewAssignment } from "@/services/interviewAssignmentService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { removeInterviewAssignment } from "@/services/interviewAssignmentService";
 import type { InterviewAssignment } from "@/types/types";
 import Spinner from "@/components/Spinner";
-import { useParams } from "react-router-dom";
 import { ApplicationInterviewData } from "@/types/types";
 import { QualifiedAppRow, useRows } from "./useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
+import { updateApplicationStatus } from "@/services/statusService";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function InterviewerSelect({
   onAdd,
@@ -191,6 +197,31 @@ function InterviewerSearchPopover({
   );
 }
 
+function StatusSelect({
+  currentStatus,
+  onStatusChange,
+  disabled = false,
+}: {
+  currentStatus: ReviewStatus;
+  onStatusChange: (newStatus: ReviewStatus) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <Select value={currentStatus} onValueChange={onStatusChange} disabled={disabled}>
+      <SelectTrigger className="w-40">
+        <SelectValue placeholder="Select status" />
+      </SelectTrigger>
+      <SelectContent>
+        {Object.values(ReviewStatus).map((status) => (
+          <SelectItem key={status} value={status}>
+            {status.charAt(0).toUpperCase() + status.slice(1).replace(/-/g, " ")}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
 export default function QualifiedApplicationsTable({
   applications,
   search,
@@ -209,6 +240,50 @@ export default function QualifiedApplicationsTable({
     pageSize: rowCount,
   });
   const queryClient = useQueryClient();
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ statusId, newStatus }: { statusId: string; newStatus: ReviewStatus }) =>
+      updateApplicationStatus(statusId, { status: newStatus }),
+    onMutate: async ({ statusId, newStatus }) => {
+      const queryKey = ["qualified-apps-rows", formId, pagination.pageIndex, rowCount];
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousRows = queryClient.getQueryData<QualifiedAppRow[]>(queryKey);
+
+      queryClient.setQueryData<QualifiedAppRow[]>(queryKey, (old) => {
+        if (!old) return [];
+        return old.map((row: QualifiedAppRow) => {
+          if (row.status?.id === statusId) {
+            return {
+              ...row,
+              status: { ...row.status, status: newStatus } as InternalApplicationStatus,
+            };
+          }
+          return row;
+        });
+      });
+
+      return { previousRows, queryKey };
+    },
+    onError: (error, _vars, context) => {
+      if (context?.previousRows) {
+        queryClient.setQueryData(context.queryKey, context.previousRows);
+      }
+      throwErrorToast("Failed to update status!");
+      console.error(error);
+    },
+    onSuccess: () => {
+      throwSuccessToast("Successfully updated status!");
+    },
+    onSettled: (_data, _error, _variables, context) => {
+      if (context?.queryKey) {
+        queryClient.invalidateQueries({ queryKey: context.queryKey });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["qualified-apps-rows"] });
+      }
+    },
+  });
+
   const addInterviewerMutation = useMutation({
     mutationFn: async ({ interviewer, responseId, role }: { interviewer: ReviewerUserProfile; responseId: string; role: ApplicantRole }) => {
       return await assignInterview(responseId, interviewer.id, role);
@@ -334,8 +409,33 @@ export default function QualifiedApplicationsTable({
           return getValue();
         },
       }),
+      columnHelper.accessor("status.status", {
+        id: "status",
+        header: ({ column }) => (
+          <SortableHeader column={column}>
+            STATUS
+          </SortableHeader>
+        ),
+        cell: ({ row }) => {
+          const status = row.original.status;
+
+          if (!status) {
+            return "N/A";
+          }
+
+          return (
+            <StatusSelect
+              currentStatus={status.status}
+              onStatusChange={(newStatus) => {
+                updateStatusMutation.mutate({ statusId: status.id, newStatus });
+              }}
+              disabled={updateStatusMutation.isPending}
+            />
+          );
+        },
+      }),
     ] as ColumnDef<QualifiedAppRow>[],
-    [columnHelper, addInterviewerMutation, removeInterviewerMutation],
+    [columnHelper, addInterviewerMutation, removeInterviewerMutation, updateStatusMutation],
   );
 
   if (isPending) return <p>Loading...</p>;

@@ -1,8 +1,9 @@
 import { getApplicantById } from "@/services/applicantService";
 import { getInterviewAssignmentsForApplication } from "@/services/interviewAssignmentService";
 import { getInterviewDataForResponseRole } from "@/services/interviewDataService";
+import { getApplicationStatusForResponseRole } from "@/services/statusService";
 import { getUserById } from "@/services/userService";
-import { ApplicantRole, ApplicationInterviewData, ApplicationResponse, InterviewAssignment, PermissionRole, ReviewerUserProfile } from "@/types/types";
+import { ApplicantRole, ApplicationInterviewData, ApplicationResponse, InterviewAssignment, InternalApplicationStatus, PermissionRole, ReviewerUserProfile } from "@/types/types";
 import { calculateInterviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
 
@@ -14,9 +15,10 @@ export type QualifiedAppRow = {
 		assigned: ReviewerUserProfile[]
 	},
 	assignments: InterviewAssignment[],
-	averageScore: number,
+	averageScore: number | null,
 	responseId: string,
 	interviews: ApplicationInterviewData[],
+	status?: InternalApplicationStatus,
 }
 
 export function useRows(
@@ -26,7 +28,7 @@ export function useRows(
 	formId: string,
 ) {
 	return useQuery<QualifiedAppRow[]>({
-		queryKey: ["qualified-apps-rows", pageIndex, formId, applications.length],
+		queryKey: ["qualified-apps-rows", formId, pageIndex, rowCount],
 		placeholderData: (prev) => prev,
 		queryFn: async () => {
 			return Promise.all(
@@ -58,6 +60,7 @@ export function useRows(
 							);
 							averageScore = scores.reduce((acc, v) => acc + v, 0) / scores.length;
 						}
+						const status = await getApplicationStatusForResponseRole(app.id, app.rolesApplied[0]);
 						return {
 							index: 1 + pageIndex * rowCount + index,
 							name: `${user.firstName} ${user.lastName}`,
@@ -67,6 +70,7 @@ export function useRows(
 							averageScore,
 							responseId: app.id,
 							interviews,
+							status,
 						} as QualifiedAppRow;
 					}),
 			);
