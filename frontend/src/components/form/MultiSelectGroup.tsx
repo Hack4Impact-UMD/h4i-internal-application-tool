@@ -11,6 +11,8 @@ interface MultiSelectGroupProps {
   options: string[];
   onOptionSelect: (selected: string[]) => void;
   displayName?: (key: string) => string;
+  displayColor?: (key: string) => string;
+  displayDarkColor?: (key: string) => string;
   className?: string;
   disabled?: boolean;
   errorMessage?: string;
@@ -27,6 +29,8 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
   disabled,
   errorMessage,
   displayName = (k) => k,
+  displayDarkColor = (_) => undefined,
+  displayColor = (_) => undefined,
 }) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(value || []);
 
@@ -59,6 +63,8 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
           <OptionButton
             key={option}
             optionName={displayName(option)}
+            optionColor={displayColor(option)}
+            optionDarkColor={displayDarkColor(option)}
             buttonType="multiSelect"
             isSelected={selectedOptions.includes(option)}
             onClick={() => handleSelectClick(option)}

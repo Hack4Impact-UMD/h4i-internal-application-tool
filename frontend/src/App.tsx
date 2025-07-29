@@ -21,7 +21,7 @@ import AppReviewPage from "./pages/AppReviewPage";
 import { ToastContainer } from "react-toastify";
 import { queryClient } from "./config/query";
 import UserRolePage from "./pages/UserRolePage";
-import ReviewerDashboard from "./pages/ReviewerDashboard";
+import ReviewerApplicationsDashboard from "./pages/ReviewerApplicationsDashboard";
 import AdminHome from "./pages/AdminHome";
 import SuperReviewerDashboardShell from "./pages/SuperReviewerDashboardShell";
 import SearchProvider from "./components/providers/SearchProvider";
@@ -32,7 +32,11 @@ import AppRevisitPage from "./pages/AppRevisitPage";
 import QualifiedApplicationsDashboard from "./components/dor/QualifiedApplicationsDashboard";
 import NotFoundPage from "./pages/NotFoundPage";
 import ViewApplicationPage from "./pages/ViewApplicationPage";
+import ReviewerDashboardShell from "./pages/ReviewerDashboardShell";
 import SuperReviewerReviewersDashboard from "./pages/SuperReviewerReviewersDashboard";
+import ReviewerInterviewsDashboard from "./pages/ReviewerInterviewsDashboard";
+import { FormValidationPage } from "./pages/FormValidationPage";
+import SuperReviewerInterviewersDashboard from "./pages/SuperReviewerInterviewersDashboard";
 
 function App() {
   return (
@@ -144,6 +148,10 @@ function App() {
                   path="dashboard/:formId/reviewers"
                   element={<SuperReviewerReviewersDashboard />}
                 />
+                <Route
+                  path="dashboard/:formId/interviewers"
+                  element={<SuperReviewerInterviewersDashboard />}
+                />
               </Route>
 
               <Route
@@ -183,6 +191,15 @@ function App() {
               />
 
               <Route
+                path="dor/forms"
+                element={
+                  <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <FormValidationPage />
+                  </RequireAuth>
+                }
+              />
+
+              <Route
                 path="dor/response/:responseId"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
@@ -192,13 +209,25 @@ function App() {
               />
 
               <Route
-                path="reviewer/dashboard/:formId"
+                path="reviewer/dashboard/:formId/"
                 element={
                   <RequireAuth requireRoles={[PermissionRole.Reviewer]}>
-                    <ReviewerDashboard />
+                    <SearchProvider>
+                      <ReviewerDashboardShell />
+                    </SearchProvider>
                   </RequireAuth>
                 }
-              />
+              >
+                <Route
+                  path="apps"
+                  element={<ReviewerApplicationsDashboard />}
+                />
+
+                <Route
+                  path="interviews"
+                  element={<ReviewerInterviewsDashboard />}
+                />
+              </Route>
               <Route
                 element={
                   <RequireAuth

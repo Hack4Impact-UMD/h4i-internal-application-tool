@@ -17,9 +17,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { AssignmentRow, useRows } from "./useRows";
+import SortableHeader from "@/components/tables/SortableHeader";
 
 type ReviewerApplicationsTableProps = {
   assignments: AppReviewAssignment[];
@@ -51,103 +51,27 @@ export default function ReviewerApplicationsTable({
         columnHelper.accessor("index", {
           id: "number",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  S. NO
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>S. NO</SortableHeader>;
           },
           cell: ({ getValue }) => getValue(),
         }),
         columnHelper.accessor("applicant.name", {
           id: "applicant-name",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  APPLICANT
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>APPLICANT</SortableHeader>;
           },
         }),
         columnHelper.accessor("role", {
           id: "role",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  ROLE
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>ROLE</SortableHeader>;
           },
           cell: ({ getValue }) => <ApplicantRolePill role={getValue()} />,
         }),
         columnHelper.accessor("score", {
           id: "score",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  SCORE
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>SCORE</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
             const review = row.original.review;
@@ -164,26 +88,7 @@ export default function ReviewerApplicationsTable({
         columnHelper.accessor("review", {
           id: "review-status",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="flex items-center flex-row gap-1">
-                  ACTION
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>ACTION</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
             const review = getValue();
@@ -282,7 +187,7 @@ export default function ReviewerApplicationsTable({
     data: rows,
     isPending,
     error,
-  } = useRows(assignments, pagination.pageIndex, rowCount);
+  } = useRows(assignments, pagination.pageIndex, rowCount, formId);
 
   if (isPending || !rows) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

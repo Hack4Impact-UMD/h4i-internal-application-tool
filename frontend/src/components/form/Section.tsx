@@ -13,7 +13,11 @@ import ChoiceGroup from "./ChoiceGroup";
 import MultiSelectGroup from "./MultiSelectGroup";
 import useForm from "../../hooks/useForm";
 import FileUpload from "./FileUpload";
-import { displayApplicantRoleName } from "@/utils/display";
+import {
+  applicantRoleColor,
+  applicantRoleDarkColor,
+  displayApplicantRoleName,
+} from "@/utils/display";
 import FormMarkdown from "./FormMarkdown";
 
 interface SectionProps {
@@ -138,6 +142,12 @@ const Section: React.FC<SectionProps> = ({
                 }}
                 displayName={(key) =>
                   displayApplicantRoleName(key as ApplicantRole)
+                }
+                displayDarkColor={(role) =>
+                  applicantRoleDarkColor(role as ApplicantRole)
+                }
+                displayColor={(role) =>
+                  applicantRoleColor(role as ApplicantRole)
                 }
               />
             ) : null}

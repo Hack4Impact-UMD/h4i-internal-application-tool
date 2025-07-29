@@ -89,3 +89,10 @@ export async function getInterviewAssignmentsForApplication(
 
   return (await getDocs(q)).docs.map((d) => d.data() as InterviewAssignment);
 }
+
+export async function getInterviewAssignmentsForForm(formId: string) {
+  const assignments = collection(db, INTERVIEW_ASSIGNMENT_COLLECTION);
+  const q = query(assignments, where("formId", "==", formId));
+
+  return (await getDocs(q)).docs.map((d) => d.data() as InterviewAssignment);
+}

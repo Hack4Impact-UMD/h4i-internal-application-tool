@@ -8,12 +8,7 @@ import { useMemo, useState } from "react";
 import { DataTable } from "../../DataTable";
 import { Button } from "../../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  EllipsisVertical,
-} from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -21,18 +16,21 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import { ReviewerRow, useRows } from "./useRows";
+import { ReviewerRow, flattenRows, useRows } from "./useRows";
 import { RoleSelect } from "./RoleSelect";
 import { getReviewerById } from "@/services/reviewersService";
 import { setReviewerRolePreferences } from "@/services/userService";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { ExportButton } from "@/components/ExportButton";
+import SortableHeader from "@/components/tables/SortableHeader";
 
 type ReviewersTableProps = {
   reviewers: ReviewerUserProfile[];
   search: string;
   rowCount?: number;
   formId: string;
+  statusFilter: "all" | "complete" | "pending" | "unassigned";
 };
 
 export default function ReviewersTable({
@@ -40,6 +38,7 @@ export default function ReviewersTable({
   search,
   formId,
   rowCount = 20,
+  statusFilter,
 }: ReviewersTableProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -114,51 +113,13 @@ export default function ReviewersTable({
         columnHelper.accessor("index", {
           id: "number",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  S. NO
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>S. NO</SortableHeader>;
           },
         }),
         columnHelper.accessor("reviewer.name", {
           id: "reviewer-name",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  REVIEWER
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>REVIEWER</SortableHeader>;
           },
         }),
         columnHelper.accessor("rolePreferences", {
@@ -190,51 +151,28 @@ export default function ReviewersTable({
         columnHelper.accessor("assignments", {
           id: "assignments",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  ASSIGNMENTS
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>ASSIGNMENTS</SortableHeader>;
           },
         }),
         columnHelper.accessor("pendingAssignments", {
           id: "pending-assignments",
           header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                className="p-0"
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-              >
-                <span className="items-center flex flex-row gap-1">
-                  PENDING
-                  {column.getIsSorted() === false ? (
-                    <ArrowUpDown />
-                  ) : column.getIsSorted() === "desc" ? (
-                    <ArrowUp />
-                  ) : (
-                    <ArrowDown />
-                  )}
-                </span>
-              </Button>
-            );
+            return <SortableHeader column={column}>PENDING</SortableHeader>;
+          },
+          filterFn: ({ original }, _, filterValue) => {
+            console.log("filter: ", filterValue);
+            if (filterValue === "all") return true;
+            else if (filterValue === "complete")
+              return (
+                original.pendingAssignments === 0 && original.assignments > 0
+              );
+            else if (filterValue === "pending")
+              return original.pendingAssignments > 0;
+            else if (filterValue === "unassigned")
+              return (
+                original.pendingAssignments === 0 && original.assignments === 0
+              );
+            else return true;
           },
         }),
         columnHelper.display({
@@ -286,6 +224,7 @@ export default function ReviewersTable({
 
   return (
     <div className="flex flex-col w-full gap-2">
+      <ExportButton data={flattenRows(rows)} filename="h4i_reviewers" />
       <DataTable
         columns={cols}
         data={rows ?? []}
@@ -296,9 +235,16 @@ export default function ReviewersTable({
           onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
+          enableColumnFilters: true,
           state: {
             globalFilter: search,
             pagination,
+            columnFilters: [
+              {
+                id: "pending-assignments",
+                value: statusFilter,
+              },
+            ],
           },
         }}
       />

@@ -2,6 +2,7 @@ import { getApplicationForm } from "@/services/applicationFormsService";
 import {
   ApplicantRole,
   ApplicationForm,
+  ApplicationInterviewData,
   ApplicationReviewData,
   ApplicationInterviewData,
 } from "@/types/types";
@@ -18,6 +19,7 @@ export async function calculateReviewScore(
 
   if (!form.scoreWeights) {
     // fallback to simple average
+    console.log("NO WEIGHTS");
     return roundScore(averageScore(review), 2);
   }
 
@@ -27,7 +29,7 @@ export async function calculateReviewScore(
       review.applicantScores,
     )
   ) {
-    return Promise.reject(-1); // TODO: find a more permanent solution for rejection
+    return Promise.reject(-1);
   }
   const score = calculateScoreForFormAndRole(
     form.scoreWeights[review.forRole],
@@ -36,7 +38,15 @@ export async function calculateReviewScore(
   return roundScore(score, 2);
 }
 
-function averageScore(review: ApplicationReviewData) {
+export async function calculateInterviewScore(
+  interviewData: ApplicationInterviewData,
+): Promise<number> {
+  return interviewData.interviewScore
+}
+
+function averageScore(
+  review: ApplicationReviewData,
+) {
   if (Object.values(review.applicantScores).length == 0) return 0;
   const scores = Object.values(review.applicantScores);
   return scores.reduce((acc, s) => acc + s, 0) / scores.length;
@@ -62,7 +72,6 @@ function calculateScoreForFormAndRole(
   }, 0);
 }
 
-// TODO: need to check if this would be useful for avg. score/elsewhere
 function roundScore(score: number, decimalPlaces: number) {
   const factor = Math.pow(10, decimalPlaces);
   return Math.round((score + Number.EPSILON) * factor) / factor;

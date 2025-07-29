@@ -1,6 +1,5 @@
 import { AssignedReviewsTable } from "@/components/dor/AssignedReviewsDashboard";
 import Loading from "@/components/Loading";
-import { ReviewerApplicationsTable } from "@/components/reviewer/ReviewerApplicationsTable";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { Button } from "@/components/ui/button";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";

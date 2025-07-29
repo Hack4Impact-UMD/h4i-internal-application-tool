@@ -58,7 +58,7 @@ export async function getReviewDataForApplicantRole(
   const q = query(
     reviewData,
     where("applicantId", "==", applicantId),
-    where("forRole", "==", role.toString()),
+    where("forRole", "==", role),
     where("applicationFormId", "==", formId),
   );
   const result = await getDocs(q);
@@ -73,7 +73,7 @@ export async function getReviewDataForAssignment(
   const q = query(
     reviewData,
     where("applicantId", "==", assignment.applicantId),
-    where("forRole", "==", assignment.forRole.toString()),
+    where("forRole", "==", assignment.forRole),
     where("applicationFormId", "==", assignment.formId),
     where("reviewerId", "==", assignment.reviewerId),
   );
@@ -154,6 +154,14 @@ export async function getReviewDataForResponseRole(
     where("applicationResponseId", "==", responseId),
     where("forRole", "==", role),
   );
+  const result = await getDocs(q);
+
+  return result.docs.map((doc) => doc.data() as ApplicationReviewData);
+}
+
+export async function getReviewDataForForm(formId: string) {
+  const reviewData = collection(db, REVIEW_DATA_COLLECTION);
+  const q = query(reviewData, where("applicationFormId", "==", formId));
   const result = await getDocs(q);
 
   return result.docs.map((doc) => doc.data() as ApplicationReviewData);

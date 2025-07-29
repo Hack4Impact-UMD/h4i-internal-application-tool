@@ -27,9 +27,10 @@ export function useRows(
   assignments: AppReviewAssignment[],
   pageIndex: number,
   rowCount: number,
+  formId: string,
 ) {
   return useQuery({
-    queryKey: ["my-assignment-rows", pageIndex, assignments, rowCount],
+    queryKey: ["my-assignment-rows", pageIndex, assignments, rowCount, formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

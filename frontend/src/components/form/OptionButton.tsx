@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge";
 
 interface OptionButtonProps {
   optionName: string;
+  optionColor?: string;
+  optionDarkColor?: string;
   buttonType: "choice" | "multiSelect";
   isSelected: boolean;
   onClick: () => void;
@@ -13,6 +15,8 @@ interface OptionButtonProps {
 
 const OptionButton: React.FC<OptionButtonProps> = ({
   optionName,
+  optionColor = null,
+  optionDarkColor = null,
   buttonType,
   isSelected,
   onClick,
@@ -37,13 +41,10 @@ const OptionButton: React.FC<OptionButtonProps> = ({
     }
   };
 
-  const backgroundColor = clicked
-    ? "#2969C4"
-    : disabled
-      ? "#DADADA"
-      : "#ffffff";
+  const backgroundColor =
+    optionColor ?? (clicked ? "#2969C4" : disabled ? "#DADADA" : "#ffffff");
 
-  const textColor = clicked ? "#ffffff" : disabled ? "#202020B2" : "#202020B2";
+  const textColor = optionDarkColor ?? (clicked ? "#ffffff" : "#202020B2");
 
   const circleOutlineColor = disabled ? "outline-gray-400" : "outline-black";
   const innerCircleColor = disabled
