@@ -7,7 +7,7 @@ import RolePill from "@/components/role-pill/RolePill";
 import { getInterviewAssignmentsForApplication } from "@/services/interviewAssignmentService";
 import { useReviewersForRole } from "@/hooks/useReviewers";
 import { assignInterview } from "@/services/interviewAssignmentService";
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -17,7 +17,7 @@ import type { InterviewAssignment } from "@/types/types";
 import Spinner from "@/components/Spinner";
 import { useParams } from "react-router-dom";
 import { ApplicationInterviewData } from "@/types/types";
-import { QualfiedAppRow, useRows } from "./useRows";
+import { QualifiedAppRow, useRows } from "./useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
 
 function InterviewerSelect({
@@ -131,29 +131,23 @@ function InterviewerSearchPopover({
   responseId: string;
   onSelect: (interviewer: ReviewerUserProfile) => void;
 }) {
-  const { formId } = useParams<{ formId: string }>();
-  const { data: interviewers, isPending, error } = useReviewersForRole(role);
-  const assignments = useQueries({
-    queries:
-      interviewers?.map((interviewer) => ({
-        queryKey: ["interview-assignments", "id", formId!, interviewer.id],
-        queryFn: async () => (await getInterviewAssignmentsForApplication(responseId)).filter(a => a.forRole === role),
-      })) ?? [],
+  const { data: interviewers, isPending: interviewersPending, error: interviewersError } = useReviewersForRole(role);
+  const { data: allAssignments, isPending: assignmentsPending, error: assignmentsError } = useQuery({
+    queryKey: ["interview-assignments", responseId],
+    queryFn: () => getInterviewAssignmentsForApplication(responseId),
   });
 
   const validInterviewers = useMemo(() => {
-    return interviewers?.filter((_, index) => {
-      const query = assignments[index];
-      if (query.data) {
-        const interviewerAssignments = query.data;
-        return !interviewerAssignments.find(
-          (a) => a.applicationResponseId == responseId && a.forRole == role,
-        );
-      } else {
-        return true;
-      }
-    });
-  }, [interviewers, assignments, responseId, role]);
+    if (!interviewers || !allAssignments) {
+      return [];
+    }
+    const assignmentsForRole = allAssignments.filter(a => a.forRole === role);
+    const assignedIds = new Set(assignmentsForRole.map(a => a.interviewerId));
+    return interviewers.filter(i => !assignedIds.has(i.id));
+  }, [interviewers, allAssignments, role]);
+
+  const isPending = interviewersPending || assignmentsPending;
+  const error = interviewersError || assignmentsError;
 
   if (isPending)
     return (
@@ -164,7 +158,7 @@ function InterviewerSearchPopover({
   if (error)
     return (
       <div className="flex items-center justify-center p-2 w-full">
-        <p>Failed to fetch interviewers: {error.message}</p>
+        <p>Failed to fetch data: {error.message}</p>
       </div>
     );
   return (
@@ -174,8 +168,7 @@ function InterviewerSearchPopover({
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
           {validInterviewers
-            ?.filter((r) => interviewers?.find((x) => x.id == r.id))
-            .map((interviewer) => (
+            ?.map((interviewer) => (
               <CommandItem
                 key={interviewer.id}
                 value={`${interviewer.firstName} ${interviewer.lastName}`}
@@ -267,7 +260,7 @@ export default function QualifiedApplicationsTable({
     error,
   } = useRows(pagination.pageIndex, applications, rowCount, formId);
 
-  const columnHelper = createColumnHelper<QualfiedAppRow>();
+  const columnHelper = createColumnHelper<QualifiedAppRow>();
   const cols = useMemo(
     () => [
       columnHelper.accessor("index", {
@@ -341,12 +334,12 @@ export default function QualifiedApplicationsTable({
           return getValue();
         },
       }),
-    ] as ColumnDef<QualfiedAppRow>[],
+    ] as ColumnDef<QualifiedAppRow>[],
     [columnHelper, addInterviewerMutation, removeInterviewerMutation],
   );
 
   if (isPending) return <p>Loading...</p>;
-  if (error) return <p>Something went wrong: {JSON.stringify(error)}</p>;
+  if (error) return <p>Something went wrong: {error.message}</p>;
 
   return (
     <div className="flex flex-col w-full gap-2">

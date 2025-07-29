@@ -6,7 +6,7 @@ import { ApplicantRole, ApplicationInterviewData, ApplicationResponse, Interview
 import { calculateInterviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
 
-export type QualfiedAppRow = {
+export type QualifiedAppRow = {
 	index: number,
 	name: string,
 	role: ApplicantRole,
@@ -25,7 +25,7 @@ export function useRows(
 	rowCount: number,
 	formId: string,
 ) {
-	return useQuery<QualfiedAppRow[]>({
+	return useQuery<QualifiedAppRow[]>({
 		queryKey: ["qualified-apps-rows", pageIndex, formId, applications.length],
 		placeholderData: (prev) => prev,
 		queryFn: async () => {
@@ -67,7 +67,7 @@ export function useRows(
 							averageScore,
 							responseId: app.id,
 							interviews,
-						} as QualfiedAppRow;
+						} as QualifiedAppRow;
 					}),
 			);
 		},
