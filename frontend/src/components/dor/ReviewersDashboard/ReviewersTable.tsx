@@ -98,6 +98,9 @@ export default function ReviewersTable({
       queryClient.invalidateQueries({
         queryKey: ["all-reviewers-rows", variables.pageIndex],
       });
+      queryClient.invalidateQueries({
+        predicate: q => q.queryKey.includes("reviewers") || q.queryKey.includes("reviewer")
+      });
     },
   });
 
@@ -196,9 +199,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.reviewer.id,
+                        formId +
+                        "/" +
+                        row.original.reviewer.id,
                       );
                     }}
                   >

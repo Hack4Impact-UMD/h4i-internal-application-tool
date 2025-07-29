@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "../components/ui/button";
 import {
   ApplicantRole,
   ApplicationResponse,
@@ -12,13 +12,13 @@ import {
 } from "@/utils/display";
 import { useAllApplicationResponsesForForm } from "@/hooks/useApplicationResponses";
 import { useParams } from "react-router-dom";
-import Loading from "../Loading";
-import QualifiedApplicationsTable from "./QualifiedApplicationsTable";
+import Loading from "../components/Loading";
 import useSearch from "@/hooks/useSearch";
 import { useQuery } from "@tanstack/react-query";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { InternalApplicationStatus } from "@/types/types";
+import { QualifiedApplicationsTable } from "@/components/dor/QualifiedDashboard";
 
 // Helper to fetch all qualified statuses for a form
 async function getQualifiedStatusesForForm(formId: string) {

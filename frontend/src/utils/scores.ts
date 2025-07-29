@@ -4,7 +4,6 @@ import {
   ApplicationForm,
   ApplicationInterviewData,
   ApplicationReviewData,
-  ApplicationInterviewData,
 } from "@/types/types";
 
 export async function calculateReviewScore(
@@ -41,7 +40,7 @@ export async function calculateReviewScore(
 export async function calculateInterviewScore(
   interviewData: ApplicationInterviewData,
 ): Promise<number> {
-  return interviewData.interviewScore
+  return Promise.resolve(interviewData.interviewScore)
 }
 
 function averageScore(
@@ -54,7 +53,7 @@ function averageScore(
 
 function validateScoreCategoriesForFormAndRole(
   scoreWeightsForRole: ApplicationForm["scoreWeights"][ApplicantRole],
-  applicantScores: ApplicationReviewData["applicantScores"] | ApplicationInterviewData["applicantScores"],
+  applicantScores: ApplicationReviewData["applicantScores"],
 ): boolean {
   return Object.keys(scoreWeightsForRole).every(
     (weight) => weight in applicantScores,
@@ -63,7 +62,7 @@ function validateScoreCategoriesForFormAndRole(
 
 function calculateScoreForFormAndRole(
   scoreWeightsForRole: ApplicationForm["scoreWeights"][ApplicantRole],
-  applicantScores: ApplicationReviewData["applicantScores"] | ApplicationInterviewData["applicantScores"],
+  applicantScores: ApplicationReviewData["applicantScores"],
 ): number {
   return Object.keys(scoreWeightsForRole).reduce((acc, scoreCategory) => {
     const weight = scoreWeightsForRole[scoreCategory] ?? 0;
@@ -77,38 +76,3 @@ function roundScore(score: number, decimalPlaces: number) {
   return Math.round((score + Number.EPSILON) * factor) / factor;
 }
 
-export async function calculateInterviewScore(
-  interview: ApplicationInterviewData,
-): Promise<number> {
-  const scores = Object.keys(interview.applicantScores);
-  if (scores.length == 0) return 0;
-
-  const form: ApplicationForm = await getApplicationForm(
-    interview.applicationFormId,
-  );
-
-  if (!form.scoreWeights) {
-    // fallback to simple average
-    return roundScore(averageInterviewScore(interview), 2);
-  }
-
-  if (
-    !validateScoreCategoriesForFormAndRole(
-      form.scoreWeights[interview.forRole],
-      interview.applicantScores,
-    )
-  ) {
-    throw new Error("Invalid score categories for interview");
-  }
-  const score = calculateScoreForFormAndRole(
-    form.scoreWeights[interview.forRole],
-    interview.applicantScores,
-  );
-  return roundScore(score, 2);
-}
-
-function averageInterviewScore(interview: ApplicationInterviewData) {
-  if (Object.values(interview.applicantScores).length == 0) return 0;
-  const scores = Object.values(interview.applicantScores);
-  return scores.reduce((acc, s) => acc + s, 0) / scores.length;
-}

@@ -29,7 +29,7 @@ import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerAp
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import { AssignedApplicationsPage } from "./pages/AssignedApplicationsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
-import QualifiedApplicationsDashboard from "./components/dor/QualifiedApplicationsDashboard";
+import QualifiedApplicationsDashboard from "./pages/QualifiedApplicationsDashboard";
 import NotFoundPage from "./pages/NotFoundPage";
 import ViewApplicationPage from "./pages/ViewApplicationPage";
 import ReviewerDashboardShell from "./pages/ReviewerDashboardShell";

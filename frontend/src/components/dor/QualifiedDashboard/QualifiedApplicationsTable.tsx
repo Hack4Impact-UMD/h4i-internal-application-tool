@@ -1,86 +1,24 @@
 import { useMemo, useState, useCallback } from "react";
-import { DataTable } from "../DataTable";
-import { Button } from "../ui/button";
-import { ApplicantRole, ApplicationResponse, ReviewerUserProfile, PermissionRole } from "@/types/types";
+import { DataTable } from "@/components/DataTable";
+import { Button } from "@/components/ui/button";
+import { ApplicantRole, ApplicationResponse, ReviewerUserProfile } from "@/types/types";
 import { createColumnHelper, getPaginationRowModel, ColumnDef } from "@tanstack/react-table";
-import { getApplicantById } from "@/services/applicantService";
-import { getInterviewDataForResponseRole } from "@/services/interviewDataService";
-import { useQuery, useQueries } from "@tanstack/react-query";
-import RolePill from "../role-pill/RolePill";
-import { calculateInterviewScore } from "@/utils/scores";
-import { getUserById } from "@/services/userService";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import RolePill from "@/components/role-pill/RolePill";
 import { getInterviewAssignmentsForApplication } from "@/services/interviewAssignmentService";
 import { useReviewersForRole } from "@/hooks/useReviewers";
 import { assignInterview } from "@/services/interviewAssignmentService";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { throwSuccessToast } from "../toasts/SuccessToast";
-import { throwErrorToast } from "../toasts/ErrorToast";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { removeInterviewAssignment } from "@/services/interviewAssignmentService";
 import type { InterviewAssignment } from "@/types/types";
-import Spinner from "../Spinner";
+import Spinner from "@/components/Spinner";
 import { useParams } from "react-router-dom";
 import { ApplicationInterviewData } from "@/types/types";
-
-// TODO: add interviewer-related logic once the related service functions are written 
-
-function useRows(
-  pageIndex: number,
-  applications: ApplicationResponse[],
-  rowCount: number,
-  formId: string,
-) {
-  return useQuery({
-    queryKey: ["qualified-apps-rows", pageIndex, formId, applications.length],
-    placeholderData: (prev) => prev,
-    queryFn: async () => {
-      return Promise.all(
-        applications
-          .slice(
-            pageIndex * rowCount,
-            Math.min(applications.length, (pageIndex + 1) * rowCount),
-          )
-          .map(async (app, index) => {
-            const user = await getApplicantById(app.userId);
-            // Get interview assignments for this application
-            const assignments = (await getInterviewAssignmentsForApplication(app.id)).filter(a => a.forRole === app.rolesApplied[0]);
-            // Get all assigned interviewer profiles
-            const assignedInterviewers: ReviewerUserProfile[] = (
-              await Promise.all(assignments.map(async (a) => await getUserById(a.interviewerId)))
-            ).filter((u): u is ReviewerUserProfile => u.role === PermissionRole.Reviewer);
-            // Get interview data for this application/role
-            const interviews = await getInterviewDataForResponseRole(
-              formId,
-              app.id,
-              app.rolesApplied[0],
-            );
-            const submittedInterviews = interviews.filter((i) => i.submitted);
-            // Calculate average score
-            let averageScore: number | null = null;
-            if (submittedInterviews.length > 0) {
-              const scores = await Promise.all(
-                submittedInterviews.map(async (i) => await calculateInterviewScore(i))
-              );
-              averageScore = scores.reduce((acc, v) => acc + v, 0) / scores.length;
-            }
-            return {
-              index: 1 + pageIndex * rowCount + index,
-              name: `${user.firstName} ${user.lastName}`,
-              role: app.rolesApplied[0],
-              interviewers: { assigned: assignedInterviewers },
-              assignments,
-              averageScore,
-              responseId: app.id,
-              interviews, // for removal check
-            };
-          }),
-      );
-    },
-    refetchOnWindowFocus: true,
-  });
-}
+import { QualfiedAppRow, useRows } from "./useRows";
+import SortableHeader from "@/components/tables/SortableHeader";
 
 function InterviewerSelect({
   onAdd,
@@ -198,10 +136,11 @@ function InterviewerSearchPopover({
   const assignments = useQueries({
     queries:
       interviewers?.map((interviewer) => ({
-        queryKey: ["assignments", "id", formId!, interviewer.id],
+        queryKey: ["interview-assignments", "id", formId!, interviewer.id],
         queryFn: async () => (await getInterviewAssignmentsForApplication(responseId)).filter(a => a.forRole === role),
       })) ?? [],
   });
+
   const validInterviewers = useMemo(() => {
     return interviewers?.filter((_, index) => {
       const query = assignments[index];
@@ -214,7 +153,8 @@ function InterviewerSearchPopover({
         return true;
       }
     });
-  }, [interviewers, assignments, responseId]);
+  }, [interviewers, assignments, responseId, role]);
+
   if (isPending)
     return (
       <div className="flex items-center justify-center p-2 w-full">
@@ -287,12 +227,12 @@ export default function QualifiedApplicationsTable({
       throwErrorToast("Failed to assign interviewer!");
       console.log(error);
     },
-    onSettled: (_data, _err) => {
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["qualified-apps-rows"],
       });
       queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("assignments") || q.queryKey.includes("assignment"),
+        predicate: (q) => q.queryKey.includes("interview-assignments") || q.queryKey.includes("interview") || q.queryKey.includes("assignment"),
       });
     },
   });
@@ -320,58 +260,38 @@ export default function QualifiedApplicationsTable({
       });
     },
   });
+
   const {
     data: rows,
     isPending,
     error,
   } = useRows(pagination.pageIndex, applications, rowCount, formId);
-  const columnHelper = createColumnHelper<any>();
-  const cols = useMemo<ColumnDef<any, any>[]>(
+
+  const columnHelper = createColumnHelper<QualfiedAppRow>();
+  const cols = useMemo(
     () => [
       columnHelper.accessor("index", {
         id: "number",
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              S.NO
-              {column.getIsSorted() === false ? <ArrowUpDown /> : column.getIsSorted() === "desc" ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          <SortableHeader column={column}>
+            S. NO
+          </SortableHeader>
         ),
-        cell: ({ getValue }) => getValue(),
       }),
       columnHelper.accessor("name", {
         id: "name",
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              NAME
-              {column.getIsSorted() === false ? <ArrowUpDown /> : column.getIsSorted() === "desc" ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          <SortableHeader column={column}>
+            NAME
+          </SortableHeader>
         ),
       }),
       columnHelper.accessor("role", {
         id: "role",
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              ROLES
-              {column.getIsSorted() === false ? <ArrowUpDown /> : column.getIsSorted() === "desc" ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          <SortableHeader column={column}>
+            ROLE
+          </SortableHeader>
         ),
         cell: ({ getValue }) => <RolePill role={getValue()} />,
         filterFn: (row, columnId, filterValue) => {
@@ -412,27 +332,22 @@ export default function QualifiedApplicationsTable({
       columnHelper.accessor("averageScore", {
         id: "avg-score",
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            <span className="items-center flex flex-row gap-1">
-              AVG. SCORE
-              {column.getIsSorted() === false ? <ArrowUpDown /> : column.getIsSorted() === "desc" ? <ArrowUp /> : <ArrowDown />}
-            </span>
-          </Button>
+          <SortableHeader column={column}>
+            AVG. SCORE
+          </SortableHeader>
         ),
         cell: ({ getValue, row }) => {
           if (row.original.averageScore == null) return "N/A";
           return getValue();
         },
       }),
-    ],
-    [columnHelper, rows, addInterviewerMutation, removeInterviewerMutation],
+    ] as ColumnDef<QualfiedAppRow>[],
+    [columnHelper, addInterviewerMutation, removeInterviewerMutation],
   );
+
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {JSON.stringify(error)}</p>;
+
   return (
     <div className="flex flex-col w-full gap-2">
       <DataTable
