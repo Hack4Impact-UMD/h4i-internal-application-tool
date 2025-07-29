@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { Link } from "react-router-dom";
 
 type NavProfileProps = {
   user: UserProfile;
@@ -52,7 +53,7 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
           <DropdownMenuGroup>
             <DropdownMenuLabel>My Profile</DropdownMenuLabel>
             <DropdownMenuItem className="cursor-pointer">
-              Edit Profile
+              <Link to={"/profile"}>Edit Profile</Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

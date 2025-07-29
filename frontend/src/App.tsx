@@ -36,6 +36,7 @@ import SuperReviewerReviewersDashboard from "./pages/SuperReviewerReviewersDashb
 import ReviewerInterviewsDashboard from "./pages/ReviewerInterviewsDashboard";
 import { FormValidationPage } from "./pages/FormValidationPage";
 import SuperReviewerInterviewersDashboard from "./pages/SuperReviewerInterviewersDashboard";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -49,6 +50,15 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/login" />} />
+
+            <Route 
+              path="/profile" 
+              element={
+                <RequireAuth>
+                  <ProfilePage />
+                </RequireAuth>
+              }
+            />
 
             <Route path="/apply">
               <Route
