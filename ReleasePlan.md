@@ -4,7 +4,8 @@
 
 This document's purpose is to track the process of finishing, testing, and deploying the H4I-UMD App Portal in time for the Fall 2025 semester. This was initially planned for August 1, 2025, but will come sometime later. Last year, the application form was released on August 13, 2024, and a similar timeline is desirable.
 
-The application has three tiers of Permissions, with the majority of app screens locked to one of the following: 
+The application has three tiers of Permissions, with the majority of app screens locked to one of the following:
+
 - Applicants
 - Reviewers
 - Super Reviewer (aka, Director of Recruitment or DOR)
@@ -13,66 +14,67 @@ There are small screens missing for Applicant and Super Reviewer, but Reviewer f
 
 ## Completion Status
 
-See `README.md` for some screenshots of app progress. Also, try running the app. 
+See `README.md` for some screenshots of app progress. Also, try running the app.
 
 ### All Roles
 
-| Feature/Story  | Status | Notes |
-|----------------|--------|-------|
-| Log-in/Sign-Up Page | ✅ ||
-| Profile/Settings Page | ❌ | Design submitted recently |
-| Report an Issue | ✅ | currently just a link to Tech Lead emails |
-| Error/404 Page | ✅ ||
-| Forgot/Reset Password Page | ❌ | frontend logic done, doesn't actually send you an email to reset |
+| Feature/Story              | Status | Notes                                                            |
+| -------------------------- | ------ | ---------------------------------------------------------------- |
+| Log-in/Sign-Up Page        | ✅     |                                                                  |
+| Profile/Settings Page      | ❌     | Design submitted recently                                        |
+| Report an Issue            | ✅     | currently just a link to club email                              |
+| Error/404 Page             | ✅     |                                                                  |
+| Forgot/Reset Password Page | ❌     | frontend logic done, doesn't actually send you an email to reset |
 
 ### Applicant
 
-| Feature/Story  | Status | Notes |
-|----------------|--------|-------|
-| Overview Page | ✅ ||
-| Application Page | ✅ | need to look at Fall 25 application and see if we're missing features. |
-| Review/Submit Application Page | ✅ ||
-| Application Submitted Page | ✅ ||
-| Status Page | ✅ ||
-| Revisit Application Page | ✅ ||
-| Decision Page | ❌ | Design submitted recently ||
+| Feature/Story                  | Status | Notes                                                                  |
+| ------------------------------ | ------ | ---------------------------------------------------------------------- |
+| Overview Page                  | ✅     |                                                                        |
+| Application Page               | ✅     | need to look at Fall 25 application and see if we're missing features. |
+| Review/Submit Application Page | ✅     |                                                                        |
+| Application Submitted Page     | ✅     |                                                                        |
+| Status Page                    | ✅     |                                                                        |
+| Revisit Application Page       | ✅     |                                                                        |
+| Decision Page                  | ❌     | Design submitted recently                                              |
 
 ### Reviewer
 
-| Feature/Story  | Status | Notes |
-|----------------|--------|-------|
-| Overview Page | ✅ ||
-| Assigned Reviews Dashboard | ✅ ||
-| Assigned Interviews Dashboard | ✅ ||
-| Submit Review Page | ❌ | Has a non-functional and sketchy frontend |
-| Submit Interview Page | ❌ | Not started. This is simpler than submitting reviews, so this should be first |
+| Feature/Story                 | Status | Notes                                                                         |
+| ----------------------------- | ------ | ----------------------------------------------------------------------------- |
+| Overview Page                 | ✅     |                                                                               |
+| Assigned Reviews Dashboard    | ✅     |                                                                               |
+| Assigned Interviews Dashboard | ✅     |                                                                               |
+| Submit Review Page            | ❌     | Has a non-functional and sketchy frontend                                     |
+| Submit Interview Page         | ❌     | Not started. This is simpler than submitting reviews, so this should be first |
 
 ### Super Reviewer
 
-| Feature/Story  | Status | Notes |
-|----------------|--------|-------|
-| Overview Page | ✅ ||
-| User Management Dashboard | ✅ ||
-| All Applications Dashboard | ✅ ||
-| - Reviewer Assignment | ✅ ||
-| Qualified Dashboard | ❌ | Currently in PR phase, needs changes |
-| - Interview Assignment | ❌ | see above |
-| Reviewers Dashboard | ✅ | this and Interviewers need an efficiency change |
-| - Role Assignment | ✅ ||
-| Interviewers Dashboard | ✅ ||
-| - Interview Assignment | ❌ | waiting for Qualified merge |
-| Reviews for X Application Dashboard | ✅ ||
-| Applications for X Reviewer Dashboard | ✅ ||
-| View Application Page | ✅ ||
-| Form Validation Page | ✅ | stretch goal, can just remove or not use if it has issues |
+| Feature/Story                         | Status | Notes                                                     |
+| ------------------------------------- | ------ | --------------------------------------------------------- |
+| Overview Page                         | ✅     |                                                           |
+| User Management Dashboard             | ✅     |                                                           |
+| All Applications Dashboard            | ✅     |                                                           |
+| - Reviewer Assignment                 | ✅     |                                                           |
+| Qualified Dashboard                   | ❌     | Currently in PR phase, needs changes                      |
+| - Interview Assignment                | ❌     | see above                                                 |
+| - Changing Application Decisions      | ❌     | see above                                                 |
+| Reviewers Dashboard                   | ✅     | this and Interviewers need an efficiency change           |
+| - Role Assignment                     | ✅     |                                                           |
+| Interviewers Dashboard                | ✅     |                                                           |
+| - Interview Assignment                | ❌     | waiting for Qualified merge                               |
+| Reviews for X Application Dashboard   | ✅     |                                                           |
+| Applications for X Reviewer Dashboard | ✅     |                                                           |
+| View Application Page                 | ✅     |                                                           |
+| Form Validation Page                  | ✅     | stretch goal, can just remove or not use if it has issues |
 
 ## Deployment Plans
 
-TODO. Release timeline would be sped-up if we had a unique URL, and thus do not have to integrate with an existing website, such as `apply.umd.hack4impact.org` or `apply-hack4impact-umd.org`.
+Release timeline would be sped-up if we had a unique URL, and thus do not have to integrate with an existing website, such as `apply.umd.hack4impact.org` or `apply-hack4impact-umd.org`. Currently, if we were to deploy on a route on the existing website, we would need to integrate with the existing website's deployment, update routes in the app to match the new base route, and update links to assets to match the new base route. This also prohibits us from leveraging automatic deployments through github actions, as each deployment would need to be manually integrated with the current site. A separate domain or subdomain would dramatically reduce the time needed to deploy.
 
 ## Testing Plans
 
-TODO. Deployment will need to be "done" for this. Past that, we will need to plan and gather users for a beta test.
+Deployment will need to be "done" for this. Past that, we will need to plan and gather users for a beta test. The beta testing should mock a full application process, from applicants submitting their applications, to reviews and interviews, and finally decision release.
 
 ## Ticket Board
 
@@ -82,19 +84,19 @@ See `README.md`, `DataFetching.md`, and `backend/README.md` for information on d
 
 ### Required
 
-| Ticket | Assignee | Scope | Notes |
-|--------|----------|-------|-------|
-| Upload Fall 25 Application || Medium | Mostly manual work, but a good opportunity to test the form types. |
-| Reviewer/Interview Grading || Large | Most important! Both frontend/backend. |
-| Profile/Settings Page || Small | Copy from Figma |
-| Applicant Decision Page || Small | Copy from Figma |
-| Allow submissions only before due date/submission || Medium | based on TODO comment; security in general needs to be looked over |
-| Reset Password Functionality || Medium | might be ignorable-just have people message TLs for help? |
+| Ticket                                            | Assignee | Scope  | Notes                                                              |
+| ------------------------------------------------- | -------- | ------ | ------------------------------------------------------------------ |
+| Upload Fall 25 Application                        |          | Medium | Mostly manual work, but a good opportunity to test the form types. |
+| Reviewer/Interview Grading                        |          | Large  | Most important! Both frontend/backend.                             |
+| Qualified Page                                    |          | Medium | Minor changes and additions need to be made to the PR              |
+| Profile/Settings Page                             |          | Small  | Copy from Figma                                                    |
+| Applicant Decision Page                           |          | Small  | Copy from Figma                                                    |
+| Allow submissions only before due date/submission |          | Medium | Just need to tighten firestore rules, routes already handle logic  |
+| Reset Password Functionality                      |          | Medium | might be ignorable-just have people message TLs for help?          |
 
 ### Good to Have + Nitpicks
 
-| Ticket | Assignee | Scope | Notes |
-|--------|----------|-------|-------|
-| Finish and use export to CSV button || Small | only works for current page of the dashboard, only on reviewers/interviewers |
-| Change TextBox to use toast notifs || Small | unsure about this, based on a TODO comment i found |
-| Interview assignments for Interview dashboard || Medium | waiting for the equivalent work in Qualified to be merged |
+| Ticket                                        | Assignee | Scope  | Notes                                                                        |
+| --------------------------------------------- | -------- | ------ | ---------------------------------------------------------------------------- |
+| Finish and use export to CSV button           |          | Small  | only works for current page of the dashboard, only on reviewers/interviewers |
+| Interview assignments for Interview dashboard |          | Medium | waiting for the equivalent work in Qualified to be merged                    |
