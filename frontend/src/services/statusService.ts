@@ -66,3 +66,20 @@ export async function updateApplicationStatus(
   const statusDoc = doc(statusCollection, statusId);
   await updateDoc(statusDoc, update);
 }
+
+// Helper to fetch all qualified statuses for a form
+export async function getQualifiedStatusesForForm(formId: string) {
+  try {
+    const statusCollection = collection(db, STATUS_COLLECTION);
+    const q = query(
+      statusCollection,
+      where("formId", "==", formId),
+      where("isQualified", "==", true),
+    );
+    const docsSnap = await getDocs(q);
+    return docsSnap.docs.map((d) => d.data() as InternalApplicationStatus);
+  } catch (error) {
+    console.error("Failed to fetch qualified statuses:", error);
+    throw error;
+  }
+}

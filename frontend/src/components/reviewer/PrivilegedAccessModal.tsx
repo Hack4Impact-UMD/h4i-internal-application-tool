@@ -7,7 +7,7 @@ const PrivilegedAccessModal: React.FC = () => {
     dialogRef.current?.close();
   };
 
-  const handleSubmit = () => { };
+  const handleSubmit = () => {};
 
   return (
     <dialog

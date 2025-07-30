@@ -29,6 +29,7 @@ import SuperReviewerApplicationsDashboard from "./components/dor/SuperReviewerAp
 import { AssignedReviewsPage } from "./pages/AssignedReviewsPage";
 import { AssignedApplicationsPage } from "./pages/AssignedApplicationsPage";
 import AppRevisitPage from "./pages/AppRevisitPage";
+import QualifiedApplicationsDashboard from "./pages/QualifiedApplicationsDashboard";
 import NotFoundPage from "./pages/NotFoundPage";
 import ViewApplicationPage from "./pages/ViewApplicationPage";
 import ReviewerDashboardShell from "./pages/ReviewerDashboardShell";
@@ -151,7 +152,7 @@ function App() {
                 />
                 <Route
                   path="dashboard/:formId/qualified"
-                  element={<p>Qualified</p>}
+                  element={<QualifiedApplicationsDashboard />}
                 />
                 <Route
                   path="dashboard/:formId/reviewers"
