@@ -70,7 +70,7 @@ export async function updateApplicationStatus(
 // Helper to fetch all qualified statuses for a form
 export async function getQualifiedStatusesForForm(formId: string) {
   try {
-    const statusCollection = collection(db, "app-status");
+    const statusCollection = collection(db, STATUS_COLLECTION);
     const q = query(
       statusCollection,
       where("formId", "==", formId),

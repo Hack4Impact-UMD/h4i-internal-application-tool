@@ -249,40 +249,42 @@ function StatusSelect({
   assignedInterviewers: boolean;
 }) {
   return (
-    <Select
-      value={currentStatus}
-      onValueChange={onStatusChange}
-      disabled={disabled}
-    >
-      <SelectTrigger className="w-40">
-        <SelectValue placeholder="Select status" />
-      </SelectTrigger>
-      <SelectContent>
-        {[
-          ReviewStatus.UnderReview,
-          ReviewStatus.Interview,
-          ReviewStatus.Accepted,
-          ReviewStatus.Waitlisted,
-          ReviewStatus.Denied,
-        ].map((status) => (
-          <SelectItem key={status} value={status}>
-            {status.charAt(0).toUpperCase() +
-              status.slice(1).replace(/-/g, " ")}
-            {status === ReviewStatus.UnderReview && assignedInterviewers && (
-              <Tooltip>
-                <TooltipTrigger>
-                  <CircleAlertIcon className="text-orange-500" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  Make sure to change status to interview if you plan to
-                  interview this applicant!
-                </TooltipContent>
-              </Tooltip>
-            )}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="flex items-center gap-2">
+      <Select
+        value={currentStatus}
+        onValueChange={onStatusChange}
+        disabled={disabled}
+      >
+        <SelectTrigger className="w-40">
+          <SelectValue placeholder="Select status" />
+        </SelectTrigger>
+        <SelectContent>
+          {[
+            ReviewStatus.UnderReview,
+            ReviewStatus.Interview,
+            ReviewStatus.Accepted,
+            ReviewStatus.Waitlisted,
+            ReviewStatus.Denied,
+          ].map((status) => (
+            <SelectItem key={status} value={status}>
+              {status.charAt(0).toUpperCase() +
+                status.slice(1).replace(/-/g, " ")}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {currentStatus === ReviewStatus.UnderReview && assignedInterviewers && (
+        <Tooltip>
+          <TooltipTrigger>
+            <CircleAlertIcon className="text-orange-500" />
+          </TooltipTrigger>
+          <TooltipContent>
+            Make sure to change status to interview if you plan to interview this
+            applicant!
+          </TooltipContent>
+        </Tooltip>
+      )}
+    </div>
   );
 }
 
