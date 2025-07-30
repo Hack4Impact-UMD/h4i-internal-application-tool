@@ -56,13 +56,13 @@ See `README.md` for some screenshots of app progress. Also, try running the app.
 | User Management Dashboard             | ✅     |                                                           |
 | All Applications Dashboard            | ✅     |                                                           |
 | - Reviewer Assignment                 | ✅     |                                                           |
-| Qualified Dashboard                   | ❌     | Currently in PR phase, needs changes                      |
-| - Interview Assignment                | ❌     | see above                                                 |
-| - Changing Application Decisions      | ❌     | see above                                                 |
+| Qualified Dashboard                   | ✅     | Done                      |
+| - Interview Assignment                | ✅     | see above                                                 |
+| - Changing Application Decisions      | ✅     | see above                                                 |
 | Reviewers Dashboard                   | ✅     | this and Interviewers need an efficiency change           |
 | - Role Assignment                     | ✅     |                                                           |
 | Interviewers Dashboard                | ✅     |                                                           |
-| - Interview Assignment                | ❌     | waiting for Qualified merge                               |
+| - Interview Assignment                | ✅     | Done                               |
 | Reviews for X Application Dashboard   | ✅     |                                                           |
 | Applications for X Reviewer Dashboard | ✅     |                                                           |
 | View Application Page                 | ✅     |                                                           |
@@ -88,7 +88,6 @@ See `README.md`, `DataFetching.md`, and `backend/README.md` for information on d
 | ------------------------------------------------- | -------- | ------ | ------------------------------------------------------------------ |
 | Upload Fall 25 Application                        |          | Medium | Mostly manual work, but a good opportunity to test the form types. |
 | Reviewer/Interview Grading                        |          | Large  | Most important! Both frontend/backend.                             |
-| Qualified Page                                    |          | Medium | Minor changes and additions need to be made to the PR              |
 | Profile/Settings Page                             |          | Small  | Copy from Figma                                                    |
 | Applicant Decision Page                           |          | Small  | Copy from Figma                                                    |
 | Allow submissions only before due date/submission |          | Medium | Just need to tighten firestore rules, routes already handle logic  |
