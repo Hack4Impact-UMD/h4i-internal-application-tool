@@ -504,9 +504,10 @@ export default function QualifiedApplicationsTable({
           header: ({ column }) => (
             <SortableHeader column={column}>AVG. SCORE</SortableHeader>
           ),
-          cell: ({ getValue, row }) => {
-            if (row.original.averageScore == null) return "N/A";
-            return getValue();
+          cell: ({ getValue }) => {
+            const value = getValue()
+            if (!value) return "N/A";
+            return value.toFixed(2);
           },
         }),
         columnHelper.accessor("status.status", {
