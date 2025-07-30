@@ -15,23 +15,8 @@ import { useParams } from "react-router-dom";
 import Loading from "../components/Loading";
 import useSearch from "@/hooks/useSearch";
 import { useQuery } from "@tanstack/react-query";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/config/firebase";
-import { InternalApplicationStatus } from "@/types/types";
 import { QualifiedApplicationsTable } from "@/components/dor/QualifiedDashboard";
-
-// Helper to fetch all qualified statuses for a form
-async function getQualifiedStatusesForForm(formId: string) {
-  try {
-    const statusCollection = collection(db, "app-status");
-    const q = query(statusCollection, where("formId", "==", formId), where("isQualified", "==", true));
-    const docsSnap = await getDocs(q);
-    return docsSnap.docs.map((d) => d.data() as InternalApplicationStatus);
-  } catch (error) {
-    console.error("Failed to fetch qualified statuses:", error);
-    throw error;
-  }
-}
+import { getQualifiedStatusesForForm } from "@/services/statusService";
 
 export default function QualifiedApplicationsDashboard() {
   const { formId } = useParams<{ formId: string }>();
@@ -61,18 +46,19 @@ export default function QualifiedApplicationsDashboard() {
   } = useAllApplicationResponsesForForm(formId);
 
   // Expand apps by role, as in SuperReviewerApplicationsDashboard
-  const expandedSubmittedApps = useMemo(() =>
-    apps
-      ?.filter((app) => app.status !== ApplicationStatus.InProgress)
-      ?.flatMap((app) =>
-        app.rolesApplied.map(
-          (role) =>
-            ({
-              ...app,
-              rolesApplied: [role],
-            }) as ApplicationResponse,
-        ),
-      ) ?? [],
+  const expandedSubmittedApps = useMemo(
+    () =>
+      apps
+        ?.filter((app) => app.status !== ApplicationStatus.InProgress)
+        ?.flatMap((app) =>
+          app.rolesApplied.map(
+            (role) =>
+              ({
+                ...app,
+                rolesApplied: [role],
+              }) as ApplicationResponse,
+          ),
+        ) ?? [],
     [apps],
   );
 
@@ -101,7 +87,8 @@ export default function QualifiedApplicationsDashboard() {
   const roleOrder = Object.values(ApplicantRole);
 
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
-  if (statusesError) return <p>Something went wrong: {statusesError.message}</p>;
+  if (statusesError)
+    return <p>Something went wrong: {statusesError.message}</p>;
   if (appsError) return <p>Something went wrong: {appsError.message}</p>;
   if (statusesPending || appsPending) return <Loading />;
 

@@ -8,23 +8,53 @@ import {
   ReviewStatus,
   InternalApplicationStatus,
 } from "@/types/types";
-import { createColumnHelper, getPaginationRowModel, ColumnDef } from "@tanstack/react-table";
+import {
+  createColumnHelper,
+  getPaginationRowModel,
+  ColumnDef,
+} from "@tanstack/react-table";
 import RolePill from "@/components/role-pill/RolePill";
 import { getInterviewAssignmentsForApplication } from "@/services/interviewAssignmentService";
 import { useReviewersForRole } from "@/hooks/useReviewers";
-import { assignInterview, removeInterviewAssignment } from "@/services/interviewAssignmentService";
+import {
+  assignInterview,
+  removeInterviewAssignment,
+} from "@/services/interviewAssignmentService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import type { InterviewAssignment } from "@/types/types";
 import Spinner from "@/components/Spinner";
 import { ApplicationInterviewData } from "@/types/types";
 import { QualifiedAppRow, useRows } from "./useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
 import { updateApplicationStatus } from "@/services/statusService";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CircleAlertIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function InterviewerSelect({
   onAdd,
@@ -37,7 +67,10 @@ function InterviewerSelect({
   interviews,
 }: {
   onAdd: (interviewer: ReviewerUserProfile) => void;
-  onDelete: (interviewer: ReviewerUserProfile, assignment: InterviewAssignment) => void;
+  onDelete: (
+    interviewer: ReviewerUserProfile,
+    assignment: InterviewAssignment,
+  ) => void;
   role: ApplicantRole;
   interviewers: ReviewerUserProfile[];
   assignments: InterviewAssignment[];
@@ -137,8 +170,16 @@ function InterviewerSearchPopover({
   responseId: string;
   onSelect: (interviewer: ReviewerUserProfile) => void;
 }) {
-  const { data: interviewers, isPending: interviewersPending, error: interviewersError } = useReviewersForRole(role);
-  const { data: allAssignments, isPending: assignmentsPending, error: assignmentsError } = useQuery({
+  const {
+    data: interviewers,
+    isPending: interviewersPending,
+    error: interviewersError,
+  } = useReviewersForRole(role);
+  const {
+    data: allAssignments,
+    isPending: assignmentsPending,
+    error: assignmentsError,
+  } = useQuery({
     queryKey: ["interview-assignments", responseId],
     queryFn: () => getInterviewAssignmentsForApplication(responseId),
   });
@@ -147,9 +188,9 @@ function InterviewerSearchPopover({
     if (!interviewers || !allAssignments) {
       return [];
     }
-    const assignmentsForRole = allAssignments.filter(a => a.forRole === role);
-    const assignedIds = new Set(assignmentsForRole.map(a => a.interviewerId));
-    return interviewers.filter(i => !assignedIds.has(i.id));
+    const assignmentsForRole = allAssignments.filter((a) => a.forRole === role);
+    const assignedIds = new Set(assignmentsForRole.map((a) => a.interviewerId));
+    return interviewers.filter((i) => !assignedIds.has(i.id));
   }, [interviewers, allAssignments, role]);
 
   const isPending = interviewersPending || assignmentsPending;
@@ -173,24 +214,23 @@ function InterviewerSearchPopover({
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
-          {validInterviewers
-            ?.map((interviewer) => (
-              <CommandItem
-                key={interviewer.id}
-                value={`${interviewer.firstName} ${interviewer.lastName}`}
-                className="cursor-pointer flex flex-col gap-1 items-start"
-                onSelect={() => onSelect(interviewer)}
-              >
-                <p>
-                  {interviewer.firstName} {interviewer.lastName}
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {interviewer.applicantRolePreferences?.map((role) => (
-                    <RolePill key={role} role={role} className="text-xs" />
-                  ))}
-                </div>
-              </CommandItem>
-            ))}
+          {validInterviewers?.map((interviewer) => (
+            <CommandItem
+              key={interviewer.id}
+              value={`${interviewer.firstName} ${interviewer.lastName}`}
+              className="cursor-pointer flex flex-col gap-1 items-start"
+              onSelect={() => onSelect(interviewer)}
+            >
+              <p>
+                {interviewer.firstName} {interviewer.lastName}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {interviewer.applicantRolePreferences?.map((role) => (
+                  <RolePill key={role} role={role} className="text-xs" />
+                ))}
+              </div>
+            </CommandItem>
+          ))}
         </CommandGroup>
       </CommandList>
     </Command>
@@ -201,20 +241,44 @@ function StatusSelect({
   currentStatus,
   onStatusChange,
   disabled = false,
+  assignedInterviewers,
 }: {
   currentStatus: ReviewStatus;
   onStatusChange: (newStatus: ReviewStatus) => void;
   disabled?: boolean;
+  assignedInterviewers: boolean;
 }) {
   return (
-    <Select value={currentStatus} onValueChange={onStatusChange} disabled={disabled}>
+    <Select
+      value={currentStatus}
+      onValueChange={onStatusChange}
+      disabled={disabled}
+    >
       <SelectTrigger className="w-40">
         <SelectValue placeholder="Select status" />
       </SelectTrigger>
       <SelectContent>
-        {Object.values(ReviewStatus).map((status) => (
+        {[
+          ReviewStatus.UnderReview,
+          ReviewStatus.Interview,
+          ReviewStatus.Accepted,
+          ReviewStatus.Waitlisted,
+          ReviewStatus.Denied,
+        ].map((status) => (
           <SelectItem key={status} value={status}>
-            {status.charAt(0).toUpperCase() + status.slice(1).replace(/-/g, " ")}
+            {status.charAt(0).toUpperCase() +
+              status.slice(1).replace(/-/g, " ")}
+            {status === ReviewStatus.UnderReview && assignedInterviewers && (
+              <Tooltip>
+                <TooltipTrigger>
+                  <CircleAlertIcon className="text-orange-500" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  Make sure to change status to interview if you plan to
+                  interview this applicant!
+                </TooltipContent>
+              </Tooltip>
+            )}
           </SelectItem>
         ))}
       </SelectContent>
@@ -242,13 +306,24 @@ export default function QualifiedApplicationsTable({
   const queryClient = useQueryClient();
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ statusId, newStatus }: { statusId: string; newStatus: ReviewStatus }) =>
-      updateApplicationStatus(statusId, { status: newStatus }),
+    mutationFn: ({
+      statusId,
+      newStatus,
+    }: {
+      statusId: string;
+      newStatus: ReviewStatus;
+    }) => updateApplicationStatus(statusId, { status: newStatus }),
     onMutate: async ({ statusId, newStatus }) => {
-      const queryKey = ["qualified-apps-rows", formId, pagination.pageIndex, rowCount];
+      const queryKey = [
+        "qualified-apps-rows",
+        formId,
+        pagination.pageIndex,
+        rowCount,
+      ];
       await queryClient.cancelQueries({ queryKey });
 
-      const previousRows = queryClient.getQueryData<QualifiedAppRow[]>(queryKey);
+      const previousRows =
+        queryClient.getQueryData<QualifiedAppRow[]>(queryKey);
 
       queryClient.setQueryData<QualifiedAppRow[]>(queryKey, (old) => {
         if (!old) return [];
@@ -256,7 +331,10 @@ export default function QualifiedApplicationsTable({
           if (row.status?.id === statusId) {
             return {
               ...row,
-              status: { ...row.status, status: newStatus } as InternalApplicationStatus,
+              status: {
+                ...row.status,
+                status: newStatus,
+              } as InternalApplicationStatus,
             };
           }
           return row;
@@ -285,7 +363,15 @@ export default function QualifiedApplicationsTable({
   });
 
   const addInterviewerMutation = useMutation({
-    mutationFn: async ({ interviewer, responseId, role }: { interviewer: ReviewerUserProfile; responseId: string; role: ApplicantRole }) => {
+    mutationFn: async ({
+      interviewer,
+      responseId,
+      role,
+    }: {
+      interviewer: ReviewerUserProfile;
+      responseId: string;
+      role: ApplicantRole;
+    }) => {
       return await assignInterview(responseId, interviewer.id, role);
     },
     onSuccess: () => {
@@ -300,15 +386,30 @@ export default function QualifiedApplicationsTable({
         queryKey: ["qualified-apps-rows"],
       });
       queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("interview-assignments") || q.queryKey.includes("interview") || q.queryKey.includes("assignment"),
+        predicate: (q) =>
+          q.queryKey.includes("interview-assignments") ||
+          q.queryKey.includes("interview") ||
+          q.queryKey.includes("assignment"),
       });
     },
   });
   const removeInterviewerMutation = useMutation({
-    mutationFn: async ({ assignment, interviews }: { assignment: InterviewAssignment; interviews: ApplicationInterviewData[]; }) => {
+    mutationFn: async ({
+      assignment,
+      interviews,
+    }: {
+      assignment: InterviewAssignment;
+      interviews: ApplicationInterviewData[];
+    }) => {
       // Prevent removal if interview has started
-      if (interviews.find((i) => i.interviewerId === assignment.interviewerId && i.submitted)) {
-        throw new Error("The interviewer has already started their interview for this assignment. It is not possible to delete it.");
+      if (
+        interviews.find(
+          (i) => i.interviewerId === assignment.interviewerId && i.submitted,
+        )
+      ) {
+        throw new Error(
+          "The interviewer has already started their interview for this assignment. It is not possible to delete it.",
+        );
       }
       return await removeInterviewAssignment(assignment.id);
     },
@@ -316,7 +417,9 @@ export default function QualifiedApplicationsTable({
       throwSuccessToast("Successfully removed interviewer assignment!");
     },
     onError: (error) => {
-      throwErrorToast(`Failed to remove interviewer assignment! (${error.message})`);
+      throwErrorToast(
+        `Failed to remove interviewer assignment! (${error.message})`,
+      );
       console.log(error);
     },
     onSettled: () => {
@@ -324,7 +427,9 @@ export default function QualifiedApplicationsTable({
         queryKey: ["qualified-apps-rows"],
       });
       queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("assignments") || q.queryKey.includes("assignment"),
+        predicate: (q) =>
+          q.queryKey.includes("assignments") ||
+          q.queryKey.includes("assignment"),
       });
     },
   });
@@ -337,105 +442,105 @@ export default function QualifiedApplicationsTable({
 
   const columnHelper = createColumnHelper<QualifiedAppRow>();
   const cols = useMemo(
-    () => [
-      columnHelper.accessor("index", {
-        id: "number",
-        header: ({ column }) => (
-          <SortableHeader column={column}>
-            S. NO
-          </SortableHeader>
-        ),
-      }),
-      columnHelper.accessor("name", {
-        id: "name",
-        header: ({ column }) => (
-          <SortableHeader column={column}>
-            NAME
-          </SortableHeader>
-        ),
-      }),
-      columnHelper.accessor("role", {
-        id: "role",
-        header: ({ column }) => (
-          <SortableHeader column={column}>
-            ROLE
-          </SortableHeader>
-        ),
-        cell: ({ getValue }) => <RolePill role={getValue()} />,
-        filterFn: (row, columnId, filterValue) => {
-          const value = row.getValue(columnId);
-          if (filterValue === "all") return true;
-          else return filterValue === value;
-        },
-      }),
-      columnHelper.accessor("interviewers.assigned", {
-        id: "interviewers",
-        header: "INTERVIEWERS",
-        cell: ({ getValue, row }) => {
-          const rowData = row.original;
-          return (
-            <InterviewerSelect
-              interviewers={getValue()}
-              interviews={rowData.interviews}
-              onAdd={(interviewer) =>
-                addInterviewerMutation.mutate({
-                  interviewer: interviewer,
-                  responseId: rowData.responseId,
-                  role: rowData.role,
-                })
-              }
-              assignments={rowData.assignments}
-              onDelete={(_interviewer, assignment) =>
-                removeInterviewerMutation.mutate({
-                  assignment: assignment,
-                  interviews: rowData.interviews,
-                })
-              }
-              responseId={rowData.responseId}
-              role={rowData.role}
-            />
-          );
-        },
-      }),
-      columnHelper.accessor("averageScore", {
-        id: "avg-score",
-        header: ({ column }) => (
-          <SortableHeader column={column}>
-            AVG. SCORE
-          </SortableHeader>
-        ),
-        cell: ({ getValue, row }) => {
-          if (row.original.averageScore == null) return "N/A";
-          return getValue();
-        },
-      }),
-      columnHelper.accessor("status.status", {
-        id: "status",
-        header: ({ column }) => (
-          <SortableHeader column={column}>
-            STATUS
-          </SortableHeader>
-        ),
-        cell: ({ row }) => {
-          const status = row.original.status;
+    () =>
+      [
+        columnHelper.accessor("index", {
+          id: "number",
+          header: ({ column }) => (
+            <SortableHeader column={column}>S. NO</SortableHeader>
+          ),
+        }),
+        columnHelper.accessor("name", {
+          id: "name",
+          header: ({ column }) => (
+            <SortableHeader column={column}>NAME</SortableHeader>
+          ),
+        }),
+        columnHelper.accessor("role", {
+          id: "role",
+          header: ({ column }) => (
+            <SortableHeader column={column}>ROLE</SortableHeader>
+          ),
+          cell: ({ getValue }) => <RolePill role={getValue()} />,
+          filterFn: (row, columnId, filterValue) => {
+            const value = row.getValue(columnId);
+            if (filterValue === "all") return true;
+            else return filterValue === value;
+          },
+        }),
+        columnHelper.accessor("interviewers.assigned", {
+          id: "interviewers",
+          header: "INTERVIEWERS",
+          cell: ({ getValue, row }) => {
+            const rowData = row.original;
+            return (
+              <InterviewerSelect
+                interviewers={getValue()}
+                interviews={rowData.interviews}
+                onAdd={(interviewer) =>
+                  addInterviewerMutation.mutate({
+                    interviewer: interviewer,
+                    responseId: rowData.responseId,
+                    role: rowData.role,
+                  })
+                }
+                assignments={rowData.assignments}
+                onDelete={(_interviewer, assignment) =>
+                  removeInterviewerMutation.mutate({
+                    assignment: assignment,
+                    interviews: rowData.interviews,
+                  })
+                }
+                responseId={rowData.responseId}
+                role={rowData.role}
+              />
+            );
+          },
+        }),
+        columnHelper.accessor("averageScore", {
+          id: "avg-score",
+          header: ({ column }) => (
+            <SortableHeader column={column}>AVG. SCORE</SortableHeader>
+          ),
+          cell: ({ getValue, row }) => {
+            if (row.original.averageScore == null) return "N/A";
+            return getValue();
+          },
+        }),
+        columnHelper.accessor("status.status", {
+          id: "status",
+          header: ({ column }) => (
+            <SortableHeader column={column}>STATUS</SortableHeader>
+          ),
+          cell: ({ row }) => {
+            const status = row.original.status;
 
-          if (!status) {
-            return "N/A";
-          }
+            if (!status) {
+              return "N/A";
+            }
 
-          return (
-            <StatusSelect
-              currentStatus={status.status}
-              onStatusChange={(newStatus) => {
-                updateStatusMutation.mutate({ statusId: status.id, newStatus });
-              }}
-              disabled={updateStatusMutation.isPending}
-            />
-          );
-        },
-      }),
-    ] as ColumnDef<QualifiedAppRow>[],
-    [columnHelper, addInterviewerMutation, removeInterviewerMutation, updateStatusMutation],
+            return (
+              <StatusSelect
+                assignedInterviewers={row.original.assignments.length > 0}
+                currentStatus={status.status}
+                onStatusChange={(newStatus) => {
+                  updateStatusMutation.mutate({
+                    statusId: status.id,
+                    newStatus,
+                  });
+                }}
+                disabled={updateStatusMutation.isPending}
+              />
+            );
+          },
+        }),
+      ] as ColumnDef<QualifiedAppRow>[],
+    [
+      columnHelper,
+      addInterviewerMutation,
+      removeInterviewerMutation,
+      updateStatusMutation,
+    ],
   );
 
   if (isPending) return <p>Loading...</p>;
@@ -467,7 +572,8 @@ export default function QualifiedApplicationsTable({
       />
       <div className="flex flex-row gap-2">
         <span>
-          Page {pagination.pageIndex + 1} of {Math.max(Math.ceil(applications.length / rowCount), 1)}
+          Page {pagination.pageIndex + 1} of{" "}
+          {Math.max(Math.ceil(applications.length / rowCount), 1)}
         </span>
         <div className="ml-auto">
           <Button
@@ -484,7 +590,9 @@ export default function QualifiedApplicationsTable({
           </Button>
           <Button
             variant="outline"
-            disabled={(pagination.pageIndex + 1) * rowCount >= applications.length}
+            disabled={
+              (pagination.pageIndex + 1) * rowCount >= applications.length
+            }
             onClick={() =>
               setPagination({
                 ...pagination,
@@ -498,4 +606,4 @@ export default function QualifiedApplicationsTable({
       </div>
     </div>
   );
-} 
+}

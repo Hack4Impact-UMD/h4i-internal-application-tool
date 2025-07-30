@@ -190,9 +190,9 @@ export default function InterviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                        formId +
-                        "/" +
-                        row.original.interviewer.id,
+                          formId +
+                          "/" +
+                          row.original.interviewer.id,
                       );
                     }}
                   >

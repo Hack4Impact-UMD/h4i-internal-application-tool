@@ -1,5 +1,3 @@
-import QualifiedApplicationsTable from "./QualifiedApplicationsTable"
+import QualifiedApplicationsTable from "./QualifiedApplicationsTable";
 
-export {
-	QualifiedApplicationsTable
-}
+export { QualifiedApplicationsTable };
