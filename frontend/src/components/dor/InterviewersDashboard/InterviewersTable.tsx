@@ -154,7 +154,6 @@ export default function InterviewersTable({
             return <SortableHeader column={column}>PENDING</SortableHeader>;
           },
           filterFn: ({ original }, _, filterValue) => {
-            console.log("filter: ", filterValue);
             if (filterValue === "all") return true;
             else if (filterValue === "complete")
               return (

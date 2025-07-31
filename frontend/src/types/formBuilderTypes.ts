@@ -5,8 +5,10 @@ export enum ApplicantRole {
   Engineer = "engineer",
   Designer = "designer",
   Product = "product",
-  Sourcing = "sourcing",
+  // Sourcing = "sourcing",
   TechLead = "tech-lead",
+  SocialMedia = "social-media-manager",
+  OutreachCoord = "outreach-coordinator",
 }
 
 export enum QuestionType {
@@ -75,9 +77,6 @@ export interface FileUploadQuestion extends IApplicationQuestion {
 
 export interface RoleSelectQuestion extends IApplicationQuestion {
   questionType: QuestionType.RoleSelect;
-  roleSections: {
-    [role in ApplicantRole]: string; //map a role to it's form section, used to decide which sections to display
-  };
 }
 
 //helps with automatic type inference based on the questionType field

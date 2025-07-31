@@ -279,8 +279,8 @@ function StatusSelect({
             <CircleAlertIcon className="text-orange-500" />
           </TooltipTrigger>
           <TooltipContent>
-            Make sure to change status to interview if you plan to interview this
-            applicant!
+            Make sure to change status to interview if you plan to interview
+            this applicant!
           </TooltipContent>
         </Tooltip>
       )}
@@ -505,7 +505,7 @@ export default function QualifiedApplicationsTable({
             <SortableHeader column={column}>AVG. SCORE</SortableHeader>
           ),
           cell: ({ getValue }) => {
-            const value = getValue()
+            const value = getValue();
             if (!value) return "N/A";
             return value.toFixed(2);
           },

@@ -45,6 +45,7 @@ function useTimelineStep() {
           ),
       );
 
+      let status = 0;
       for (const appStatus of appStatuses) {
         if (
           appStatus.status === "decided" ||
@@ -52,15 +53,15 @@ function useTimelineStep() {
           appStatus.status === ReviewStatus.Waitlisted ||
           appStatus.status === ReviewStatus.Denied
         ) {
-          return 3;
+          status = Math.max(3, status);
         } else if (appStatus.status === ReviewStatus.Interview) {
-          return 2;
+          status = Math.max(2, status);
         } else if (appStatus.status === ReviewStatus.UnderReview) {
-          return 1;
+          status = Math.max(1, status);
         }
       }
 
-      return 0;
+      return status;
     },
   });
 }
@@ -152,13 +153,16 @@ function ApplicationResponseRow({
       <td className="text-center">{formatDate(response.dateSubmitted)}</td>
       <td className="text-center">
         {decided ? (
-          <Link
-            className="text-blue-500 cursor-pointer"
-            to={"/apply/status/decision"}
-          >
-            {form.semester + " Application"}
-            View Decision
-          </Link>
+          form.decisionsReleased ? (
+            <Link
+              className="text-blue-500 cursor-pointer"
+              to={"/apply/status/decision"}
+            >
+              View Decision
+            </Link>
+          ) : (
+            "Decisions not Released"
+          )
         ) : (
           "-"
         )}

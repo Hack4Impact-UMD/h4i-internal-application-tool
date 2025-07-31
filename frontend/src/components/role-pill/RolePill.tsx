@@ -22,7 +22,7 @@ export default function ApplicantRolePill({
         color: applicantRoleDarkColor(role),
       }}
       className={twMerge(
-        `text-sm rounded-full px-2 py-1 flex items-center max-w-fit justify-center`,
+        `text-sm rounded-full px-2 py-1 text-center flex items-center max-w-fit justify-center`,
         className,
       )}
     >

@@ -29,8 +29,8 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
   disabled,
   errorMessage,
   displayName = (k) => k,
-  displayDarkColor = (_) => undefined,
-  displayColor = (_) => undefined,
+  displayDarkColor = () => undefined,
+  displayColor = () => undefined,
 }) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>(value || []);
 

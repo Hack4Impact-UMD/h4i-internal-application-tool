@@ -52,8 +52,8 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/login" />} />
 
-            <Route 
-              path="/profile" 
+            <Route
+              path="/profile"
               element={
                 <RequireAuth>
                   <ProfilePage />
