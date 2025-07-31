@@ -98,6 +98,10 @@ export default function ReviewersTable({
       queryClient.invalidateQueries({
         queryKey: ["all-reviewers-rows", variables.pageIndex],
       });
+      queryClient.invalidateQueries({
+        predicate: (q) =>
+          q.queryKey.includes("reviewers") || q.queryKey.includes("reviewer"),
+      });
     },
   });
 

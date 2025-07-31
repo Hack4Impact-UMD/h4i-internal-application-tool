@@ -40,12 +40,10 @@ export async function calculateReviewScore(
 export async function calculateInterviewScore(
   interviewData: ApplicationInterviewData,
 ): Promise<number> {
-  return interviewData.interviewScore
+  return Promise.resolve(interviewData.interviewScore);
 }
 
-function averageScore(
-  review: ApplicationReviewData,
-) {
+function averageScore(review: ApplicationReviewData) {
   if (Object.values(review.applicantScores).length == 0) return 0;
   const scores = Object.values(review.applicantScores);
   return scores.reduce((acc, s) => acc + s, 0) / scores.length;

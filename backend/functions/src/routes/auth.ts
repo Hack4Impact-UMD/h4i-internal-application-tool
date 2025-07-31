@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
 import { UserProfile, UserRegisterForm, userRegisterFormSchema } from "../models/user";
-import { CollectionReference, Timestamp } from "firebase-admin/firestore";
+import { CollectionReference, DocumentReference, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import * as admin from "firebase-admin"
 import { isAuthenticated } from "../middleware/authentication";
@@ -56,25 +56,47 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
   }
 });
 
-// example of an authenticated endpoint to update the user's profile
 router.post("/update", [isAuthenticated, validateSchema(userRegisterFormSchema)], async (req: Request, res: Response) => {
   const registerForm = req.body as UserRegisterForm;
+  const uid = req.token!.uid;
 
-  const updatedUserRecord = await admin.auth().updateUser(req.token!.uid, {
-    email: registerForm.email,
-    password: registerForm.password,
-    displayName: `${registerForm.firstName} ${registerForm.lastName}`,
-    emailVerified: false
-  })
+  try {
+    const updatedUserRecord = await admin.auth().updateUser(uid, {
+      email: registerForm.email,
+      password: registerForm.password,
+      displayName: `${registerForm.firstName} ${registerForm.lastName}`,
+    });
 
-  const collection = db.collection("users") as CollectionReference<UserProfile>
-  await collection.doc(updatedUserRecord.uid).update({
-    email: registerForm.email,
-    firstName: registerForm.firstName,
-    lastName: registerForm.lastName
-  })
+    logger.info(`Successfully updated auth user for UID: ${updatedUserRecord.uid}`);
 
-  res.status(200).send()
-})
+    // will throw if doc doesn't exist
+    const userRef = db.collection("users").doc(uid) as DocumentReference<UserProfile>;
+    await userRef.update({
+      email: registerForm.email,
+      firstName: registerForm.firstName,
+      lastName: registerForm.lastName
+    });
+
+    logger.info(`Successfully updated user doc for UID: ${updatedUserRecord.uid}`);
+
+    // fetch updated user to return, necessary to update app state immediately
+    const finalSnap = await userRef.get();
+    const finalUser = finalSnap.data();
+
+    if (!finalUser) {
+      logger.error(`User doc undefined after update for UID: ${uid}`);
+      return res.status(500).send("User profile could not be retrieved after update.");
+    }
+
+    res.status(200).json(finalUser);
+  } catch (error) {
+    if (error instanceof FirebaseAuthError) {
+      res.status(500).send(error.message)
+    } else {
+      res.status(500).send()
+    }    
+  }
+});
+
 
 export default router;

@@ -50,6 +50,32 @@ export async function registerUser(
   }
 }
 
+export async function updateUser(
+  email: string,
+  firstName: string,
+  lastName: string,
+  password: string,
+): Promise<UserProfile> {
+  try {
+    const updatedUser = (await axios.post(API_URL + "/auth/update", {
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    })) as UserProfile;
+
+    return updatedUser;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage = `Failed to update user: ${error.message} (${error.response?.data})`;
+      throwErrorToast(errorMessage);
+      throw new Error(errorMessage);
+    } else {
+      throw error;
+    }
+  }
+}
+
 export async function loginUser(
   email: string,
   password: string,
