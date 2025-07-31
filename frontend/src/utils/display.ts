@@ -22,7 +22,7 @@ export function applicantRoleColor(role: ApplicantRole) {
   else if (role == ApplicantRole.TechLead) return "#E2D8E8";
   else if (role == ApplicantRole.Product) return "#DCEBDD";
   else if (role == ApplicantRole.SocialMedia) return "#F8E6BA";
-  else if (role == ApplicantRole.OutreachCoord) return "#D5E7F2";
+  else if (role == ApplicantRole.OutreachCoord) return "#FEF9C3";
   else if (role == ApplicantRole.Engineer) return "#D5E7F2";
   else if (role == ApplicantRole.Designer) return "#F8DFEB";
   else return "#FFFFFF";
@@ -33,7 +33,7 @@ export function applicantRoleDarkColor(role: ApplicantRole) {
   else if (role == ApplicantRole.TechLead) return "#592878";
   else if (role == ApplicantRole.Product) return "#1D3829";
   else if (role == ApplicantRole.SocialMedia) return "#402C1B";
-  else if (role == ApplicantRole.OutreachCoord) return "#193347";
+  else if (role == ApplicantRole.OutreachCoord) return "#713F12";
   else if (role == ApplicantRole.Engineer) return "#193347";
   else if (role == ApplicantRole.Designer) return "#4C2337";
   else return "#000000";
