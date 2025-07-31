@@ -39,8 +39,8 @@ service cloud.firestore {
       // user documents can be read only by the user they represent or reviewers
     	allow read: if isReviewer() || hasID(user_id);
       // user documents can be written to only by the user they represent or super-reviewers
-      allow create: if isSuperReviewer();
-      allow update: if isSuperReviewer();
+      allow create: if false;
+      allow update: if hasID(user_id) || isSuperReviewer();
       allow delete: if hasID(user_id) || isSuperReviewer();
     }
 
@@ -52,8 +52,10 @@ service cloud.firestore {
     }
 
     match /application-responses/{response_id} {
-      allow read: if isReviewer() || hasID(resource.data.userId); // currently all reviewers can read all apps
-      allow create: if isApplicant() && request.resource.data.status == 'in-progress' && isResponseOpen(request.resource.data);
+      // NOTE: Cannot query in rules, so any reviewer can read any application.
+      // Frontend queries should filter this to only assigned applications.
+      allow read: if isReviewer() || hasID(resource.data.userId);
+      allow create: if isApplicant() && request.resource.data.status == 'in-progress' && isResponseOpen(request.resource.data) && hasID(request.resource.data.userId);
       allow update: if isApplicant() && hasID(resource.data.userId) && resource.data.status == 'in-progress' && isResponseOpen(resource.data);
       allow delete: if (isApplicant() && hasID(resource.data.userId)) || isSuperReviewer();
     }
@@ -70,12 +72,16 @@ service cloud.firestore {
 
     match /review-data/{review_id} {
       allow read: if (isReviewer() && hasID(resource.data.reviewerId)) || isSuperReviewer();
-      allow write: if isReviewer();
+      allow create: if isReviewer() && hasID(request.resource.data.reviewerId);
+      allow update: if isReviewer() && hasID(request.resource.data.reviewerId);
+      allow delete: if isSuperReviewer() || hasID(resource.data.reviewerId);
     }
 
     match /interview-data/{review_id} {
       allow read: if (isReviewer() && hasID(resource.data.interviewerId)) || isSuperReviewer();
-      allow write: if isReviewer();
+      allow create: if isReviewer() && hasID(request.resource.data.interviewerId);
+      allow update: if isReviewer() && hasID(request.resource.data.interviewerId);
+      allow delete: if isSuperReviewer() || hasID(resource.data.interviewerId);
     }
 
     match /app-status/{status_id} {

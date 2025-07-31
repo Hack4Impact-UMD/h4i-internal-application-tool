@@ -154,7 +154,6 @@ export default function InterviewersTable({
             return <SortableHeader column={column}>PENDING</SortableHeader>;
           },
           filterFn: ({ original }, _, filterValue) => {
-            console.log("filter: ", filterValue);
             if (filterValue === "all") return true;
             else if (filterValue === "complete")
               return (
@@ -190,9 +189,9 @@ export default function InterviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.interviewer.id,
+                        formId +
+                        "/" +
+                        row.original.interviewer.id,
                       );
                     }}
                   >

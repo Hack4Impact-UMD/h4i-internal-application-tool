@@ -32,7 +32,7 @@ interface SectionProps {
 const Section: React.FC<SectionProps> = ({
   section,
   responses,
-  onChangeResponse = () => {},
+  onChangeResponse = () => { },
   validationErrors,
   disabled = false,
   responseId,
@@ -132,8 +132,8 @@ const Section: React.FC<SectionProps> = ({
                   "You are encouraged to apply to multiple roles at the same time if you believe they are a good fit."
                 }
                 value={Array.isArray(response) ? response : []}
-                options={Object.keys(
-                  (question as RoleSelectQuestion).roleSections,
+                options={Object.values(
+                  ApplicantRole
                 )}
                 onOptionSelect={(value) => {
                   console.log("setting selected roles to: ", value);

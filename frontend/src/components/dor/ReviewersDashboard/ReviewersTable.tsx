@@ -164,7 +164,6 @@ export default function ReviewersTable({
             return <SortableHeader column={column}>PENDING</SortableHeader>;
           },
           filterFn: ({ original }, _, filterValue) => {
-            console.log("filter: ", filterValue);
             if (filterValue === "all") return true;
             else if (filterValue === "complete")
               return (
@@ -200,9 +199,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.reviewer.id,
+                        formId +
+                        "/" +
+                        row.original.reviewer.id,
                       );
                     }}
                   >
