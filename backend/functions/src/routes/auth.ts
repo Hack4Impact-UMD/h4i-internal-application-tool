@@ -15,6 +15,11 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
   const registerForm = req.body as UserRegisterForm;
 
   try {
+    if (!registerForm.email.endsWith("umd.edu")) {
+      res.status(400).send("Only emails ending in umd.edu are allowed!")
+      return;
+    }
+
     const userRecord = await admin.auth().createUser({
       email: registerForm.email,
       password: registerForm.password,

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ApplicantRole } from "./appResponse";
+import { Timestamp } from "firebase-admin/firestore";
 
 export const ApplicationQuestion = z.object({
   questionId: z.string().nonempty(),
@@ -22,7 +23,7 @@ export const ApplicationSectionSchema = z.object({
 export const ApplicationFormSchema = z.object({
   id: z.string().nonempty(),
   isActive: z.boolean(),
-  dueDate: z.date(),
+  dueDate: z.custom<Timestamp>(d => d instanceof Timestamp),
   semester: z.string(),
   description: z.string(),
   sections: z.array(ApplicationSectionSchema),

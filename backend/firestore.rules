@@ -29,13 +29,18 @@ service cloud.firestore {
     function isSuperReviewer() {
     	return isAuthed() && getCurrentUser().data.role == "super-reviewer";
     }
+
+    function isResponseOpen(response) {
+      let formDocPath = /databases/$(database)/documents/application-forms/$(response.applicationFormId);
+      return exists(formDocPath) && request.time < get(formDocPath).data.dueDate;
+    }
     
     match /users/{user_id} {
       // user documents can be read only by the user they represent or reviewers
     	allow read: if isReviewer() || hasID(user_id);
       // user documents can be written to only by the user they represent or super-reviewers
-      allow create: if hasID(user_id);
-      allow update: if hasID(user_id) || isSuperReviewer();
+      allow create: if isSuperReviewer();
+      allow update: if isSuperReviewer();
       allow delete: if hasID(user_id) || isSuperReviewer();
     }
 
@@ -48,18 +53,18 @@ service cloud.firestore {
 
     match /application-responses/{response_id} {
       allow read: if isReviewer() || hasID(resource.data.userId); // currently all reviewers can read all apps
-      allow create: if isApplicant();
-      allow update: if isApplicant() && hasID(resource.data.userId); //IMPORTANT TODO: editing should only be allowed before due date and if status == InProgress
+      allow create: if isApplicant() && request.resource.data.status == 'in-progress' && isResponseOpen(request.resource.data);
+      allow update: if isApplicant() && hasID(resource.data.userId) && resource.data.status == 'in-progress' && isResponseOpen(resource.data);
       allow delete: if (isApplicant() && hasID(resource.data.userId)) || isSuperReviewer();
     }
 
     match /review-assignments/{assignment_id} {
-      allow read: if isReviewer();
+      allow read: if isSuperReviewer() || (isReviewer() && hasID(resource.data.reviewerId));
       allow write: if isSuperReviewer();
     }
 
     match /interview-assignments/{assignment_id} {
-      allow read: if isReviewer();
+      allow read: if isSuperReviewer() || (isReviewer() && hasID(resource.data.interviewerId));
       allow write: if isSuperReviewer();
     }
 

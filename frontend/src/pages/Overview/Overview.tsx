@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useMyApplicationResponses } from "@/hooks/useApplicationResponses";
 import { ApplicationStatus } from "@/types/types";
 import FormMarkdown from "@/components/form/FormMarkdown";
+import { Timestamp } from "firebase/firestore";
 
 const Overview: React.FC = () => {
   const {
@@ -67,15 +68,27 @@ const Overview: React.FC = () => {
         <div className="flex flex-col">
           <h2 className="text-blue text-2xl">Hack4Impact-UMD New Member</h2>
           <h3 className="text-blue text-2xl">Application {form.semester}</h3>
+          <p className="text-gray-500 text-lg">
+            Due:{" "}
+            {form.dueDate.toDate().toLocaleString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+              timeZoneName: "short",
+            })}
+          </p>
         </div>
         {
           <Button
             onClick={handleApply}
-            disabled={wait}
+            disabled={wait || Timestamp.now() > form.dueDate}
             className="w-full sm:w-fit cursor-pointer inline-flex items-center justify-center px-10 py-2 rounded-full bg-black 
                 text-white transition-colors hover:bg-darkgray"
           >
-            {applied ? "Go to status page" : "Apply"}
+            {applied ? "Go to status page" : Timestamp.now() <= form.dueDate ? "Apply" : "Application Closed"}
           </Button>
         }
       </div>

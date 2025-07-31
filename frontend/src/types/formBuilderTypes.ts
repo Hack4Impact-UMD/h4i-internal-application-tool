@@ -26,7 +26,7 @@ export interface ApplicationForm {
   semester: string;
   description: string;
   sections: ApplicationSection[];
-  decisionReleased: boolean;
+  decisionsReleased: boolean;
   scoreWeights: {
     [role in ApplicantRole]: {
       [score in string]: number; // weight for role + score category, between 0-1

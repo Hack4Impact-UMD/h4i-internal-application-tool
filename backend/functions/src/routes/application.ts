@@ -132,8 +132,8 @@ router.post("/submit", [isAuthenticated, hasRoles(["applicant"]), validateSchema
     const applicationFormDoc = await applicationFormCollection.doc(applicationResponse.applicationFormId).get();
     const applicationFormDocData = applicationFormDoc.data();
 
-    const currentTime = new Date();
-    const dueDate = new Date(applicationFormDocData!.dueDate);
+    const currentTime = Timestamp.now();
+    const dueDate = applicationFormDocData!.dueDate;
     if (currentTime > dueDate) {
       logger.warn("Submission deadline passed for form:" + applicationFormDocData?.id)
       return res.status(400).send("Submission deadline has passed");

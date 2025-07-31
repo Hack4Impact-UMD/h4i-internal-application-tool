@@ -13,6 +13,7 @@ import { ApplicationResponse, ValidationError } from "../types/types";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { throwErrorToast } from "../components/toasts/ErrorToast";
+import { Timestamp } from "firebase/firestore";
 
 export default function AppSubmitPage() {
   const { formId } = useParams();
@@ -42,11 +43,14 @@ export default function AppSubmitPage() {
       }
     } catch (err) {
       console.error("Submit error");
-      throwErrorToast("Oops, looks like you've missed some things!");
       if (err instanceof AxiosError) {
         const resp = err.response?.data as ApplicationSubmitResponse;
-        if (resp.status == "error")
+        if (resp.status == "error") {
+          throwErrorToast("Oops, looks like you've missed some things!");
           setValidationErrors(resp.validationErrors ?? []);
+        } else if (Timestamp.now() > form.dueDate) {
+          throwErrorToast("Due date has passed")
+        }
       }
     }
   }
@@ -107,7 +111,7 @@ export default function AppSubmitPage() {
                     (r) => r.sectionId == s.sectionId,
                   )!.questions
                 }
-                onChangeResponse={() => {}}
+                onChangeResponse={() => { }}
               />
             </div>
           ))}
