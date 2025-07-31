@@ -2,6 +2,9 @@ import { z } from "zod";
 import { ApplicantRole, QuestionType } from "@/types/formBuilderTypes";
 
 const ApplicantRoleSchema = z.enum(ApplicantRole);
+const scoreWeightSchema = z.number().min(0).max(4);
+const scoreCategoryMapSchema = z.record(z.string(), scoreWeightSchema);
+const scoreWeightsSchema = z.record(z.enum(ApplicantRole), scoreCategoryMapSchema);
 
 const BaseQuestion = z.object({
   questionId: z.string(),
@@ -57,7 +60,8 @@ export const ApplicationFormSchema = z.object({
   semester: z.string(),
   description: z.string(),
   sections: z.array(ApplicationSectionSchema),
-  decisionReleased: z.boolean().default(false),
+  decisionsReleased: z.boolean().default(false),
+  scoreWeights: scoreWeightsSchema,
 });
 
 export type ApplicationFormData = z.infer<typeof ApplicationFormSchema>;

@@ -31,12 +31,12 @@ export interface ApplicationForm {
   decisionsReleased: boolean;
   scoreWeights: {
     [role in ApplicantRole]: {
-      [score in string]: number; // weight for role + score category, between 0-1
+      [score in string]: number; // weight for role + score category, between 0-4
     };
   };
-  interviewScoreWeights?: {
+  interviewScoreWeights?: { // optional because interviews seem to have only one score rn
     [role in ApplicantRole]: {
-      [score in string]: number; // weight for role + score category, between 0-1
+      [score in string]: number; // weight for role + score category, between 0-4
     };
   };
 }
