@@ -88,7 +88,11 @@ const Overview: React.FC = () => {
             className="w-full sm:w-fit cursor-pointer inline-flex items-center justify-center px-10 py-2 rounded-full bg-black 
                 text-white transition-colors hover:bg-darkgray"
           >
-            {applied ? "Go to status page" : Timestamp.now() <= form.dueDate ? "Apply" : "Application Closed"}
+            {applied
+              ? "Go to status page"
+              : Timestamp.now() <= form.dueDate
+                ? "Apply"
+                : "Application Closed"}
           </Button>
         }
       </div>

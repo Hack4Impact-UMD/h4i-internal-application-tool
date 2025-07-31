@@ -8,7 +8,7 @@ export enum ApplicantRole {
   // Sourcing = "sourcing",
   TechLead = "tech-lead",
   SocialMedia = "social-media-manager",
-  OutreachCoord = "outreach-coordinator"
+  OutreachCoord = "outreach-coordinator",
 }
 
 export enum QuestionType {

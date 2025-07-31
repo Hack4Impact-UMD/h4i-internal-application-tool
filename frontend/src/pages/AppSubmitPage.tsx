@@ -49,7 +49,7 @@ export default function AppSubmitPage() {
           throwErrorToast("Oops, looks like you've missed some things!");
           setValidationErrors(resp.validationErrors ?? []);
         } else if (Timestamp.now() > form.dueDate) {
-          throwErrorToast("Due date has passed")
+          throwErrorToast("Due date has passed");
         }
       }
     }
@@ -111,7 +111,7 @@ export default function AppSubmitPage() {
                     (r) => r.sectionId == s.sectionId,
                   )!.questions
                 }
-                onChangeResponse={() => { }}
+                onChangeResponse={() => {}}
               />
             </div>
           ))}

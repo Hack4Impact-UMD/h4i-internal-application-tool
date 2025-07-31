@@ -199,9 +199,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                        formId +
-                        "/" +
-                        row.original.reviewer.id,
+                          formId +
+                          "/" +
+                          row.original.reviewer.id,
                       );
                     }}
                   >
