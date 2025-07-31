@@ -359,7 +359,7 @@ export default function QualifiedApplicationsTable({
       if (context?.queryKey) {
         queryClient.invalidateQueries({ queryKey: context.queryKey });
       } else {
-        queryClient.invalidateQueries({ queryKey: ["qualified-apps-rows"] });
+        queryClient.invalidateQueries({ predicate: q => q.queryKey.includes("qualified-apps-rows") });
       }
     },
   });

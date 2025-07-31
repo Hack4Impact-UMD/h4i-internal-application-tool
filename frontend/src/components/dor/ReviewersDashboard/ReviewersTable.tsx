@@ -64,9 +64,9 @@ export default function ReviewersTable({
       throwErrorToast(`Failed to add role preference! (${error.message})`);
       console.log(error);
     },
-    onSettled: (_data, _err, variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["all-reviewers-rows", variables.pageIndex],
+        predicate: q => q.queryKey.includes("all-reviewers-rows")
       });
     },
   });
@@ -94,9 +94,9 @@ export default function ReviewersTable({
       throwErrorToast(`Failed to remove role preference! (${error.message})`);
       console.log(error);
     },
-    onSettled: (_data, _err, variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["all-reviewers-rows", variables.pageIndex],
+        predicate: q => q.queryKey.includes("all-reviewers-rows")
       });
       queryClient.invalidateQueries({
         predicate: (q) =>
@@ -199,9 +199,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.reviewer.id,
+                        formId +
+                        "/" +
+                        row.original.reviewer.id,
                       );
                     }}
                   >
