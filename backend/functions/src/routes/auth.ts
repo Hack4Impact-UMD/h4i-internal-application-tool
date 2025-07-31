@@ -88,13 +88,13 @@ router.post("/update", [isAuthenticated, validateSchema(userRegisterFormSchema)]
       return res.status(500).send("User profile could not be retrieved after update.");
     }
 
-    res.status(200).json(finalUser);
+    return res.status(200).json(finalUser);
   } catch (error) {
     if (error instanceof FirebaseAuthError) {
-      res.status(500).send(error.message)
+      return res.status(500).send(error.message)
     } else {
-      res.status(500).send()
-    }    
+      return res.status(500).send()
+    }
   }
 });
 

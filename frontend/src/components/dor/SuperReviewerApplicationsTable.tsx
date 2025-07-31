@@ -416,7 +416,7 @@ export default function SuperReviewerApplicationsTable({
     },
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["all-apps-rows", variables.pageIndex],
+        queryKey: ["all-apps-rows", variables.pageIndex, applications],
       });
       queryClient.invalidateQueries({
         predicate: (q) =>
@@ -450,7 +450,7 @@ export default function SuperReviewerApplicationsTable({
     },
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["all-apps-rows", variables.pageIndex],
+        queryKey: ["all-apps-rows", variables.pageIndex, applications],
       });
       queryClient.invalidateQueries({
         predicate: (q) =>
@@ -468,15 +468,16 @@ export default function SuperReviewerApplicationsTable({
     },
     onMutate: async ({ status }) => {
       await queryClient.cancelQueries({
-        queryKey: ["all-apps-rows", pagination.pageIndex],
+        queryKey: ["all-apps-rows", pagination.pageIndex, applications],
       });
       const oldRows = queryClient.getQueryData([
         "all-apps-rows",
         pagination.pageIndex,
+        applications
       ]);
 
       queryClient.setQueryData(
-        ["all-apps-rows", pagination.pageIndex],
+        ["all-apps-rows", pagination.pageIndex, applications],
         (old: ApplicationRow[]) =>
           old.map((row) => {
             if (row.status?.id === status.id) {
@@ -499,14 +500,14 @@ export default function SuperReviewerApplicationsTable({
     },
     onError: (error, _resp, ctx) => {
       queryClient.setQueryData(
-        ["all-apps-rows", pagination.pageIndex],
+        ["all-apps-rows", pagination.pageIndex, applications],
         ctx?.oldRows,
       );
       throwErrorToast("Failed to update qualified status: " + error);
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["all-apps-rows", pagination.pageIndex],
+        queryKey: ["all-apps-rows", pagination.pageIndex, applications],
       });
       queryClient.invalidateQueries({
         predicate: q => q.queryKey.includes("qualified-apps-rows")
