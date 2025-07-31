@@ -3,7 +3,6 @@ import {
   QuestionType,
   OptionQuestion,
   QuestionResponse,
-  RoleSelectQuestion,
   ApplicantRole,
   ValidationError,
 } from "../../types/types";
@@ -32,7 +31,7 @@ interface SectionProps {
 const Section: React.FC<SectionProps> = ({
   section,
   responses,
-  onChangeResponse = () => {},
+  onChangeResponse = () => { },
   validationErrors,
   disabled = false,
   responseId,
