@@ -30,7 +30,7 @@ export function useRows(
   formId: string,
 ) {
   return useQuery({
-    queryKey: ["all-interviewers-rows", pageIndex],
+    queryKey: ["all-interviewers-rows", pageIndex, interviewers],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

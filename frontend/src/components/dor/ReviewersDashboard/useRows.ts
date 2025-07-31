@@ -31,7 +31,7 @@ export function useRows(
   formId: string,
 ) {
   return useQuery({
-    queryKey: ["all-reviewers-rows", pageIndex],
+    queryKey: ["all-reviewers-rows", pageIndex, reviewers],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

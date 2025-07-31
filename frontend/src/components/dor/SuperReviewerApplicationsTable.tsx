@@ -301,7 +301,7 @@ function useRows(
   formId: string,
 ) {
   return useQuery({
-    queryKey: ["all-apps-rows", pageIndex],
+    queryKey: ["all-apps-rows", pageIndex, applications],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
@@ -326,12 +326,12 @@ function useRows(
               completedReviews == 0
                 ? 0
                 : (
-                    await Promise.all(
-                      reviews
-                        .filter((r) => r.submitted)
-                        .map(async (r) => await calculateReviewScore(r)),
-                    )
-                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                  await Promise.all(
+                    reviews
+                      .filter((r) => r.submitted)
+                      .map(async (r) => await calculateReviewScore(r)),
+                  )
+                ).reduce((acc, v) => acc + v, 0) / completedReviews;
             let status: InternalApplicationStatus | undefined;
 
             try {
@@ -508,6 +508,12 @@ export default function SuperReviewerApplicationsTable({
       queryClient.invalidateQueries({
         queryKey: ["all-apps-rows", pagination.pageIndex],
       });
+      queryClient.invalidateQueries({
+        predicate: q => q.queryKey.includes("qualified-apps-rows")
+      });
+      queryClient.invalidateQueries({
+        predicate: q => q.queryKey.includes("qualified-statuses")
+      });
     },
   });
 
@@ -615,8 +621,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />
