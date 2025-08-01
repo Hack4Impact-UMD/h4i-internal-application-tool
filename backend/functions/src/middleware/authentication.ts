@@ -41,6 +41,13 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
     logger.log("ID Token correctly decoded", decodedIdToken);
+
+    if (!decodedIdToken.email_verified) {
+      logger.warn(`Email ${decodedIdToken.email} not verified! Rejecting request!`)
+      res.status(403).send("Email not verified!")
+      return;
+    }
+
     req.token = decodedIdToken;
     next();
     return;

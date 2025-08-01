@@ -27,6 +27,7 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
       disabled: false,
       emailVerified: false
     })
+
     logger.info(`Auth user created with UID ${userRecord.uid}`)
 
     const collection = db.collection("users") as CollectionReference<UserProfile>
