@@ -10,9 +10,9 @@ import cors from "cors"
 const app = express();
 
 const ALLOWED_ORIGINS = [
-  "h4i-applications.web.app",
-  "apply.umd.hack4impact.org",
-  "localhost"
+  "https://h4i-applications.web.app",
+  "https://apply.umd.hack4impact.org",
+  "http://localhost:5173"
 ]
 
 app.use(cors({
