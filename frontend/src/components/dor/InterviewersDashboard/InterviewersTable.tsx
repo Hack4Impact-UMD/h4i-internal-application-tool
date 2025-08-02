@@ -1,4 +1,8 @@
-import { ReviewerUserProfile } from "@/types/types";
+import {
+  ApplicationInterviewData,
+  InterviewAssignment,
+  ReviewerUserProfile,
+} from "@/types/types";
 import {
   ColumnDef,
   createColumnHelper,
@@ -22,6 +26,8 @@ import SortableHeader from "@/components/tables/SortableHeader";
 
 type InterviewersTableProps = {
   interviewers: ReviewerUserProfile[];
+  interviewData: ApplicationInterviewData[];
+  assignments: InterviewAssignment[];
   search: string;
   rowCount?: number;
   formId: string;
@@ -30,6 +36,8 @@ type InterviewersTableProps = {
 
 export default function InterviewersTable({
   interviewers,
+  interviewData,
+  assignments,
   search,
   formId,
   rowCount = 20,
@@ -210,7 +218,13 @@ export default function InterviewersTable({
     data: rows,
     isPending,
     error,
-  } = useRows(pagination.pageIndex, interviewers, rowCount, formId);
+  } = useRows(
+    pagination.pageIndex,
+    interviewers,
+    interviewData,
+    assignments,
+    rowCount,
+  );
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

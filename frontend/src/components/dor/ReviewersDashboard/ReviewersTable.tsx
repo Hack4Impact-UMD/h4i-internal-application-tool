@@ -1,4 +1,9 @@
-import { ApplicantRole, ReviewerUserProfile } from "@/types/types";
+import {
+  AppReviewAssignment,
+  ApplicantRole,
+  ApplicationReviewData,
+  ReviewerUserProfile,
+} from "@/types/types";
 import {
   ColumnDef,
   createColumnHelper,
@@ -27,6 +32,8 @@ import SortableHeader from "@/components/tables/SortableHeader";
 
 type ReviewersTableProps = {
   reviewers: ReviewerUserProfile[];
+  assignments: AppReviewAssignment[];
+  reviewData: ApplicationReviewData[];
   search: string;
   rowCount?: number;
   formId: string;
@@ -35,6 +42,8 @@ type ReviewersTableProps = {
 
 export default function ReviewersTable({
   reviewers,
+  assignments,
+  reviewData,
   search,
   formId,
   rowCount = 20,
@@ -220,7 +229,13 @@ export default function ReviewersTable({
     data: rows,
     isPending,
     error,
-  } = useRows(pagination.pageIndex, reviewers, rowCount, formId);
+  } = useRows(
+    pagination.pageIndex,
+    reviewers,
+    assignments,
+    reviewData,
+    rowCount,
+  );
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

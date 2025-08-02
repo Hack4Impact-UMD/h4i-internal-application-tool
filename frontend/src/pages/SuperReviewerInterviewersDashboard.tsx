@@ -125,6 +125,8 @@ export default function SuperReviewerInterviewersDashboard() {
       </div>
       <InterviewersTable
         interviewers={interviewers}
+        interviewData={interviewData}
+        assignments={assignments}
         formId={formId}
         search={search}
         statusFilter={statusFilter}
