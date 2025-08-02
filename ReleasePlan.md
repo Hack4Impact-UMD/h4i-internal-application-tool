@@ -18,13 +18,13 @@ See `README.md` for some screenshots of app progress. Also, try running the app.
 
 ### All Roles
 
-| Feature/Story              | Status | Notes                                                            |
-| -------------------------- | ------ | ---------------------------------------------------------------- |
-| Log-in/Sign-Up Page        | ✅     |                                                                  |
-| Profile/Settings Page      | ❌     | Design submitted recently                                        |
-| Report an Issue            | ✅     | currently just a link to club email                              |
-| Error/404 Page             | ✅     |                                                                  |
-| Forgot/Reset Password Page | ❌     | frontend logic done, doesn't actually send you an email to reset |
+| Feature/Story              | Status | Notes                               |
+| -------------------------- | ------ | ----------------------------------- |
+| Log-in/Sign-Up Page        | ✅     |                                     |
+| Profile/Settings Page      | ❌     | Design submitted recently           |
+| Report an Issue            | ✅     | currently just a link to club email |
+| Error/404 Page             | ✅     |                                     |
+| Forgot/Reset Password Page | ✅     | Done                                |
 
 ### Applicant
 
@@ -56,13 +56,13 @@ See `README.md` for some screenshots of app progress. Also, try running the app.
 | User Management Dashboard             | ✅     |                                                           |
 | All Applications Dashboard            | ✅     |                                                           |
 | - Reviewer Assignment                 | ✅     |                                                           |
-| Qualified Dashboard                   | ✅     | Done                      |
+| Qualified Dashboard                   | ✅     | Done                                                      |
 | - Interview Assignment                | ✅     | see above                                                 |
 | - Changing Application Decisions      | ✅     | see above                                                 |
 | Reviewers Dashboard                   | ✅     | this and Interviewers need an efficiency change           |
 | - Role Assignment                     | ✅     |                                                           |
 | Interviewers Dashboard                | ✅     |                                                           |
-| - Interview Assignment                | ✅     | Done                               |
+| - Interview Assignment                | ✅     | Done                                                      |
 | Reviews for X Application Dashboard   | ✅     |                                                           |
 | Applications for X Reviewer Dashboard | ✅     |                                                           |
 | View Application Page                 | ✅     |                                                           |
@@ -84,14 +84,12 @@ See `README.md`, `DataFetching.md`, and `backend/README.md` for information on d
 
 ### Required
 
-| Ticket                                            | Assignee | Scope  | Notes                                                              |
-| ------------------------------------------------- | -------- | ------ | ------------------------------------------------------------------ |
-| Upload Fall 25 Application                        |          | Medium | Mostly manual work, but a good opportunity to test the form types. |
-| Reviewer/Interview Grading                        |          | Large  | Most important! Both frontend/backend.                             |
-| Profile/Settings Page                             |          | Small  | Copy from Figma                                                    |
-| Applicant Decision Page                           |          | Small  | Copy from Figma                                                    |
-| Allow submissions only before due date/submission |          | Medium | Just need to tighten firestore rules, routes already handle logic  |
-| Reset Password Functionality                      |          | Medium | might be ignorable-just have people message TLs for help?          |
+| Ticket                     | Assignee | Scope  | Notes                                                              |
+| -------------------------- | -------- | ------ | ------------------------------------------------------------------ |
+| Upload Fall 25 Application |          | Medium | Mostly manual work, but a good opportunity to test the form types. |
+| Reviewer/Interview Grading |          | Large  | Most important! Both frontend/backend.                             |
+| Profile/Settings Page      |          | Small  | Copy from Figma                                                    |
+| Applicant Decision Page    |          | Small  | Copy from Figma                                                    |
 
 ### Good to Have + Nitpicks
 
