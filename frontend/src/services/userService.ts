@@ -18,7 +18,7 @@ import {
   UserProfile,
 } from "../types/types";
 import { throwErrorToast } from "../components/toasts/ErrorToast";
-import { clearQueryCache, queryClient } from "@/config/query";
+import { clearQueryCache } from "@/config/query";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 
 export const USER_COLLECTION = "users";

@@ -1,5 +1,4 @@
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/config/firebase";
 import { useAuth } from "@/hooks/useAuth";

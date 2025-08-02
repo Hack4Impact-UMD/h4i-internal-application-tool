@@ -27,7 +27,6 @@ type NavProfileProps = {
 export default function NavProfile({ user, className = "" }: NavProfileProps) {
   const { logout } = useAuth();
   const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient();
 
   return (
     <>
