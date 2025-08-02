@@ -1,4 +1,4 @@
-import { ApplicantRole, PermissionRole, ReviewStatus } from "@/types/types";
+import { ApplicantRole, PermissionRole } from "@/types/types";
 
 export function displayUserRoleName(role: PermissionRole) {
   if (role == PermissionRole.SuperReviewer) return "Super Reviewer";
