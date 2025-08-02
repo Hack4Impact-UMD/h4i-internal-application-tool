@@ -150,7 +150,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="decision"
+                  path="decision/:responseId/:role"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                       <DecisionPage />
