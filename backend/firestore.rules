@@ -40,8 +40,9 @@ service cloud.firestore {
     	allow read: if isReviewer() || hasID(user_id);
       // user documents can be written to only by the user they represent or super-reviewers
       allow create: if false;
-      allow update: if hasID(user_id) || isSuperReviewer();
-      allow delete: if hasID(user_id) || isSuperReviewer();
+      allow update: if (hasId(user_id) && (!request.resource.data.diff(resource.data).affectedKeys()
+        .hasAny(['role']))) || isSuperReviewer(); //IMPORTANT: Role can't be updated for security reasons unless by super reviewer!
+      allow delete: if isSuperReviewer();
     }
 
     match /application-forms/{form_id} {
