@@ -3,26 +3,39 @@ import { Button } from "@/components/ui/button";
 import { auth } from "@/config/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { logoutUser, sendVerificationEmail } from "@/services/userService";
-import { useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useCallback, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 
 export default function VerifyEmailPage() {
 	const { isAuthed, user } = useAuth()
 
-	const handleSend = useCallback(async () => {
-		const user = auth.currentUser
-		if (!user) {
-			throwErrorToast("Current user is not authenticated, unable to send email!");
-			return;
+	const sendMutation = useMutation({
+		mutationFn: async () => {
+			const user = auth.currentUser
+			if (!user) {
+				throwErrorToast("Current user is not authenticated, unable to send email!");
+				return;
+			}
+			await sendVerificationEmail(user)
+		},
+		onError: (err) => {
+			console.log("Failed to send verification email: ", err);
+			throwErrorToast("Failed to send verification email! Make sure the email address is valid.")
 		}
-		await sendVerificationEmail(user)
+	})
+
+	useEffect(() => {
+		if (auth.currentUser?.emailVerified) {
+			logoutUser()
+		}
 	}, [])
 
-	if (!isAuthed) return <Navigate to="/" />
+	const handleSend = useCallback(() => {
+		sendMutation.mutate()
+	}, [sendMutation])
 
-	if (auth.currentUser?.emailVerified) {
-		logoutUser()
-	}
+	if (!isAuthed) return <Navigate to="/" />
 
 	return (
 		<div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-center p-4">
@@ -39,6 +52,7 @@ export default function VerifyEmailPage() {
 			<Button
 				className="bg-blue hover:bg-blue/80 transition text-white font-bold py-2 px-4 rounded"
 				onClick={handleSend}
+				disabled={sendMutation.isPending}
 			>
 				Re-send Verification Email
 			</Button>

@@ -6,6 +6,7 @@ import { Button } from "../../components/ui/button";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/config/firebase";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
 
 export default function ForgotPassCard() {
   const navigate = useNavigate();
@@ -39,27 +40,28 @@ export default function ForgotPassCard() {
   };
 
   // using dummy conditionals for now
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(async () => {
     let valid = true;
     const errors = { ...formErrors };
 
     if (!validEmail(formData.email)) {
       valid = false;
-      errors.email = "Enter a valid terpmail address";
+      errors.email = "Enter a valid email address";
     }
 
     setFormErrors(errors);
 
     if (valid) {
-      navigate("/resetpassword");
+      try {
+        await sendPasswordResetEmail(auth, formData.email);
+        throwSuccessToast(`Send password reset email to ${formData.email}!`);
+        navigate("/login");
+      } catch (err) {
+        console.log(err)
+        throwErrorToast(`Failed to send password reset email to ${formData.email}!`)
+      }
     }
-  };
-
-  const sendResetEmail = useCallback(async () => {
-    await sendPasswordResetEmail(auth, formData.email);
-    throwSuccessToast(`Send password reset email to ${formData.email}!`);
-    navigate("/login");
-  }, [formData, navigate])
+  }, [formData.email, formErrors, navigate]);
 
   return (
     <form
@@ -85,7 +87,7 @@ export default function ForgotPassCard() {
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />
-      <Button className="w-full h-[73px]" disabled={!isFormValid} type="submit" onClick={sendResetEmail}>
+      <Button className="w-full h-[73px]" disabled={!isFormValid} type="submit">
         Send Reset Email
       </Button>
       <div className="w-full">

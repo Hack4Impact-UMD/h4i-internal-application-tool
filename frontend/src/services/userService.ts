@@ -24,8 +24,13 @@ import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 export const USER_COLLECTION = "users";
 
 export async function sendVerificationEmail(user: User) {
-  await sendEmailVerification(user)
-  throwSuccessToast(`A verification email has been sent to ${user.email}!`)
+  try {
+    await sendEmailVerification(user)
+    throwSuccessToast(`A verification email has been sent to ${user.email}!`)
+  } catch (err) {
+    throwErrorToast("Failed to send verification email!")
+    throw err;
+  }
 }
 
 export async function registerUser(

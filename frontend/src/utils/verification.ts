@@ -6,7 +6,7 @@ const emailRegExp = new RegExp("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
 const codeRegExp = new RegExp("^[A-Z0-9]{6}$");
 
 export function validEmail(email: string): boolean {
-  return emailRegExp.test(email);
+  return emailRegExp.test(email) && email.trim().endsWith("umd.edu");
 }
 
 export function validPassword(password: string): boolean {
