@@ -66,7 +66,7 @@ export default function ReviewersTable({
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        predicate: q => q.queryKey.includes("all-reviewers-rows")
+        predicate: (q) => q.queryKey.includes("all-reviewers-rows"),
       });
     },
   });
@@ -96,7 +96,7 @@ export default function ReviewersTable({
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        predicate: q => q.queryKey.includes("all-reviewers-rows")
+        predicate: (q) => q.queryKey.includes("all-reviewers-rows"),
       });
       queryClient.invalidateQueries({
         predicate: (q) =>
@@ -199,9 +199,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                        formId +
-                        "/" +
-                        row.original.reviewer.id,
+                          formId +
+                          "/" +
+                          row.original.reviewer.id,
                       );
                     }}
                   >

@@ -34,7 +34,8 @@ export interface ApplicationForm {
       [score in string]: number; // weight for role + score category, between 0-4
     };
   };
-  interviewScoreWeights?: { // optional because interviews seem to have only one score rn
+  interviewScoreWeights?: {
+    // optional because interviews seem to have only one score rn
     [role in ApplicantRole]: {
       [score in string]: number; // weight for role + score category, between 0-4
     };

@@ -4,7 +4,10 @@ import { ApplicantRole, QuestionType } from "@/types/formBuilderTypes";
 const ApplicantRoleSchema = z.enum(ApplicantRole);
 const scoreWeightSchema = z.number().min(0).max(4);
 const scoreCategoryMapSchema = z.record(z.string(), scoreWeightSchema);
-const scoreWeightsSchema = z.record(z.enum(ApplicantRole), scoreCategoryMapSchema);
+const scoreWeightsSchema = z.record(
+  z.enum(ApplicantRole),
+  scoreCategoryMapSchema,
+);
 
 const BaseQuestion = z.object({
   questionId: z.string(),

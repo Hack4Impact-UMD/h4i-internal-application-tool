@@ -12,7 +12,7 @@ import { queryClient } from "./config/query";
 import SearchProvider from "./components/providers/SearchProvider";
 import Loading from "./components/Loading";
 
-const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"))
+const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const StatusPage = lazy(() => import("./components/status/StatusPage"));
 const DecisionPage = lazy(() => import("./components/status/DecisionPage"));
 const SignUp = lazy(() => import("./pages/SignUp/SignUp"));
@@ -37,12 +37,12 @@ const SuperReviewerApplicationsDashboard = lazy(
   () => import("./components/dor/SuperReviewerApplicationsDashboard"),
 );
 const AssignedReviewsPage = lazy(() =>
-  import("./pages/AssignedReviewsPage").then(module => ({
+  import("./pages/AssignedReviewsPage").then((module) => ({
     default: module.AssignedReviewsPage,
   })),
 );
 const AssignedApplicationsPage = lazy(() =>
-  import("./pages/AssignedApplicationsPage").then(module => ({
+  import("./pages/AssignedApplicationsPage").then((module) => ({
     default: module.AssignedApplicationsPage,
   })),
 );
@@ -62,7 +62,7 @@ const ReviewerInterviewsDashboard = lazy(
   () => import("./pages/ReviewerInterviewsDashboard"),
 );
 const FormValidationPage = lazy(() =>
-  import("./pages/FormValidationPage").then(module => ({
+  import("./pages/FormValidationPage").then((module) => ({
     default: module.FormValidationPage,
   })),
 );

@@ -57,8 +57,10 @@ export default function ForgotPassCard() {
         throwSuccessToast(`Send password reset email to ${formData.email}!`);
         navigate("/login");
       } catch (err) {
-        console.log(err)
-        throwErrorToast(`Failed to send password reset email to ${formData.email}!`)
+        console.log(err);
+        throwErrorToast(
+          `Failed to send password reset email to ${formData.email}!`,
+        );
       }
     }
   }, [formData.email, formErrors, navigate]);
@@ -76,8 +78,7 @@ export default function ForgotPassCard() {
       <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
         <h1 className="text-3xl font-bold">Forgot Password?</h1>
         <h3 className="text-lg text-darkgray">
-          No worries! You will recieve an email to reset your
-          account.
+          No worries! You will recieve an email to reset your account.
         </h3>
       </div>
       <TextBox

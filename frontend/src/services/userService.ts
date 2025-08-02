@@ -1,4 +1,10 @@
-import { sendEmailVerification, signInWithEmailAndPassword, signOut, User, UserInfo } from "firebase/auth";
+import {
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+  UserInfo,
+} from "firebase/auth";
 import { API_URL, auth, db } from "../config/firebase";
 import axios, { AxiosError } from "axios";
 import {
@@ -25,10 +31,10 @@ export const USER_COLLECTION = "users";
 
 export async function sendVerificationEmail(user: User) {
   try {
-    await sendEmailVerification(user)
-    throwSuccessToast(`A verification email has been sent to ${user.email}!`)
+    await sendEmailVerification(user);
+    throwSuccessToast(`A verification email has been sent to ${user.email}!`);
   } catch (err) {
-    throwErrorToast("Failed to send verification email!")
+    throwErrorToast("Failed to send verification email!");
     throw err;
   }
 }
@@ -50,8 +56,8 @@ export async function registerUser(
     const { user } = await signInWithEmailAndPassword(auth, email, password);
 
     if (!user.emailVerified) {
-      console.log("Sending verification email...")
-      sendVerificationEmail(user)
+      console.log("Sending verification email...");
+      sendVerificationEmail(user);
     }
 
     return createdUser;
@@ -99,8 +105,8 @@ export async function loginUser(
   const res = await signInWithEmailAndPassword(auth, email, password);
 
   if (!res.user.emailVerified) {
-    console.log("Sending verification email...")
-    await sendVerificationEmail(res.user)
+    console.log("Sending verification email...");
+    await sendVerificationEmail(res.user);
   }
 
   return await getUserById(res.user.uid);
@@ -108,7 +114,7 @@ export async function loginUser(
 
 export async function logoutUser() {
   await signOut(auth);
-  await clearQueryCache()
+  await clearQueryCache();
 }
 
 export async function getUserById(id: string): Promise<UserProfile> {

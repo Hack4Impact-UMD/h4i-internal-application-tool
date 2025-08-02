@@ -36,7 +36,13 @@ export function useRows(
   formId: string,
 ) {
   return useQuery<QualifiedAppRow[]>({
-    queryKey: ["qualified-apps-rows", formId, pageIndex, rowCount, applications],
+    queryKey: [
+      "qualified-apps-rows",
+      formId,
+      pageIndex,
+      rowCount,
+      applications,
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

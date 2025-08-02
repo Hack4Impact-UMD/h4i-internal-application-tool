@@ -62,7 +62,7 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
               <TooltipTrigger asChild>
                 <DropdownMenuItem
                   onClick={async () => {
-                    await clearQueryCache()
+                    await clearQueryCache();
                   }}
                   className="cursor-pointer"
                 >

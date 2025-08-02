@@ -101,7 +101,7 @@ export default function AuthProvider(props: AuthProviderProps) {
           open={
             !authState.user.applicantRolePreferences ||
             authState.user.applicantRolePreferences.length <
-            MIN_REVIEWER_ROLE_PREFS
+              MIN_REVIEWER_ROLE_PREFS
           }
           minRoles={MIN_REVIEWER_ROLE_PREFS}
           onSubmit={(roles) => submitMutation.mutate(roles)}
