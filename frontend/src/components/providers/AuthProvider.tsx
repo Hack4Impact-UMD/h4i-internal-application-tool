@@ -61,6 +61,7 @@ export default function AuthProvider(props: AuthProviderProps) {
       if (userInfo != null) {
         const user = await getUserById(userInfo.uid);
         const token = await auth.currentUser?.getIdToken();
+
         setAuthState({
           isAuthed: true,
           token: token,
@@ -100,7 +101,7 @@ export default function AuthProvider(props: AuthProviderProps) {
           open={
             !authState.user.applicantRolePreferences ||
             authState.user.applicantRolePreferences.length <
-              MIN_REVIEWER_ROLE_PREFS
+            MIN_REVIEWER_ROLE_PREFS
           }
           minRoles={MIN_REVIEWER_ROLE_PREFS}
           onSubmit={(roles) => submitMutation.mutate(roles)}

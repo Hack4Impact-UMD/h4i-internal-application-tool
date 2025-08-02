@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { validEmail } from "../../utils/verification";
 import TextBox from "../../components/TextBox";
 import { Button } from "../../components/ui/button";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "@/config/firebase";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 
 export default function ForgotPassCard() {
   const navigate = useNavigate();
@@ -52,6 +55,12 @@ export default function ForgotPassCard() {
     }
   };
 
+  const sendResetEmail = useCallback(async () => {
+    await sendPasswordResetEmail(auth, formData.email);
+    throwSuccessToast(`Send password reset email to ${formData.email}!`);
+    navigate("/login");
+  }, [formData, navigate])
+
   return (
     <form
       onSubmit={(e) => {
@@ -65,8 +74,8 @@ export default function ForgotPassCard() {
       <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
         <h1 className="text-3xl font-bold">Forgot Password?</h1>
         <h3 className="text-lg text-darkgray">
-          No worries! You will recieve a code in your email to reset your
-          account
+          No worries! You will recieve an email to reset your
+          account.
         </h3>
       </div>
       <TextBox
@@ -76,9 +85,8 @@ export default function ForgotPassCard() {
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />
-      <Button className="w-full h-[73px]" disabled={!isFormValid} type="submit">
-        {" "}
-        Send Code{" "}
+      <Button className="w-full h-[73px]" disabled={!isFormValid} type="submit" onClick={sendResetEmail}>
+        Send Reset Email
       </Button>
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
