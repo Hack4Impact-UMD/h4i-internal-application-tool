@@ -3,7 +3,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
   	function isAuthed() {
-    	return request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    	return request.auth != null && request.auth.token.email_verified && exists(/databases/$(database)/documents/users/$(request.auth.uid));
     }
     
     function getCurrentUser() {

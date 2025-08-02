@@ -12,6 +12,7 @@ import { queryClient } from "./config/query";
 import SearchProvider from "./components/providers/SearchProvider";
 import Loading from "./components/Loading";
 
+const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"))
 const StatusPage = lazy(() => import("./components/status/StatusPage"));
 const DecisionPage = lazy(() => import("./components/status/DecisionPage"));
 const SignUp = lazy(() => import("./pages/SignUp/SignUp"));
@@ -319,6 +320,7 @@ function App() {
             />
             <Route path="/forgotpassword" element={<ForgotPass />}></Route>
             <Route path="/resetpassword" element={<ResetPassCard />}></Route>
+            <Route path="/verify" element={<VerifyEmailPage />}></Route>
 
             {/*WARN:MAKE SURE THIS IS THE LAST ROUTE*/}
             <Route path="*" element={<NotFoundPage />} />

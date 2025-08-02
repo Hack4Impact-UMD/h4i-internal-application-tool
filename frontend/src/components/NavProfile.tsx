@@ -14,9 +14,9 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useQueryClient } from "@tanstack/react-query";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Link } from "react-router-dom";
+import { clearQueryCache } from "@/config/query";
 
 type NavProfileProps = {
   user: UserProfile;
@@ -26,7 +26,6 @@ type NavProfileProps = {
 export default function NavProfile({ user, className = "" }: NavProfileProps) {
   const { logout } = useAuth();
   const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient();
 
   return (
     <>
@@ -63,9 +62,7 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
               <TooltipTrigger asChild>
                 <DropdownMenuItem
                   onClick={async () => {
-                    await queryClient.cancelQueries();
-                    await queryClient.invalidateQueries();
-                    queryClient.clear();
+                    await clearQueryCache()
                   }}
                   className="cursor-pointer"
                 >

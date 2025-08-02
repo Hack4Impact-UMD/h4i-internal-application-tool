@@ -15,7 +15,7 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
   const registerForm = req.body as UserRegisterForm;
 
   try {
-    if (!registerForm.email.endsWith("umd.edu")) {
+    if (!registerForm.email.trim().endsWith("umd.edu")) {
       res.status(400).send("Only emails ending in umd.edu are allowed!")
       return;
     }
@@ -27,6 +27,7 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
       disabled: false,
       emailVerified: false
     })
+
     logger.info(`Auth user created with UID ${userRecord.uid}`)
 
     const collection = db.collection("users") as CollectionReference<UserProfile>
