@@ -1,5 +1,3 @@
-import { getInterviewAssignments } from "@/services/interviewAssignmentService";
-import { getInterviewDataForInterviewer } from "@/services/interviewDataService";
 import {
   ApplicationInterviewData,
   InterviewAssignment,
