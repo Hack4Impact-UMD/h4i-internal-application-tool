@@ -86,9 +86,9 @@ export default function ReviewCard() {
   );
 
   return (
-    <form onSubmit={handleSubmit} className="m-3">
+    <form onSubmit={handleSubmit}>
       <div className="flex-shrink-0">
-        <div className="bg-white rounded-lg p-6 flex flex-col gap-6 border border-gray-400">
+        <div className="bg-white rounded-lg p-6 flex flex-col gap-6 border border-gray-200">
           <div className="mb-2">
             <h2 className="text-xl font-semibold">Engineer Review</h2>
             <a href="#" className="text-blue-600 underline text-sm block mt-1">
