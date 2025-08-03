@@ -5,13 +5,13 @@ import {
 } from "@/types/formBuilderTypes";
 import { Timestamp } from "firebase/firestore";
 
-const FORM_ID = "h4i-fall-2025-form";
+const FORM_ID = "h4i-fall-2025-form-internal";
 
 export const h4iApplicationForm: ApplicationForm = {
   id: FORM_ID,
   isActive: true,
   dueDate: Timestamp.fromDate(new Date("2025-08-20T03:59:59Z")),
-  semester: "Fall 2025",
+  semester: "Fall 2025 (Internal Testing)",
   description: `
 Hack4Impact is a student-run 501(c)(3) dedicated to building software for social impact. We are the **University of Maryland, College Park chapter** of the national Hack4Impact organization. Each year, we partner with nonprofits to help them better serve their communities. We are recruiting software engineers, product managers, tech leads, UI designers, and sourcing team members for the fall semester.
 
@@ -759,7 +759,7 @@ Provide the link to your completed assessment repo here (e.g. https://github.com
           maximumWordCount: 200,
         },
         {
-           questionId: "technical-assessment-comments",
+          questionId: "technical-assessment-comments",
           questionType: QuestionType.LongAnswer,
           optional: false,
           questionText: "Comments/Notes",

@@ -19,7 +19,7 @@ export default function AdminHome() {
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-        "This will create a new form with ID 'h4i-fall-2025-form' in Firestore with all the new interview questions and scoring weights.",
+      `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
     );
 
     if (!confirmed || !token) return;
