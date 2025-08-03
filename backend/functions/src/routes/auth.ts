@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
-import { UserProfile, UserRegisterForm, userRegisterFormSchema } from "../models/user";
+import { UserProfile, UserRegisterForm, userRegisterFormSchema, updateUserSchema } from "../models/user";
 import { CollectionReference, DocumentReference, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import * as admin from "firebase-admin"
@@ -57,14 +57,13 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
   }
 });
 
-router.post("/update", [isAuthenticated, validateSchema(userRegisterFormSchema)], async (req: Request, res: Response) => {
+router.post("/update", [isAuthenticated, validateSchema(updateUserSchema)], async (req: Request, res: Response) => {
   const registerForm = req.body as UserRegisterForm;
   const uid = req.token!.uid;
 
   try {
     const updatedUserRecord = await admin.auth().updateUser(uid, {
       email: registerForm.email,
-      password: registerForm.password,
       displayName: `${registerForm.firstName} ${registerForm.lastName}`,
     });
 
