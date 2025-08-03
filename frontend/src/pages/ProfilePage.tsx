@@ -62,7 +62,7 @@ export default function ProfilePage() {
               </span>
               <span
                 ref={editProfileRef}
-                className={`font-md text-md text-gray-500 underline cursor-pointer transition-colors ${isHighlighted ? "{highlightBackground}" : ""}`}
+                className={`font-md text-md text-gray-500 underline cursor-pointer transition-colors ${isHighlighted ? highlightBackground : ''}`}
                 onClick={() => setDisabled(false)}
               >
                 Edit Profile

@@ -79,6 +79,9 @@ export async function updateUser(
 ): Promise<UserProfile> {
   try {
     const token = await auth.currentUser?.getIdToken();
+    if (!token) {
+      throw new Error("User must be authenticated to update profile");
+    }
 
     const response = await axios.post(
       API_URL + "/auth/update",
