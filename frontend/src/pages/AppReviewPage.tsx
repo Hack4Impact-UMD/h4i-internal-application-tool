@@ -40,7 +40,8 @@ function UserHeader({ applicantId, form, role }: UserHeaderProps) {
   return (
     <div className="w-full flex flex-col gap-2">
       <h1 className="font-bold text-2xl">
-        Reviewing {applicant.firstName} {applicant.lastName}'s {form.semester} {displayApplicantRoleName(role).substring(1)} Application
+        {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
+        {displayApplicantRoleName(role).substring(1)} Application
       </h1>
       <div className="flex flex-row gap-2 flex-wrap">
         <ApplicantRolePill role={role} />
@@ -71,24 +72,29 @@ const ApplicationPage: React.FC = () => {
   const {
     data: reviewData,
     isPending: reviewPending,
-    error: reviewError
-  } = useReviewData(reviewDataId ?? "")
-
+    error: reviewError,
+  } = useReviewData(reviewDataId ?? "");
 
   if (formLoading || responseLoading || reviewPending) return <Loading />;
-  if (formError || !form) return <p>Failed to fetch form: {formError.message}</p>;
-  if (responseError || !response) return <p>Failed to fetch response: {responseError?.message}</p>;
-  if (reviewError || !reviewData) return <p>Failed to fetch response: {reviewError.message}</p>;
-
+  if (formError || !form)
+    return <p>Failed to fetch form: {formError.message}</p>;
+  if (responseError || !response)
+    return <p>Failed to fetch response: {responseError?.message}</p>;
+  if (reviewError || !reviewData)
+    return <p>Failed to fetch response: {reviewError.message}</p>;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-      <div className="flex flex-row w-full p-4 items-center">
-        <UserHeader applicantId={response.userId} form={form} role={reviewData.forRole} />
+    <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
+      <div className="flex flex-row w-full py-2 px-4 items-center rounded border border-blue-300 bg-blue-100 text-blue">
+        <UserHeader
+          applicantId={response.userId}
+          form={form}
+          role={reviewData.forRole}
+        />
         <Button variant="default">Submit</Button>
       </div>
-      <div className="flex gap-2 justify-center px-4 grow overflow-scroll">
-        <div className="w-1/2 flex h-full flex-col gap-2 overflow-scroll">
+      <div className="flex gap-2 justify-center grow overflow-scroll pt-4">
+        <div className="w-1/2 flex h-full flex-col gap-2 overflow-scroll shadow">
           {form.sections
             .filter((s) => {
               if (s.forRoles) {
@@ -115,12 +121,12 @@ const ApplicationPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )!.questions
                   }
-                  onChangeResponse={() => { }}
+                  onChangeResponse={() => {}}
                 />
               </div>
             ))}
         </div>
-        <div className="w-1/2 h-full overflow-y-scroll">
+        <div className="w-1/2 h-full overflow-y-scroll shadow">
           <ReviewCard></ReviewCard>
         </div>
       </div>

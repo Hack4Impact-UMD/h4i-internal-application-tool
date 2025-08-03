@@ -61,7 +61,9 @@ export default function AppSubmitPage() {
       <div className="max-w-3xl w-full flex flex-col gap-2">
         <div>
           <h1 className="text-3xl font-bold">Almost there!</h1>
-          <p className="text-muted-foreground">Review your application before submitting.</p>
+          <p className="text-muted-foreground">
+            Review your application before submitting.
+          </p>
         </div>
         {form.sections
           .filter((s) => {
@@ -99,7 +101,7 @@ export default function AppSubmitPage() {
                     (r) => r.sectionId == s.sectionId,
                   )!.questions
                 }
-                onChangeResponse={() => { }}
+                onChangeResponse={() => {}}
               />
             </div>
           ))}

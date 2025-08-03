@@ -20,9 +20,9 @@ export const REVIEW_DATA_COLLECTION = "review-data";
 
 export async function getReviewDataById(id: string) {
   const reviewData = collection(db, REVIEW_DATA_COLLECTION);
-  const docRef = doc(reviewData, id)
+  const docRef = doc(reviewData, id);
 
-  return (await getDoc(docRef)).data() as ApplicationReviewData
+  return (await getDoc(docRef)).data() as ApplicationReviewData;
 }
 
 export async function getReviewDataForApplication(
