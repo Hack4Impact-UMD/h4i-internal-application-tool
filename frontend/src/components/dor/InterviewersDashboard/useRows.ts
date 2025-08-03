@@ -1,6 +1,8 @@
-import { getInterviewAssignments } from "@/services/interviewAssignmentService";
-import { getInterviewDataForInterviewer } from "@/services/interviewDataService";
-import { ReviewerUserProfile } from "@/types/types";
+import {
+  ApplicationInterviewData,
+  InterviewAssignment,
+  ReviewerUserProfile,
+} from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 
 export type InterviewerRow = {
@@ -26,8 +28,9 @@ export type FlatInterviewerRow = {
 export function useRows(
   pageIndex: number,
   interviewers: ReviewerUserProfile[],
+  interviewData: ApplicationInterviewData[],
+  assignments: InterviewAssignment[],
   rowCount: number,
-  formId: string,
 ) {
   return useQuery({
     queryKey: ["all-interviewers-rows", pageIndex, interviewers],
@@ -40,13 +43,11 @@ export function useRows(
             Math.min(interviewers.length, (pageIndex + 1) * rowCount),
           )
           .map(async (interviewer, index) => {
-            const assignments = await getInterviewAssignments(
-              formId,
-              interviewer.id,
+            const interviewerAssignments = assignments.filter(
+              (assignment) => assignment.interviewerId == interviewer.id,
             );
-            const reviewData = await getInterviewDataForInterviewer(
-              formId,
-              interviewer.id,
+            const interviewerInterviewData = interviewData.filter(
+              (reviewData) => reviewData.interviewerId == interviewer.id,
             );
 
             const row: InterviewerRow = {
@@ -56,10 +57,11 @@ export function useRows(
                 name: `${interviewer.firstName} ${interviewer.lastName}`,
               },
               //   rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
-              assignments: assignments.length,
+              assignments: interviewerAssignments.length,
               pendingAssignments:
-                assignments.length -
-                reviewData.filter((data) => data.submitted).length,
+                interviewerAssignments.length -
+                interviewerInterviewData.filter((data) => data.submitted)
+                  .length,
             };
 
             return row;

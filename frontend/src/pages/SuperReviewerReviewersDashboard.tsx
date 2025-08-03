@@ -122,6 +122,8 @@ export default function SuperReviewerReviewersDashboard() {
       </div>
       <ReviewersTable
         reviewers={reviewers}
+        assignments={assignments}
+        reviewData={reviewData}
         formId={formId}
         search={search}
         statusFilter={statusFilter}

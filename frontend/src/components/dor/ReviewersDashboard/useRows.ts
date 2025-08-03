@@ -1,7 +1,9 @@
-import { getReviewAssignments } from "@/services/reviewAssignmentService";
-import { getReviewDataForReviewer } from "@/services/reviewDataService";
-import { getRolePreferencesForReviewer } from "@/services/reviewersService";
-import { ApplicantRole, ReviewerUserProfile } from "@/types/types";
+import {
+  AppReviewAssignment,
+  ApplicantRole,
+  ApplicationReviewData,
+  ReviewerUserProfile,
+} from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 
 export type ReviewerRow = {
@@ -27,8 +29,9 @@ export type FlatReviewerRow = {
 export function useRows(
   pageIndex: number,
   reviewers: ReviewerUserProfile[],
+  assignments: AppReviewAssignment[],
+  reviewData: ApplicationReviewData[],
   rowCount: number,
-  formId: string,
 ) {
   return useQuery({
     queryKey: ["all-reviewers-rows", pageIndex, reviewers],
@@ -41,10 +44,11 @@ export function useRows(
             Math.min(reviewers.length, (pageIndex + 1) * rowCount),
           )
           .map(async (reviewer, index) => {
-            const assignments = await getReviewAssignments(formId, reviewer.id);
-            const reviewData = await getReviewDataForReviewer(
-              formId,
-              reviewer.id,
+            const reviewerAssignments = assignments.filter(
+              (assignment) => assignment.reviewerId == reviewer.id,
+            );
+            const reviewerReviewData = reviewData.filter(
+              (reviewData) => reviewData.reviewerId == reviewer.id,
             );
 
             const row: ReviewerRow = {
@@ -53,11 +57,11 @@ export function useRows(
                 id: reviewer.id,
                 name: `${reviewer.firstName} ${reviewer.lastName}`,
               },
-              rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
-              assignments: assignments.length,
+              rolePreferences: reviewer.applicantRolePreferences,
+              assignments: reviewerAssignments.length,
               pendingAssignments:
-                assignments.length -
-                reviewData.filter((data) => data.submitted).length,
+                reviewerAssignments.length -
+                reviewerReviewData.filter((data) => data.submitted).length,
             };
 
             return row;

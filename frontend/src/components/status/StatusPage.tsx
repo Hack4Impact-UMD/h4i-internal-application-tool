@@ -156,7 +156,7 @@ function ApplicationResponseRow({
           form.decisionsReleased ? (
             <Link
               className="text-blue-500 cursor-pointer"
-              to={"/apply/status/decision"}
+              to={"/apply/decision/" + response.id + "/" + role}
             >
               View Decision
             </Link>
