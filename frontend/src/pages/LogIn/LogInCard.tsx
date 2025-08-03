@@ -60,12 +60,6 @@ export default function LogInCard() {
     let valid = true;
     const errors = { ...formErrors };
 
-    if (!validEmail(formData.email)) {
-      valid = false;
-      const errorMessage = "Invalid Email.";
-      errors.email = errorMessage;
-      throwErrorToast(errorMessage);
-    }
     if (!validPassword(formData.password)) {
       valid = false;
       const errorMessage =
