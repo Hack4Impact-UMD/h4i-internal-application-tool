@@ -19,34 +19,34 @@ export default function AdminHome() {
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-      "This will create a new form with ID 'h4i-fall-2025-form' in Firestore with all the new interview questions and scoring weights.",
+        "This will create a new form with ID 'h4i-fall-2025-form' in Firestore with all the new interview questions and scoring weights.",
     );
 
     if (!confirmed || !token) return;
 
-    const sectionIdSet = new Set<string>()
-    const questionIdSet = new Set<string>()
+    const sectionIdSet = new Set<string>();
+    const questionIdSet = new Set<string>();
     let duplicates = false;
 
-    h4iApplicationForm.sections.forEach(s => {
+    h4iApplicationForm.sections.forEach((s) => {
       if (sectionIdSet.has(s.sectionId)) {
-        throwErrorToast("Duplicate section ID: " + s.sectionId)
+        throwErrorToast("Duplicate section ID: " + s.sectionId);
         duplicates = true;
         return;
       } else {
-        sectionIdSet.add(s.sectionId)
+        sectionIdSet.add(s.sectionId);
       }
 
-      s.questions.forEach(q => {
+      s.questions.forEach((q) => {
         if (questionIdSet.has(q.questionId)) {
-          throwErrorToast("Duplicate section ID: " + q.questionId)
+          throwErrorToast("Duplicate section ID: " + q.questionId);
           duplicates = true;
           return;
         } else {
-          questionIdSet.add(q.questionId)
+          questionIdSet.add(q.questionId);
         }
-      })
-    })
+      });
+    });
 
     if (duplicates) return;
 

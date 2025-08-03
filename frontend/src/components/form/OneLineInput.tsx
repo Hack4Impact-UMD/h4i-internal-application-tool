@@ -25,7 +25,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
   className = "",
   disabled,
   errorMessage,
-  placeholderText = ""
+  placeholderText = "",
 }) => {
   return (
     <main

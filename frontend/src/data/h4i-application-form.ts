@@ -12,8 +12,7 @@ export const h4iApplicationForm: ApplicationForm = {
   isActive: true,
   dueDate: Timestamp.fromDate(new Date("2025-08-20T03:59:59Z")),
   semester: "Fall 2025",
-  description:
-    `
+  description: `
 Hack4Impact is a student-run 501(c)(3) dedicated to building software for social impact. We are the **University of Maryland, College Park chapter** of the national Hack4Impact organization. Each year, we partner with nonprofits to help them better serve their communities. We are recruiting software engineers, product managers, tech leads, UI designers, and sourcing team members for the fall semester.
 
 
@@ -169,7 +168,8 @@ CS classes are NOT a requirement for members, we take all majors!
     {
       sectionId: "demographics",
       sectionName: "Demographic Information",
-      description: "Help us understand our community. Your responses will not affect the result of your application, they are purely for metric purposes.",
+      description:
+        "Help us understand our community. Your responses will not affect the result of your application, they are purely for metric purposes.",
       questions: [
         {
           questionId: "pronouns",
@@ -197,7 +197,7 @@ CS classes are NOT a requirement for members, we take all majors!
           questionType: QuestionType.ShortAnswer,
           optional: true,
           questionText: "If you chose to self-describe, enter your gender here",
-          placeholderText: ""
+          placeholderText: "",
         },
         {
           questionId: "race-ethnicity",
@@ -220,8 +220,9 @@ CS classes are NOT a requirement for members, we take all majors!
           questionId: "race-ethnicity-self-decribe",
           questionType: QuestionType.ShortAnswer,
           optional: true,
-          questionText: "If you chose to self-describe, enter your race/ethnicity here",
-          placeholderText: ""
+          questionText:
+            "If you chose to self-describe, enter your race/ethnicity here",
+          placeholderText: "",
         },
       ],
     },
@@ -264,7 +265,7 @@ There are additional responsibilities depending on the member's role and team.
           questionText: "Which role(s) are you applying for?",
           secondaryText: `
 You can choose which roles to apply to here! You are free to apply to as many roles as you want!
-`
+`,
         },
       ],
     },
@@ -698,7 +699,7 @@ Engineer Responsibilities:
           secondaryText:
             "Describe your version control experience and any team projects...",
           maximumWordCount: 250,
-          placeholderText: ""
+          placeholderText: "",
         },
         {
           questionId: "tech-stack",
@@ -709,7 +710,7 @@ Engineer Responsibilities:
           secondaryText:
             "For each technology, briefly explain a project or context where you used it...",
           maximumWordCount: 400,
-          placeholderText: ""
+          placeholderText: "",
         },
         {
           questionId: "team-experience",
@@ -720,7 +721,7 @@ Engineer Responsibilities:
           secondaryText:
             "Describe a collaborative project and your contribution...",
           maximumWordCount: 300,
-          placeholderText: ""
+          placeholderText: "",
         },
         {
           questionId: "admired-technology",
@@ -763,8 +764,8 @@ Provide the link to your completed assessment repo here (e.g. https://github.com
           optional: false,
           questionText: "Comments/Notes",
           placeholderText: "",
-          maximumWordCount: 300
-        }
+          maximumWordCount: 300,
+        },
       ],
     },
     {
@@ -811,14 +812,16 @@ Note: Those applying for the engineer and/or tech lead role must also complete a
           placeholderText:
             "Focus on your problem-solving process and what you learned...",
           maximumWordCount: 300,
-          secondaryText: ""
+          secondaryText: "",
         },
         {
           questionId: "ml-engineer-interest",
           questionType: QuestionType.MultipleChoice,
           optional: false,
-          questionText: "Are you interested in being considered as a Machine Learning Engineer?",
-          secondaryText: "Please only select Yes if you have **prior experience working with ML!**",
+          questionText:
+            "Are you interested in being considered as a Machine Learning Engineer?",
+          secondaryText:
+            "Please only select Yes if you have **prior experience working with ML!**",
           questionOptions: ["Yes", "No"],
           multipleSelect: false,
         },
@@ -974,7 +977,7 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
             "Describe any content creation or social media management experience...",
           maximumWordCount: 250,
         },
-      ]
+      ],
     },
     {
       sectionId: "outreach-coordinator-questions",
@@ -1000,7 +1003,7 @@ Optional specialization tracks allow Outreach Coordinators to further support ke
           secondaryText:
             "Include any relevant communications, marketing, or outreach experience...",
           maximumWordCount: 250,
-          placeholderText: ""
+          placeholderText: "",
         },
         {
           questionId: "video-call-comfort",
@@ -1032,7 +1035,7 @@ Please rank your preferences for specializations and provide reasoning for your 
           placeholderText: "",
           maximumWordCount: 300,
         },
-      ]
-    }
+      ],
+    },
   ],
 };
