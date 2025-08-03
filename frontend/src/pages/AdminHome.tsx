@@ -12,23 +12,25 @@ import { useState } from "react";
 export default function AdminHome() {
   const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [uploadStatus, setUploadStatus] = useState<string>("");
 
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-      "This will create a new form with ID 'h4i-fall-2025-form' in Firestore with all the new interview questions and scoring weights."
+        "This will create a new form with ID 'h4i-fall-2025-form' in Firestore with all the new interview questions and scoring weights.",
     );
-    
-    if (!confirmed) return;
+
+    if (!confirmed || !token) return;
 
     try {
       setUploadStatus("Uploading...");
-      const result = await createApplicationForm(h4iApplicationForm);
+      const result = await createApplicationForm(h4iApplicationForm, token);
       setUploadStatus(`Success! Form uploaded with ID: ${result.formId}`);
     } catch (error) {
-      setUploadStatus(`Error: ${error instanceof Error ? error.message : "Unknown error"}`);
+      setUploadStatus(
+        `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   };
 
@@ -118,7 +120,9 @@ export default function AdminHome() {
               {uploadStatus === "Uploading..." ? "Uploading..." : "Upload Form"}
             </Button>
             {uploadStatus && (
-              <p className={`mt-2 text-sm ${uploadStatus.startsWith("Error") ? "text-red-600" : "text-green-600"}`}>
+              <p
+                className={`mt-2 text-sm ${uploadStatus.startsWith("Error") ? "text-red-600" : "text-green-600"}`}
+              >
                 {uploadStatus}
               </p>
             )}

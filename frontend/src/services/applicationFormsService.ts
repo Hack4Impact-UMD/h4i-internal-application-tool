@@ -39,7 +39,14 @@ export async function getActiveForm(): Promise<ApplicationForm> {
   }
 }
 
-export async function createApplicationForm(form: ApplicationForm): Promise<{ status: string; formId: string }> {
-  const res = await axios.post(API_URL + "/application/forms", form);
+export async function createApplicationForm(
+  form: ApplicationForm,
+  token: string,
+): Promise<{ status: string; formId: string }> {
+  const res = await axios.post(API_URL + "/application/forms", form, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 }
