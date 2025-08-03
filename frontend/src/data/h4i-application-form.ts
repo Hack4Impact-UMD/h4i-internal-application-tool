@@ -735,11 +735,11 @@ Engineer Responsibilities:
           maximumWordCount: 200,
         },
         {
-          questionId: "technical-assesment-link",
+          questionId: "technical-assessment-link",
           questionType: QuestionType.LongAnswer,
           optional: false,
           questionText:
-            "Provide a link to your completed technical assesment repo here",
+            "Provide a link to your completed technical assessment repo here",
           placeholderText: "",
           secondaryText: `
 All applicants applying for the engineer and/or tech lead role must complete this technical assessment which should take an estimated 2 hours. Note: This assessment is not timed, and you are welcome to take as long as you need until you submit your application.
