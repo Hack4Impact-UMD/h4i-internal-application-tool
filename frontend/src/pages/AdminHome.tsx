@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { h4iApplicationForm } from "@/data/h4i-application-form";
 import { createApplicationForm } from "@/services/applicationFormsService";
 import { useState } from "react";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
 
 export default function AdminHome() {
   const navigate = useNavigate();
@@ -18,10 +19,36 @@ export default function AdminHome() {
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-        "This will create a new form with ID 'h4i-fall-2025-form' in Firestore with all the new interview questions and scoring weights.",
+      "This will create a new form with ID 'h4i-fall-2025-form' in Firestore with all the new interview questions and scoring weights.",
     );
 
     if (!confirmed || !token) return;
+
+    const sectionIdSet = new Set<string>()
+    const questionIdSet = new Set<string>()
+    let duplicates = false;
+
+    h4iApplicationForm.sections.forEach(s => {
+      if (sectionIdSet.has(s.sectionId)) {
+        throwErrorToast("Duplicate section ID: " + s.sectionId)
+        duplicates = true;
+        return;
+      } else {
+        sectionIdSet.add(s.sectionId)
+      }
+
+      s.questions.forEach(q => {
+        if (questionIdSet.has(q.questionId)) {
+          throwErrorToast("Duplicate section ID: " + q.questionId)
+          duplicates = true;
+          return;
+        } else {
+          questionIdSet.add(q.questionId)
+        }
+      })
+    })
+
+    if (duplicates) return;
 
     try {
       setUploadStatus("Uploading...");
@@ -43,7 +70,7 @@ export default function AdminHome() {
   if (error) return <p>Failed to fetch forms: {error.message}</p>;
 
   return (
-    <div className="w-full h-full px-2 py-4 flex gap-2 flex-col bg-lightgray items-center">
+    <div className="w-full grow px-2 py-4 flex gap-2 flex-col bg-lightgray items-center">
       <div className="max-w-5xl w-full p-4 rounded-md">
         <h1 className="text-2xl font-bold">Welcome, {user.firstName}!</h1>
         <p className="text-muted-foreground">

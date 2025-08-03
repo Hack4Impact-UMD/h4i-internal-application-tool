@@ -13,7 +13,57 @@ export const h4iApplicationForm: ApplicationForm = {
   dueDate: Timestamp.fromDate(new Date("2025-08-20T03:59:59Z")),
   semester: "Fall 2025",
   description:
-    "Hack4Impact-UMD Application Portal - Join our mission to create technology for social good!",
+    `
+Hack4Impact is a student-run 501(c)(3) dedicated to building software for social impact. We are the **University of Maryland, College Park chapter** of the national Hack4Impact organization. Each year, we partner with nonprofits to help them better serve their communities. We are recruiting software engineers, product managers, tech leads, UI designers, and sourcing team members for the fall semester.
+
+
+**We are looking for new members who are:**
+* Willing to commit their time for 1 semester (at least 5 hours per week)
+* Excited about our mission and values
+* Passionate about software, social impact, and our nonprofit partners
+* Willing to learn
+
+
+Extensive experience isn't necessary, but technical applicants should have programming experience. We place a strong emphasis on learning, so we’ll teach you everything you need to know beyond programming fundamentals during bootcamp!
+
+
+**As a software engineer, you will:**
+* Develop and ship a project to a nonprofit partner
+* Gain the skills necessary to become a full-stack developer
+* Learn how to identify user needs in order to design the best products for the problem
+
+
+We also have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. PMs will work directly with our nonprofit partners to gather project requirements and ensure what we create is the best solution for the nonprofit and communicate those needs to engineers. Tech Leads serve as the point of contact for engineers, providing technical guidance as well as upholding code quality through code reviews. Designers will work with both engineers and nonprofits, creating UI mockups for our projects to ensure our projects go above and beyond our clients' expectations. Members of the Public Relations & Outreach team will connect with nonprofit partners, maintain the organization's public presence, and manage organizational communication.
+
+
+**Why join?**
+* Developing projects for our nonprofit partners as a student is incredible, and recruiters notice
+* You’ll find a community of multidisciplinary, passionate people who love what they do
+* You can learn more about a role you may want to have after school
+* Attend workshops, tech talks, social events, and volunteer events
+* Learn about working in the nonprofit sector and tech for social good
+* Work with and learn more about some amazing organizations
+* Get plugged into a strong network of accomplished and amazing alums
+
+
+There are also PLENTY of opportunities to gain leadership experience. We have positions for mentors, a super fun board of directors, and even a national board and committees. As an organization and as a community, we care about and actively support the individual development of each member, both professional and personal. When you join Hack4Impact-UMD, you join a national network of leaders, techies, do-gooders, and friends.
+
+
+Feel free to visit our chapter website at <https://umd.hack4impact.org/> or the national website at <https://hack4impact.org> for more information.
+
+
+We will have rolling applications that consist of this written application and may include a live interview (not a technical interview). Those applying for the engineer and/or tech lead role are **REQUIRED** to complete a technical assessment (2-3 hours) included in the following sections of this application form. We will be CLOSING the form at **midnight (11:59pm EST) on August 19, 2025** or when openings are filled.
+
+
+**Please do not use ChatGPT or other AI services to create or edit your responses.**
+
+
+Please reach out to <umd@hack4impact.org> if you have any questions.
+
+
+All admission decisions will be communicated to applicants no later than September 1, 2025.
+
+`,
   decisionsReleased: false,
   scoreWeights: {
     [ApplicantRole.Bootcamp]: {
@@ -107,8 +157,10 @@ export const h4iApplicationForm: ApplicationForm = {
           questionType: QuestionType.LongAnswer,
           optional: false,
           questionText: "Which CS classes have you taken?",
-          secondaryText:
-            "Include course numbers and names (e.g., CMSC131, CMSC132, etc.)",
+          secondaryText: `
+CS classes are NOT a requirement for members, we take all majors!
+
+**[You must be a current/incoming student at the University of Maryland, College Park]. Include course numbers and names (e.g., CMSC131, CMSC132, etc.)**`,
           placeholderText: "List the computer science courses you've completed",
           maximumWordCount: 200,
         },
@@ -117,7 +169,7 @@ export const h4iApplicationForm: ApplicationForm = {
     {
       sectionId: "demographics",
       sectionName: "Demographic Information",
-      description: "Help us understand our community",
+      description: "Help us understand our community. Your responses will not affect the result of your application, they are purely for metric purposes.",
       questions: [
         {
           questionId: "pronouns",
@@ -141,6 +193,13 @@ export const h4iApplicationForm: ApplicationForm = {
           ],
         },
         {
+          questionId: "gender-self-describe",
+          questionType: QuestionType.ShortAnswer,
+          optional: true,
+          questionText: "If you chose to self-describe, enter your gender here",
+          placeholderText: ""
+        },
+        {
           questionId: "race-ethnicity",
           questionType: QuestionType.MultipleSelect,
           optional: true,
@@ -157,21 +216,55 @@ export const h4iApplicationForm: ApplicationForm = {
             "Prefer to self-describe",
           ],
         },
+        {
+          questionId: "race-ethnicity-self-decribe",
+          questionType: QuestionType.ShortAnswer,
+          optional: true,
+          questionText: "If you chose to self-describe, enter your race/ethnicity here",
+          placeholderText: ""
+        },
       ],
     },
     {
       sectionId: "role-selection",
       sectionName: "Role Selection",
-      description:
-        "About Our Roles:\n\nBootcamp - Learn web development fundamentals and contribute to projects\n\nProduct Manager - Lead project planning, coordinate teams, and manage stakeholder relationships\n\nDesigner - Create user experiences and visual designs for our nonprofit partners\n\nEngineer - Build web applications using modern technologies\n\nTech Lead - Mentor engineers and lead technical decisions\n\nSocial Media Manager - Manage our online presence and create engaging content\n\nOutreach Coordinator - Source nonprofit partnerships and manage external relationships",
+      description: `
+**About Hack4Impact-UMD Teams & Structure**
+
+At Hack4Impact-UMD, there are three types of teams: project teams, bootcamp, and the sourcing team. Project teams work directly with our nonprofit partners to create products to help the community; these teams consists of Product Managers (PMs), Tech Leads, Designers, and Engineers. On the other hand, bootcamp is for students who are interested in Hack4Impact's mission but need experience before they join a project team. The sourcing team reaches out to non-profit organizations to secure projects for Hack4Impact-UMD. 
+
+**Project Teams**
+
+Project teams work with real non-profit partners, creating solutions for any technical needs that our partners have. It's important to us when forming teams to find people who have the capacity to commit to the project for the whole semester. Otherwise, it's unfair to the teams and the partners. Our project teams practice the agile software development methodology, and project team members are expected to fulfil their commitments made during each sprint. Our workflow involves two week sprints, weekly meetings with your team, doing your own project tasks during the week, and monthly chapter wide meetings. The time commitment is around 5 hours a week.
+
+**Bootcamp**
+
+Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
+
+**Public Relations & Outreach Team**
+
+**Public Relations & Outreach (PR&O)** is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
+
+**Member Responsibilities**
+
+Regardless of which team a Hack4Impact-UMD member is in, there are responsibilities that we expect all members to follow:
+
+- attend mandatory general body meetings
+- attend team, bootcamp, or sourcing meetings
+- respond to Slack messages within 24 to 48 hours
+- regularly check team Slack channel and #umd-general for announcements
+
+There are additional responsibilities depending on the member's role and team.
+`,
       questions: [
         {
           questionId: "role-select",
           questionType: QuestionType.RoleSelect,
           optional: false,
           questionText: "Which role(s) are you applying for?",
-          secondaryText:
-            "Select all roles you're interested in. You'll see role-specific questions based on your selections.",
+          secondaryText: `
+You can choose which roles to apply to here! You are free to apply to as many roles as you want!
+`
         },
       ],
     },
@@ -185,7 +278,9 @@ export const h4iApplicationForm: ApplicationForm = {
           questionType: QuestionType.MultipleSelect,
           optional: false,
           questionText: "Technical Skills Checklist",
-          secondaryText: "Select all that apply to your current skill level",
+          secondaryText: `
+We consider applicants with all experience levels! You are not required to have technical experience, just a willingness to learn. People with fewer technical skills, but sufficient interest and passion, may be placed on a bootcamp group. If you don't have any of these yet, don't worry (especially if you're interested in sourcing). Please only check the following skills that you have used for a project (in class, internship, research, or for fun).
+`,
           multipleSelect: true,
           questionOptions: [
             "HTML/CSS",
@@ -294,6 +389,13 @@ export const h4iApplicationForm: ApplicationForm = {
     {
       sectionId: "bootcamp-questions",
       sectionName: "Bootcamp Questions",
+      description: `
+Please answer the following questions if you are interested in bootcamp. We will be especially looking at the quality of your responses since you will not be interviewed for this role.
+
+The bootcamp description is included below for reference.
+
+Bootcamp essentially teaches members the foundation to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly bootcamp meetings, doing the bootcamp assignments during the week, and chapter wide meetings monthly. The time commitment is around 3-5 hours a week.
+`,
       forRoles: [ApplicantRole.Bootcamp],
       questions: [
         {
@@ -340,6 +442,25 @@ export const h4iApplicationForm: ApplicationForm = {
     {
       sectionId: "pm-questions",
       sectionName: "Product Manager Questions",
+      description: `
+The PM expectations are included below for reference.
+
+PM Specific Responsibilities:
+* responsible for drawing out the roadmap for their project
+* ensures that all deadlines are met
+* meets with team on a weekly basis
+* meets with nonprofits on a weekly basis
+* meets with tech leads and designers on a weekly basis
+* meets with Director of Product weekly to discuss project progression
+* be organized in terms of project management
+* be accountable for any decisions made for the project
+* provide accurate details of project progression
+* communicate with nonprofit professionally
+* be an effective communicator within the team and maintain structure
+* promote participation among team members
+* stimulate interaction between team members
+* have effective conflict resolution skills
+`,
       forRoles: [ApplicantRole.Product],
       questions: [
         {
@@ -454,6 +575,19 @@ export const h4iApplicationForm: ApplicationForm = {
     {
       sectionId: "design-questions",
       sectionName: "Designer Questions",
+      description: `
+The Designer expectations are included below for reference.
+
+Designer Responsibilities:
+- responsible for creating the frontend designs for the product based on nonprofit needs
+- attends team meetings
+- attends meetings with nonprofit and PM
+- meets with Director of Design to discuss project progression
+- walkthrough designs and get nonprofit's feedback
+- communicate with engineers on designs and whether or not they are feasible
+- complete tasks by the given deadline so that the engineers have enough time to do their tasks as well
+- provide feedback to engineers on their implementation of the designs
+`,
       forRoles: [ApplicantRole.Designer],
       questions: [
         {
@@ -510,6 +644,29 @@ export const h4iApplicationForm: ApplicationForm = {
     {
       sectionId: "general-engineering",
       sectionName: "General Engineering Questions",
+      description: `
+The Tech Lead expectations are included below for reference.
+
+Tech Lead Responsibilities:
+* point of contact for engineers to help with technologies related to their projects
+* research technologies and shape the technical direction of the project
+* attends team meetings
+* attends meetings with nonprofit and PM
+* meets with Director of Engineering weekly to discuss project progression
+* review pull requests
+* add notes for each task on the team Kanban board before the sprint meeting
+* update PMs about engineers' status, issues, and progress
+* give feedback to designers on the feasibility of design
+
+The Engineer expectations are included below for reference.
+
+Engineer Responsibilities:
+* responsible for implementation of all technological aspects of product
+* attend team meetings
+* complete assigned tasks by the given deadline
+* update Tech Lead and PM with any relevant issues
+
+**Note**: Those applying for the engineer and/or tech lead role must also complete a technical assessment (estimated 2 hours) included in this application form.`,
       forRoles: [ApplicantRole.Engineer, ApplicantRole.TechLead],
       questions: [
         {
@@ -538,9 +695,10 @@ export const h4iApplicationForm: ApplicationForm = {
           optional: false,
           questionText:
             "What is your experience with Git and Github? If you used it in a collaborative setting, tell us about how you managed pull requests or worked in a shared codebase.",
-          placeholderText:
+          secondaryText:
             "Describe your version control experience and any team projects...",
           maximumWordCount: 250,
+          placeholderText: ""
         },
         {
           questionId: "tech-stack",
@@ -548,9 +706,10 @@ export const h4iApplicationForm: ApplicationForm = {
           optional: false,
           questionText:
             "List the languages, frameworks, or tools you're most familiar with (e.g., React, Node, Django, etc.) and provide a short description of how you've used each.",
-          placeholderText:
+          secondaryText:
             "For each technology, briefly explain a project or context where you used it...",
           maximumWordCount: 400,
+          placeholderText: ""
         },
         {
           questionId: "team-experience",
@@ -558,9 +717,10 @@ export const h4iApplicationForm: ApplicationForm = {
           optional: false,
           questionText:
             "Tell us about a time you worked on a team. What role did you play, and what did you learn from that experience?",
-          placeholderText:
+          secondaryText:
             "Describe a collaborative project and your contribution...",
           maximumWordCount: 300,
+          placeholderText: ""
         },
         {
           questionId: "admired-technology",
@@ -568,15 +728,58 @@ export const h4iApplicationForm: ApplicationForm = {
           optional: false,
           questionText:
             "What's a piece of technology (a product, tool, or system) you admire and why?",
-          placeholderText:
+          secondaryText:
             "This could be an app, framework, system architecture, etc...",
+          placeholderText: "",
           maximumWordCount: 200,
         },
+        {
+          questionId: "technical-assesment-link",
+          questionType: QuestionType.LongAnswer,
+          optional: false,
+          questionText:
+            "Provide a link to your completed technical assesment repo here",
+          placeholderText: "",
+          secondaryText: `
+All applicants applying for the engineer and/or tech lead role must complete this technical assessment which should take an estimated 2 hours. Note: This assessment is not timed, and you are welcome to take as long as you need until you submit your application.
+
+**Instructions can be found in the following document:**
+
+<https://docs.google.com/document/d/1YnB-So54uxA1HWc7AAPNUiTJKy87G6j0KEiadN5iwAg>
+
+If you encounter technical difficulties or have any other questions regarding the assessment, please send an email to <umd-tech@hack4impact.org>
+
+Provide the link to your completed assessment repo here (e.g. https://github.com/username/FirstnameLastname-h4i-assessment-Fall25)
+
+**Please ensure that your repository is private and that Hack4ImpactUMD is added as a collaborator**
+
+**Only submit the application once you have completed the assessment and DO NOT continue working after the deadline. Thank you!**
+`,
+          maximumWordCount: 200,
+        },
+        {
+          questionId: "technical-assesment-comments",
+          questionType: QuestionType.LongAnswer,
+          optional: false,
+          questionText: "Comments/Notes",
+          placeholderText: "",
+          maximumWordCount: 300
+        }
       ],
     },
     {
       sectionId: "engineer-specific",
       sectionName: "Engineer Specific Questions",
+      description: `
+The Engineer expectations are included below for reference.
+
+Engineer Responsibilities:
+- responsible for implementation of all technological aspects of product
+- attend team meetings
+- complete assigned tasks by the given deadline
+- update Tech Lead and PM with any relevant issues
+
+Note: Those applying for the engineer and/or tech lead role must also complete a technical assessment (estimated 2 hours) included in this application form.`,
       forRoles: [ApplicantRole.Engineer],
       questions: [
         {
@@ -608,11 +811,35 @@ export const h4iApplicationForm: ApplicationForm = {
           placeholderText:
             "Focus on your problem-solving process and what you learned...",
           maximumWordCount: 300,
+          secondaryText: ""
+        },
+        {
+          questionId: "ml-engineer-interest",
+          questionType: QuestionType.MultipleChoice,
+          optional: false,
+          questionText: "Are you interested in being considered as a Machine Learning Engineer?",
+          secondaryText: "Please only select Yes if you have **prior experience working with ML!**",
+          questionOptions: ["Yes", "No"],
+          multipleSelect: false,
         },
       ],
     },
     {
       sectionId: "tech-lead-specific",
+      description: `
+Please answer the following questions if you are interested in the Tech Lead role. The Tech Lead expectations are included below for reference.
+
+Tech Lead Responsibilities:
+- point of contact for engineers to help with technologies related to their projects
+- research technologies and shape the technical direction of the project
+- attends team meetings,
+- attends meetings with nonprofit and PM
+- meets with Director of Engineering weekly to discuss project progression
+- review pull requests
+- add notes for each task on the team Kanban board before the sprint meeting
+- update PMs about engineers' status, issues, and progress
+- give feedback to designers on the feasibility of design
+`,
       sectionName: "Tech Lead Specific Questions",
       forRoles: [ApplicantRole.TechLead],
       questions: [
@@ -649,6 +876,23 @@ export const h4iApplicationForm: ApplicationForm = {
     {
       sectionId: "pr-outreach",
       sectionName: "PR & Outreach Questions",
+      description: `
+Please answer the following questions if you are interested in joining our project sourcing team. The sourcing team description is included below for reference.
+
+**Public Relations & Outreach (PR&O)** is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
+
+**Outreach Coordinator**
+
+Responsible for identifying and engaging potential nonprofit partners for upcoming Hack4Impact-UMD projects. Core responsibilities include sending outreach emails, holding exploratory meetings with nonprofits, drafting comprehensive project descriptions, and presenting them to the Directors of Engineering and Product for feedback.
+
+Optional specialization tracks allow Outreach Coordinators to further support key organizational efforts:
+
+* Finance Specialization: Assists the Directors of Finance with outreach to corporate partners and supports the development of long-term sponsorship relationships.
+* Long-Term Growth Specialization: Reconnects with past nonprofit partners to collect feedback and impact stories, and contributes to semesterly and annual impact reporting.
+
+**Social Media Manager**
+
+Focuses on developing and maintaining Hack4Impact-UMD’s social media presence across platforms such as Instagram, TikTok, and YouTube. Responsibilities include creating and scheduling content, maintaining consistent branding, and collaborating with other teams to highlight ongoing projects, organizational milestones, and community impact.`,
       forRoles: [ApplicantRole.SocialMedia, ApplicantRole.OutreachCoord],
       questions: [
         {
@@ -683,15 +927,43 @@ export const h4iApplicationForm: ApplicationForm = {
           maximumWordCount: 300,
         },
         {
-          questionId: "professional-communication",
+          questionId: "npo-experience",
           questionType: QuestionType.LongAnswer,
           optional: false,
           questionText:
-            "Do you have any experience communicating professionally on behalf of a club/organization, and if so, can you briefly describe what you did?",
+            "Do you have any prior experience working with Nonprofit Organizations? If not, please put N/A.",
           placeholderText:
-            "Include any relevant communications, marketing, or outreach experience...",
-          maximumWordCount: 250,
+            "Describe any volunteer work or nonprofit involvement...",
+          maximumWordCount: 200,
         },
+        {
+          questionId: "nonprofit-research",
+          questionType: QuestionType.LongAnswer,
+          optional: false,
+          questionText: "Nonprofit Research Assignment",
+          secondaryText: `
+Find 2 nonprofits in the D.C./Maryland/Virginia area that would be good fits for projects with Hack4Impact-UMD.
+
+For each nonprofit, provide:
+
+- Organization name
+- Two-sentence explanation of why they'd be a good fit
+`,
+          placeholderText:
+            "Research local nonprofits that could benefit from technology solutions...",
+          maximumWordCount: 400,
+        },
+      ],
+    },
+    {
+      sectionId: "social-media-manager-questions",
+      sectionName: "PR & Outreach Questions: Social Media Manager",
+      description: `
+**Social Media Manager**
+
+Focuses on developing and maintaining Hack4Impact-UMD’s social media presence across platforms such as Instagram, TikTok, and YouTube. Responsibilities include creating and scheduling content, maintaining consistent branding, and collaborating with other teams to highlight ongoing projects, organizational milestones, and community impact.`,
+      forRoles: [ApplicantRole.SocialMedia],
+      questions: [
         {
           questionId: "social-media-experience",
           questionType: QuestionType.LongAnswer,
@@ -701,6 +973,34 @@ export const h4iApplicationForm: ApplicationForm = {
           placeholderText:
             "Describe any content creation or social media management experience...",
           maximumWordCount: 250,
+        },
+      ]
+    },
+    {
+      sectionId: "outreach-coordinator-questions",
+      sectionName: "PR & Outreach Questions: Outreach Coordinator",
+      description: `
+**Outreach Coordinator**
+
+Responsible for identifying and engaging potential nonprofit partners for upcoming Hack4Impact-UMD projects. Core responsibilities include sending outreach emails, holding exploratory meetings with nonprofits, drafting comprehensive project descriptions, and presenting them to the Directors of Engineering and Product for feedback.
+
+Optional specialization tracks allow Outreach Coordinators to further support key organizational efforts:
+
+* Finance Specialization: Assists the Directors of Finance with outreach to corporate partners and supports the development of long-term sponsorship relationships.
+* Long-Term Growth Specialization: Reconnects with past nonprofit partners to collect feedback and impact stories, and contributes to semesterly and annual impact reporting.
+`,
+      forRoles: [ApplicantRole.OutreachCoord],
+      questions: [
+        {
+          questionId: "professional-communication",
+          questionType: QuestionType.LongAnswer,
+          optional: false,
+          questionText:
+            "Do you have any experience communicating professionally on behalf of a club/organization, and if so, can you briefly describe what you did?",
+          secondaryText:
+            "Include any relevant communications, marketing, or outreach experience...",
+          maximumWordCount: 250,
+          placeholderText: ""
         },
         {
           questionId: "video-call-comfort",
@@ -718,27 +1018,21 @@ export const h4iApplicationForm: ApplicationForm = {
           ],
         },
         {
-          questionId: "nonprofit-research",
+          questionId: "specialization-preference",
           questionType: QuestionType.LongAnswer,
           optional: false,
-          questionText: "Nonprofit Research Assignment",
-          secondaryText:
-            "Find 2 nonprofits in the D.C./Maryland/Virginia area that would be good fits for projects with Hack4Impact-UMD.\n\nFor each nonprofit, provide:\n- Organization name\n- Two-sentence explanation of why they'd be a good fit",
-          placeholderText:
-            "Research local nonprofits that could benefit from technology solutions...",
-          maximumWordCount: 400,
+          questionText: `
+Please rank your preferences for specializations and provide reasoning for your ranking:
+`,
+          secondaryText: `
+- Finance specializations
+- Long-term outreach specialization
+- No specialization
+`,
+          placeholderText: "",
+          maximumWordCount: 300,
         },
-        {
-          questionId: "npo-experience",
-          questionType: QuestionType.LongAnswer,
-          optional: false,
-          questionText:
-            "Do you have any prior experience working with Nonprofit Organizations? If not, please put N/A.",
-          placeholderText:
-            "Describe any volunteer work or nonprofit involvement...",
-          maximumWordCount: 200,
-        },
-      ],
-    },
+      ]
+    }
   ],
 };

@@ -14,6 +14,7 @@ interface LongFormInputProps {
   minWordCount?: number;
   maxWordCount?: number;
   errorMessage?: string;
+  placeholderText?: string;
 }
 
 const LongFormInput: React.FC<LongFormInputProps> = ({
@@ -27,6 +28,7 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
   minWordCount,
   maxWordCount,
   errorMessage,
+  placeholderText = ""
 }) => {
   const wordCount = useMemo(() => {
     const words = value.trim().split(" ");
@@ -41,7 +43,7 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
         className,
       )}
     >
-      <span className="text-xl font-normal">
+      <span className="text-xl font-normal mb-2">
         {question}{" "}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
@@ -70,6 +72,7 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
+        placeholder={placeholderText}
       ></Textarea>
       <p className="text-xs mt-1 font-light">
         {wordCount} word{wordCount != 1 && "s"}

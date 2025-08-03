@@ -205,7 +205,7 @@ function StatusPage() {
   const { data: currentTimelineStep } = useTimelineStep();
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex grow flex-col">
       <div className="h-full bg-muted">
         <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8 rounded shadow">
           <h1 className="text-xl mt-10 mb-10 font-semibold">My Applications</h1>
@@ -214,9 +214,8 @@ function StatusPage() {
             <div className="flex gap-8">
               <button
                 onClick={() => setActiveTab("active")}
-                className={`relative pb-4 px-1 cursor-pointer ${
-                  activeTab === "active" ? "text-blue-500" : "text-gray-500"
-                }`}
+                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "active" ? "text-blue-500" : "text-gray-500"
+                  }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Active ({activeApplications.length})
@@ -226,9 +225,8 @@ function StatusPage() {
               </button>
               <button
                 onClick={() => setActiveTab("inactive")}
-                className={`relative pb-4 px-1 cursor-pointer ${
-                  activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
-                }`}
+                className={`relative pb-4 px-1 cursor-pointer ${activeTab === "inactive" ? "text-blue-500" : "text-gray-500"
+                  }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
                 Inactive ({inactiveApplications.length})
