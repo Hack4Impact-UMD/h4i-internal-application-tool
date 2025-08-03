@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 export default function ProfilePage() {
   const [user, setUser] = useState(useAuth().user);
   const editProfileRef = useRef<HTMLSpanElement>(null);
-  const [isHighlighted, setIsHighlighted] = useState(false);
+  const [isHighlighted] = useState(false);
 
   const navigate = useNavigate();
 
@@ -29,9 +29,9 @@ export default function ProfilePage() {
 
   const highlightEditProfile = () => {
     if (disabled && editProfileRef.current) {
-      editProfileRef.current.classList.add("bg-blue-300", "transition-colors");
+      editProfileRef.current.classList.add(highlightBackground, "transition-colors");
       setTimeout(() => {
-        editProfileRef.current?.classList.remove("bg-blue-300");
+        editProfileRef.current?.classList.remove(highlightBackground);
       }, 500);
     }
   };
