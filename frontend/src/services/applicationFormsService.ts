@@ -1,7 +1,8 @@
 import { collection, doc, getDoc, getDocs, where } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { db, API_URL } from "../config/firebase";
 import { ApplicationForm } from "../types/types";
 import { query } from "firebase/firestore";
+import axios from "axios";
 
 export const APPLICATION_FORMS_COLLECTION = "application-forms";
 
@@ -36,4 +37,9 @@ export async function getActiveForm(): Promise<ApplicationForm> {
   else {
     throw new Error("No active form!");
   }
+}
+
+export async function createApplicationForm(form: ApplicationForm): Promise<{ status: string; formId: string }> {
+  const res = await axios.post(API_URL + "/application/forms", form);
+  return res.data;
 }

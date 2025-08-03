@@ -243,5 +243,28 @@ router.put("/save/:respId", [isAuthenticated, hasRoles([PermissionRole.Applicant
 }
 );
 
+// TEMPORARY ENDPOINT - Remove after form upload is complete
+// No auth needed since this is one-time use and button will be removed
+router.post("/forms", async (req: Request, res: Response) => {
+  try {
+    const formData = req.body as ApplicationForm;
+    const formsCollection = db.collection(APPLICATION_FORMS_COLLECTION) as CollectionReference<ApplicationForm>;
+    
+    // Convert serialized dueDate to Firestore Timestamp
+    const dueDate = formData.dueDate as any;
+    const form = {
+      ...formData,
+      dueDate: new Timestamp(dueDate.seconds, dueDate.nanoseconds)
+    };
+    
+    await formsCollection.doc(form.id).set(form);
+    logger.info(`Created application form with ID: ${form.id}`);
+    
+    res.status(201).json({ status: "success", formId: form.id });
+  } catch (error) {
+    logger.error("Failed to create application form:", error);
+    res.status(400).send(error instanceof Error ? error.message : "Unknown error");
+  }
+});
 
 export default router;

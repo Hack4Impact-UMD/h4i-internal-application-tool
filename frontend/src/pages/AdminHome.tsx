@@ -5,11 +5,32 @@ import { useAuth } from "@/hooks/useAuth";
 import { PermissionRole } from "@/types/types";
 import { displayUserRoleName } from "@/utils/display";
 import { Link, useNavigate } from "react-router-dom";
+import { h4iApplicationForm } from "@/data/h4i-application-form";
+import { createApplicationForm } from "@/services/applicationFormsService";
+import { useState } from "react";
 
 export default function AdminHome() {
   const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
   const { user } = useAuth();
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+
+  const handleUploadForm = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to upload the Fall 2025 application form?\n\n" +
+      "This will create a new form with ID 'h4i-fall-2025-form' in Firestore with all the new interview questions and scoring weights."
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      setUploadStatus("Uploading...");
+      const result = await createApplicationForm(h4iApplicationForm);
+      setUploadStatus(`Success! Form uploaded with ID: ${result.formId}`);
+    } catch (error) {
+      setUploadStatus(`Error: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  };
 
   if (!user) return <Loading />;
 
@@ -82,6 +103,25 @@ export default function AdminHome() {
             >
               Form Validator
             </Button>
+          </div>
+          {/* TEMPORARY SECTION - Remove after form upload is complete */}
+          <div className="max-w-5xl w-full p-4 bg-white rounded-md">
+            <h1 className="text-xl">Upload H4I Application Form</h1>
+            <p className="text-muted-foreground">
+              Upload the new Hack4Impact application form to Firestore.
+            </p>
+            <Button
+              className="mt-4"
+              onClick={handleUploadForm}
+              disabled={uploadStatus === "Uploading..."}
+            >
+              {uploadStatus === "Uploading..." ? "Uploading..." : "Upload Form"}
+            </Button>
+            {uploadStatus && (
+              <p className={`mt-2 text-sm ${uploadStatus.startsWith("Error") ? "text-red-600" : "text-green-600"}`}>
+                {uploadStatus}
+              </p>
+            )}
           </div>
         </>
       )}
