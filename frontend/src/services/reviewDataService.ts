@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   setDoc,
@@ -16,6 +17,13 @@ import { db } from "../config/firebase";
 import { v4 as uuidv4 } from "uuid";
 
 export const REVIEW_DATA_COLLECTION = "review-data";
+
+export async function getReviewDataById(id: string) {
+  const reviewData = collection(db, REVIEW_DATA_COLLECTION);
+  const docRef = doc(reviewData, id);
+
+  return (await getDoc(docRef)).data() as ApplicationReviewData;
+}
 
 export async function getReviewDataForApplication(
   applicationResponseId: string,

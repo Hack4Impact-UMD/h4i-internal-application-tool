@@ -2,7 +2,7 @@ import { useState } from "react";
 import TextBox from "../../components/TextBox";
 import { Button } from "../../components/ui/button";
 import { useAuth } from "../../hooks/useAuth";
-import { validEmail, validPassword } from "../../utils/verification";
+import { validPassword } from "../../utils/verification";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
@@ -60,12 +60,6 @@ export default function LogInCard() {
     let valid = true;
     const errors = { ...formErrors };
 
-    if (!validEmail(formData.email)) {
-      valid = false;
-      const errorMessage = "Invalid Email.";
-      errors.email = errorMessage;
-      throwErrorToast(errorMessage);
-    }
     if (!validPassword(formData.password)) {
       valid = false;
       const errorMessage =

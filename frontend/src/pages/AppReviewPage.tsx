@@ -7,11 +7,9 @@ import ReviewCard from "../components/reviewer/ReviewCard";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import Loading from "@/components/Loading";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";
+import { useReviewData } from "@/hooks/useReviewData";
 
 const ApplicationPage: React.FC = () => {
-  //TODO: Some parts of this component should be moved to the form provider,
-  //including the timeline. Form provider should basically serve as the layout shell
-  // const location = useLocation();
   const navigate = useNavigate();
   const { sectionId, formId, responseId, reviewDataId } = useParams<{
     formId: string;
@@ -25,11 +23,18 @@ const ApplicationPage: React.FC = () => {
     isPending: responseLoading,
     error: responseError,
   } = useApplicationResponse(responseId);
+
   const {
     data: form,
     isPending: formLoading,
     error: formError,
   } = useApplicationForm(formId);
+
+  const {
+    data: reviewData,
+    isPending: reviewPending,
+    error: reviewError,
+  } = useReviewData(reviewDataId ?? "");
 
   const availableSections = useMemo(() => {
     return (
@@ -74,12 +79,13 @@ const ApplicationPage: React.FC = () => {
     );
   }, [response, currentSection]);
 
-  if (formLoading || responseLoading) return <Loading />;
-  if (formError || !form) return <p>Failed to fetch form...</p>;
-  if (responseError || !response) return <p>Failed to fetch response...</p>;
-
-  // const applicationResponseId = location.state?.applicationResponseId;
-  // const userId = location.state?.userId;
+  if (formLoading || responseLoading || reviewPending) return <Loading />;
+  if (formError || !form)
+    return <p>Failed to fetch form: {formError.message}</p>;
+  if (responseError || !response)
+    return <p>Failed to fetch response: {responseError?.message}</p>;
+  if (reviewError || !reviewData)
+    return <p>Failed to fetch response: {reviewError.message}</p>;
 
   if (!currentSection) {
     return (
@@ -162,8 +168,7 @@ const ApplicationPage: React.FC = () => {
             disabled={form.sections[0].sectionId === sectionId}
             onClick={handlePrevious}
           >
-            {" "}
-            Back{" "}
+            Back
           </Button>
         ) : (
           <div></div>
@@ -176,8 +181,7 @@ const ApplicationPage: React.FC = () => {
             }
             onClick={handleNext}
           >
-            {" "}
-            Next{" "}
+            Next
           </Button>
         ) : (
           <div></div>

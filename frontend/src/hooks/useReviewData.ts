@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { ApplicantRole, ApplicationReviewData } from "../types/types";
 import {
+  getReviewDataById,
   getReviewDataForApplicant,
   getReviewDataForApplicantRole,
   getReviewDataForApplication,
@@ -8,6 +9,14 @@ import {
   getReviewDataForReviewer,
 } from "../services/reviewDataService";
 import { useAuth } from "./useAuth";
+
+export function useReviewData(reviewDataId: string) {
+  return useQuery<ApplicationReviewData>({
+    queryKey: ["review-data", "id", reviewDataId],
+    enabled: !!reviewDataId,
+    queryFn: () => getReviewDataById(reviewDataId),
+  });
+}
 
 export function useReviewDataForApplicant(formId: string, applicantId: string) {
   return useQuery<ApplicationReviewData[]>({

@@ -150,7 +150,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="decision"
+                  path="decision/:responseId/:role"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.Applicant]}>
                       <DecisionPage />
@@ -284,7 +284,7 @@ function App() {
                   }
                 >
                   <Route
-                    path="review/f/:formId/:responseId/:sectionId/:reviewDataId" // TODO: change the routing to refer to an applicant + form, different provider
+                    path="review/f/:formId/:responseId/:sectionId/:reviewDataId"
                     element={<AppReviewPage />}
                   />
                 </Route>
