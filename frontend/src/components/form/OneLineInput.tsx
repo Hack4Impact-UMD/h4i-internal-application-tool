@@ -49,7 +49,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        placeholder={placeholderText ?? "Enter your response..."}
+        placeholder={placeholderText || "Enter your response..."}
       ></Input>
 
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
