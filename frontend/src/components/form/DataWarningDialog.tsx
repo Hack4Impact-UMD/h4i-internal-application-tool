@@ -18,7 +18,7 @@ export default function DataWarningDialog({
   open,
   onSubmit,
 }: DataWarningDialogProps) {
-  const [ buttonDisabled, setButtonDisabled ] = useState(true);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -32,11 +32,12 @@ export default function DataWarningDialog({
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-           ⚠️ Warning
-          </AlertDialogTitle>
+          <AlertDialogTitle>⚠️ Warning</AlertDialogTitle>
           <AlertDialogDescription>
-            Welcome to the first live run of Hack4Impact-UMD's Application Portal! This app is designed to autosave your responses. However, as this is our initial launch, there may be unforeseen issues. Backup your responses elsewhere (e.g. in Google Docs)... just in case!
+            Welcome to the first live run of Hack4Impact-UMD's Application
+            Portal! This app is designed to autosave your responses. However, as
+            this is our initial launch, there may be unforeseen issues. Backup
+            your responses elsewhere (e.g. in Google Docs)... just in case!
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

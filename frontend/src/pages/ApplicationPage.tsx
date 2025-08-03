@@ -13,7 +13,7 @@ const ApplicationPage: React.FC = () => {
   // const location = useLocation();
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
-  const [ dialogOpen, setDialogOpen ] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(true);
 
   const {
     form,
@@ -96,7 +96,10 @@ const ApplicationPage: React.FC = () => {
 
   return (
     <>
-      <DataWarningDialog open={dialogOpen} onSubmit={() => setDialogOpen(false)}/>
+      <DataWarningDialog
+        open={dialogOpen}
+        onSubmit={() => setDialogOpen(false)}
+      />
       <div className="flex flex-col items-center justify-center p-3">
         <div className="w-full max-w-3xl overflow-x-auto p-2">
           <Timeline
@@ -131,7 +134,8 @@ const ApplicationPage: React.FC = () => {
               <Button
                 className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
                 disabled={
-                  form.sections[form.sections.length - 1].sectionId === sectionId
+                  form.sections[form.sections.length - 1].sectionId ===
+                  sectionId
                 }
                 onClick={handleNext}
               >

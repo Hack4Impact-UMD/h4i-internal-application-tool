@@ -33,9 +33,8 @@ const ApplicationPage: React.FC = () => {
   const {
     data: reviewData,
     isPending: reviewPending,
-    error: reviewError
-  } = useReviewData(reviewDataId ?? "")
-
+    error: reviewError,
+  } = useReviewData(reviewDataId ?? "");
 
   const availableSections = useMemo(() => {
     return (
@@ -81,9 +80,12 @@ const ApplicationPage: React.FC = () => {
   }, [response, currentSection]);
 
   if (formLoading || responseLoading || reviewPending) return <Loading />;
-  if (formError || !form) return <p>Failed to fetch form: {formError.message}</p>;
-  if (responseError || !response) return <p>Failed to fetch response: {responseError?.message}</p>;
-  if (reviewError || !reviewData) return <p>Failed to fetch response: {reviewError.message}</p>;
+  if (formError || !form)
+    return <p>Failed to fetch form: {formError.message}</p>;
+  if (responseError || !response)
+    return <p>Failed to fetch response: {responseError?.message}</p>;
+  if (reviewError || !reviewData)
+    return <p>Failed to fetch response: {reviewError.message}</p>;
 
   if (!currentSection) {
     return (
