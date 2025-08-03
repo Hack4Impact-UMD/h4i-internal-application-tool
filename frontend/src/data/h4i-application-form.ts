@@ -217,7 +217,7 @@ CS classes are NOT a requirement for members, we take all majors!
           ],
         },
         {
-          questionId: "race-ethnicity-self-decribe",
+          questionId: "race-ethnicity-self-describe",
           questionType: QuestionType.ShortAnswer,
           optional: true,
           questionText:
