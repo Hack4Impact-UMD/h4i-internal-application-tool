@@ -54,7 +54,7 @@ export default function ForgotPassCard() {
     if (valid) {
       try {
         await sendPasswordResetEmail(auth, formData.email);
-        throwSuccessToast(`Send password reset email to ${formData.email}!`);
+        throwSuccessToast(`Sent password reset email to ${formData.email}!`);
         navigate("/login");
       } catch (err) {
         console.log(err);
