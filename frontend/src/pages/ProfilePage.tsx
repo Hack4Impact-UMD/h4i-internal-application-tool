@@ -7,13 +7,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { updateUser } from "@/services/userService";
 import { validEmail } from "@/utils/verification";
 import { sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { throwWarningToast } from "@/components/toasts/WarningToast";
+import { displayUserRoleName } from "@/utils/display";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(useAuth().user);
   const editProfileRef = useRef<HTMLSpanElement>(null);
-  const [isHighlighted] = useState(false);
 
   const navigate = useNavigate();
 
@@ -36,23 +37,17 @@ export default function ProfilePage() {
     }
   };
 
-  useEffect(() => {
-    if (isHighlighted && editProfileRef.current) {
-      editProfileRef.current.classList.add(highlightBackground);
-      return () => {
-        if (editProfileRef.current) {
-          editProfileRef.current.classList.remove(highlightBackground);
-        }
-      };
-    }
-  }, [isHighlighted]);
-
   return (
     <div className="min-h-screen w-full flex justify-center items-start bg-gray-50 py-10 px-4 sm:px-6">
       <div className="w-full max-w-screen-lg bg-white rounded-xl shadow p-6 sm:p-10 md:p-12">
         <div className="flex flex-col space-y-6">
-          <span className="font-bold text-lg mb-5">
+          <span className="font-bold text-lg mb-0">
             {user?.firstName + " " + user?.lastName}
+          </span>
+          <span className="font-bold text-md mb-5 text-gray-500">
+            {user?.role &&
+              "Permission Level: " + displayUserRoleName(user?.role)
+            }
           </span>
           <div className="flex flex-col mb-7">
             <hr className="bg-gray-500 mb-2"></hr>
@@ -62,8 +57,8 @@ export default function ProfilePage() {
               </span>
               <span
                 ref={editProfileRef}
-                className={`font-md text-md text-gray-500 underline cursor-pointer transition-colors ${isHighlighted ? highlightBackground : ''}`}
-                onClick={() => setDisabled(false)}
+                className={`font-md text-md text-gray-500 underline cursor-pointer transition-colors`}
+                onClick={() => setDisabled(!disabled)}
               >
                 Edit Profile
               </span>
@@ -146,6 +141,9 @@ export default function ProfilePage() {
                     return;
                   }
 
+                  setDisabled(true)
+                  throwWarningToast("Attempting to update profile...")
+
                   try {
                     const emailChanged = profileInputData.email !== user?.email;
 
@@ -157,22 +155,16 @@ export default function ProfilePage() {
 
                     setUser(updatedUser);
 
+                    throwSuccessToast("Profile name updated successfully!");
+
                     if (emailChanged && auth.currentUser) {
                       await auth.currentUser?.getIdToken(true);
                       await sendEmailVerification(auth.currentUser);
                       await auth.currentUser.reload();
 
-                      navigate("/verify", {
-                        state: {
-                          message:
-                            "We've sent a verification link to your new email address. Please check your inbox and verify your email.",
-                        },
-                      });
-                      setTimeout(() => window.location.reload(), 50);
+                      navigate("/verify");
                       return;
                     }
-
-                    throwSuccessToast("Profile updated successfully!");
                   } catch (error) {
                     throwErrorToast(
                       "Failed to update profile. Please try again.",
