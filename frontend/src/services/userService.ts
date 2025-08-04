@@ -75,18 +75,29 @@ export async function registerUser(
 export async function updateUser(
   email: string,
   firstName: string,
-  lastName: string,
-  password: string,
+  lastName: string
 ): Promise<UserProfile> {
   try {
-    const updatedUser = (await axios.post(API_URL + "/auth/update", {
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
-    })) as UserProfile;
+    const token = await auth.currentUser?.getIdToken();
+    if (!token) {
+      throw new Error("User must be authenticated to update profile");
+    }
 
-    return updatedUser;
+    const response = await axios.post(
+      API_URL + "/auth/update",
+      {
+        email,
+        firstName,
+        lastName,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data as UserProfile;
   } catch (error) {
     if (error instanceof AxiosError) {
       const errorMessage = `Failed to update user: ${error.message} (${error.response?.data})`;
@@ -97,6 +108,7 @@ export async function updateUser(
     }
   }
 }
+
 
 export async function loginUser(
   email: string,
