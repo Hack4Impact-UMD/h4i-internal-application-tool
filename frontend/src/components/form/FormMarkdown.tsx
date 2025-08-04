@@ -9,7 +9,12 @@ export default function FormMarkdown({
   if (!children) return <></>;
 
   return (
-    <div className={twMerge("mb-2.5 text-sm text-muted-foreground", className)}>
+    <div
+      className={twMerge(
+        "mb-2.5 prose prose text-muted-foreground max-w-none leading-snug prose-li:m-0",
+        className,
+      )}
+    >
       <Markdown
         components={{
           a: (opts) => (

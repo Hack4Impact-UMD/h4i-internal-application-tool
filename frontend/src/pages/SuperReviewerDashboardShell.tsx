@@ -6,7 +6,7 @@ export default function SuperReviewerDashboardShell() {
   const { formId } = useParams<{ formId: string }>();
 
   return (
-    <div className="w-full h-full bg-lightgray flex flex-col items-center p-2 py-4">
+    <div className="w-full grow bg-lightgray flex flex-col items-center p-2 py-4">
       <div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
         <div className="flex gap-2 flex-row items-center">
           <NavLink

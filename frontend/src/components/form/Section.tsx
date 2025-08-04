@@ -64,6 +64,7 @@ const Section: React.FC<SectionProps> = ({
                 onChange={(value) =>
                   onChangeResponse(question.questionId, value)
                 }
+                placeholderText={question.placeholderText}
               />
             ) : question.questionType === QuestionType.LongAnswer ? (
               <LongFormInput
@@ -78,6 +79,7 @@ const Section: React.FC<SectionProps> = ({
                 onChange={(value) =>
                   onChangeResponse(question.questionId, value)
                 }
+                placeholderText={question.placeholderText}
               />
             ) : (question as OptionQuestion).questionOptions &&
               question.questionType === QuestionType.MultipleChoice ? (

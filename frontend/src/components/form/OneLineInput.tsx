@@ -13,6 +13,7 @@ interface OneLineInputProps {
   maxWords?: number;
   disabled?: boolean;
   errorMessage?: string;
+  placeholderText?: string;
 }
 
 const OneLineInput: React.FC<OneLineInputProps> = ({
@@ -24,6 +25,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
   className = "",
   disabled,
   errorMessage,
+  placeholderText = "",
 }) => {
   return (
     <main
@@ -32,7 +34,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
         className,
       )}
     >
-      <span className="text-xl font-normal">
+      <span className="mb-2 text-xl font-normal">
         {question}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
@@ -47,7 +49,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        placeholder="Enter your response..."
+        placeholder={placeholderText || "Enter your response..."}
       ></Input>
 
       {errorMessage && <p className="text-red-600">{errorMessage}</p>}
