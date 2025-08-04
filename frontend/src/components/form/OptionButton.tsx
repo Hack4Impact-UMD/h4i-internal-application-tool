@@ -47,11 +47,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
   const textColor = optionDarkColor ?? (clicked ? "#ffffff" : "#202020B2");
 
   const circleOutlineColor = disabled ? "outline-gray-400" : "outline-black";
-  const innerCircleColor = disabled
-    ? "bg-gray-400"
-    : clicked
-      ? "bg-[#2969C4]"
-      : "bg-transparent";
+  const innerCircleColor = clicked ? "bg-[#2969C4]" : "bg-transparent";
   const checkColor = disabled ? "text-gray-400" : "text-blue-600";
 
   return (

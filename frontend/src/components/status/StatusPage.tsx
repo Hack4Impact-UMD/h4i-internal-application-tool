@@ -205,7 +205,7 @@ function StatusPage() {
   const { data: currentTimelineStep } = useTimelineStep();
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex grow flex-col">
       <div className="h-full bg-muted">
         <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8 rounded shadow">
           <h1 className="text-xl mt-10 mb-10 font-semibold">My Applications</h1>
