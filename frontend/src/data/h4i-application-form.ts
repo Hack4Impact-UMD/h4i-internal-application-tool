@@ -363,7 +363,7 @@ We consider applicants with all experience levels! You are not required to have 
           questionType: QuestionType.MultipleSelect,
           optional: false,
           questionText: "How did you hear about us?",
-          multipleSelect: false,
+          multipleSelect: true,
           questionOptions: [
             "Friend/Word of mouth",
             "Social media",
