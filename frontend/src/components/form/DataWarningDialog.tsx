@@ -45,7 +45,7 @@ export default function DataWarningDialog({
             onClick={() => onSubmit()}
             disabled={buttonDisabled}
           >
-            {buttonDisabled ? "Read the message" : "Take me to the app"}
+            {buttonDisabled ? "Read the message" : "Continue"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
