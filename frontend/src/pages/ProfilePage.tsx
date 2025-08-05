@@ -144,9 +144,20 @@ export default function ProfilePage() {
                   }
 
                   setDisabled(true);
-                  throwWarningToast("Attempting to update profile...");
 
                   try {
+                    const dataChanged = 
+                      profileInputData.email !== user?.email ||
+                      profileInputData.firstName !== user?.firstName ||
+                      profileInputData.lastName !== user?.lastName;
+
+                    if (!dataChanged) {
+                      throwWarningToast("No changes detected.");
+                      return;
+                    }
+
+                    throwWarningToast("Attempting to update profile...");
+                      
                     const emailChanged = profileInputData.email !== user?.email;
 
                     const updatedUser = await updateUser(
