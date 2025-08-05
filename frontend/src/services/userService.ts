@@ -75,7 +75,7 @@ export async function registerUser(
 export async function updateUser(
   email: string,
   firstName: string,
-  lastName: string
+  lastName: string,
 ): Promise<UserProfile> {
   try {
     const token = await auth.currentUser?.getIdToken();
@@ -94,7 +94,7 @@ export async function updateUser(
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     return response.data as UserProfile;
@@ -108,7 +108,6 @@ export async function updateUser(
     }
   }
 }
-
 
 export async function loginUser(
   email: string,

@@ -30,7 +30,10 @@ export default function ProfilePage() {
 
   const highlightEditProfile = () => {
     if (disabled && editProfileRef.current) {
-      editProfileRef.current.classList.add(highlightBackground, "transition-colors");
+      editProfileRef.current.classList.add(
+        highlightBackground,
+        "transition-colors",
+      );
       setTimeout(() => {
         editProfileRef.current?.classList.remove(highlightBackground);
       }, 500);
@@ -46,8 +49,7 @@ export default function ProfilePage() {
           </span>
           <span className="font-bold text-md mb-5 text-gray-500">
             {user?.role &&
-              "Permission Level: " + displayUserRoleName(user?.role)
-            }
+              "Permission Level: " + displayUserRoleName(user?.role)}
           </span>
           <div className="flex flex-col mb-7">
             <hr className="bg-gray-500 mb-2"></hr>
@@ -141,8 +143,8 @@ export default function ProfilePage() {
                     return;
                   }
 
-                  setDisabled(true)
-                  throwWarningToast("Attempting to update profile...")
+                  setDisabled(true);
+                  throwWarningToast("Attempting to update profile...");
 
                   try {
                     const emailChanged = profileInputData.email !== user?.email;

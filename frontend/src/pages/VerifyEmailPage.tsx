@@ -68,7 +68,7 @@ export default function VerifyEmailPage() {
           className="bg-blue hover:bg-blue/80 transition text-white font-bold py-2 px-4 rounded ml-3"
           onClick={() => window.location.reload()}
           disabled={sendMutation.isPending}
-        >        
+        >
           Refresh Page
         </Button>
       </div>
