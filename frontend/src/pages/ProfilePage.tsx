@@ -155,7 +155,7 @@ export default function ProfilePage() {
 
                     setUser(updatedUser);
 
-                    throwSuccessToast("Profile name updated successfully!");
+                    throwSuccessToast("Profile email updated successfully!");
 
                     if (emailChanged && auth.currentUser) {
                       await auth.currentUser?.getIdToken(true);
