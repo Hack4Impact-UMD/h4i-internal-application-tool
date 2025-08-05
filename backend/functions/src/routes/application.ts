@@ -95,13 +95,22 @@ function validateResponses(applicationResponse: ApplicationResponse, application
       }
 
       const responseWordsArr = question.response.toString().trim().split(" ")
-      if (metaData?.maximumWordCount && responseWordsArr.length > metaData?.maximumWordCount ||
-        metaData?.minimumWordCount && responseWordsArr.length < metaData?.minimumWordCount
-      ) {
+      const wordCount = responseWordsArr.length;
+      const min = metaData?.minimumWordCount ?? 0;
+      const max = metaData?.maximumWordCount ?? Infinity;
+
+      if (wordCount < min || wordCount > max) {
+        const diff = wordCount < min ? min - wordCount : wordCount - max;
+        const wordLabel = diff === 1 ? "word" : "words";
+        const message =
+          wordCount < min
+            ? `This response is too short. You are ${diff} ${wordLabel} below the minimum word count.`
+            : `This response is too long. You are ${diff} ${wordLabel} above the maximum word count.`;
+
         errors.push({
           sectionId: section.sectionId,
           questionId: question.questionId,
-          message: `Word count ${responseWordsArr.length} is out of range [${metaData.minimumWordCount || 0}, ${metaData.maximumWordCount || "∞"}]`
+          message,
         });
       }
     }
