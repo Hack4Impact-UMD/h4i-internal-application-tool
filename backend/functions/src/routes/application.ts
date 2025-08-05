@@ -94,8 +94,8 @@ function validateResponses(applicationResponse: ApplicationResponse, application
         })
       }
 
-      const responseWordsArr = question.response.toString().trim().split(" ")
-      const wordCount = responseWordsArr.length;
+      const responseText = question.response.toString().trim();
+      const wordCount = responseText === "" ? 0 : responseText.split(/\s+/).length;
       const min = metaData?.minimumWordCount ?? 0;
       const max = metaData?.maximumWordCount ?? Infinity;
 
