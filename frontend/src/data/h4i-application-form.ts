@@ -360,7 +360,7 @@ We consider applicants with all experience levels! You are not required to have 
         },
         {
           questionId: "how-did-you-hear",
-          questionType: QuestionType.MultipleChoice,
+          questionType: QuestionType.MultipleSelect,
           optional: false,
           questionText: "How did you hear about us?",
           multipleSelect: false,
