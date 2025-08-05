@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import Loading from "../components/Loading";
+import Loading from "../../../components/Loading";
 import useSearch from "@/hooks/useSearch";
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";

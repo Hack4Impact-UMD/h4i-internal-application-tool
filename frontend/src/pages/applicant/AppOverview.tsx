@@ -8,7 +8,7 @@ import { ApplicationStatus } from "@/types/types";
 import FormMarkdown from "@/components/form/FormMarkdown";
 import { Timestamp } from "firebase/firestore";
 
-const Overview: React.FC = () => {
+const AppOverview: React.FC = () => {
   const {
     data: form,
     isPending: formLoading,
@@ -105,4 +105,4 @@ const Overview: React.FC = () => {
   );
 };
 
-export default Overview;
+export default AppOverview;

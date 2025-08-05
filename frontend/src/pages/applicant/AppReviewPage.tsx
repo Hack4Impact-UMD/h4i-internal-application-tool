@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
-import Section from "../components/form/Section";
-import Timeline from "../components/status/Timeline"; // Import Timeline component
-import { Button } from "../components/ui/button";
+import Section from "../../components/form/Section";
+import Timeline from "../../components/status/Timeline"; // Import Timeline component
+import { Button } from "../../components/ui/button";
 import { useMemo } from "react";
-import ReviewCard from "../components/reviewer/ReviewCard";
+import ReviewCard from "../../components/reviewer/ReviewCard";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import Loading from "@/components/Loading";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";

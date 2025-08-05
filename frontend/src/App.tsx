@@ -15,59 +15,59 @@ import Loading from "./components/Loading";
 const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const StatusPage = lazy(() => import("./components/status/StatusPage"));
 const DecisionPage = lazy(() => import("./components/status/DecisionPage"));
-const SignUp = lazy(() => import("./pages/SignUp/SignUp"));
-const LogIn = lazy(() => import("./pages/LogIn/LogIn"));
-const ForgotPass = lazy(() => import("./pages/ForgotPass/ForgotPass"));
-const ResetPassCard = lazy(() => import("./pages/ResetPass/ResetPassCard"));
+const SignUp = lazy(() => import("./pages/signup/SignUp"));
+const LogIn = lazy(() => import("./pages/login/LogIn"));
+const ForgotPass = lazy(() => import("./pages/forgotpass/ForgotPass"));
+const ResetPassCard = lazy(() => import("./pages/resetpass/ResetPassCard"));
 const Layout = lazy(() => import("./pages/Layout"));
-const ApplicationPage = lazy(() => import("./pages/ApplicationPage"));
-const Overview = lazy(() => import("./pages/Overview/Overview"));
-const AppSubmitted = lazy(() => import("./pages/AppSubmitted/AppSubmitted"));
-const AppSubmitPage = lazy(() => import("./pages/AppSubmitPage"));
-const AppReviewPage = lazy(() => import("./pages/AppReviewPage"));
-const UserRolePage = lazy(() => import("./pages/UserRolePage"));
+const ApplicationPage = lazy(() => import("./pages/applicant/ApplicationPage"));
+const AppOverview = lazy(() => import("./pages/applicant/AppOverview"));
+const AppSubmitted = lazy(() => import("./pages/applicant/appsubmitted/AppSubmitted"));
+const AppSubmitPage = lazy(() => import("./pages/applicant/AppSubmitPage"));
+const AppReviewPage = lazy(() => import("./pages/applicant/AppReviewPage"));
+const UserRolePage = lazy(() => import("./pages/super-reviewer/dashboards/UserRolePage"));
 const ReviewerApplicationsDashboard = lazy(
-  () => import("./pages/ReviewerApplicationsDashboard"),
+  () => import("./pages/reviewer/ReviewerApplicationsDashboard"),
 );
-const AdminHome = lazy(() => import("./pages/AdminHome"));
+const AdminHome = lazy(() => import("./pages/super-reviewer/AdminHome"));
 const SuperReviewerDashboardShell = lazy(
-  () => import("./pages/SuperReviewerDashboardShell"),
+  () => import("./pages/super-reviewer/dashboards/SuperReviewerDashboardShell"),
 );
 const SuperReviewerApplicationsDashboard = lazy(
   () => import("./components/dor/SuperReviewerApplicationsDashboard"),
 );
 const AssignedReviewsPage = lazy(() =>
-  import("./pages/AssignedReviewsPage").then((module) => ({
+  import("./pages/super-reviewer/dashboards/AssignedReviewsPage").then((module) => ({
     default: module.AssignedReviewsPage,
   })),
 );
 const AssignedApplicationsPage = lazy(() =>
-  import("./pages/AssignedApplicationsPage").then((module) => ({
+  import("./pages/super-reviewer/dashboards/AssignedApplicationsPage").then((module) => ({
     default: module.AssignedApplicationsPage,
   })),
 );
-const AppRevisitPage = lazy(() => import("./pages/AppRevisitPage"));
+const AppRevisitPage = lazy(() => import("./pages/applicant/AppRevisitPage"));
 const QualifiedApplicationsDashboard = lazy(
-  () => import("./pages/QualifiedApplicationsDashboard"),
+  () => import("./pages/super-reviewer/dashboards/QualifiedApplicationsDashboard"),
 );
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-const ViewApplicationPage = lazy(() => import("./pages/ViewApplicationPage"));
+const ViewApplicationPage = lazy(() => import("./pages/super-reviewer/ViewApplicationPage"));
 const ReviewerDashboardShell = lazy(
-  () => import("./pages/ReviewerDashboardShell"),
+  () => import("./pages/reviewer/ReviewerDashboardShell"),
 );
 const SuperReviewerReviewersDashboard = lazy(
-  () => import("./pages/SuperReviewerReviewersDashboard"),
+  () => import("./pages/super-reviewer/dashboards/SuperReviewerReviewersDashboard"),
 );
 const ReviewerInterviewsDashboard = lazy(
-  () => import("./pages/ReviewerInterviewsDashboard"),
+  () => import("./pages/reviewer/ReviewerInterviewsDashboard"),
 );
 const FormValidationPage = lazy(() =>
-  import("./pages/FormValidationPage").then((module) => ({
+  import("./pages/super-reviewer/FormValidationPage").then((module) => ({
     default: module.FormValidationPage,
   })),
 );
 const SuperReviewerInterviewersDashboard = lazy(
-  () => import("./pages/SuperReviewerInterviewersDashboard"),
+  () => import("./pages/super-reviewer/dashboards/SuperReviewerInterviewersDashboard"),
 );
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 
@@ -99,7 +99,7 @@ function App() {
                   index
                   element={
                     <RequireAuth>
-                      <Overview />
+                      <AppOverview />
                     </RequireAuth>
                   }
                 ></Route>

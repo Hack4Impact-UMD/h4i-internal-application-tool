@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
-import Section from "../components/form/Section";
-import Timeline from "../components/status/Timeline"; // Import Timeline component
-import useForm from "../hooks/useForm";
-import { Button } from "../components/ui/button";
+import Section from "../../components/form/Section";
+import Timeline from "../../components/status/Timeline"; // Import Timeline component
+import useForm from "../../hooks/useForm";
+import { Button } from "../../components/ui/button";
 import { useMemo, useState } from "react";
 import DataWarningDialog from "@/components/form/DataWarningDialog";
 import { throwWarningToast } from "@/components/toasts/WarningToast";

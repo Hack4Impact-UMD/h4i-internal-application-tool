@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Button } from "../components/ui/button";
+import { Button } from "../../../components/ui/button";
 import {
   ApplicantRole,
   ApplicationResponse,
@@ -12,7 +12,7 @@ import {
 } from "@/utils/display";
 import { useAllApplicationResponsesForForm } from "@/hooks/useApplicationResponses";
 import { useParams } from "react-router-dom";
-import Loading from "../components/Loading";
+import Loading from "../../../components/Loading";
 import useSearch from "@/hooks/useSearch";
 import { useQuery } from "@tanstack/react-query";
 import { QualifiedApplicationsTable } from "@/components/dor/QualifiedDashboard";
