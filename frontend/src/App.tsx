@@ -33,8 +33,8 @@ const AdminHome = lazy(() => import("./pages/super-reviewer/AdminHome"));
 const SuperReviewerDashboardShell = lazy(
   () => import("./pages/super-reviewer/dashboards/SuperReviewerDashboardShell"),
 );
-const SuperReviewerApplicationsDashboard = lazy(
-  () => import("./components/dor/SuperReviewerApplicationsDashboard"),
+const UnderReviewDashboard = lazy(
+  () => import("./pages/super-reviewer/dashboards/UnderReviewDashboard"),
 );
 const AssignedReviewsPage = lazy(() =>
   import("./pages/super-reviewer/dashboards/AssignedReviewsPage").then((module) => ({
@@ -181,7 +181,7 @@ function App() {
                 >
                   <Route
                     path="dashboard/:formId/all"
-                    element={<SuperReviewerApplicationsDashboard />}
+                    element={<UnderReviewDashboard />}
                   />
                   <Route
                     path="dashboard/:formId/qualified"

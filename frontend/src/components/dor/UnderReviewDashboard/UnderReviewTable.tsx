@@ -1,7 +1,6 @@
 import {
   ApplicantRole,
   ApplicationResponse,
-  ApplicationReviewData,
   AppReviewAssignment,
   InternalApplicationStatus,
   ReviewerUserProfile,
@@ -11,46 +10,26 @@ import {
   createColumnHelper,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { useCallback, useMemo, useState } from "react";
-import { DataTable } from "../DataTable";
-import { Button } from "../ui/button";
+import { useMemo, useState } from "react";
+import { DataTable } from "../../DataTable";
+import { Button } from "../../ui/button";
 import {
   useMutation,
-  useQueries,
-  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { getApplicantById } from "@/services/applicantService";
 import {
   getReviewDataForAssignment,
-  getReviewDataForResponseRole,
 } from "@/services/reviewDataService";
-import { calculateReviewScore } from "@/utils/scores";
-import { getUserById } from "@/services/userService";
 import {
   assignReview,
-  getReviewAssignments,
-  getReviewAssignmentsForApplication,
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { EllipsisVertical } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { throwSuccessToast } from "../../toasts/SuccessToast";
+import { throwErrorToast } from "../../toasts/ErrorToast";
+import ApplicantRolePill from "../../role-pill/RolePill";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "../ui/command";
-import { useReviewersForRole } from "@/hooks/useReviewers";
-import Spinner from "../Spinner";
-import { useNavigate, useParams } from "react-router-dom";
-import { throwSuccessToast } from "../toasts/SuccessToast";
-import { throwErrorToast } from "../toasts/ErrorToast";
-import ApplicantRolePill from "../role-pill/RolePill";
-import {
-  getApplicationStatusForResponseRole,
   updateApplicationStatus,
 } from "@/services/statusService";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -59,8 +38,10 @@ import {
   DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import SortableHeader from "../tables/SortableHeader";
+} from "../../ui/dropdown-menu";
+import SortableHeader from "../../tables/SortableHeader";
+import { ApplicationRow, useRows } from "./useRows";
+import { ReviewerSelect } from "./ReviewerSelect";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -69,317 +50,6 @@ type SuperReviewerApplicationsTableProps = {
   roleFilter: "all" | ApplicantRole;
   formId: string;
 };
-
-type ApplicationRow = {
-  index: number;
-  applicant: {
-    name: string;
-    id: string;
-  };
-  responseId: string;
-  role: ApplicantRole;
-  reviews: {
-    assigned: number;
-    completed: number;
-    averageScore: number;
-    assignments: AppReviewAssignment[];
-    reviewData: ApplicationReviewData[];
-  };
-  reviewers: {
-    assigned: ReviewerUserProfile[];
-  };
-  assignments: AppReviewAssignment[];
-  status: InternalApplicationStatus | undefined;
-};
-
-type ReviewerSelectProps = {
-  onAdd: (reviewer: ReviewerUserProfile) => void;
-  onDelete: (
-    reviewer: ReviewerUserProfile,
-    assignment: AppReviewAssignment,
-  ) => void;
-  role: ApplicantRole;
-  reviewers: ReviewerUserProfile[];
-  assignments: AppReviewAssignment[];
-  responseId: string;
-  disabled?: boolean;
-  reviews: ApplicationReviewData[];
-};
-
-type ReviewerSearchPopoverProps = {
-  role: ApplicantRole;
-  onSelect: (reviewer: ReviewerUserProfile) => void;
-  responseId: string;
-};
-
-function ReviewerSearchPopover({
-  role,
-  responseId,
-  onSelect,
-}: ReviewerSearchPopoverProps) {
-  const { formId } = useParams<{ formId: string }>();
-
-  const { data: reviewers, isPending, error } = useReviewersForRole(role);
-  const assignments = useQueries({
-    queries:
-      reviewers?.map((reviewer) => ({
-        queryKey: ["assignments", "id", formId!, reviewer.id],
-        queryFn: () => getReviewAssignments(formId!, reviewer.id),
-      })) ?? [],
-  });
-
-  const validReviewers = useMemo(() => {
-    return reviewers?.filter((_, index) => {
-      const query = assignments[index];
-
-      if (query.data) {
-        const reviewerAssignments = query.data;
-        return !reviewerAssignments.find(
-          (a) => a.applicationResponseId == responseId && a.forRole == role,
-        );
-      } else {
-        return true;
-      }
-    });
-  }, [reviewers, assignments, responseId]);
-
-  if (isPending)
-    return (
-      <div className="flex items-center justify-center p-2 w-full">
-        <Spinner />
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className="flex items-center justify-center p-2 w-full">
-        <p>Failed to fetch reviewers: {error.message}</p>
-      </div>
-    );
-
-  return (
-    <Command>
-      <CommandInput placeholder="Search Reviewers..." />
-      <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup>
-          {validReviewers
-            ?.filter((r) => reviewers?.find((x) => x.id == r.id))
-            .map((reviewer) => {
-              const index = reviewers!.findIndex((r) => r.id === reviewer.id);
-              return (
-                <CommandItem
-                  key={reviewer.id}
-                  value={`${reviewer.firstName} ${reviewer.lastName}`}
-                  className="cursor-pointer flex flex-col gap-1 items-start"
-                  onSelect={() => onSelect(reviewer)}
-                >
-                  <p>
-                    {reviewer.firstName} {reviewer.lastName}{" "}
-                    {assignments[index].isPending ? (
-                      <Spinner className="size-3 inline ml-2" />
-                    ) : assignments[index].error ? (
-                      "N/A"
-                    ) : (
-                      `(${assignments[index].data?.length ?? "N/A"})`
-                    )}
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {reviewer.applicantRolePreferences.map((role) => (
-                      <ApplicantRolePill
-                        key={role}
-                        role={role}
-                        className="text-xs"
-                      />
-                    ))}
-                  </div>
-                </CommandItem>
-              );
-            })}
-        </CommandGroup>
-      </CommandList>
-    </Command>
-  );
-}
-
-function ReviewerSelect({
-  onAdd,
-  onDelete,
-  role,
-  reviewers,
-  responseId,
-  disabled = false,
-  assignments,
-  reviews,
-}: ReviewerSelectProps) {
-  const [showPopover, setShowPopover] = useState(false);
-
-  const complete = useCallback(
-    (reviewer: ReviewerUserProfile) => {
-      return reviews.find(
-        (review) =>
-          review.submitted &&
-          review.reviewerId === reviewer.id &&
-          review.forRole === role,
-      );
-    },
-    [reviews, role],
-  );
-
-  return (
-    <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
-      {reviewers.map((reviewer, index) => (
-        <div
-          key={reviewer.id}
-          className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(reviewer) ? "bg-green-200 text-green-800 border-green-100" : "bg-muted"}`}
-        >
-          <span className="text-sm">
-            {reviewer.firstName} {reviewer.lastName}
-          </span>
-          <Button
-            disabled={disabled}
-            variant="ghost"
-            className="size-3 hover:bg-transparent"
-            onClick={() => onDelete(reviewer, assignments[index])}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-3"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18 18 6M6 6l12 12"
-              />
-            </svg>
-          </Button>
-        </div>
-      ))}
-      <Popover open={showPopover} onOpenChange={setShowPopover}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="default"
-            className="rounded-full text-sm h-7 font-normal p-0"
-            disabled={disabled}
-          >
-            Assign
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-3"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="p-0 max-h-32">
-          <ReviewerSearchPopover
-            responseId={responseId}
-            role={role}
-            onSelect={onAdd}
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-}
-function useRows(
-  pageIndex: number,
-  applications: ApplicationResponse[],
-  rowCount: number,
-  formId: string,
-) {
-  return useQuery({
-    queryKey: ["all-apps-rows", pageIndex, applications],
-    placeholderData: (prev) => prev,
-    queryFn: async () => {
-      return Promise.all(
-        applications
-          .slice(
-            pageIndex * rowCount,
-            Math.min(applications.length, (pageIndex + 1) * rowCount),
-          )
-          .map(async (app, index) => {
-            const user = await getApplicantById(app.userId);
-            const reviews = await getReviewDataForResponseRole(
-              formId,
-              app.id,
-              app.rolesApplied[0],
-            );
-            const assignments = (
-              await getReviewAssignmentsForApplication(app.id)
-            ).filter((a) => a.forRole === app.rolesApplied[0]);
-
-            const completedReviews = reviews.filter((r) => r.submitted).length;
-            const avgScore =
-              completedReviews == 0
-                ? 0
-                : (
-                    await Promise.all(
-                      reviews
-                        .filter((r) => r.submitted)
-                        .map(async (r) => await calculateReviewScore(r)),
-                    )
-                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
-            let status: InternalApplicationStatus | undefined;
-
-            try {
-              status = await getApplicationStatusForResponseRole(
-                app.id,
-                app.rolesApplied[0],
-              );
-            } catch (error) {
-              console.log(
-                `Failed to fetch application status for application ${app.id}-${app.rolesApplied[0]}: ${error}`,
-              );
-              status = undefined;
-            }
-            const row: ApplicationRow = {
-              index: 1 + pageIndex * rowCount + index,
-              applicant: {
-                id: user.id,
-                name: `${user.firstName} ${user.lastName}`,
-              },
-              responseId: app.id,
-              role: app.rolesApplied[0], //These have already been expanded into their separate roles
-              reviews: {
-                assigned: assignments.length,
-                completed: reviews.filter((r) => r.submitted).length,
-                assignments: assignments,
-                averageScore: avgScore,
-                reviewData: reviews,
-              },
-              reviewers: {
-                assigned: await Promise.all(
-                  assignments.map(
-                    async (assignment) =>
-                      (await getUserById(
-                        assignment.reviewerId,
-                      )) as ReviewerUserProfile,
-                  ),
-                ),
-              },
-              assignments: assignments,
-              status: status,
-            };
-
-            return row;
-          }),
-      );
-    },
-  });
-}
 
 export default function SuperReviewerApplicationsTable({
   applications,

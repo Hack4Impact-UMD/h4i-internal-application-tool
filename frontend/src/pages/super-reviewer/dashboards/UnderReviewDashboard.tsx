@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../../components/ui/button";
 import {
   ApplicantRole,
   ApplicationResponse,
@@ -12,11 +12,11 @@ import {
 } from "@/utils/display";
 import { useAllApplicationResponsesForForm } from "@/hooks/useApplicationResponses";
 import { useParams } from "react-router-dom";
-import Loading from "../Loading";
-import SuperReviewerApplicationsTable from "./SuperReviewerApplicationsTable";
+import Loading from "../../../components/Loading";
+import { UnderReviewTable } from "@/components/dor/UnderReviewDashboard";
 import useSearch from "@/hooks/useSearch";
 
-export default function SuperReviewerApplicationsDashboard() {
+export default function UnderReviewDashboard() {
   const { formId } = useParams<{ formId: string }>();
   const [roleFilter, setRoleFilter] = useState<"all" | ApplicantRole>("all");
 
@@ -91,7 +91,7 @@ export default function SuperReviewerApplicationsDashboard() {
           );
         })}
       </div>
-      <SuperReviewerApplicationsTable
+      <UnderReviewTable
         applications={expandedSubmittedApps}
         formId={formId}
         search={search}
