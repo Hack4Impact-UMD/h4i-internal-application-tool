@@ -234,17 +234,17 @@ CS classes are NOT a requirement for members, we take all majors!
 
 At Hack4Impact-UMD, there are three types of teams: project teams, bootcamp, and the sourcing team. Project teams work directly with our nonprofit partners to create products to help the community; these teams consists of Product Managers (PMs), Tech Leads, Designers, and Engineers. On the other hand, bootcamp is for students who are interested in Hack4Impact's mission but need experience before they join a project team. The sourcing team reaches out to non-profit organizations to secure projects for Hack4Impact-UMD. 
 
-**Project Teams**
+**🫂 Project Teams**
 
 Project teams work with real non-profit partners, creating solutions for any technical needs that our partners have. It's important to us when forming teams to find people who have the capacity to commit to the project for the whole semester. Otherwise, it's unfair to the teams and the partners. Our project teams practice the agile software development methodology, and project team members are expected to fulfil their commitments made during each sprint. Our workflow involves two week sprints, weekly meetings with your team, doing your own project tasks during the week, and monthly chapter wide meetings. The time commitment is around 5 hours a week.
 
-**Bootcamp**
+**🥾 Bootcamp**
 
 Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
 
-**Public Relations & Outreach Team**
+**🗣️ Public Relations & Outreach Team**
 
-**Public Relations & Outreach (PR&O)** is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
+Public Relations & Outreach (PR&O) is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **📢 Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **📱 Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
 
 **Member Responsibilities**
 
