@@ -232,7 +232,7 @@ CS classes are NOT a requirement for members, we take all majors!
       description: `
 **About Hack4Impact-UMD Teams & Structure**
 
-At Hack4Impact-UMD, there are three types of teams: project teams, bootcamp, and the sourcing team. Project teams work directly with our nonprofit partners to create products to help the community; these teams consists of Product Managers (PMs), Tech Leads, Designers, and Engineers. On the other hand, bootcamp is for students who are interested in Hack4Impact's mission but need experience before they join a project team. The sourcing team reaches out to non-profit organizations to secure projects for Hack4Impact-UMD. 
+At Hack4Impact-UMD, there are three types of teams: project teams, bootcamp, and the sourcing team. Project teams work directly with our nonprofit partners to create products to help the community; these teams consists of 🤝 Product Managers (PMs), 🤖 Tech Leads, 🎨 Designers, and ⚙️ Engineers. On the other hand, bootcamp is for students who are interested in Hack4Impact's mission but need experience before they join a project team. The sourcing team reaches out to non-profit organizations to secure projects for Hack4Impact-UMD. 
 
 **🫂 Project Teams**
 
