@@ -200,7 +200,7 @@ export default function FormProvider() {
     >
       <div className="w-full flex flex-row p-2 items-center justify-center">
         <div className="w-full max-w-3xl flex flex-row items-center">
-          <div className="grow flex">
+          <div className="grow">
             <div
               className={`w-fit ${saveMutation.isError ? "bg-red-100" : "bg-lightblue"} rounded-full px-2 text-blue`}
             >
@@ -219,11 +219,6 @@ export default function FormProvider() {
               ) : (
                 <p>Form not yet saved!</p>
               )}
-            </div>
-            <div
-              className={`w-fit text-[#402C1B] rounded-full px-2 bg-[#FEF9C3] ml-1`}
-            >
-              <p>Remember to backup your application!</p>
             </div>
           </div>
           <Button
