@@ -761,7 +761,7 @@ Provide the link to your completed assessment repo here (e.g. https://github.com
         {
           questionId: "technical-assessment-comments",
           questionType: QuestionType.LongAnswer,
-          optional: false,
+          optional: true,
           questionText: "Comments/Notes",
           placeholderText: "",
           maximumWordCount: 300,
