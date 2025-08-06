@@ -240,7 +240,7 @@ Project teams work with real non-profit partners, creating solutions for any tec
 
 **🥾 Bootcamp**
 
-Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
+Bootcamp essentially teaches members the necessary skillset to join a project team. Students will learn web development skills starting from basic HTML, JavaScript, and CSS, and then build up to more complicated tools like Firebase, React, and Node.js. The goal is for members to complete bootcamp and then have the necessary skills to pass a technical assessment and join a project team the following semester. The bootcamp is mainly focused on developing technical skills, but there are opportunities to learn about other roles including Designer and Project Manager. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-7 hours a week.
 
 **🗣️ Public Relations & Outreach Team**
 
