@@ -154,7 +154,15 @@ body,
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-@layer base {}
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  .style-links a {
+    @apply underline text-blue;
+  }
+}
 
 @layer utilities {
 
