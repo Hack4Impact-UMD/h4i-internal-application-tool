@@ -315,7 +315,7 @@ We consider applicants with all experience levels! You are not required to have 
           questionText:
             "What about Hack4Impact-UMD drove you to apply, and what makes us stand out to you?",
           placeholderText: "Tell us what attracted you to our organization...",
-          maximumWordCount: 300,
+          minimumWordCount: 400,
         },
         {
           questionId: "social-initiative",

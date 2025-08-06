@@ -1,0 +1,17 @@
+[
+	{
+		"origin": [
+			"https://h4i-applications.web.app",
+			"https://apply.umd.hack4impact.org",
+			"http://localhost:5173"
+		],
+		"method": [
+			"DELETE",
+			"GET",
+			"HEAD",
+			"POST",
+			"PUT"
+		],
+		"maxAgeSeconds": 3600
+	}
+]
