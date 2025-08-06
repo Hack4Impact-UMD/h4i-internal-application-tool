@@ -143,7 +143,7 @@ export default function SignUpCard() {
       <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
         <h1 className="text-3xl font-bold">Create an Account</h1>
         <h3 className="text-lg text-darkgray">
-          Lets get started by filling out your information below
+          Let's get started by filling out your information below
         </h3>
       </div>
 

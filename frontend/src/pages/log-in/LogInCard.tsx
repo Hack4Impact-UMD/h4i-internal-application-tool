@@ -112,7 +112,7 @@ export default function LogInCard() {
       <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
         <h1 className="text-3xl font-bold text-black">Log In</h1>
         <h3 className="text-lg text-darkgray">
-          Lets get started by filling out your information below
+          Let's get started by filling out your information below
         </h3>
       </div>
       <TextBox
@@ -147,7 +147,7 @@ export default function LogInCard() {
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-gray-500 mt-1">
-          Dont have an account?{" "}
+          Don't have an account?{" "}
           <a href="/signup" className="text-blue">
             Create account
           </a>
