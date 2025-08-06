@@ -46,6 +46,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
 
   const textColor = optionDarkColor ?? (clicked ? "#ffffff" : "#202020B2");
 
+  const containerShapeClass = buttonType === 'choice' ? 'rounded-full' : 'rounded-xs';
   const circleOutlineColor = disabled ? "outline-gray-400" : "outline-black";
   const innerCircleColor = clicked ? "bg-[#2969C4]" : "bg-transparent";
   const checkColor = disabled ? "text-gray-400" : "text-blue-600";
@@ -68,7 +69,8 @@ const OptionButton: React.FC<OptionButtonProps> = ({
       <div className="relative flex items-center justify-center">
         <div
           className={twMerge(
-            "absolute rounded-xs bg-white outline h-4 w-4 flex items-center justify-center",
+            "absolute bg-white outline h-4 w-4 flex items-center justify-center",
+            containerShapeClass, // Use the variable to set the shape
             circleOutlineColor,
           )}
         ></div>
