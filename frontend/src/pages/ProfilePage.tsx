@@ -7,12 +7,10 @@ import { updateUser } from "@/services/userService";
 import { validEmail } from "@/utils/verification";
 import {
   getAuth,
-  sendEmailVerification,
   sendPasswordResetEmail,
-  updateEmail,
+  verifyBeforeUpdateEmail,
 } from "firebase/auth";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 import { displayUserRoleName } from "@/utils/display";
 
@@ -20,8 +18,6 @@ export default function ProfilePage() {
   const [user, setUser] = useState(useAuth().user);
   const auth = getAuth();
   const editProfileRef = useRef<HTMLSpanElement>(null);
-
-  const navigate = useNavigate();
 
   const [profileInputData, setProfileInputData] = useState({
     firstName: user?.firstName || "",
@@ -44,6 +40,38 @@ export default function ProfilePage() {
       }, 500);
     }
   };
+
+  useEffect(() => {
+    const reconcileEmail = async () => {
+      if (!auth.currentUser) {
+        return;
+      }
+      await auth.currentUser.reload();
+      const freshEmail = auth.currentUser.email;
+      if (!freshEmail) {
+        return;
+      }
+
+      if (freshEmail !== user?.email) {
+        try {
+          const updatedUser = await updateUser(
+            freshEmail,
+            profileInputData.firstName,
+            profileInputData.lastName,
+          );
+          setUser(updatedUser);
+          setProfileInputData((prev) => ({ ...prev, email: freshEmail }));
+          throwSuccessToast(`${freshEmail} verified!`);
+        } catch (e) {
+          console.error("Failed to sync verified email:", e);
+        }
+      } else {
+        setProfileInputData((prev) => ({ ...prev, email: freshEmail }));
+      }
+    };
+
+    reconcileEmail();
+  }, []);
 
   return (
     <div className="min-h-screen w-full flex justify-center items-start bg-gray-50 py-10 px-4 sm:px-6">
@@ -151,25 +179,39 @@ export default function ProfilePage() {
                   setDisabled(true);
 
                   try {
-                    const dataChanged =
-                      profileInputData.email !== user?.email ||
+                    const nameChanged =
                       profileInputData.firstName !== user?.firstName ||
                       profileInputData.lastName !== user?.lastName;
 
-                    if (!dataChanged) {
+                    const emailChanged = profileInputData.email !== user?.email;
+
+                    if (!nameChanged && !emailChanged) {
                       throwWarningToast("No changes detected.");
                       return;
                     }
 
                     throwWarningToast("Attempting to update profile...");
 
-                    const emailChanged = profileInputData.email !== user?.email;
+                    if (nameChanged) {
+                      const updatedUser = await updateUser(
+                        user?.email ?? "",
+                        profileInputData.firstName,
+                        profileInputData.lastName,
+                      );
+
+                      setUser(updatedUser);
+                      throwSuccessToast("Profile name updated successfully!");
+                    }
 
                     if (emailChanged && auth.currentUser) {
                       try {
-                        await updateEmail(
+                        await verifyBeforeUpdateEmail(
                           auth.currentUser,
                           profileInputData.email,
+                        );
+
+                        throwWarningToast(
+                          `Please check ${profileInputData.email} to update your email address and reload the page.`,
                         );
                       } catch (error) {
                         throwErrorToast(
@@ -178,24 +220,6 @@ export default function ProfilePage() {
                         setDisabled(false);
                         return;
                       }
-                    }
-
-                    const updatedUser = await updateUser(
-                      profileInputData.email,
-                      profileInputData.firstName,
-                      profileInputData.lastName,
-                    );
-
-                    setUser(updatedUser);
-                    throwSuccessToast("Profile updated successfully!");
-
-                    if (emailChanged && auth.currentUser) {
-                      await auth.currentUser.getIdToken(true);
-                      await sendEmailVerification(auth.currentUser);
-                      await auth.currentUser.reload();
-
-                      navigate("/verify");
-                      return;
                     }
                   } catch (error) {
                     throwErrorToast(
