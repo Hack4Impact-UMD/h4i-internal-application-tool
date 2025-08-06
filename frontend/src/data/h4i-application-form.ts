@@ -154,7 +154,7 @@ All admission decisions will be communicated to applicants no later than Septemb
         {
           questionId: "cs-classes",
           questionType: QuestionType.LongAnswer,
-          optional: false,
+          optional: true,
           questionText: "Which CS classes have you taken?",
           secondaryText: `
 CS classes are NOT a requirement for members, we take all majors!
