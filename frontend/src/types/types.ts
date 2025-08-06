@@ -149,11 +149,12 @@ export type ValidationError = {
 export type RoleReviewRubric = {
   id: string;
   formId: string;
-  role: ApplicantRole | "any";
-  rubricQuestions: RubricQuestion[];
+  roles: ApplicantRole[];
+  rubricQuestions: ReviewRubricQuestion[];
+  detailLink?: string;
 };
 
-export type RubricQuestion = {
+export type ReviewRubricQuestion = {
   scoreKey: string;
   prompt: string;
   description?: string;

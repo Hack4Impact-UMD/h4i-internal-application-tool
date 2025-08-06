@@ -11,6 +11,7 @@ import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
 import { displayApplicantRoleName } from "@/utils/display";
 import { Button } from "@/components/ui/button";
+import { RubricQuestion } from "@/components/reviewer/rubric/RubricQuestion";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -39,13 +40,10 @@ function UserHeader({ applicantId, form, role }: UserHeaderProps) {
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <h1 className="font-bold text-2xl">
+      <h1 className="text-xl">
         {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
         {displayApplicantRoleName(role).substring(1)} Application
       </h1>
-      <div className="flex flex-row gap-2 flex-wrap">
-        <ApplicantRolePill role={role} />
-      </div>
     </div>
   );
 }
@@ -91,10 +89,10 @@ const ApplicationPage: React.FC = () => {
           form={form}
           role={reviewData.forRole}
         />
-        <Button variant="default">Submit</Button>
+        <Button variant="default">Submit Review</Button>
       </div>
       <div className="flex gap-2 justify-center grow overflow-scroll pt-4">
-        <div className="w-1/2 flex h-full flex-col gap-2 overflow-scroll shadow">
+        <div className="w-1/2 flex h-full flex-col gap-2 overflow-scroll">
           {form.sections
             .filter((s) => {
               if (s.forRoles) {
@@ -121,13 +119,23 @@ const ApplicationPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )!.questions
                   }
-                  onChangeResponse={() => { }}
+                  onChangeResponse={() => {}}
                 />
               </div>
             ))}
         </div>
-        <div className="w-1/2 h-full overflow-y-scroll shadow">
-          <ReviewCard></ReviewCard>
+        <div className="bg-white p-4 w-1/2 h-full overflow-y-scroll rounded-md border border-gray-200">
+          {Array.from({ length: 20 }, () => (
+            <RubricQuestion
+              onChange={(k, v) => console.log(k, v)}
+              question={{
+                prompt: "Test rubric question",
+                scoreKey: "foo",
+                description: "*some description text*",
+              }}
+              value={0}
+            />
+          ))}
         </div>
       </div>
     </div>

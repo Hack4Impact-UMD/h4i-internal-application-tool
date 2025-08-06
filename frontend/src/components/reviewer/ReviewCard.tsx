@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { Button } from "../ui/button";
 
 const reviewCategories = [
   {
@@ -74,15 +75,14 @@ export default function ReviewCard() {
     selected: boolean;
     onClick: () => void;
   }) => (
-    <button
-      type="button"
+    <Button
       onClick={onClick}
       className={`w-24 h-14 flex items-center justify-center rounded-md text-sm transition border-none outline-none focus:ring-2 focus:ring-blue-400
         ${selected ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-600"}`}
       style={{ boxShadow: "none" }}
     >
       {score}
-    </button>
+    </Button>
   );
 
   return (

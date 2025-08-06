@@ -305,13 +305,13 @@ function StatusPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-t border-gray-300">
-                    <th className="pb-4 pt-4 text-left font-normal w-1/3">
+                    <th className="pb-4 pt-4 text-left font-normal w-1/2">
                       Application
                     </th>
-                    <th className="pb-4 pt-4 text-center font-normal w-1/4">
+                    <th className="pb-4 pt-4 text-center font-normal w-1/6">
                       Application Status
                     </th>
-                    <th className="pb-4 pt-4 text-center font-normal w-1/4">
+                    <th className="pb-4 pt-4 text-center font-normal w-1/6">
                       Date Submitted
                     </th>
                     <th className="pb-4 pt-4 text-center font-normal w-1/6">
