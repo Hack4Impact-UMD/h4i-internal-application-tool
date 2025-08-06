@@ -213,15 +213,16 @@ export default function ProfilePage() {
                         throwWarningToast(
                           `Please check ${profileInputData.email} to update your email address and reload the page.`,
                         );
+                        setDisabled(false);
                       } catch (error) {
                         throwErrorToast(
                           "Please sign in again to change your email.",
                         );
+                        setDisabled(false);
                         return;
                       }
                     }
-                    
-                    setDisabled(false);
+
                   } catch (error) {
                     throwErrorToast(
                       "Failed to update profile. Please try again.",
