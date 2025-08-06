@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import Section from "../components/form/Section";
-import ReviewCard from "../components/reviewer/ReviewCard";
+import Section from "@/components/form/Section";
+import ReviewCard from "@/components/reviewer/ReviewCard";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import Loading from "@/components/Loading";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";
@@ -121,7 +121,7 @@ const ApplicationPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )!.questions
                   }
-                  onChangeResponse={() => {}}
+                  onChangeResponse={() => { }}
                 />
               </div>
             ))}

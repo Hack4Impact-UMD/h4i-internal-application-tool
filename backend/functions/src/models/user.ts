@@ -21,4 +21,11 @@ export const userRegisterFormSchema = z.object({
   password: z.string().min(6, "Password must be greater than 6 characters")
 })
 
+export const updateUserSchema = z.object({
+  email: z.string().email("Must provide a valid email"),
+  firstName: z.string().nonempty("First name can't be empty"),
+  lastName: z.string().nonempty("Last name can't be empty")
+})
+
 export type UserRegisterForm = z.infer<typeof userRegisterFormSchema>
+export type UpdateUser = z.infer<typeof updateUserSchema>

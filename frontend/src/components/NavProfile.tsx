@@ -51,9 +51,11 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
         <DropdownMenuContent className="w-50" align="end">
           <DropdownMenuGroup>
             <DropdownMenuLabel>My Profile</DropdownMenuLabel>
-            <DropdownMenuItem className="cursor-pointer">
-              <Link to={"/profile"}>Edit Profile</Link>
-            </DropdownMenuItem>
+            <Link to={"/profile"}>
+              <DropdownMenuItem className="cursor-pointer">
+                Edit Profile
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
@@ -76,9 +78,11 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
                 </p>
               </TooltipContent>
             </Tooltip>
-            <DropdownMenuItem className="cursor-pointer">
-              <a href="mailto:umd@hack4impact.org">Report an Issue</a>
-            </DropdownMenuItem>
+            <a href="mailto:umd@hack4impact.org">
+              <DropdownMenuItem className="cursor-pointer">
+                Report an Issue
+              </DropdownMenuItem>
+            </a>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>

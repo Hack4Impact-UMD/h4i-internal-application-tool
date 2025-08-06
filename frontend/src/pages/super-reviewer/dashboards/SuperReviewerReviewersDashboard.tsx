@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import Loading from "../components/Loading";
-import ReviewersTable from "../components/dor/ReviewersDashboard/ReviewersTable";
+import Loading from "../../../components/Loading";
+import ReviewersTable from "../../../components/dor/ReviewersDashboard/ReviewersTable";
 import useSearch from "@/hooks/useSearch";
 import { useAllReviewers } from "@/hooks/useReviewers";
 import { useReviewDataForForm } from "@/hooks/useReviewData";

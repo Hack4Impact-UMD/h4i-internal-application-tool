@@ -56,13 +56,22 @@ export default function VerifyEmailPage() {
         verification link, then reload this page. If you have not received the
         email, click the re-send button below.
       </p>
-      <Button
-        className="bg-blue hover:bg-blue/80 transition text-white font-bold py-2 px-4 rounded"
-        onClick={handleSend}
-        disabled={sendMutation.isPending}
-      >
-        Re-send Verification Email
-      </Button>
+      <div className="flex">
+        <Button
+          className="bg-blue hover:bg-blue/80 transition text-white font-bold py-2 px-4 rounded"
+          onClick={handleSend}
+          disabled={sendMutation.isPending}
+        >
+          Re-send Verification Email
+        </Button>
+        <Button
+          className="bg-blue hover:bg-blue/80 transition text-white font-bold py-2 px-4 rounded ml-3"
+          onClick={() => window.location.reload()}
+          disabled={sendMutation.isPending}
+        >
+          Refresh Page
+        </Button>
+      </div>
     </div>
   );
 }

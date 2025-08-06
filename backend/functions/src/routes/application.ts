@@ -243,5 +243,34 @@ router.put("/save/:respId", [isAuthenticated, hasRoles([PermissionRole.Applicant
 }
 );
 
+// TEMPORARY ENDPOINT - Remove after form upload is complete
+router.post("/forms", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])], async (req: Request, res: Response) => {
+  try {
+    const formData = req.body as ApplicationForm;
+    const formsCollection = db.collection(APPLICATION_FORMS_COLLECTION) as CollectionReference<ApplicationForm>;
+
+    if (!formData.dueDate || typeof formData.dueDate !== "object") {
+      return res.status(400).send("Invalid dueDate format");
+    }
+
+    const dueDate = formData.dueDate as { seconds: number; nanoseconds: number };
+    if (typeof dueDate.seconds !== "number" || typeof dueDate.nanoseconds !== "number") {
+      return res.status(400).send("Invalid dueDate timestamp format");
+    }
+
+    const form = {
+      ...formData,
+      dueDate: new Timestamp(dueDate.seconds, dueDate.nanoseconds)
+    };
+
+    await formsCollection.doc(form.id).set(form);
+    logger.info(`Created application form with ID: ${form.id}`);
+
+    return res.status(201).json({ status: "success", formId: form.id });
+  } catch (error) {
+    logger.error("Failed to create application form:", error);
+    return res.status(500).send("Failed to create application form");
+  }
+});
 
 export default router;

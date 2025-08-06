@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
-import { UserProfile, UserRegisterForm, userRegisterFormSchema } from "../models/user";
+import { UserProfile, UserRegisterForm, userRegisterFormSchema, updateUserSchema } from "../models/user";
 import { CollectionReference, DocumentReference, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import * as admin from "firebase-admin"
@@ -57,15 +57,14 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
   }
 });
 
-router.post("/update", [isAuthenticated, validateSchema(userRegisterFormSchema)], async (req: Request, res: Response) => {
-  const registerForm = req.body as UserRegisterForm;
+router.post("/update", [isAuthenticated, validateSchema(updateUserSchema)], async (req: Request, res: Response) => {
+  const updateForm = req.body as UserRegisterForm;
   const uid = req.token!.uid;
 
   try {
     const updatedUserRecord = await admin.auth().updateUser(uid, {
-      email: registerForm.email,
-      password: registerForm.password,
-      displayName: `${registerForm.firstName} ${registerForm.lastName}`,
+      email: updateForm.email,
+      displayName: `${updateForm.firstName} ${updateForm.lastName}`,
     });
 
     logger.info(`Successfully updated auth user for UID: ${updatedUserRecord.uid}`);
@@ -73,9 +72,9 @@ router.post("/update", [isAuthenticated, validateSchema(userRegisterFormSchema)]
     // will throw if doc doesn't exist
     const userRef = db.collection("users").doc(uid) as DocumentReference<UserProfile>;
     await userRef.update({
-      email: registerForm.email,
-      firstName: registerForm.firstName,
-      lastName: registerForm.lastName
+      email: updateForm.email,
+      firstName: updateForm.firstName,
+      lastName: updateForm.lastName
     });
 
     logger.info(`Successfully updated user doc for UID: ${updatedUserRecord.uid}`);
