@@ -2,11 +2,15 @@ import OneLineInput from "@/components/form/OneLineInput";
 import { throwSuccessToast } from "../components/toasts/SuccessToast";
 import { throwErrorToast } from "../components/toasts/ErrorToast";
 import { Button } from "@/components/ui/button";
-import { auth } from "@/config/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { updateUser } from "@/services/userService";
 import { validEmail } from "@/utils/verification";
-import { sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
+import {
+  getAuth,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  updateEmail,
+} from "firebase/auth";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
@@ -14,6 +18,7 @@ import { displayUserRoleName } from "@/utils/display";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(useAuth().user);
+  const auth = getAuth();
   const editProfileRef = useRef<HTMLSpanElement>(null);
 
   const navigate = useNavigate();
@@ -146,7 +151,7 @@ export default function ProfilePage() {
                   setDisabled(true);
 
                   try {
-                    const dataChanged = 
+                    const dataChanged =
                       profileInputData.email !== user?.email ||
                       profileInputData.firstName !== user?.firstName ||
                       profileInputData.lastName !== user?.lastName;
@@ -157,8 +162,23 @@ export default function ProfilePage() {
                     }
 
                     throwWarningToast("Attempting to update profile...");
-                      
+
                     const emailChanged = profileInputData.email !== user?.email;
+
+                    if (emailChanged && auth.currentUser) {
+                      try {
+                        await updateEmail(
+                          auth.currentUser,
+                          profileInputData.email,
+                        );
+                      } catch (error) {
+                        throwErrorToast(
+                          "Please sign in again to change your email.",
+                        );
+                        setDisabled(false);
+                        return;
+                      }
+                    }
 
                     const updatedUser = await updateUser(
                       profileInputData.email,
@@ -167,11 +187,10 @@ export default function ProfilePage() {
                     );
 
                     setUser(updatedUser);
-
                     throwSuccessToast("Profile updated successfully!");
 
                     if (emailChanged && auth.currentUser) {
-                      await auth.currentUser?.getIdToken(true);
+                      await auth.currentUser.getIdToken(true);
                       await sendEmailVerification(auth.currentUser);
                       await auth.currentUser.reload();
 
