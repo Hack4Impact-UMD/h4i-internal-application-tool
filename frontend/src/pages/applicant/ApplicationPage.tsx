@@ -83,14 +83,14 @@ const ApplicationPage: React.FC = () => {
       await save();
       navigate(`/apply/f/${form.id}/${nextSection()}`);
     }
-    throwWarningToast("Remember to backup your application!");
+    throwWarningToast("Remember to back up your application!");
   };
 
   const handlePrevious = async () => {
     console.log(previousSection());
     await save();
     navigate(`/apply/f/${form.id}/${previousSection()}`);
-    throwWarningToast("Remember to backup your application!");
+    throwWarningToast("Remember to back up your application!");
   };
 
   const currentStep = availableSections.findIndex(

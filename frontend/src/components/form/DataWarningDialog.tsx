@@ -36,7 +36,7 @@ export default function DataWarningDialog({
           <AlertDialogDescription>
             Welcome to the first live run of Hack4Impact-UMD's Application
             Portal! This app is designed to autosave your responses. However, as
-            this is our initial launch, there may be unforeseen issues. Backup
+            this is our initial launch, there may be unforeseen issues. Back up
             your responses elsewhere (e.g. in Google Docs)... just in case!
           </AlertDialogDescription>
         </AlertDialogHeader>
