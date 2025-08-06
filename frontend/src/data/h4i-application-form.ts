@@ -626,7 +626,7 @@ Designer Responsibilities:
           optional: false,
           questionText: "Portfolio Submission (mandatory)",
           secondaryText:
-            "Please include links to your work:\n- Portfolio website\n- Behance/Dribbble\n- Specific project links\n- GitHub repositories",
+            "Please include links to your work:\n- Portfolio website\n- Behance/Dribbble\n- Portfolio and/or project file links\n- GitHub repositories\nMake sure we can view your links!",
           placeholderText: "Provide links to your design work...",
           maximumWordCount: 300,
         },
