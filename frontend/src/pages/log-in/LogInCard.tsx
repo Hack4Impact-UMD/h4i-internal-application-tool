@@ -60,14 +60,6 @@ export default function LogInCard() {
     let valid = true;
     const errors = { ...formErrors };
 
-    if (!validPassword(formData.password)) {
-      valid = false;
-      const errorMessage =
-        "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#).";
-      errors.password = errorMessage;
-      throwErrorToast(errorMessage);
-    }
-
     setFormErrors(errors);
 
     if (valid) {
