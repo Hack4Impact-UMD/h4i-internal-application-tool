@@ -217,10 +217,11 @@ export default function ProfilePage() {
                         throwErrorToast(
                           "Please sign in again to change your email.",
                         );
-                        setDisabled(false);
                         return;
                       }
                     }
+                    
+                    setDisabled(false);
                   } catch (error) {
                     throwErrorToast(
                       "Failed to update profile. Please try again.",
