@@ -39,7 +39,7 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
             )}
           >
             <Avatar className="rounded-full size-8">
-              <AvatarFallback className="bg-gray-200">
+              <AvatarFallback className="bg-gray-300">
                 {user.firstName.charAt(0).toUpperCase()}
                 {user.lastName.charAt(0).toUpperCase()}
               </AvatarFallback>

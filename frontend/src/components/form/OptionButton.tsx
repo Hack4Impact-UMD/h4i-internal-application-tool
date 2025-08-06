@@ -68,7 +68,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
       <div className="relative flex items-center justify-center">
         <div
           className={twMerge(
-            "absolute rounded-full bg-white outline h-4 w-4 flex items-center justify-center",
+            "absolute rounded-xs bg-white outline h-4 w-4 flex items-center justify-center",
             circleOutlineColor,
           )}
         ></div>
