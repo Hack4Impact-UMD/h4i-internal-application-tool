@@ -31,53 +31,21 @@ We have positions open for **Software Engineers, Product Managers (PMs), Tech Le
 
 Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
 
+*Public Relations & Outreach (PR&O)* 
+
+PR&O is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
+
 *Project Teams*
 
 Project teams work with real non-profit partners, creating solutions for any technical needs that our partners have. It's important to us when forming teams to find people who have the capacity to commit to the project for the whole semester. Otherwise, it's unfair to the teams and the partners. Our project teams practice the agile software development methodology, and project team members are expected to fulfil their commitments made during each sprint. Our workflow involves two week sprints, weekly meetings with your team, doing your own project tasks during the week, and monthly chapter wide meetings. The time commitment is around 5 hours a week.
 
-- *Product Manager (PM)*:
- - responsible for drawing out the roadmap for their project
- - ensures that all deadlines are met
- - meets with team on a weekly basis
- - meets with nonprofits on a weekly basis
- - meets with tech leads and designers on a weekly basis
- - meets with Director of Product weekly to discuss project progression
- - be organized in terms of project management
- - be accountable for any decisions made for the project
- - provide accurate details of project progression
- - communicate with nonprofit professionally
- - be an effective communicator within the team and maintain structure
- - promote participation among team members
- - stimulate interaction between team members
- - have effective conflict resolution skills
+- Product Manager (PM):The Product Manager is responsible for drawing out the project roadmap, ensuring deadlines are met, meeting weekly with the team, nonprofit, tech leads, designers, and Director of Product to discuss project progression, staying organized in project management, being accountable for decisions, providing accurate updates, communicating professionally with the nonprofit, maintaining structure and effective communication within the team, promoting participation, encouraging interaction, and resolving conflicts effectively.
 
-- *Designer*:
- - responsible for creating the frontend designs for the product based on nonprofit needs
- - attends team meetings
- - attends meetings with nonprofit and PM
- - meets with Director of Design to discuss project progression
- - walkthrough designs and get nonprofit's feedback
- - communicate with engineers on designs and whether or not they are feasible
- - complete tasks by the given deadline so that the engineers have enough time to do their tasks as well
- - provide feedback to engineers on their implementation of the designs
+- Designer: The Designer is responsible for creating frontend designs based on nonprofit needs, attending team meetings and meetings with the nonprofit and PM, meeting with the Director of Design to discuss project progression, walking through designs for nonprofit feedback, collaborating with engineers to ensure design feasibility, meeting deadlines to support engineering timelines, and providing feedback on design implementation.
 
-- *Tech Lead*:
- - point of contact for engineers to help with technologies related to their projects
- - research technologies and shape the technical direction of the project
- - attends team meetings
- - attends meetings with nonprofit and PM
- - meets with Director of Engineering weekly to discuss project progression
- - review pull requests
- - add notes for each task on the team Kanban board before the sprint meeting
- - update PMs about engineers' status, issues, and progress
- - give feedback to designers on the feasibility of design
+- Tech Lead: The Tech Lead serves as the point of contact for engineers regarding project technologies, researches and shapes the project’s technical direction, attends team and nonprofit meetings with the PM, meets weekly with the Director of Engineering, reviews pull requests, documents tasks on the Kanban board before sprint meetings, updates the PM on engineer progress and issues, and advises designers on the feasibility of their designs.
 
-- *Engineer*:
- - responsible for implementation of all technological aspects of product
- - attend team meetings
- - complete assigned tasks by the given deadline
- - update Tech Lead and PM with any relevant issues
-
+- Engineer: The Engineer is responsible for implementing all technological aspects of the product, attending team meetings, completing assigned tasks by the deadline, and updating the Tech Lead and PM with relevant issues.
 
 **Why join?**
 * Developing projects for our nonprofit partners as a student is incredible, and recruiters notice
