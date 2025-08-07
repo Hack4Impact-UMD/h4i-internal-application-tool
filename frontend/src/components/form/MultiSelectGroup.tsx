@@ -52,7 +52,7 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
   return (
     <main className={twMerge("flex flex-col min-w-60", className)}>
       <span className="text-xl font-normal mb-2">
-        {question}{" "}
+        {question}{isRequired && <span className="text-red-600">*</span>}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
 

@@ -35,7 +35,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
       )}
     >
       <span className="mb-2 text-xl font-normal">
-        {question}
+        {question}{isRequired && <span className="text-red-600">*</span>}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
 
