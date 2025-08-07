@@ -302,6 +302,7 @@ We consider applicants with all experience levels! You are not required to have 
           optional: false,
           questionText:
             "What about Hack4Impact-UMD drove you to apply, and what makes us stand out to you?",
+          secondaryText: "We are looking for a detailed and thoughtful answer here. Aim for a response of at least 400 words that gives a clear sense of why you're excited to join Hack4Impact-UMD, and how we align with your values and goals.",
           placeholderText: "Tell us what attracted you to our organization...",
           minimumWordCount: 400,
         },
