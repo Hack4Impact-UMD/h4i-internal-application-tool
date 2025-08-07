@@ -23,12 +23,7 @@ Hack4Impact is a student-run 501(c)(3) dedicated to building software for social
 
 Extensive experience isn't necessary, but technical applicants should have programming experience. We place a strong emphasis on learning, so we’ll teach you everything you need to know beyond programming fundamentals during bootcamp!
 
-**As a software engineer, you will:**
-* Develop and ship a project to a nonprofit partner
-* Gain the skills necessary to become a full-stack developer
-* Learn how to identify user needs in order to design the best products for the problem
-
-We also have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. PMs will work directly with our nonprofit partners to gather project requirements and ensure what we create is the best solution for the nonprofit and communicate those needs to engineers. Tech Leads serve as the point of contact for engineers, providing technical guidance as well as upholding code quality through code reviews. Designers will work with both engineers and nonprofits, creating UI mockups for our projects to ensure our projects go above and beyond our clients' expectations. Members of the Public Relations & Outreach team will connect with nonprofit partners, maintain the organization's public presence, and manage organizational communication.
+We have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. PMs will work directly with our nonprofit partners to gather project requirements and ensure what we create is the best solution for the nonprofit and communicate those needs to engineers. Tech Leads serve as the point of contact for engineers, providing technical guidance as well as upholding code quality through code reviews. Designers will work with both engineers and nonprofits, creating UI mockups for our projects to ensure our projects go above and beyond our clients' expectations. Members of the Public Relations & Outreach team will connect with nonprofit partners, maintain the organization's public presence, and manage organizational communication.
 
 **Why join?**
 * Developing projects for our nonprofit partners as a student is incredible, and recruiters notice
