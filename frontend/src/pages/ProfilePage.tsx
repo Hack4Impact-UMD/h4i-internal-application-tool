@@ -2,21 +2,22 @@ import OneLineInput from "@/components/form/OneLineInput";
 import { throwSuccessToast } from "../components/toasts/SuccessToast";
 import { throwErrorToast } from "../components/toasts/ErrorToast";
 import { Button } from "@/components/ui/button";
-import { auth } from "@/config/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { updateUser } from "@/services/userService";
 import { validEmail } from "@/utils/verification";
-import { sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  getAuth,
+  sendPasswordResetEmail,
+  verifyBeforeUpdateEmail,
+} from "firebase/auth";
+import { useEffect, useRef, useState } from "react";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 import { displayUserRoleName } from "@/utils/display";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(useAuth().user);
+  const auth = getAuth();
   const editProfileRef = useRef<HTMLSpanElement>(null);
-
-  const navigate = useNavigate();
 
   const [profileInputData, setProfileInputData] = useState({
     firstName: user?.firstName || "",
@@ -39,6 +40,38 @@ export default function ProfilePage() {
       }, 500);
     }
   };
+
+  useEffect(() => {
+    const reconcileEmail = async () => {
+      if (!auth.currentUser) {
+        return;
+      }
+      await auth.currentUser.reload();
+      const freshEmail = auth.currentUser.email;
+      if (!freshEmail) {
+        return;
+      }
+
+      if (freshEmail !== user?.email) {
+        try {
+          const updatedUser = await updateUser(
+            freshEmail,
+            profileInputData.firstName,
+            profileInputData.lastName,
+          );
+          setUser(updatedUser);
+          setProfileInputData((prev) => ({ ...prev, email: freshEmail }));
+          throwSuccessToast(`${freshEmail} verified!`);
+        } catch (e) {
+          console.error("Failed to sync verified email:", e);
+        }
+      } else {
+        setProfileInputData((prev) => ({ ...prev, email: freshEmail }));
+      }
+    };
+
+    reconcileEmail();
+  }, []);
 
   return (
     <div className="min-h-screen w-full flex justify-center items-start bg-gray-50 py-10 px-4 sm:px-6">
@@ -144,29 +177,52 @@ export default function ProfilePage() {
                   }
 
                   setDisabled(true);
-                  throwWarningToast("Attempting to update profile...");
 
                   try {
+                    const nameChanged =
+                      profileInputData.firstName !== user?.firstName ||
+                      profileInputData.lastName !== user?.lastName;
+
                     const emailChanged = profileInputData.email !== user?.email;
 
-                    const updatedUser = await updateUser(
-                      profileInputData.email,
-                      profileInputData.firstName,
-                      profileInputData.lastName,
-                    );
-
-                    setUser(updatedUser);
-
-                    throwSuccessToast("Profile name updated successfully!");
-
-                    if (emailChanged && auth.currentUser) {
-                      await auth.currentUser?.getIdToken(true);
-                      await sendEmailVerification(auth.currentUser);
-                      await auth.currentUser.reload();
-
-                      navigate("/verify");
+                    if (!nameChanged && !emailChanged) {
+                      throwWarningToast("No changes detected.");
                       return;
                     }
+
+                    throwWarningToast("Attempting to update profile...");
+
+                    if (nameChanged) {
+                      const updatedUser = await updateUser(
+                        user?.email ?? "",
+                        profileInputData.firstName,
+                        profileInputData.lastName,
+                      );
+
+                      setUser(updatedUser);
+                      throwSuccessToast("Profile name updated successfully!");
+                    }
+
+                    if (emailChanged && auth.currentUser) {
+                      try {
+                        await verifyBeforeUpdateEmail(
+                          auth.currentUser,
+                          profileInputData.email,
+                        );
+
+                        throwWarningToast(
+                          `Please check ${profileInputData.email} to update your email address, and reload the page once you've followed the instructions.`,
+                        );
+                        setDisabled(false);
+                      } catch (error) {
+                        throwErrorToast(
+                          "Please sign in again to change your email.",
+                        );
+                        setDisabled(false);
+                        return;
+                      }
+                    }
+
                   } catch (error) {
                     throwErrorToast(
                       "Failed to update profile. Please try again.",
