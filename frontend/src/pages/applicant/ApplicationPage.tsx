@@ -90,7 +90,6 @@ const ApplicationPage: React.FC = () => {
     console.log(previousSection());
     await save();
     navigate(`/apply/f/${form.id}/${previousSection()}`);
-    throwWarningToast("Remember to back up your application!");
   };
 
   const currentStep = availableSections.findIndex(
