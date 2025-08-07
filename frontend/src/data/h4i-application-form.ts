@@ -894,7 +894,7 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
           questionId: "role-preference",
           questionType: QuestionType.MultipleChoice,
           optional: true,
-          questionText: "If you are applying to both roles, please rank your preference here:",
+          questionText: "If you are applying to both roles, please rank your preference here",
           secondaryText: "Select your top preference",
           multipleSelect: false,
           questionOptions: [
@@ -907,7 +907,7 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
           questionId: "preference-reasoning",
           questionType: QuestionType.LongAnswer,
           optional: true,
-          questionText: "If you are applying to both roles, please explain your ranking here:",
+          questionText: "If you are applying to both roles, please explain your ranking here",
           placeholderText: "Explain your interest in these roles...",
           maximumWordCount: 250,
         },
