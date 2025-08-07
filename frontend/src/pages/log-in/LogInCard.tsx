@@ -5,6 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LogInCard() {
   const { login } = useAuth();
@@ -32,6 +33,8 @@ export default function LogInCard() {
     email: "",
     password: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   // check if all fields are filled
   const isFormValid =
@@ -113,14 +116,27 @@ export default function LogInCard() {
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />
-      <div className="w-full">
-        <TextBox
-          inputType="password"
-          className="w-full"
-          label="PASSWORD"
-          invalidLabel={formErrors.password}
-          onChange={(e) => handleInputChange("password", e.target.value)}
-        />
+      <div className="w-full relative">
+        <div className="relative flex items-center">
+          <TextBox
+            inputType={showPassword ? "text" : "password"}
+            className="w-full flex-1"
+            label="PASSWORD"
+            invalidLabel={formErrors.password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 text-gray-500 cursor-pointer"
+          >
+            {showPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
+          </button>
+        </div>
         <div className="w-full flex justify-end">
           <a href="/forgotpassword" className="text-blue">
             Forgot password?

@@ -6,6 +6,7 @@ import { AxiosError } from "axios";
 import { validEmail, validPassword } from "../../utils/verification";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SignUpCard() {
   const signUpMutation = useMutation({
@@ -38,6 +39,8 @@ export default function SignUpCard() {
     password: "",
     genericError: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   // check if all fields are filled
   const isFormValid =
@@ -170,13 +173,26 @@ export default function SignUpCard() {
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />
-      <TextBox
-        inputType="password"
-        className="w-full"
-        label="PASSWORD"
-        invalidLabel={formErrors.password}
-        onChange={(e) => handleInputChange("password", e.target.value)}
-      />
+      <div className="relative flex items-center w-full">
+        <TextBox
+          inputType={showPassword ? "text" : "password"}
+          className="w-full flex-1"
+          label="PASSWORD"
+          invalidLabel={formErrors.password}
+          onChange={(e) => handleInputChange("password", e.target.value)}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 text-gray-500 cursor-pointer"
+        >
+          {showPassword ? (
+            <EyeOff className="h-5 w-5" />
+          ) : (
+            <Eye className="h-5 w-5" />
+          )}
+        </button>
+      </div>
       <Button
         className="w-full h-[73px]"
         disabled={signUpMutation.isPending || !isFormValid}
