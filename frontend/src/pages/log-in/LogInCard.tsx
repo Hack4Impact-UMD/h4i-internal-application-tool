@@ -2,7 +2,7 @@ import { useState } from "react";
 import TextBox from "../../components/TextBox";
 import { Button } from "../../components/ui/button";
 import { useAuth } from "../../hooks/useAuth";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
 import { Eye, EyeOff } from "lucide-react";
@@ -59,7 +59,7 @@ export default function LogInCard() {
 
   // using dummy conditionals for now
   const handleSubmit = async () => {
-    let valid = true;
+    const valid = true;
     const errors = { ...formErrors };
 
     setFormErrors(errors);
@@ -128,7 +128,7 @@ export default function LogInCard() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 text-gray-500 cursor-pointer"
+            className="absolute right-3 text-gray-500 cursor-pointer bg-lightgray h-12"
           >
             {showPassword ? (
               <EyeOff className="h-5 w-5" />
@@ -138,9 +138,9 @@ export default function LogInCard() {
           </button>
         </div>
         <div className="w-full flex justify-end">
-          <a href="/forgotpassword" className="text-blue">
+          <Link to="/forgotpassword" className="text-blue">
             Forgot password?
-          </a>
+          </Link>
         </div>
       </div>
       <Button
@@ -148,16 +148,15 @@ export default function LogInCard() {
         disabled={loginMutation.isPending || !isFormValid}
         type="submit"
       >
-        {" "}
-        Log In{" "}
+        Log In
       </Button>
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-gray-500 mt-1">
           Don't have an account?{" "}
-          <a href="/signup" className="text-blue">
+          <Link to="/signup" className="text-blue">
             Create account
-          </a>
+          </Link>
         </p>
       </div>
     </form>

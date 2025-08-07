@@ -7,6 +7,7 @@ import { validEmail, validPassword } from "../../utils/verification";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
 import { Eye, EyeOff } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function SignUpCard() {
   const signUpMutation = useMutation({
@@ -184,12 +185,12 @@ export default function SignUpCard() {
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 text-gray-500 cursor-pointer"
+          className="absolute right-3 text-gray-500 cursor-pointer bg-lightgray h-12"
         >
           {showPassword ? (
-            <EyeOff className="h-5 w-5" />
+            <EyeOff className="size-5" />
           ) : (
-            <Eye className="h-5 w-5" />
+            <Eye className="size-5" />
           )}
         </button>
       </div>
@@ -198,16 +199,15 @@ export default function SignUpCard() {
         disabled={signUpMutation.isPending || !isFormValid}
         type="submit"
       >
-        {" "}
-        Create Account{" "}
+        Create Account
       </Button>
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-darkgray mt-1">
           Already have an account?{" "}
-          <a href="/login" className="text-blue">
+          <Link to="/login" className="text-blue">
             Log In
-          </a>
+          </Link>
         </p>
       </div>
     </form>
