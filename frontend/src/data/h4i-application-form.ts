@@ -23,7 +23,58 @@ Hack4Impact is a student-run 501(c)(3) dedicated to building software for social
 
 Extensive experience isn't necessary, but technical applicants should have programming experience. We place a strong emphasis on learning, so we’ll teach you everything you need to know beyond programming fundamentals during bootcamp!
 
-We have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. PMs will work directly with our nonprofit partners to gather project requirements and ensure what we create is the best solution for the nonprofit and communicate those needs to engineers. Tech Leads serve as the point of contact for engineers, providing technical guidance as well as upholding code quality through code reviews. Designers will work with both engineers and nonprofits, creating UI mockups for our projects to ensure our projects go above and beyond our clients' expectations. Members of the Public Relations & Outreach team will connect with nonprofit partners, maintain the organization's public presence, and manage organizational communication.
+We have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. 
+
+**Descriptions for Open Roles**:
+*Project Teams*
+Project teams work with real non-profit partners, creating solutions for any technical needs that our partners have. It's important to us when forming teams to find people who have the capacity to commit to the project for the whole semester. Otherwise, it's unfair to the teams and the partners. Our project teams practice the agile software development methodology, and project team members are expected to fulfil their commitments made during each sprint. Our workflow involves two week sprints, weekly meetings with your team, doing your own project tasks during the week, and monthly chapter wide meetings. The time commitment is around 5 hours a week.
+
+*Bootcamp*
+Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
+
+*Product Manager (PM)*:
+- responsible for drawing out the roadmap for their project
+- ensures that all deadlines are met
+- meets with team on a weekly basis
+- meets with nonprofits on a weekly basis
+- meets with tech leads and designers on a weekly basis
+- meets with Director of Product weekly to discuss project progression
+- be organized in terms of project management
+- be accountable for any decisions made for the project
+- provide accurate details of project progression
+- communicate with nonprofit professionally
+- be an effective communicator within the team and maintain structure
+- promote participation among team members
+- stimulate interaction between team members
+- have effective conflict resolution skills
+
+*Designer*:
+- responsible for creating the frontend designs for the product based on nonprofit needs
+- attends team meetings
+- attends meetings with nonprofit and PM
+- meets with Director of Design to discuss project progression
+- walkthrough designs and get nonprofit's feedback
+- communicate with engineers on designs and whether or not they are feasible
+- complete tasks by the given deadline so that the engineers have enough time to do their tasks as well
+- provide feedback to engineers on their implementation of the designs
+
+*Tech Lead*:
+- point of contact for engineers to help with technologies related to their projects
+- research technologies and shape the technical direction of the project
+- attends team meetings
+- attends meetings with nonprofit and PM
+- meets with Director of Engineering weekly to discuss project progression
+- review pull requests
+- add notes for each task on the team Kanban board before the sprint meeting
+- update PMs about engineers' status, issues, and progress
+- give feedback to designers on the feasibility of design
+
+*Engineer*:
+- responsible for implementation of all technological aspects of product
+- attend team meetings
+- complete assigned tasks by the given deadline
+- update Tech Lead and PM with any relevant issues
+
 
 **Why join?**
 * Developing projects for our nonprofit partners as a student is incredible, and recruiters notice
