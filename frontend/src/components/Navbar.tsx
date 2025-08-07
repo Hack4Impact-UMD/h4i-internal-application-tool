@@ -41,8 +41,8 @@ function Navbar({ className }: { className?: string }) {
           )}
         </div>
         <div className="ml-auto flex flex-row items-center">
-          <NavLink to="/">
-            <HomeIcon className="w-8 h-8 text-black mr-3 cursor-pointer hover:bg-darkgray/5 rounded-md p-1 transition-colors" />
+          <NavLink to="/" className="border-r border-solid border-gray-400 pr-3">
+            <HomeIcon className="w-8 h-8 text-black cursor-pointer hover:bg-darkgray/5 rounded-md p-1 transition-colors" />
           </NavLink>
           {!isLoading && isAuthed && user && (
             <NavProfile user={user} className="hover:bg-darkgray/5" />

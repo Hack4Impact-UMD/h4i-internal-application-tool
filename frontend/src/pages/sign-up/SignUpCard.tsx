@@ -169,7 +169,7 @@ export default function SignUpCard() {
       <TextBox
         inputType="text"
         className="w-full"
-        label="EMAIL (@umd.edu or @terpmail.umd.edu)"
+        label="EMAIL (@umd.edu, @terpmail.umd.edu, or @hack4impact.org)"
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />

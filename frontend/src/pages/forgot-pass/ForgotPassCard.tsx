@@ -46,7 +46,7 @@ export default function ForgotPassCard() {
 
     if (!validEmail(formData.email)) {
       valid = false;
-      errors.email = "Please ensure your email ends with @terpmail.umd.edu or @umd.edu";
+      errors.email = "Please ensure your email ends with @terpmail.umd.edu, @umd.edu, or @hack4impact.org";
     }
 
     setFormErrors(errors);
