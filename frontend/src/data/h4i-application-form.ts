@@ -21,15 +21,18 @@ Hack4Impact is a student-run 501(c)(3) dedicated to building software for social
 * Passionate about software, social impact, and our nonprofit partners
 * Willing to learn
 
-Extensive experience isn't necessary, but technical applicants should have programming experience. We place a strong emphasis on learning, so we’ll teach you everything you need to know beyond programming fundamentals during bootcamp!
+Extensive experience isn't necessary, but technical applicants should have programming experience. We place a strong emphasis on learning, so we’ll teach you everything you need to know beyond programming fundamentals during Bootcamp!
 
 We have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. 
 
 **Descriptions for Open Roles**:
+
 *Project Teams*
+
 Project teams work with real non-profit partners, creating solutions for any technical needs that our partners have. It's important to us when forming teams to find people who have the capacity to commit to the project for the whole semester. Otherwise, it's unfair to the teams and the partners. Our project teams practice the agile software development methodology, and project team members are expected to fulfil their commitments made during each sprint. Our workflow involves two week sprints, weekly meetings with your team, doing your own project tasks during the week, and monthly chapter wide meetings. The time commitment is around 5 hours a week.
 
 *Bootcamp*
+
 Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
 
 *Product Manager (PM)*:
