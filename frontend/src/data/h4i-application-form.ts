@@ -15,25 +15,20 @@ export const h4iApplicationForm: ApplicationForm = {
   description: `
 Hack4Impact is a student-run 501(c)(3) dedicated to building software for social impact. We are the **University of Maryland, College Park chapter** of the national Hack4Impact organization. Each year, we partner with nonprofits to help them better serve their communities. We are recruiting software engineers, product managers, tech leads, UI designers, and sourcing team members for the fall semester.
 
-
 **We are looking for new members who are:**
 * Willing to commit their time for 1 semester (at least 5 hours per week)
 * Excited about our mission and values
 * Passionate about software, social impact, and our nonprofit partners
 * Willing to learn
 
-
 Extensive experience isn't necessary, but technical applicants should have programming experience. We place a strong emphasis on learning, so we’ll teach you everything you need to know beyond programming fundamentals during bootcamp!
-
 
 **As a software engineer, you will:**
 * Develop and ship a project to a nonprofit partner
 * Gain the skills necessary to become a full-stack developer
 * Learn how to identify user needs in order to design the best products for the problem
 
-
 We also have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. PMs will work directly with our nonprofit partners to gather project requirements and ensure what we create is the best solution for the nonprofit and communicate those needs to engineers. Tech Leads serve as the point of contact for engineers, providing technical guidance as well as upholding code quality through code reviews. Designers will work with both engineers and nonprofits, creating UI mockups for our projects to ensure our projects go above and beyond our clients' expectations. Members of the Public Relations & Outreach team will connect with nonprofit partners, maintain the organization's public presence, and manage organizational communication.
-
 
 **Why join?**
 * Developing projects for our nonprofit partners as a student is incredible, and recruiters notice
@@ -44,24 +39,17 @@ We also have positions open for **Software Engineers, Product Managers (PMs), Te
 * Work with and learn more about some amazing organizations
 * Get plugged into a strong network of accomplished and amazing alums
 
-
 There are also PLENTY of opportunities to gain leadership experience. We have positions for mentors, a super fun board of directors, and even a national board and committees. As an organization and as a community, we care about and actively support the individual development of each member, both professional and personal. When you join Hack4Impact-UMD, you join a national network of leaders, techies, do-gooders, and friends.
-
 
 Feel free to visit our chapter website at <https://umd.hack4impact.org/> or the national website at <https://hack4impact.org> for more information.
 
-
 We will have rolling applications that consist of this written application and may include a live interview (not a technical interview). Those applying for the engineer and/or tech lead role are **REQUIRED** to complete a technical assessment (2-3 hours) included in the following sections of this application form. We will be CLOSING the form at **midnight (11:59pm EST) on August 19, 2025** or when openings are filled.
-
 
 **Please do not use ChatGPT or other AI services to create or edit your responses.**
 
-
 Please reach out to <umd@hack4impact.org> if you have any questions.
 
-
 All admission decisions will be communicated to applicants no later than September 1, 2025.
-
 `,
   decisionsReleased: false,
   scoreWeights: {
@@ -524,7 +512,10 @@ PM Specific Responsibilities:
           questionId: "ideal-project",
           questionType: QuestionType.LongAnswer,
           optional: false,
-          questionText: "What's your ideal project?",
+          questionText:
+            "What's your ideal project look like, and how would you lead this ideal team of your to make the project successful?",
+          secondaryText:
+            "You can talk about the type of problem you'd want to help solve, how you'd collaborate with engineers, and what kind of process you'd want to lead to make the project successful.",
           placeholderText:
             "Describe the type of project that excites you most...",
           maximumWordCount: 200,

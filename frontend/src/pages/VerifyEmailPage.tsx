@@ -9,7 +9,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 export default function VerifyEmailPage() {
   const { isAuthed, user } = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const sendMutation = useMutation({
     mutationFn: async () => {
@@ -36,12 +36,12 @@ export default function VerifyEmailPage() {
     }
   }, []);
 
-  const refresh = useCallback(() => navigate(0), [navigate])
+  const refresh = useCallback(() => navigate(0), [navigate]);
 
   useEffect(() => {
-    window.addEventListener("focus", refresh)
-    return () => window.removeEventListener("focus", refresh)
-  }, [refresh])
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, [refresh]);
 
   const handleSend = useCallback(() => {
     sendMutation.mutate();
