@@ -103,7 +103,7 @@ function StatusPage() {
                 }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
-                Active ({activeApplications.length})
+                Active ({activeApplications.reduce((sum, application) => sum + application.rolesApplied.length, 0)})
                 {activeTab === "active" && (
                   <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                 )}
@@ -115,7 +115,7 @@ function StatusPage() {
                 }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
-                Inactive ({inactiveApplications.length})
+                Inactive ({inactiveApplications.reduce((sum, application) => sum + application.rolesApplied.length, 0)})
                 {activeTab === "inactive" && (
                   <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                 )}
