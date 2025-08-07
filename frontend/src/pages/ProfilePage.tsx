@@ -211,7 +211,7 @@ export default function ProfilePage() {
                         );
 
                         throwWarningToast(
-                          `Please check ${profileInputData.email} to update your email address and reload the page.`,
+                          `Please check ${profileInputData.email} to update your email address, and reload the page once you've followed the instructions.`,
                         );
                         setDisabled(false);
                       } catch (error) {
