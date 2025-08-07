@@ -5,13 +5,13 @@ import {
 } from "@/types/formBuilderTypes";
 import { Timestamp } from "firebase/firestore";
 
-const FORM_ID = "h4i-fall-2025-form-internal";
+const FORM_ID = "h4i-fall-2025-form-final";
 
 export const h4iApplicationForm: ApplicationForm = {
   id: FORM_ID,
   isActive: true,
   dueDate: Timestamp.fromDate(new Date("2025-08-20T03:59:59Z")),
-  semester: "Fall 2025 (Internal Testing)",
+  semester: "Fall 2025",
   description: `
 Hack4Impact is a student-run 501(c)(3) dedicated to building software for social impact. We are the **University of Maryland, College Park chapter** of the national Hack4Impact organization. Each year, we partner with nonprofits to help them better serve their communities. We are recruiting software engineers, product managers, tech leads, UI designers, and sourcing team members for the fall semester.
 
