@@ -171,7 +171,7 @@ export default function ProfilePage() {
 
                   if (!validEmail(profileInputData.email)) {
                     throwErrorToast(
-                      "Invalid Email. Please ensure your email ends with @terpmail.umd.edu or @umd.edu",
+                      "Invalid Email. Please ensure your email ends with @terpmail.umd.edu, @umd.edu, or @hack4impact.org",
                     );
                     return;
                   }
