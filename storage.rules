@@ -5,7 +5,7 @@ rules_version = '2';
 //    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   function isAuthed() {
-    return request.auth != null && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid));
+    return request.auth != null && request.auth.token.email_verified && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid));
   }
   
   function getCurrentUser() {

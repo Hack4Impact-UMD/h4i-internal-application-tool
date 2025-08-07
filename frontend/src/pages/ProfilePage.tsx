@@ -61,7 +61,6 @@ export default function ProfilePage() {
           );
           setUser(updatedUser);
           setProfileInputData((prev) => ({ ...prev, email: freshEmail }));
-          throwSuccessToast(`${freshEmail} verified!`);
         } catch (e) {
           console.error("Failed to sync verified email:", e);
         }

@@ -30,6 +30,15 @@ const AppOverview: React.FC = () => {
     else return false;
   }, [applications, form]);
 
+  const inProgress = useMemo(() => {
+    if (form && applications)
+      return applications
+        .filter((app) => app.status == ApplicationStatus.InProgress)
+        .map((app) => app.applicationFormId)
+        .includes(form.id);
+    else return false;
+  }, [applications, form])
+
   const navigate = useNavigate();
   const [wait, setWait] = useState(false);
 
@@ -92,7 +101,7 @@ const AppOverview: React.FC = () => {
               {applied
                 ? "Go to status page"
                 : Timestamp.now() <= form.dueDate
-                  ? "Apply"
+                  ? inProgress ? "Continue Application" : "Apply"
                   : "Application Closed"}
             </Button>
           }

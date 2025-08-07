@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState } from "react";
 import Timeline from "./Timeline.tsx";
-import { ApplicationResponse, ReviewStatus } from "../../types/types.ts";
+import { ApplicantRole, ApplicationResponse, ReviewStatus } from "../../types/types.ts";
 import { useApplicationResponsesAndSemesters } from "../../hooks/useApplicationResponseAndSemesters.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth.ts";
@@ -8,10 +8,16 @@ import { getApplicationResponseAndSemester } from "@/services/applicationRespons
 import { getApplicationStatus } from "@/services/statusService.ts";
 import { ApplicationResponseRow } from "./ApplicationResponseRow.tsx";
 
-const timelineItems = [
-  { label: "Not Reviewed", id: ReviewStatus.NotReviewed },
+const fullTimelineItems = [
+  { label: "Submitted", id: ReviewStatus.NotReviewed },
   { label: "Under Review", id: ReviewStatus.UnderReview },
   { label: "Interview", id: ReviewStatus.Interview },
+  { label: "Decided", id: "decided" },
+];
+
+const bootcampTimelineItems = [
+  { label: "Submitted", id: ReviewStatus.NotReviewed },
+  { label: "Under Review", id: ReviewStatus.UnderReview },
   { label: "Decided", id: "decided" },
 ];
 
@@ -24,14 +30,17 @@ function useTimelineStep() {
       if (!user || !token) return 0;
 
       const applications = await getApplicationResponseAndSemester(user.id);
+      const activeApps = applications.filter((app) => app.active);
+      
+      const allRoles = activeApps.flatMap(app => app.rolesApplied);
+      const isOnlyBootcamp = allRoles.length === 1 && allRoles[0] === ApplicantRole.Bootcamp;
+      
       const appStatuses = await Promise.all(
-        applications
-          .filter((app) => app.active)
-          .flatMap((app) =>
-            app.rolesApplied.map((role) =>
-              getApplicationStatus(token, app.id, role),
-            ),
+        activeApps.flatMap((app) =>
+          app.rolesApplied.map((role) =>
+            getApplicationStatus(token, app.id, role),
           ),
+        ),
       );
 
       let status = 0;
@@ -42,9 +51,11 @@ function useTimelineStep() {
           appStatus.status === ReviewStatus.Waitlisted ||
           appStatus.status === ReviewStatus.Denied
         ) {
-          status = Math.max(3, status);
+          status = Math.max(isOnlyBootcamp ? 2 : 3, status);
         } else if (appStatus.status === ReviewStatus.Interview) {
-          status = Math.max(2, status);
+          if (!isOnlyBootcamp) {
+            status = Math.max(2, status);
+          }
         } else if (appStatus.status === ReviewStatus.UnderReview) {
           status = Math.max(1, status);
         }
@@ -87,6 +98,20 @@ function StatusPage() {
   }, new Map<string, ApplicationResponse[]>());
 
   const { data: currentTimelineStep } = useTimelineStep();
+  
+  // Determine if only bootcamp is applied
+  const isOnlyBootcamp = useMemo(() => {
+    if (!activeApplications.length) return false;
+    
+    const allRoles = activeApplications.flatMap(app => app.rolesApplied);
+    return allRoles.length === 1 && allRoles[0] === "bootcamp";
+  }, [activeApplications]);
+  
+  const timelineItems = useMemo(() => {
+    return isOnlyBootcamp ? bootcampTimelineItems : fullTimelineItems;
+  }, [isOnlyBootcamp]);
+
+  const maxStepReached = isOnlyBootcamp ? 2 : 3;
 
   return (
     <div className="flex grow flex-col">
@@ -103,7 +128,7 @@ function StatusPage() {
                 }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
-                Active ({activeApplications.length})
+                Active ({activeApplications.reduce((sum, application) => sum + application.rolesApplied.length, 0)})
                 {activeTab === "active" && (
                   <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                 )}
@@ -115,7 +140,7 @@ function StatusPage() {
                 }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
-                Inactive ({inactiveApplications.length})
+                Inactive ({inactiveApplications.reduce((sum, application) => sum + application.rolesApplied.length, 0)})
                 {activeTab === "inactive" && (
                   <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                 )}
@@ -128,7 +153,7 @@ function StatusPage() {
               <Timeline
                 currentStep={currentTimelineStep ?? 0}
                 items={timelineItems}
-                maxStepReached={3}
+                maxStepReached={maxStepReached}
               />
             )}
           </div>

@@ -5,10 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { logoutUser, sendVerificationEmail } from "@/services/userService";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function VerifyEmailPage() {
   const { isAuthed, user } = useAuth();
+  const navigate = useNavigate();
 
   const sendMutation = useMutation({
     mutationFn: async () => {
@@ -35,6 +36,13 @@ export default function VerifyEmailPage() {
     }
   }, []);
 
+  const refresh = useCallback(() => navigate(0), [navigate]);
+
+  useEffect(() => {
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, [refresh]);
+
   const handleSend = useCallback(() => {
     sendMutation.mutate();
   }, [sendMutation]);
@@ -53,10 +61,11 @@ export default function VerifyEmailPage() {
       </h1>
       <p className="text-md text-muted-foreground mt-2 mb-8 max-w-lg">
         A verification email has been sent to {user?.email}. Click the
-        verification link, then reload this page. If you have not received the
-        email, click the re-send button below.
+        verification link, then reload this page.{" "}
+        <strong>Make sure to check your spam!</strong> If you have not received
+        the email, click the re-send button below.
       </p>
-      <div className="flex">
+      <div className="flex-row">
         <Button
           className="bg-blue hover:bg-blue/80 transition text-white font-bold py-2 px-4 rounded"
           onClick={handleSend}
@@ -72,6 +81,13 @@ export default function VerifyEmailPage() {
           Refresh Page
         </Button>
       </div>
+       <Button
+          className="bg-red-400 hover:bg-red-400/80 transition text-white font-bold py-2 px-10 rounded mt-5"
+          onClick={() => logoutUser()}
+          disabled={sendMutation.isPending}
+        >
+          Cancel
+        </Button>
     </div>
   );
 }
