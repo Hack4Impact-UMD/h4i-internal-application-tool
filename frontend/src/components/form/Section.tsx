@@ -31,7 +31,7 @@ interface SectionProps {
 const Section: React.FC<SectionProps> = ({
   section,
   responses,
-  onChangeResponse = () => {},
+  onChangeResponse = () => { },
   validationErrors,
   disabled = false,
   responseId,
@@ -40,8 +40,8 @@ const Section: React.FC<SectionProps> = ({
   return (
     <div className="mt-2 mb-2 flex flex-col gap-5">
       <div>
-        <h1 className="font-bold text-xl">{section.sectionName}</h1>
-        <FormMarkdown>{section.description}</FormMarkdown>
+        <h1 className="font-bold text-3xl">{section.sectionName}</h1>
+        <FormMarkdown>{"Description text goes **here**"}</FormMarkdown>
       </div>
       {section.questions.map((question) => {
         const response =
