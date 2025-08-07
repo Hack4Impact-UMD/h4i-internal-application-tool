@@ -860,7 +860,7 @@ Tech Lead Responsibilities:
           questionType: QuestionType.LongAnswer,
           optional: false,
           questionText:
-            "What makes you a great fit for the TL role? Discuss any leadership experience, mentoring, or systems thinking examples.",
+            "What makes you a great fit for the TL role? Discuss any leadership experience, mentoring, or systems design examples.",
           placeholderText:
             "Highlight relevant leadership and technical experience...",
           maximumWordCount: 400,
