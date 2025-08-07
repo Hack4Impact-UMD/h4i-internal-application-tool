@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import { queryClient } from "./config/query";
 import SearchProvider from "./components/providers/SearchProvider";
 import Loading from "./components/Loading";
+import LandingPage from "./pages/LandingPage";
 
 const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const StatusPage = lazy(() => import("./components/status/StatusPage"));
@@ -91,14 +92,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ToastContainer
-          // for error notifications; separate from Layout as it is needed in the account management pages
           position="bottom-right"
           toastClassName={() => "bg-transparent shadow-none border-none mb-3"}
         />
         <Suspense fallback={<Loading />}>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/" element={<Layout />}>
-              <Route index element={<Navigate to="/login" />} />
+              <Route element={<Navigate to="/login" />} />
 
               <Route
                 path="/profile"

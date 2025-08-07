@@ -852,7 +852,7 @@ Tech Lead Responsibilities:
           questionType: QuestionType.LongAnswer,
           optional: false,
           questionText:
-            "What makes you a great fit for the TL role? Discuss any leadership experience, mentoring, or systems thinking examples.",
+            "What makes you a great fit for the TL role? Discuss any leadership experience, mentoring, or systems design examples.",
           placeholderText:
             "Highlight relevant leadership and technical experience...",
           maximumWordCount: 400,
@@ -893,8 +893,8 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
         {
           questionId: "role-preference",
           questionType: QuestionType.MultipleChoice,
-          optional: false,
-          questionText: "Please rank your preference for roles:",
+          optional: true,
+          questionText: "If you are applying to both roles, please rank your preference here",
           secondaryText: "Select your top preference",
           multipleSelect: false,
           questionOptions: [
@@ -906,8 +906,8 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
         {
           questionId: "preference-reasoning",
           questionType: QuestionType.LongAnswer,
-          optional: false,
-          questionText: "What motivated you to rank your preferences that way?",
+          optional: true,
+          questionText: "If you are applying to both roles, please explain your ranking here",
           placeholderText: "Explain your interest in these roles...",
           maximumWordCount: 250,
         },
