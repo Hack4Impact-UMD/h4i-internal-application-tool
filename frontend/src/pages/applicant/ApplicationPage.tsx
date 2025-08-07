@@ -82,7 +82,7 @@ const ApplicationPage: React.FC = () => {
     if (currentIndex < form.sections.length - 1) {
       await save();
       navigate(`/apply/f/${form.id}/${nextSection()}`);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, behavior: "instant" });
     }
     throwWarningToast("Remember to back up your application!");
   };
@@ -91,7 +91,7 @@ const ApplicationPage: React.FC = () => {
     console.log(previousSection());
     await save();
     navigate(`/apply/f/${form.id}/${previousSection()}`);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const currentStep = availableSections.findIndex(
@@ -148,16 +148,15 @@ const ApplicationPage: React.FC = () => {
                 }
                 onClick={handleNext}
               >
-                {" "}
-                Next{" "}
+                Next
               </Button>
             ) : (
               <Button
                 onClick={handleSubmit}
+                disabled={response.rolesApplied.length === 0}
                 className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
               >
-                {" "}
-                Submit{" "}
+                Submit
               </Button>
             )}
           </div>

@@ -1,6 +1,13 @@
 import { db } from "@/config/firebase";
 import { ApplicantRole, RoleReviewRubric } from "@/types/types";
-import { collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 
 export const RUBRIC_COLLECTION = "rubrics";
 
@@ -19,7 +26,7 @@ export async function getRoleRubricsForFormRole(
 ): Promise<RoleReviewRubric[]> {
   const rubrics = collection(db, RUBRIC_COLLECTION);
   const q = query(
-    rubrics, 
+    rubrics,
     where("formId", "==", formId),
     where("role", "==", role),
   );
@@ -33,6 +40,6 @@ export async function updateRoleRubric(
 ) {
   const rubrics = collection(db, RUBRIC_COLLECTION);
   const rubricRef = doc(rubrics, rubricId);
-  
+
   await updateDoc(rubricRef, update);
 }

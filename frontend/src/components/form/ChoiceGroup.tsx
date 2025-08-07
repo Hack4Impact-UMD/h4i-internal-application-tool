@@ -35,7 +35,8 @@ const ChoiceGroup: React.FC<ChoiceGroupProps> = ({
   return (
     <main className={twMerge("flex flex-col min-w-52", className)}>
       <span className="text-xl font-normal">
-        {question}{isRequired && <span className="text-red-600 ml-px">*</span>}
+        {question}
+        {isRequired && <span className="text-red-600 ml-px">*</span>}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
       <FormMarkdown>{label}</FormMarkdown>

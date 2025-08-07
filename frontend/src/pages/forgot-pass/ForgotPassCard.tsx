@@ -46,7 +46,8 @@ export default function ForgotPassCard() {
 
     if (!validEmail(formData.email)) {
       valid = false;
-      errors.email = "Please ensure your email ends with @terpmail.umd.edu, @umd.edu, or @hack4impact.org";
+      errors.email =
+        "Please ensure your email ends with @terpmail.umd.edu, @umd.edu, or @hack4impact.org";
     }
 
     setFormErrors(errors);
@@ -54,7 +55,9 @@ export default function ForgotPassCard() {
     if (valid) {
       try {
         await sendPasswordResetEmail(auth, formData.email);
-        throwWarningToast(`If an account is registered under ${formData.email}, you will receive a password reset link`);
+        throwWarningToast(
+          `If an account is registered under ${formData.email}, you will receive a password reset link`,
+        );
         navigate("/login");
       } catch (err) {
         console.log(err);

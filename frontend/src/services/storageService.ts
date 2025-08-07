@@ -15,7 +15,9 @@ export async function uploadFile(
 ): Promise<string> {
   const fileRef = ref(storage, path);
 
-  const timeout = new Promise<string>((_, reject) => setTimeout(() => reject("Timeout!"), 1000 * 60))
+  const timeout = new Promise<string>((_, reject) =>
+    setTimeout(() => reject("Timeout!"), 1000 * 60),
+  );
 
   const upload = new Promise<string>((resolve, reject) => {
     const uploadTask = uploadBytesResumable(fileRef, file, metadata);
@@ -25,7 +27,7 @@ export async function uploadFile(
         onProgress(snapshot.bytesTransferred / snapshot.totalBytes);
       },
       (err) => {
-        console.log("storage error", err)
+        console.log("storage error", err);
         return reject(err);
       },
       async () => {

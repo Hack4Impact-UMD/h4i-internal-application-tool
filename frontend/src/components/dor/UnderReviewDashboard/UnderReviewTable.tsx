@@ -13,13 +13,8 @@ import {
 import { useMemo, useState } from "react";
 import { DataTable } from "../../DataTable";
 import { Button } from "../../ui/button";
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import {
-  getReviewDataForAssignment,
-} from "@/services/reviewDataService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getReviewDataForAssignment } from "@/services/reviewDataService";
 import {
   assignReview,
   removeReviewAssignment,
@@ -29,9 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { throwSuccessToast } from "../../toasts/SuccessToast";
 import { throwErrorToast } from "../../toasts/ErrorToast";
 import ApplicantRolePill from "../../role-pill/RolePill";
-import {
-  updateApplicationStatus,
-} from "@/services/statusService";
+import { updateApplicationStatus } from "@/services/statusService";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,

@@ -14,28 +14,28 @@ type TimelineProps = {
 };
 
 const Timeline = (props: TimelineProps) => {
-  const [visibleItems, setVisibleItems] = useState(props.items.slice(0,4)) 
+  const [visibleItems, setVisibleItems] = useState(props.items.slice(0, 4));
   const [progressIndex, setProgressIndex] = useState(0);
 
   const handleStepClick = (index: number) => {
     if (index <= props.maxStepReached && props.onStepClick) {
       props.onStepClick(index, props.items[index]);
     }
-  };  
+  };
 
   useEffect(() => {
     const totalItems = props.items.length;
-  
+
     // -1 to include previous item if possible
     let start = Math.max(props.currentStep - 1, 0);
     let end = start + 4;
-  
+
     // if out of bounds, just show last four items
     if (end > totalItems) {
       end = totalItems;
       start = Math.max(end - 4, 0);
     }
-  
+
     setProgressIndex(props.currentStep - start);
     setVisibleItems(props.items.slice(start, end));
   }, [props.currentStep, props.items]);

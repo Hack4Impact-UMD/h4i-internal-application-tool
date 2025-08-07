@@ -222,7 +222,6 @@ export default function ProfilePage() {
                         return;
                       }
                     }
-
                   } catch (error) {
                     throwErrorToast(
                       "Failed to update profile. Please try again.",

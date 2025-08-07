@@ -44,7 +44,8 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
       )}
     >
       <span className="text-xl font-normal mb-2">
-        {question}{isRequired && <span className="text-red-600 ml-px">*</span>}
+        {question}
+        {isRequired && <span className="text-red-600 ml-px">*</span>}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
       <FormMarkdown>{label}</FormMarkdown>

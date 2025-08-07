@@ -22,10 +22,14 @@ const ResetPassCard = lazy(() => import("./pages/reset-pass/ResetPassCard"));
 const Layout = lazy(() => import("./pages/Layout"));
 const ApplicationPage = lazy(() => import("./pages/applicant/ApplicationPage"));
 const AppOverview = lazy(() => import("./pages/applicant/AppOverview"));
-const AppSubmitted = lazy(() => import("./pages/applicant/app-submitted/AppSubmitted"));
+const AppSubmitted = lazy(
+  () => import("./pages/applicant/app-submitted/AppSubmitted"),
+);
 const AppSubmitPage = lazy(() => import("./pages/applicant/AppSubmitPage"));
 const AppReviewPage = lazy(() => import("./pages/applicant/AppReviewPage"));
-const UserRolePage = lazy(() => import("./pages/super-reviewer/dashboards/UserRolePage"));
+const UserRolePage = lazy(
+  () => import("./pages/super-reviewer/dashboards/UserRolePage"),
+);
 const ReviewerApplicationsDashboard = lazy(
   () => import("./pages/reviewer/ReviewerApplicationsDashboard"),
 );
@@ -37,26 +41,34 @@ const UnderReviewDashboard = lazy(
   () => import("./pages/super-reviewer/dashboards/UnderReviewDashboard"),
 );
 const AssignedReviewsPage = lazy(() =>
-  import("./pages/super-reviewer/dashboards/AssignedReviewsPage").then((module) => ({
-    default: module.AssignedReviewsPage,
-  })),
+  import("./pages/super-reviewer/dashboards/AssignedReviewsPage").then(
+    (module) => ({
+      default: module.AssignedReviewsPage,
+    }),
+  ),
 );
 const AssignedApplicationsPage = lazy(() =>
-  import("./pages/super-reviewer/dashboards/AssignedApplicationsPage").then((module) => ({
-    default: module.AssignedApplicationsPage,
-  })),
+  import("./pages/super-reviewer/dashboards/AssignedApplicationsPage").then(
+    (module) => ({
+      default: module.AssignedApplicationsPage,
+    }),
+  ),
 );
 const AppRevisitPage = lazy(() => import("./pages/applicant/AppRevisitPage"));
 const QualifiedApplicationsDashboard = lazy(
-  () => import("./pages/super-reviewer/dashboards/QualifiedApplicationsDashboard"),
+  () =>
+    import("./pages/super-reviewer/dashboards/QualifiedApplicationsDashboard"),
 );
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
-const ViewApplicationPage = lazy(() => import("./pages/super-reviewer/ViewApplicationPage"));
+const ViewApplicationPage = lazy(
+  () => import("./pages/super-reviewer/ViewApplicationPage"),
+);
 const ReviewerDashboardShell = lazy(
   () => import("./pages/reviewer/ReviewerDashboardShell"),
 );
 const SuperReviewerReviewersDashboard = lazy(
-  () => import("./pages/super-reviewer/dashboards/SuperReviewerReviewersDashboard"),
+  () =>
+    import("./pages/super-reviewer/dashboards/SuperReviewerReviewersDashboard"),
 );
 const ReviewerInterviewsDashboard = lazy(
   () => import("./pages/reviewer/ReviewerInterviewsDashboard"),
@@ -67,7 +79,10 @@ const FormValidationPage = lazy(() =>
   })),
 );
 const SuperReviewerInterviewersDashboard = lazy(
-  () => import("./pages/super-reviewer/dashboards/SuperReviewerInterviewersDashboard"),
+  () =>
+    import(
+      "./pages/super-reviewer/dashboards/SuperReviewerInterviewersDashboard"
+    ),
 );
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 

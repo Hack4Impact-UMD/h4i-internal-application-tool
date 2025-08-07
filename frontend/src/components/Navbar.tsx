@@ -41,7 +41,10 @@ function Navbar({ className }: { className?: string }) {
           )}
         </div>
         <div className="ml-auto flex flex-row items-center">
-          <NavLink to="/" className="border-r border-solid border-gray-400 pr-1">
+          <NavLink
+            to="/"
+            className="border-r border-solid border-gray-400 pr-1"
+          >
             <HomeIcon className="w-8 h-8 text-black cursor-pointer hover:bg-darkgray/5 rounded-md p-1 transition-colors" />
           </NavLink>
           {!isLoading && isAuthed && user && (
