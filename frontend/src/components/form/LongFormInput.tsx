@@ -67,7 +67,7 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
       )}
       <Textarea
         className={twMerge(
-          "p-2 h-32 w-full rounded-md border-2 disabled:bg-[#DADADA] disabled:cursor-not-allowed disabled:opacity-100",
+          "p-2 h-32 w-full rounded-md border-2 disabled:opacity-100 disabled:bg-[#f3f4f6] disabled:cursor-not-allowed",
         )}
         required={isRequired}
         value={value}

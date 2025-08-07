@@ -44,7 +44,7 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
 
       <Input
         className={twMerge(
-          "max-w-96 mt-auto p-2 w-full bg-white rounded-md outline outline-black border-2 disabled:cursor-not-allowed disabled:bg-[#DADADA] disabled:opacity-100",
+          "max-w-96 mt-auto p-2 w-full bg-white rounded-md outline outline-black border-2 disabled:cursor-not-allowed disabled:opacity-100 disabled:bg-[#f3f4f6]",
         )}
         required={isRequired}
         value={value}
