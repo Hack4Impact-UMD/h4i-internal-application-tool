@@ -10,7 +10,7 @@ import { ApplicationResponseRow } from "./ApplicationResponseRow.tsx";
 
 const timelineItems = [
   { label: "Not Reviewed", id: ReviewStatus.NotReviewed },
-  { label: "Under Review", id: ReviewStatus.UnderReview },
+  { label: "Submitted", id: ReviewStatus.UnderReview },
   { label: "Interview", id: ReviewStatus.Interview },
   { label: "Decided", id: "decided" },
 ];
