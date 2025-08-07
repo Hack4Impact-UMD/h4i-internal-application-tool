@@ -170,7 +170,7 @@ export default function ProfilePage() {
                 <Button
                   disabled={disabled}
                   onClick={async () => {
-                    //TODO: Why is this inline lmao, also refactor to a mutation
+                    //TODO: Why is this inline lol, refactor to a mutation instead
                     if (
                       !profileInputData.firstName.trim() ||
                       !profileInputData.lastName.trim() ||
