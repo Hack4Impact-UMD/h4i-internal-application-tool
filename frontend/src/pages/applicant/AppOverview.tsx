@@ -63,7 +63,7 @@ const AppOverview: React.FC = () => {
   }
   return (
     <div className="flex flex-col items-center">
-      <div className="mt-5 max-w-5xl w-full px-5 py-5 font-sans leading-relaxed h-full">
+      <div className="mt-5 max-w-5xl w-full px-5 py-5 font-sans leading-relaxed h-full rounded-xl shadow-sm border border-gray-200 bg-gray-50">
         <h1 className="mb-3 text-5xl text-black">Overview</h1>
         <div className="flex gap-2 flex-col sm:flex-row items-start justify-between mb-5">
           <div className="flex flex-col">
