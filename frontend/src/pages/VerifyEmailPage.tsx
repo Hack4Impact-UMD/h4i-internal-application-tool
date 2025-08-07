@@ -5,10 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { logoutUser, sendVerificationEmail } from "@/services/userService";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function VerifyEmailPage() {
   const { isAuthed, user } = useAuth();
+  const navigate = useNavigate()
 
   const sendMutation = useMutation({
     mutationFn: async () => {
@@ -34,6 +35,13 @@ export default function VerifyEmailPage() {
       logoutUser();
     }
   }, []);
+
+  const refresh = useCallback(() => navigate(0), [navigate])
+
+  useEffect(() => {
+    window.addEventListener("focus", refresh)
+    return () => window.removeEventListener("focus", refresh)
+  }, [refresh])
 
   const handleSend = useCallback(() => {
     sendMutation.mutate();
