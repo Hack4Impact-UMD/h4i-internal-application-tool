@@ -134,6 +134,8 @@ function ApplicationResponseRow({
       </tr>
     );
 
+  const semesterDisplay = form.semester + " Application"; 
+
   return (
     <tr className="border-t border-gray-300">
       <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
@@ -141,7 +143,7 @@ function ApplicationResponseRow({
           className="text-blue-500 cursor-pointer"
           to={"/apply/revisit/" + response.applicationFormId}
         >
-          {form.semester + " Application"}
+          {(semesterDisplay.length > 25) ? (semesterDisplay.slice(0, 23) + "...") : semesterDisplay}
         </Link>
         <ApplicantRolePill role={role} />
       </td>
