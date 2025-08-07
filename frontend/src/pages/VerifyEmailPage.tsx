@@ -53,8 +53,9 @@ export default function VerifyEmailPage() {
       </h1>
       <p className="text-md text-muted-foreground mt-2 mb-8 max-w-lg">
         A verification email has been sent to {user?.email}. Click the
-        verification link, then reload this page. If you have not received the
-        email, click the re-send button below.
+        verification link, then reload this page.{" "}
+        <strong>Make sure to check your spam!</strong> If you have not received
+        the email, click the re-send button below.
       </p>
       <div className="flex">
         <Button
