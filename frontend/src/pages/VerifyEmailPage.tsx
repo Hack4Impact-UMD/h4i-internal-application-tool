@@ -65,7 +65,7 @@ export default function VerifyEmailPage() {
         <strong>Make sure to check your spam!</strong> If you have not received
         the email, click the re-send button below.
       </p>
-      <div className="flex">
+      <div className="flex-row">
         <Button
           className="bg-blue hover:bg-blue/80 transition text-white font-bold py-2 px-4 rounded"
           onClick={handleSend}
@@ -81,6 +81,13 @@ export default function VerifyEmailPage() {
           Refresh Page
         </Button>
       </div>
+       <Button
+          className="bg-red-400 hover:bg-red-400/80 transition text-white font-bold py-2 px-10 rounded mt-5"
+          onClick={() => logoutUser()}
+          disabled={sendMutation.isPending}
+        >
+          Cancel
+        </Button>
     </div>
   );
 }
