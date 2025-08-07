@@ -2,10 +2,10 @@ import { useState } from "react";
 import TextBox from "../../components/TextBox";
 import { Button } from "../../components/ui/button";
 import { useAuth } from "../../hooks/useAuth";
-import { validPassword } from "../../utils/verification";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LogInCard() {
   const { login } = useAuth();
@@ -34,6 +34,8 @@ export default function LogInCard() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   // check if all fields are filled
   const isFormValid =
     formData.email.trim() !== "" && formData.password.trim() !== "";
@@ -59,14 +61,6 @@ export default function LogInCard() {
   const handleSubmit = async () => {
     let valid = true;
     const errors = { ...formErrors };
-
-    if (!validPassword(formData.password)) {
-      valid = false;
-      const errorMessage =
-        "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#).";
-      errors.password = errorMessage;
-      throwErrorToast(errorMessage);
-    }
 
     setFormErrors(errors);
 
@@ -112,7 +106,7 @@ export default function LogInCard() {
       <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
         <h1 className="text-3xl font-bold text-black">Log In</h1>
         <h3 className="text-lg text-darkgray">
-          Lets get started by filling out your information below
+          Let's get started by filling out your information below
         </h3>
       </div>
       <TextBox
@@ -122,14 +116,27 @@ export default function LogInCard() {
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />
-      <div className="w-full">
-        <TextBox
-          inputType="password"
-          className="w-full"
-          label="PASSWORD"
-          invalidLabel={formErrors.password}
-          onChange={(e) => handleInputChange("password", e.target.value)}
-        />
+      <div className="w-full relative">
+        <div className="relative flex items-center">
+          <TextBox
+            inputType={showPassword ? "text" : "password"}
+            className="w-full flex-1"
+            label="PASSWORD"
+            invalidLabel={formErrors.password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 text-gray-500 cursor-pointer"
+          >
+            {showPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
+          </button>
+        </div>
         <div className="w-full flex justify-end">
           <a href="/forgotpassword" className="text-blue">
             Forgot password?
@@ -147,7 +154,7 @@ export default function LogInCard() {
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-gray-500 mt-1">
-          Dont have an account?{" "}
+          Don't have an account?{" "}
           <a href="/signup" className="text-blue">
             Create account
           </a>

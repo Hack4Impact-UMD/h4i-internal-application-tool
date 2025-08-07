@@ -232,19 +232,19 @@ CS classes are NOT a requirement for members, we take all majors!
       description: `
 **About Hack4Impact-UMD Teams & Structure**
 
-At Hack4Impact-UMD, there are three types of teams: project teams, bootcamp, and the sourcing team. Project teams work directly with our nonprofit partners to create products to help the community; these teams consists of Product Managers (PMs), Tech Leads, Designers, and Engineers. On the other hand, bootcamp is for students who are interested in Hack4Impact's mission but need experience before they join a project team. The sourcing team reaches out to non-profit organizations to secure projects for Hack4Impact-UMD. 
+At Hack4Impact-UMD, there are three types of teams: project teams, bootcamp, and the sourcing team. Project teams work directly with our nonprofit partners to create products to help the community; these teams consists of 🤝 Product Managers (PMs), 🤖 Tech Leads, 🎨 Designers, and ⚙️ Engineers. On the other hand, bootcamp is for students who are interested in Hack4Impact's mission but need experience before they join a project team. The sourcing team reaches out to non-profit organizations to secure projects for Hack4Impact-UMD. 
 
-**Project Teams**
+**🫂 Project Teams**
 
 Project teams work with real non-profit partners, creating solutions for any technical needs that our partners have. It's important to us when forming teams to find people who have the capacity to commit to the project for the whole semester. Otherwise, it's unfair to the teams and the partners. Our project teams practice the agile software development methodology, and project team members are expected to fulfil their commitments made during each sprint. Our workflow involves two week sprints, weekly meetings with your team, doing your own project tasks during the week, and monthly chapter wide meetings. The time commitment is around 5 hours a week.
 
-**Bootcamp**
+**🥾 Bootcamp**
 
-Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
+Bootcamp essentially teaches members the necessary skillset to join a project team. Students will learn web development skills starting from basic HTML, JavaScript, and CSS, and then build up to more complicated tools like Firebase, React, and Node.js. The goal is for members to complete bootcamp and then have the necessary skills to pass a technical assessment and join a project team the following semester. The bootcamp is mainly focused on developing technical skills, but there are opportunities to learn about other roles including Designer and Project Manager. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-7 hours a week.
 
-**Public Relations & Outreach Team**
+**🗣️ Public Relations & Outreach Team**
 
-**Public Relations & Outreach (PR&O)** is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
+Public Relations & Outreach (PR&O) is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **📢 Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **📱 Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
 
 **Member Responsibilities**
 
@@ -360,10 +360,10 @@ We consider applicants with all experience levels! You are not required to have 
         },
         {
           questionId: "how-did-you-hear",
-          questionType: QuestionType.MultipleChoice,
+          questionType: QuestionType.MultipleSelect,
           optional: false,
           questionText: "How did you hear about us?",
-          multipleSelect: false,
+          multipleSelect: true,
           questionOptions: [
             "Friend/Word of mouth",
             "Social media",
@@ -626,7 +626,7 @@ Designer Responsibilities:
           optional: false,
           questionText: "Portfolio Submission (mandatory)",
           secondaryText:
-            "Please include links to your work:\n- Portfolio website\n- Behance/Dribbble\n- Specific project links\n- GitHub repositories",
+            "Please include links to your work:\n- Portfolio website\n- Behance/Dribbble\n- Portfolio and/or project file links\n- GitHub repositories\nMake sure we can view your links!",
           placeholderText: "Provide links to your design work...",
           maximumWordCount: 300,
         },
@@ -761,7 +761,7 @@ Provide the link to your completed assessment repo here (e.g. https://github.com
         {
           questionId: "technical-assessment-comments",
           questionType: QuestionType.LongAnswer,
-          optional: false,
+          optional: true,
           questionText: "Comments/Notes",
           placeholderText: "",
           maximumWordCount: 300,

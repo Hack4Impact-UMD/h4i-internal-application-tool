@@ -41,7 +41,7 @@ function Navbar({ className }: { className?: string }) {
         </div>
         {!isLoading && isAuthed && user && (
           <div className="ml-auto">
-            <NavProfile user={user} />
+            <NavProfile user={user} className="hover:bg-darkgray/5"/>
           </div>
         )}
       </div>

@@ -18,7 +18,13 @@ export const userRegisterFormSchema = z.object({
   email: z.string().email("Must provide a valid email"),
   firstName: z.string().nonempty("First name can't be empty"),
   lastName: z.string().nonempty("Last name can't be empty"),
-  password: z.string().min(6, "Password must be greater than 6 characters")
+  password: z.string()
+  .min(8, "Password must be at least 8 characters")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+
 })
 
 export const updateUserSchema = z.object({
