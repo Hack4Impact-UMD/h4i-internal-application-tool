@@ -315,7 +315,8 @@ We consider applicants with all experience levels! You are not required to have 
           optional: false,
           questionText:
             "What about Hack4Impact-UMD drove you to apply, and what makes us stand out to you?",
-          secondaryText: "We are looking for a detailed and thoughtful answer here. Aim for a response of at least 400 words that gives a clear sense of why you're excited to join Hack4Impact-UMD, and how we align with your values and goals.",
+          secondaryText:
+            "We are looking for a detailed and thoughtful answer here. Aim for a response of at least 400 words that gives a clear sense of why you're excited to join Hack4Impact-UMD, and how we align with your values and goals.",
           placeholderText: "Tell us what attracted you to our organization...",
           minimumWordCount: 400,
         },
@@ -907,7 +908,8 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
           questionId: "role-preference",
           questionType: QuestionType.MultipleChoice,
           optional: true,
-          questionText: "If you are applying to both roles, please rank your preference here",
+          questionText:
+            "If you are applying to both roles, please rank your preference here",
           secondaryText: "Select your top preference",
           multipleSelect: false,
           questionOptions: [
@@ -920,7 +922,8 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
           questionId: "preference-reasoning",
           questionType: QuestionType.LongAnswer,
           optional: true,
-          questionText: "If you are applying to both roles, please explain your ranking here",
+          questionText:
+            "If you are applying to both roles, please explain your ranking here",
           placeholderText: "Explain your interest in these roles...",
           maximumWordCount: 250,
         },

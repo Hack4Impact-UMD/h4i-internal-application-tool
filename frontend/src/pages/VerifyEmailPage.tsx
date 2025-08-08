@@ -81,13 +81,13 @@ export default function VerifyEmailPage() {
           Refresh Page
         </Button>
       </div>
-       <Button
-          className="bg-red-400 hover:bg-red-400/80 transition text-white font-bold py-2 px-10 rounded mt-5"
-          onClick={() => logoutUser()}
-          disabled={sendMutation.isPending}
-        >
-          Cancel
-        </Button>
+      <Button
+        className="bg-red-400 hover:bg-red-400/80 transition text-white font-bold py-2 px-10 rounded mt-5"
+        onClick={() => logoutUser()}
+        disabled={sendMutation.isPending}
+      >
+        Cancel
+      </Button>
     </div>
   );
 }

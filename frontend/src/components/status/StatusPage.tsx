@@ -1,6 +1,10 @@
 import { Fragment, useMemo, useState } from "react";
 import Timeline from "./Timeline.tsx";
-import { ApplicantRole, ApplicationResponse, ReviewStatus } from "../../types/types.ts";
+import {
+  ApplicantRole,
+  ApplicationResponse,
+  ReviewStatus,
+} from "../../types/types.ts";
 import { useApplicationResponsesAndSemesters } from "../../hooks/useApplicationResponseAndSemesters.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth.ts";
@@ -31,10 +35,11 @@ function useTimelineStep() {
 
       const applications = await getApplicationResponseAndSemester(user.id);
       const activeApps = applications.filter((app) => app.active);
-      
-      const allRoles = activeApps.flatMap(app => app.rolesApplied);
-      const isOnlyBootcamp = allRoles.length === 1 && allRoles[0] === ApplicantRole.Bootcamp;
-      
+
+      const allRoles = activeApps.flatMap((app) => app.rolesApplied);
+      const isOnlyBootcamp =
+        allRoles.length === 1 && allRoles[0] === ApplicantRole.Bootcamp;
+
       const appStatuses = await Promise.all(
         activeApps.flatMap((app) =>
           app.rolesApplied.map((role) =>
@@ -98,15 +103,15 @@ function StatusPage() {
   }, new Map<string, ApplicationResponse[]>());
 
   const { data: currentTimelineStep } = useTimelineStep();
-  
+
   // Determine if only bootcamp is applied
   const isOnlyBootcamp = useMemo(() => {
     if (!activeApplications.length) return false;
-    
-    const allRoles = activeApplications.flatMap(app => app.rolesApplied);
+
+    const allRoles = activeApplications.flatMap((app) => app.rolesApplied);
     return allRoles.length === 1 && allRoles[0] === "bootcamp";
   }, [activeApplications]);
-  
+
   const timelineItems = useMemo(() => {
     return isOnlyBootcamp ? bootcampTimelineItems : fullTimelineItems;
   }, [isOnlyBootcamp]);
@@ -128,7 +133,12 @@ function StatusPage() {
                 }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
-                Active ({activeApplications.reduce((sum, application) => sum + application.rolesApplied.length, 0)})
+                Active (
+                {activeApplications.reduce(
+                  (sum, application) => sum + application.rolesApplied.length,
+                  0,
+                )}
+                )
                 {activeTab === "active" && (
                   <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                 )}
@@ -140,7 +150,12 @@ function StatusPage() {
                 }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
-                Inactive ({inactiveApplications.reduce((sum, application) => sum + application.rolesApplied.length, 0)})
+                Inactive (
+                {inactiveApplications.reduce(
+                  (sum, application) => sum + application.rolesApplied.length,
+                  0,
+                )}
+                )
                 {activeTab === "inactive" && (
                   <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                 )}

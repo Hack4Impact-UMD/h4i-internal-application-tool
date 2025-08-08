@@ -37,7 +37,7 @@ const AppOverview: React.FC = () => {
         .map((app) => app.applicationFormId)
         .includes(form.id);
     else return false;
-  }, [applications, form])
+  }, [applications, form]);
 
   const navigate = useNavigate();
   const [wait, setWait] = useState(false);
@@ -101,7 +101,9 @@ const AppOverview: React.FC = () => {
               {applied
                 ? "Go to status page"
                 : Timestamp.now() <= form.dueDate
-                  ? inProgress ? "Continue Application" : "Apply"
+                  ? inProgress
+                    ? "Continue Application"
+                    : "Apply"
                   : "Application Closed"}
             </Button>
           }
