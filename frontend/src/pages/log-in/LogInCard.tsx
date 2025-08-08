@@ -100,10 +100,10 @@ export default function LogInCard() {
         e.stopPropagation();
         handleSubmit();
       }}
-      className="flex flex-col items-center justify-around w-full p-4 max-w-[430px] h-[700px]"
+      className="flex flex-col items-center justify-around w-full p-4 max-w-[430px] min-h-screen"
     >
-      <img src="h4i-logo.png" alt="h4i logo" className="w-[105px] h-[105px]" />
-      <div className="flex flex-col items-center text-center justify-around w-[305px] h-[305px]">
+      <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
+      <div className="flex flex-col items-center text-center w-[305px] h-[105px]">
         <h1 className="text-3xl font-bold text-black">Log In</h1>
         <h3 className="text-lg text-darkgray">
           Let's get started by filling out your information below
