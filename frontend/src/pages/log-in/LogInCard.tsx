@@ -114,7 +114,7 @@ export default function LogInCard() {
         <div>
           <span>
             We are aware of an issue where some users may experience an "insufficient permissions" error upon logging in.
-            <strong> If you experience this issue we recommend signing out and then signing back in to access the application.</strong>
+            <strong> If you experience this issue, we recommend signing out and then signing back in to access the application.</strong>
           </span>
         </div>
       </div>
