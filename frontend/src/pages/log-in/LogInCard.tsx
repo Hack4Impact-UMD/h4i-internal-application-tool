@@ -109,7 +109,7 @@ export default function LogInCard() {
           Let's get started by filling out your information below
         </h3>
       </div>
-      <div className="flex gap-1 items-center bg-lightblue p-2 text-blue rounded text-sm border-blue border">
+      <div className="flex gap-1 items-center bg-lightblue p-2 text-blue rounded text-sm border-blue border mb-2">
         <InfoIcon className="size-32 inline pr-1" />
         <div>
           <span>
@@ -120,7 +120,7 @@ export default function LogInCard() {
       </div>
       <TextBox
         inputType="text"
-        className="w-full"
+        className="w-full mb-2"
         label="EMAIL"
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
@@ -146,7 +146,7 @@ export default function LogInCard() {
             )}
           </button>
         </div>
-        <div className="w-full flex justify-end">
+        <div className="w-full flex justify-end mb-2">
           <Link to="/forgotpassword" className="text-blue">
             Forgot password?
           </Link>
