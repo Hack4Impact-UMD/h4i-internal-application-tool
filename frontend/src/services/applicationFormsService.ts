@@ -3,7 +3,7 @@ import { db, API_URL } from "../config/firebase";
 import { ApplicationForm } from "../types/types";
 import { query } from "firebase/firestore";
 import axios from "axios";
-import { getApplicationResponseByFormId, getApplicationResponseById } from "./applicationResponsesService";
+import { getApplicationResponseById } from "./applicationResponsesService";
 
 export const APPLICATION_FORMS_COLLECTION = "application-forms";
 
