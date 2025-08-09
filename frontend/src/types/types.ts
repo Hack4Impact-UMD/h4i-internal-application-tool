@@ -86,7 +86,6 @@ export interface ApplicationResponse {
   sectionResponses: SectionResponse[];
   status: ApplicationStatus;
   dateSubmitted: Timestamp; // if not submitted, this will be the Timestamp of the last save
-  decisionLetterId?: string;
 }
 
 // One of these per review. Reviews tie together an application, role, and reviewer.
