@@ -138,8 +138,11 @@ const ApplicationPage: React.FC = () => {
   }, [reviewData, localNotes]);
 
   const sortedRubrics = useMemo(
-    () => (rubrics ? [...rubrics].sort((a, b) => a.roles.length - b.roles.length) : []),
-    [rubrics]
+    () =>
+      rubrics
+        ? [...rubrics].sort((a, b) => a.roles.length - b.roles.length)
+        : [],
+    [rubrics],
   );
 
   const scoreChange = useCallback(
@@ -287,23 +290,22 @@ const ApplicationPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )?.questions ?? []
                   }
-                  onChangeResponse={() => { }}
+                  onChangeResponse={() => {}}
                 />
               </div>
             ))}
         </div>
         <div className="w-1/2 overflow-y-scroll flex flex-col gap-2">
-          {sortedRubrics
-            .map((r) => (
-              <RoleRubric
-                key={r.id}
-                rubric={r}
-                onScoreChange={scoreChange}
-                onCommentChange={commentChange}
-                reviewData={optimisticReviewData}
-                disabled={optimisticReviewData.submitted}
-              />
-            ))}
+          {sortedRubrics.map((r) => (
+            <RoleRubric
+              key={r.id}
+              rubric={r}
+              onScoreChange={scoreChange}
+              onCommentChange={commentChange}
+              reviewData={optimisticReviewData}
+              disabled={optimisticReviewData.submitted}
+            />
+          ))}
         </div>
       </div>
     </div>
