@@ -47,7 +47,7 @@ export default function RoleRubric({
         ))}
       </div>
       <h2 className="text-lg">Review Comments</h2>
-      <FormMarkdown>{rubric.commentsDecription}</FormMarkdown>
+      <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
       <Textarea
         disabled={disabled}
         value={reviewData.reviewerNotes[rubric.id] ?? ""}
