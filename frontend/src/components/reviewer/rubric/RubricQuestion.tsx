@@ -6,12 +6,14 @@ type RubricQuestionProps = {
   question: ReviewRubricQuestion;
   onChange: (key: string, value: number) => void;
   value: number;
+  disabled?: boolean;
 };
 
 export function RubricQuestion({
   question,
   onChange,
   value,
+  disabled = false
 }: RubricQuestionProps) {
   return (
     <div className="">
@@ -26,7 +28,9 @@ export function RubricQuestion({
             key={score}
             score={score}
             selected={value === score}
-            onClick={() => onChange(question.scoreKey, score)}
+            onClick={() => {
+              if (!disabled) onChange(question.scoreKey, score)
+            }}
           />
         ))}
       </div>

@@ -103,24 +103,32 @@ const ApplicationPage: React.FC = () => {
     error: scoreError
   } = useReviewScore(reviewData!)
 
-  const [localNotes, setLocalNotes] = useState<Record<string, string> | null>(null);
+  const [localNotes, setLocalNotes] = useState<Record<string, string> | undefined>(undefined);
 
   useEffect(() => {
-    if (reviewData && localNotes === null) {
+    if (reviewData && !localNotes) {
       setLocalNotes(reviewData.reviewerNotes || {});
     }
   }, [reviewData, localNotes]);
 
+  useEffect(() => {
+    const ref = setTimeout(() => updateReviewData({
+      reviewerNotes: localNotes
+    }), 1000)
+    return () => {
+      clearTimeout(ref)
+    }
+  }, [localNotes, updateReviewData])
+
   const optimisticReviewData = useMemo(() => {
-    if (!reviewData) return null;
-    if (localNotes === null) return reviewData;
+    if (!reviewData) return undefined;
+    if (!localNotes) return reviewData;
     return {
       ...reviewData,
       reviewerNotes: localNotes,
     };
   }, [reviewData, localNotes]);
 
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const scoreChange = useCallback((key: string, value: number) => {
     if (!reviewData || reviewData.submitted) return;
@@ -134,19 +142,9 @@ const ApplicationPage: React.FC = () => {
   }, [reviewData, updateReviewData]);
 
   const commentChange = useCallback((id: string, value: string) => {
-    if (localNotes === null || reviewData?.submitted) return;
-
     const newLocalNotes = { ...localNotes, [id]: value };
     setLocalNotes(newLocalNotes);
-
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
-
-    debounceTimeout.current = setTimeout(() => {
-      updateReviewData({ reviewerNotes: newLocalNotes });
-    }, 1000);
-  }, [localNotes, reviewData, updateReviewData]);
+  }, [localNotes]);
 
   const handleSubmitReview = () => {
     submitReview({ submitted: true }, {
@@ -160,15 +158,17 @@ const ApplicationPage: React.FC = () => {
     });
   }
 
-  if (formLoading || responseLoading || reviewPending || rubricsPending || localNotes === null) return <Loading />;
+  if (formLoading || responseLoading || reviewPending || rubricsPending || !localNotes) return <Loading />;
   if (formError || !form)
     return <p>Failed to fetch form: {formError.message}</p>;
   if (responseError || !response)
     return <p>Failed to fetch response: {responseError?.message}</p>;
-  if (reviewError || !reviewData || !optimisticReviewData)
-    return <p>Failed to fetch response: {reviewError.message}</p>;
+  if (reviewError)
+    return <p>Failed to fetch review: {reviewError.message}</p>;
   if (rubricsError)
-    return <p>Failed to fetch response: {rubricsError.message}</p>;
+    return <p>Failed to fetch rubrics: {rubricsError.message}</p>;
+  if (!optimisticReviewData)
+    return <p>Failed to fetch review data</p>
 
 
   return (

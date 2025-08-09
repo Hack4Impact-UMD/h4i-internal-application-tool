@@ -96,13 +96,8 @@ export interface ApplicationReviewData {
   applicationFormId: string;
   applicationResponseId: string;
   applicantId: string;
-  applicantScores: {
-    [category in string]: number; // between 0-4, each review category in the rubric will have a value here
-  };
-  reviewerNotes: {
-    [rubricId in string]: string; // each rubric has a section for comments which should be saved here
-  };
-  // reviewStatus: ReviewStatus;
+  applicantScores: Record<string, number>,
+  reviewerNotes: Record<string, string>  // reviewStatus: ReviewStatus;
   forRole: ApplicantRole; // what role is this review for
   submitted: boolean;
 }
