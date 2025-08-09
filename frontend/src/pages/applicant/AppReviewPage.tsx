@@ -147,6 +147,16 @@ const ApplicationPage: React.FC = () => {
   }, [localNotes]);
 
   const handleSubmitReview = () => {
+    const requiredKeys = rubrics?.flatMap(r => r.rubricQuestions.map(q => q.scoreKey)) ?? []
+    const existingKeys = new Set(Object.keys(reviewData?.applicantScores ?? {}))
+
+    for (const req of requiredKeys) {
+      if (!existingKeys.has(req)) {
+        throwErrorToast(`Review is incomplete, missing required key ${req}`)
+        return;
+      }
+    }
+
     submitReview({ submitted: true }, {
       onSuccess: () => {
         throwSuccessToast("Review submitted successfully!");
@@ -205,7 +215,7 @@ const ApplicationPage: React.FC = () => {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="flex gap-2 justify-center grow overflow-scroll pt-4">
+      <div className="flex gap-2 justify-center grow overflow-scroll pt-2">
         <div className="w-1/2 flex h-full flex-col gap-2 overflow-scroll">
           {form.sections
             .filter((s) => {

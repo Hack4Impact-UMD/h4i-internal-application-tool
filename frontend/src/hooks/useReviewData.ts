@@ -24,8 +24,9 @@ export function useUpdateReviewData(reviewDataId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (update: Partial<Omit<ApplicationReviewData, "id">>) =>
-      updateReviewData(reviewDataId, update),
+    mutationFn: async (update: Partial<Omit<ApplicationReviewData, "id">>) => {
+      await updateReviewData(reviewDataId, update)
+    },
     onMutate: async (newData) => {
       await queryClient.cancelQueries({
         queryKey: ["review-data", "id", reviewDataId],

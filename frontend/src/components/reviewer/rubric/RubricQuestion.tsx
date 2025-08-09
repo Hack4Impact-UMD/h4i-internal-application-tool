@@ -5,7 +5,7 @@ import { RubricScoreButton } from "./RubricScoreButton";
 type RubricQuestionProps = {
   question: ReviewRubricQuestion;
   onChange: (key: string, value: number) => void;
-  value: number;
+  value?: number;
   disabled?: boolean;
 };
 
