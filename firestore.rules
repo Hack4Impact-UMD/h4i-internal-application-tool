@@ -88,7 +88,7 @@ service cloud.firestore {
 
     match /rubrics/{rubric_id} {
       allow read: if isReviewer();
-      allow write: if isReviewer();
+      allow write: if isSuperReviewer();
     }
     
     // by default, all documents should be inaccessible to reads and writes
