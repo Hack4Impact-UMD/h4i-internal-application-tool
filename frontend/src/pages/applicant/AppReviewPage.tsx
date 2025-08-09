@@ -137,6 +137,11 @@ const ApplicationPage: React.FC = () => {
     };
   }, [reviewData, localNotes]);
 
+  const sortedRubrics = useMemo(
+    () => (rubrics ? [...rubrics].sort((a, b) => a.roles.length - b.roles.length) : []),
+    [rubrics]
+  );
+
   const scoreChange = useCallback(
     (key: string, value: number) => {
       if (!reviewData || reviewData.submitted) return;
@@ -280,16 +285,15 @@ const ApplicationPage: React.FC = () => {
                   responses={
                     response.sectionResponses.find(
                       (r) => r.sectionId == s.sectionId,
-                    )!.questions
+                    )?.questions ?? []
                   }
-                  onChangeResponse={() => {}}
+                  onChangeResponse={() => { }}
                 />
               </div>
             ))}
         </div>
         <div className="w-1/2 overflow-y-scroll flex flex-col gap-2">
-          {rubrics
-            .sort((a, b) => a.roles.length - b.roles.length)
+          {sortedRubrics
             .map((r) => (
               <RoleRubric
                 key={r.id}

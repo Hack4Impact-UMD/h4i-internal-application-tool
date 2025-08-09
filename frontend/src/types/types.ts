@@ -147,7 +147,7 @@ export type RoleReviewRubric = {
   roles: ApplicantRole[];
   rubricQuestions: ReviewRubricQuestion[];
   detailLink?: string;
-  commentsDecription?: string;
+  commentsDescription?: string;
 };
 
 export type ReviewRubricQuestion = {
