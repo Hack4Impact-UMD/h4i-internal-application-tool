@@ -4,6 +4,7 @@ import {
   getActiveForm,
   getAllForms,
   getApplicationForm,
+  getApplicationFormForResponseId,
 } from "../services/applicationFormsService";
 
 export function useAllApplicationForms() {
@@ -26,4 +27,12 @@ export function useActiveForm() {
     queryKey: ["form", "active"],
     queryFn: getActiveForm,
   });
+}
+
+export function useApplicationFormForResponseId(responseId?: string) {
+  return useQuery<ApplicationForm>({
+    queryKey: ["form", "responseId", responseId],
+    queryFn: () => getApplicationFormForResponseId(responseId!),
+    enabled: responseId != undefined,
+  })
 }

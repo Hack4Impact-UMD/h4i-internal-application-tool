@@ -65,6 +65,14 @@ Please reach out to <umd@hack4impact.org> if you have any questions.
 All admission decisions will be communicated to applicants no later than September 1, 2025.
 `,
   decisionsReleased: false,
+  decisionLetter: {
+    [ApplicantRole.Bootcamp]: {
+
+    }, 
+    ["team"]: {
+
+    }
+  }
   scoreWeights: {
     [ApplicantRole.Bootcamp]: {
       "Interest in the club": 0.5,
