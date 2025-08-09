@@ -3,7 +3,7 @@ import Section from "../../components/form/Section";
 import Timeline from "../../components/status/Timeline"; // Import Timeline component
 import useForm from "../../hooks/useForm";
 import { Button } from "../../components/ui/button";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DataWarningDialog from "@/components/form/DataWarningDialog";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 
@@ -13,7 +13,15 @@ const ApplicationPage: React.FC = () => {
   // const location = useLocation();
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
-  const [dialogOpen, setDialogOpen] = useState(true);
+
+  const [dialogOpen, setDialogOpen] = useState(() => {
+    return sessionStorage.getItem("hasSeenDataWarning") !== "true";
+  });
+  useEffect(() => {
+    if (dialogOpen === false) {
+      sessionStorage.setItem("hasSeenDataWarning", "true");
+    }
+  }, [dialogOpen]);
 
   const {
     form,
@@ -74,15 +82,16 @@ const ApplicationPage: React.FC = () => {
     if (currentIndex < form.sections.length - 1) {
       await save();
       navigate(`/apply/f/${form.id}/${nextSection()}`);
+      window.scrollTo({ top: 0, behavior: "instant" });
     }
-    throwWarningToast("Remember to backup your application!");
+    throwWarningToast("Remember to back up your application!");
   };
 
   const handlePrevious = async () => {
     console.log(previousSection());
     await save();
     navigate(`/apply/f/${form.id}/${previousSection()}`);
-    throwWarningToast("Remember to backup your application!");
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   const currentStep = availableSections.findIndex(
@@ -139,16 +148,15 @@ const ApplicationPage: React.FC = () => {
                 }
                 onClick={handleNext}
               >
-                {" "}
-                Next{" "}
+                Next
               </Button>
             ) : (
               <Button
                 onClick={handleSubmit}
+                disabled={response.rolesApplied.length === 0}
                 className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
               >
-                {" "}
-                Submit{" "}
+                Submit
               </Button>
             )}
           </div>

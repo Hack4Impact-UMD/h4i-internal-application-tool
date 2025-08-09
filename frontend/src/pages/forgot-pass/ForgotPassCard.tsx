@@ -5,8 +5,8 @@ import TextBox from "../../components/TextBox";
 import { Button } from "../../components/ui/button";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/config/firebase";
-import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { throwWarningToast } from "@/components/toasts/WarningToast";
 
 export default function ForgotPassCard() {
   const navigate = useNavigate();
@@ -46,7 +46,8 @@ export default function ForgotPassCard() {
 
     if (!validEmail(formData.email)) {
       valid = false;
-      errors.email = "Enter a valid email address";
+      errors.email =
+        "Please ensure your email ends with @terpmail.umd.edu, @umd.edu, or @hack4impact.org";
     }
 
     setFormErrors(errors);
@@ -54,7 +55,9 @@ export default function ForgotPassCard() {
     if (valid) {
       try {
         await sendPasswordResetEmail(auth, formData.email);
-        throwSuccessToast(`Sent password reset email to ${formData.email}!`);
+        throwWarningToast(
+          `If an account is registered under ${formData.email}, you will receive a password reset link`,
+        );
         navigate("/login");
       } catch (err) {
         console.log(err);
@@ -62,6 +65,8 @@ export default function ForgotPassCard() {
           `Failed to send password reset email to ${formData.email}!`,
         );
       }
+    } else {
+      throwErrorToast(errors.email);
     }
   }, [formData.email, formErrors, navigate]);
 

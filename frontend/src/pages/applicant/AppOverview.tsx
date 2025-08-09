@@ -30,6 +30,15 @@ const AppOverview: React.FC = () => {
     else return false;
   }, [applications, form]);
 
+  const inProgress = useMemo(() => {
+    if (form && applications)
+      return applications
+        .filter((app) => app.status == ApplicationStatus.InProgress)
+        .map((app) => app.applicationFormId)
+        .includes(form.id);
+    else return false;
+  }, [applications, form]);
+
   const navigate = useNavigate();
   const [wait, setWait] = useState(false);
 
@@ -63,7 +72,7 @@ const AppOverview: React.FC = () => {
   }
   return (
     <div className="flex flex-col items-center">
-      <div className="mt-5 max-w-5xl w-full px-5 py-5 font-sans leading-relaxed h-full">
+      <div className="mt-5 mb-5 max-w-5xl w-full px-10 py-5 font-sans leading-relaxed h-full rounded-xl shadow-sm border border-gray-200 bg-gray-50">
         <h1 className="mb-3 text-5xl text-black">Overview</h1>
         <div className="flex gap-2 flex-col sm:flex-row items-start justify-between mb-5">
           <div className="flex flex-col">
@@ -92,7 +101,9 @@ const AppOverview: React.FC = () => {
               {applied
                 ? "Go to status page"
                 : Timestamp.now() <= form.dueDate
-                  ? "Apply"
+                  ? inProgress
+                    ? "Continue Application"
+                    : "Apply"
                   : "Application Closed"}
             </Button>
           }

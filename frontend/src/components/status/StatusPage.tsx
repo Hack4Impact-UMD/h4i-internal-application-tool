@@ -1,6 +1,4 @@
 import { Fragment, useMemo, useState } from "react";
-import { Timestamp } from "firebase/firestore";
-
 import Timeline from "./Timeline.tsx";
 import {
   ApplicantRole,
@@ -8,21 +6,22 @@ import {
   ReviewStatus,
 } from "../../types/types.ts";
 import { useApplicationResponsesAndSemesters } from "../../hooks/useApplicationResponseAndSemesters.ts";
-import { useApplicationForm } from "../../hooks/useApplicationForm.ts";
-import Spinner from "../Spinner.tsx";
-import { useMyApplicationStatus } from "@/hooks/useApplicationStatus.ts";
-import { statusDisplay } from "@/utils/status.ts";
-import ApplicantRolePill from "../role-pill/RolePill.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { getApplicationResponseAndSemester } from "@/services/applicationResponseAndSemesterService.ts";
 import { getApplicationStatus } from "@/services/statusService.ts";
-import { Link } from "react-router-dom";
+import { ApplicationResponseRow } from "./ApplicationResponseRow.tsx";
 
-const timelineItems = [
-  { label: "Not Reviewed", id: ReviewStatus.NotReviewed },
+const fullTimelineItems = [
+  { label: "Submitted", id: ReviewStatus.NotReviewed },
   { label: "Under Review", id: ReviewStatus.UnderReview },
   { label: "Interview", id: ReviewStatus.Interview },
+  { label: "Decided", id: "decided" },
+];
+
+const bootcampTimelineItems = [
+  { label: "Submitted", id: ReviewStatus.NotReviewed },
+  { label: "Under Review", id: ReviewStatus.UnderReview },
   { label: "Decided", id: "decided" },
 ];
 
@@ -35,14 +34,18 @@ function useTimelineStep() {
       if (!user || !token) return 0;
 
       const applications = await getApplicationResponseAndSemester(user.id);
+      const activeApps = applications.filter((app) => app.active);
+
+      const allRoles = activeApps.flatMap((app) => app.rolesApplied);
+      const isOnlyBootcamp =
+        allRoles.length === 1 && allRoles[0] === ApplicantRole.Bootcamp;
+
       const appStatuses = await Promise.all(
-        applications
-          .filter((app) => app.active)
-          .flatMap((app) =>
-            app.rolesApplied.map((role) =>
-              getApplicationStatus(token, app.id, role),
-            ),
+        activeApps.flatMap((app) =>
+          app.rolesApplied.map((role) =>
+            getApplicationStatus(token, app.id, role),
           ),
+        ),
       );
 
       let status = 0;
@@ -53,9 +56,11 @@ function useTimelineStep() {
           appStatus.status === ReviewStatus.Waitlisted ||
           appStatus.status === ReviewStatus.Denied
         ) {
-          status = Math.max(3, status);
+          status = Math.max(isOnlyBootcamp ? 2 : 3, status);
         } else if (appStatus.status === ReviewStatus.Interview) {
-          status = Math.max(2, status);
+          if (!isOnlyBootcamp) {
+            status = Math.max(2, status);
+          }
         } else if (appStatus.status === ReviewStatus.UnderReview) {
           status = Math.max(1, status);
         }
@@ -64,111 +69,6 @@ function useTimelineStep() {
       return status;
     },
   });
-}
-
-function ApplicationResponseRow({
-  response,
-  role,
-}: {
-  response: ApplicationResponse;
-  role: ApplicantRole;
-}) {
-  const {
-    data: form,
-    isPending: isFormPending,
-    error: formError,
-  } = useApplicationForm(response.applicationFormId);
-
-  const {
-    data: appStatus,
-    isPending: isStatusPending,
-    error: statusError,
-  } = useMyApplicationStatus(response.id, role);
-
-  const status = appStatus?.status;
-
-  const decided = useMemo(
-    () =>
-      status == "decided" ||
-      status == ReviewStatus.Accepted ||
-      status == ReviewStatus.Waitlisted ||
-      status == ReviewStatus.Denied,
-    [status],
-  );
-
-  const formatDate = (timestamp: Timestamp) => {
-    if (timestamp && timestamp.toDate) {
-      return timestamp.toDate().toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-    }
-    return "-";
-  };
-
-  if (isFormPending || isStatusPending)
-    return (
-      <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={4}>
-          <Spinner className="w-full" />
-        </td>
-      </tr>
-    );
-
-  if (formError)
-    return (
-      <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={4}>
-          <p className="text-center">{formError.message}</p>
-        </td>
-      </tr>
-    );
-
-  if (statusError)
-    return (
-      <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={4}>
-          <p className="text-center">{statusError.message}</p>
-        </td>
-      </tr>
-    );
-
-  return (
-    <tr className="border-t border-gray-300">
-      <td className="py-4 flex flex-row gap-2 items-center text-blue-500 font-bold">
-        <Link
-          className="text-blue-500 cursor-pointer"
-          to={"/apply/revisit/" + response.applicationFormId}
-        >
-          {form.semester + " Application"}
-        </Link>
-        <ApplicantRolePill role={role} />
-      </td>
-      <td className="text-center">
-        <span className={`px-3 py-1 rounded-full bg-lightblue`}>
-          {decided ? "Decided" : status ? statusDisplay(status) : "Unknown"}
-        </span>
-      </td>
-      <td className="text-center">{formatDate(response.dateSubmitted)}</td>
-      <td className="text-center">
-        {decided ? (
-          form.decisionsReleased ? (
-            <Link
-              className="text-blue-500 cursor-pointer"
-              to={"/apply/decision/" + response.id + "/" + role}
-            >
-              View Decision
-            </Link>
-          ) : (
-            "Decisions not Released"
-          )
-        ) : (
-          "-"
-        )}
-      </td>
-    </tr>
-  );
 }
 
 function StatusPage() {
@@ -204,10 +104,24 @@ function StatusPage() {
 
   const { data: currentTimelineStep } = useTimelineStep();
 
+  // Determine if only bootcamp is applied
+  const isOnlyBootcamp = useMemo(() => {
+    if (!activeApplications.length) return false;
+
+    const allRoles = activeApplications.flatMap((app) => app.rolesApplied);
+    return allRoles.length === 1 && allRoles[0] === "bootcamp";
+  }, [activeApplications]);
+
+  const timelineItems = useMemo(() => {
+    return isOnlyBootcamp ? bootcampTimelineItems : fullTimelineItems;
+  }, [isOnlyBootcamp]);
+
+  const maxStepReached = isOnlyBootcamp ? 2 : 3;
+
   return (
     <div className="flex grow flex-col">
-      <div className="h-full bg-muted">
-        <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8 rounded shadow">
+      <div className="h-full">
+        <div className="bg-white p-6 w-full max-w-5xl mx-auto m-8 rounded-md shadow">
           <h1 className="text-xl mt-10 mb-10 font-semibold">My Applications</h1>
 
           <div className="border-b border-gray-300">
@@ -219,7 +133,12 @@ function StatusPage() {
                 }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
-                Active ({activeApplications.length})
+                Active (
+                {activeApplications.reduce(
+                  (sum, application) => sum + application.rolesApplied.length,
+                  0,
+                )}
+                )
                 {activeTab === "active" && (
                   <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                 )}
@@ -231,7 +150,12 @@ function StatusPage() {
                 }`}
                 style={{ background: "none", border: "none", outline: "none" }}
               >
-                Inactive ({inactiveApplications.length})
+                Inactive (
+                {inactiveApplications.reduce(
+                  (sum, application) => sum + application.rolesApplied.length,
+                  0,
+                )}
+                )
                 {activeTab === "inactive" && (
                   <div className="absolute bottom-0 left-2 right-2 h-1.5 bg-blue-500 rounded-t-full" />
                 )}
@@ -244,7 +168,7 @@ function StatusPage() {
               <Timeline
                 currentStep={currentTimelineStep ?? 0}
                 items={timelineItems}
-                maxStepReached={3}
+                maxStepReached={maxStepReached}
               />
             )}
           </div>

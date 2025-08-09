@@ -5,16 +5,15 @@ import {
 } from "@/types/formBuilderTypes";
 import { Timestamp } from "firebase/firestore";
 
-const FORM_ID = "h4i-fall-2025-form-internal";
+const FORM_ID = "h4i-fall-2025-form-final";
 
 export const h4iApplicationForm: ApplicationForm = {
   id: FORM_ID,
   isActive: true,
   dueDate: Timestamp.fromDate(new Date("2025-08-20T03:59:59Z")),
-  semester: "Fall 2025 (Internal Testing)",
+  semester: "Fall 2025",
   description: `
 Hack4Impact is a student-run 501(c)(3) dedicated to building software for social impact. We are the **University of Maryland, College Park chapter** of the national Hack4Impact organization. Each year, we partner with nonprofits to help them better serve their communities. We are recruiting software engineers, product managers, tech leads, UI designers, and sourcing team members for the fall semester.
-
 
 **We are looking for new members who are:**
 * Willing to commit their time for 1 semester (at least 5 hours per week)
@@ -22,18 +21,27 @@ Hack4Impact is a student-run 501(c)(3) dedicated to building software for social
 * Passionate about software, social impact, and our nonprofit partners
 * Willing to learn
 
+Extensive experience isn't necessary, but technical applicants should have programming experience. We place a strong emphasis on learning, so we’ll teach you everything you need to know beyond programming fundamentals during Bootcamp!
 
-Extensive experience isn't necessary, but technical applicants should have programming experience. We place a strong emphasis on learning, so we’ll teach you everything you need to know beyond programming fundamentals during bootcamp!
+We have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. 
 
+**Descriptions for Open Roles**:
 
-**As a software engineer, you will:**
-* Develop and ship a project to a nonprofit partner
-* Gain the skills necessary to become a full-stack developer
-* Learn how to identify user needs in order to design the best products for the problem
+*Bootcamp*
 
+Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
 
-We also have positions open for **Software Engineers, Product Managers (PMs), Tech Leads (TLs), UI/UX Designers and Public Relations & Outreach Team members**. PMs will work directly with our nonprofit partners to gather project requirements and ensure what we create is the best solution for the nonprofit and communicate those needs to engineers. Tech Leads serve as the point of contact for engineers, providing technical guidance as well as upholding code quality through code reviews. Designers will work with both engineers and nonprofits, creating UI mockups for our projects to ensure our projects go above and beyond our clients' expectations. Members of the Public Relations & Outreach team will connect with nonprofit partners, maintain the organization's public presence, and manage organizational communication.
+*Public Relations & Outreach (PR&O)* 
 
+PR&O is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
+
+*Project Teams*
+
+Project teams work with real non-profit partners, creating solutions for any technical needs that our partners have. It's important to us when forming teams to find people who have the capacity to commit to the project for the whole semester. Otherwise, it's unfair to the teams and the partners. Our project teams practice the agile software development methodology, and project team members are expected to fulfil their commitments made during each sprint. Our workflow involves two week sprints, weekly meetings with your team, doing your own project tasks during the week, and monthly chapter wide meetings. The time commitment is around 5 hours a week.
+* **Product Manager (PM)** - The Product Manager is responsible for drawing out the project roadmap, ensuring deadlines are met, meeting weekly with the team, nonprofit, tech leads, designers, and Director of Product to discuss project progression, staying organized in project management, being accountable for decisions, providing accurate updates, communicating professionally with the nonprofit, maintaining structure and effective communication within the team, promoting participation, encouraging interaction, and resolving conflicts effectively.
+* **Designer** - The Designer is responsible for creating frontend designs based on nonprofit needs, attending team meetings and meetings with the nonprofit and PM, meeting with the Director of Design to discuss project progression, walking through designs for nonprofit feedback, collaborating with engineers to ensure design feasibility, meeting deadlines to support engineering timelines, and providing feedback on design implementation.
+* **Tech Lead** - The Tech Lead serves as the point of contact for engineers regarding project technologies, researches and shapes the project’s technical direction, attends team and nonprofit meetings with the PM, meets weekly with the Director of Engineering, reviews pull requests, documents tasks on the Kanban board before sprint meetings, updates the PM on engineer progress and issues, and advises designers on the feasibility of their designs.
+* **Engineer** - The Engineer is responsible for implementing all technological aspects of the product, attending team meetings, completing assigned tasks by the deadline, and updating the Tech Lead and PM with relevant issues.
 
 **Why join?**
 * Developing projects for our nonprofit partners as a student is incredible, and recruiters notice
@@ -44,24 +52,17 @@ We also have positions open for **Software Engineers, Product Managers (PMs), Te
 * Work with and learn more about some amazing organizations
 * Get plugged into a strong network of accomplished and amazing alums
 
-
 There are also PLENTY of opportunities to gain leadership experience. We have positions for mentors, a super fun board of directors, and even a national board and committees. As an organization and as a community, we care about and actively support the individual development of each member, both professional and personal. When you join Hack4Impact-UMD, you join a national network of leaders, techies, do-gooders, and friends.
-
 
 Feel free to visit our chapter website at <https://umd.hack4impact.org/> or the national website at <https://hack4impact.org> for more information.
 
-
 We will have rolling applications that consist of this written application and may include a live interview (not a technical interview). Those applying for the engineer and/or tech lead role are **REQUIRED** to complete a technical assessment (2-3 hours) included in the following sections of this application form. We will be CLOSING the form at **midnight (11:59pm EST) on August 19, 2025** or when openings are filled.
-
 
 **Please do not use ChatGPT or other AI services to create or edit your responses.**
 
-
 Please reach out to <umd@hack4impact.org> if you have any questions.
 
-
 All admission decisions will be communicated to applicants no later than September 1, 2025.
-
 `,
   decisionsReleased: false,
   scoreWeights: {
@@ -232,19 +233,19 @@ CS classes are NOT a requirement for members, we take all majors!
       description: `
 **About Hack4Impact-UMD Teams & Structure**
 
-At Hack4Impact-UMD, there are three types of teams: project teams, bootcamp, and the sourcing team. Project teams work directly with our nonprofit partners to create products to help the community; these teams consists of Product Managers (PMs), Tech Leads, Designers, and Engineers. On the other hand, bootcamp is for students who are interested in Hack4Impact's mission but need experience before they join a project team. The sourcing team reaches out to non-profit organizations to secure projects for Hack4Impact-UMD. 
+At Hack4Impact-UMD, there are three types of teams: project teams, bootcamp, and the sourcing team. Project teams work directly with our nonprofit partners to create products to help the community; these teams consists of 🤝 Product Managers (PMs), 🤖 Tech Leads, 🎨 Designers, and ⚙️ Engineers. On the other hand, bootcamp is for students who are interested in Hack4Impact's mission but need experience before they join a project team. The sourcing team reaches out to non-profit organizations to secure projects for Hack4Impact-UMD. 
 
-**Project Teams**
+**🫂 Project Teams**
 
 Project teams work with real non-profit partners, creating solutions for any technical needs that our partners have. It's important to us when forming teams to find people who have the capacity to commit to the project for the whole semester. Otherwise, it's unfair to the teams and the partners. Our project teams practice the agile software development methodology, and project team members are expected to fulfil their commitments made during each sprint. Our workflow involves two week sprints, weekly meetings with your team, doing your own project tasks during the week, and monthly chapter wide meetings. The time commitment is around 5 hours a week.
 
-**Bootcamp**
+**🥾 Bootcamp**
 
-Bootcamp essentially teaches members the necessary skillset to join a project team. In bootcamp, students learn web development skills starting from basic HTML, JavaScript, and CSS and then building up to the FERN (Firebase, Express, React, Node.js) stack. The goal is for members to complete bootcamp and then join a project team the following semester. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-5 hours a week.
+Bootcamp essentially teaches members the necessary skillset to join a project team. Students will learn web development skills starting from basic HTML, JavaScript, and CSS, and then build up to more complicated tools like Firebase, React, and Node.js. The goal is for members to complete bootcamp and then have the necessary skills to pass a technical assessment and join a project team the following semester. The bootcamp is mainly focused on developing technical skills, but there are opportunities to learn about other roles including Designer and Project Manager. Similar to project teams, we are looking for motivated and committed students to join bootcamp and continue working with our nonprofit partners. The bootcamp workflow involves weekly meetings, doing the assignments during the week, and monthly chapter wide meetings. The time commitment is around 3-7 hours a week.
 
-**Public Relations & Outreach Team**
+**🗣️ Public Relations & Outreach Team**
 
-**Public Relations & Outreach (PR&O)** is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
+Public Relations & Outreach (PR&O) is Hack4Impact-UMD’s external-facing team, responsible for identifying and securing nonprofit partners, managing organizational communications, and maintaining the org’s public presence. The team includes **📢 Outreach Coordinators**, who lead nonprofit outreach and project sourcing, with optional specialization tracks in finance or long-term growth. It also includes **📱 Social Media Managers**, who create content across platforms like Instagram, TikTok, and YouTube. PR&O is a great fit for students interested in communication, business, social impact, or public policy, and there is no technical background required. The time commitment is around 3-5 hours per week.
 
 **Member Responsibilities**
 
@@ -314,6 +315,8 @@ We consider applicants with all experience levels! You are not required to have 
           optional: false,
           questionText:
             "What about Hack4Impact-UMD drove you to apply, and what makes us stand out to you?",
+          secondaryText:
+            "We are looking for a detailed and thoughtful answer here. Aim for a response of at least 400 words that gives a clear sense of why you're excited to join Hack4Impact-UMD, and how we align with your values and goals.",
           placeholderText: "Tell us what attracted you to our organization...",
           minimumWordCount: 400,
         },
@@ -360,10 +363,10 @@ We consider applicants with all experience levels! You are not required to have 
         },
         {
           questionId: "how-did-you-hear",
-          questionType: QuestionType.MultipleChoice,
+          questionType: QuestionType.MultipleSelect,
           optional: false,
           questionText: "How did you hear about us?",
-          multipleSelect: false,
+          multipleSelect: true,
           questionOptions: [
             "Friend/Word of mouth",
             "Social media",
@@ -524,7 +527,10 @@ PM Specific Responsibilities:
           questionId: "ideal-project",
           questionType: QuestionType.LongAnswer,
           optional: false,
-          questionText: "What's your ideal project?",
+          questionText:
+            "What's your ideal project look like, and how would you lead this ideal team of your to make the project successful?",
+          secondaryText:
+            "You can talk about the type of problem you'd want to help solve, how you'd collaborate with engineers, and what kind of process you'd want to lead to make the project successful.",
           placeholderText:
             "Describe the type of project that excites you most...",
           maximumWordCount: 200,
@@ -626,7 +632,7 @@ Designer Responsibilities:
           optional: false,
           questionText: "Portfolio Submission (mandatory)",
           secondaryText:
-            "Please include links to your work:\n- Portfolio website\n- Behance/Dribbble\n- Specific project links\n- GitHub repositories",
+            "Please include links to your work:\n- Portfolio website\n- Behance/Dribbble\n- Portfolio and/or project file links\n- GitHub repositories\nMake sure we can view your links!",
           placeholderText: "Provide links to your design work...",
           maximumWordCount: 300,
         },
@@ -761,7 +767,7 @@ Provide the link to your completed assessment repo here (e.g. https://github.com
         {
           questionId: "technical-assessment-comments",
           questionType: QuestionType.LongAnswer,
-          optional: false,
+          optional: true,
           questionText: "Comments/Notes",
           placeholderText: "",
           maximumWordCount: 300,
@@ -860,7 +866,7 @@ Tech Lead Responsibilities:
           questionType: QuestionType.LongAnswer,
           optional: false,
           questionText:
-            "What makes you a great fit for the TL role? Discuss any leadership experience, mentoring, or systems thinking examples.",
+            "What makes you a great fit for the TL role? Discuss any leadership experience, mentoring, or systems design examples.",
           placeholderText:
             "Highlight relevant leadership and technical experience...",
           maximumWordCount: 400,
@@ -901,8 +907,9 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
         {
           questionId: "role-preference",
           questionType: QuestionType.MultipleChoice,
-          optional: false,
-          questionText: "Please rank your preference for roles:",
+          optional: true,
+          questionText:
+            "If you are applying to both roles, please rank your preference here",
           secondaryText: "Select your top preference",
           multipleSelect: false,
           questionOptions: [
@@ -914,8 +921,9 @@ Focuses on developing and maintaining Hack4Impact-UMD’s social media presence 
         {
           questionId: "preference-reasoning",
           questionType: QuestionType.LongAnswer,
-          optional: false,
-          questionText: "What motivated you to rank your preferences that way?",
+          optional: true,
+          questionText:
+            "If you are applying to both roles, please explain your ranking here",
           placeholderText: "Explain your interest in these roles...",
           maximumWordCount: 250,
         },

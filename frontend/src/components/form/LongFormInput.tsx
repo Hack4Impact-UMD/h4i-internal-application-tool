@@ -44,7 +44,8 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
       )}
     >
       <span className="text-xl font-normal mb-2">
-        {question}{" "}
+        {question}
+        {isRequired && <span className="text-red-600 ml-px">*</span>}
         {!isRequired && <span className="font-light text-xs"> (Optional)</span>}
       </span>
       <FormMarkdown>{label}</FormMarkdown>
@@ -66,7 +67,7 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
       )}
       <Textarea
         className={twMerge(
-          "p-2 h-32 w-full rounded-md border-2 disabled:bg-[#DADADA] disabled:cursor-not-allowed disabled:opacity-100",
+          "p-2 h-32 w-full rounded-md border-2 disabled:opacity-100 disabled:bg-[#f3f4f6] disabled:cursor-not-allowed",
         )}
         required={isRequired}
         value={value}

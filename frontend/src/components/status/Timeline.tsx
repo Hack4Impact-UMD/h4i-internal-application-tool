@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 type TimelineItem = {
   id: string;
   label: string;
@@ -12,18 +14,38 @@ type TimelineProps = {
 };
 
 const Timeline = (props: TimelineProps) => {
+  const [visibleItems, setVisibleItems] = useState(props.items.slice(0, 4));
+  const [progressIndex, setProgressIndex] = useState(0);
+
   const handleStepClick = (index: number) => {
     if (index <= props.maxStepReached && props.onStepClick) {
       props.onStepClick(index, props.items[index]);
     }
   };
 
+  useEffect(() => {
+    const totalItems = props.items.length;
+
+    // -1 to include previous item if possible
+    let start = Math.max(props.currentStep - 1, 0);
+    let end = start + 4;
+
+    // if out of bounds, just show last four items
+    if (end > totalItems) {
+      end = totalItems;
+      start = Math.max(end - 4, 0);
+    }
+
+    setProgressIndex(props.currentStep - start);
+    setVisibleItems(props.items.slice(start, end));
+  }, [props.currentStep, props.items]);
+
   return (
     <div className={props.className}>
       <ul className="flex justify-between relative gap-x-4 before:absolute before:top-6 before:left-0 before:right-0 before:h-1 before:bg-gray-300 min-w-full w-fit">
-        {props.items.map((item, index) => {
-          const isCompleted = index < props.currentStep;
-          const isActive = index === props.currentStep;
+        {visibleItems.map((item, index) => {
+          const isCompleted = index < progressIndex;
+          const isActive = index === progressIndex;
           const isUnlocked = index <= props.maxStepReached;
 
           return (

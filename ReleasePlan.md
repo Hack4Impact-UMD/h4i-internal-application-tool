@@ -21,7 +21,7 @@ See `README.md` for some screenshots of app progress. Also, try running the app.
 | Feature/Story              | Status | Notes                               |
 | -------------------------- | ------ | ----------------------------------- |
 | Log-in/Sign-Up Page        | ✅     |                                     |
-| Profile/Settings Page      | ❌     | Design submitted recently           |
+| Profile/Settings Page      | ✅     | Design submitted recently           |
 | Report an Issue            | ✅     | currently just a link to club email |
 | Error/404 Page             | ✅     |                                     |
 | Forgot/Reset Password Page | ✅     | Done                                |
@@ -36,7 +36,7 @@ See `README.md` for some screenshots of app progress. Also, try running the app.
 | Application Submitted Page     | ✅     |                                                                        |
 | Status Page                    | ✅     |                                                                        |
 | Revisit Application Page       | ✅     |                                                                        |
-| Decision Page                  | ❌     | Design submitted recently                                              |
+| Decision Page                   | ❌     | Design submitted recently                                              |
 
 ### Reviewer
 

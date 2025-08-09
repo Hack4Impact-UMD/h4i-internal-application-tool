@@ -6,6 +6,8 @@ import { AxiosError } from "axios";
 import { validEmail, validPassword } from "../../utils/verification";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
+import { Eye, EyeOff } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function SignUpCard() {
   const signUpMutation = useMutation({
@@ -38,6 +40,8 @@ export default function SignUpCard() {
     password: "",
     genericError: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   // check if all fields are filled
   const isFormValid =
@@ -143,7 +147,7 @@ export default function SignUpCard() {
       <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
         <h1 className="text-3xl font-bold">Create an Account</h1>
         <h3 className="text-lg text-darkgray">
-          Lets get started by filling out your information below
+          Let's get started by filling out your information below
         </h3>
       </div>
 
@@ -166,32 +170,44 @@ export default function SignUpCard() {
       <TextBox
         inputType="text"
         className="w-full"
-        label="EMAIL (@umd.edu or @terpmail.umd.edu)"
+        label="EMAIL (@umd.edu, @terpmail.umd.edu, or @hack4impact.org)"
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />
-      <TextBox
-        inputType="password"
-        className="w-full"
-        label="PASSWORD"
-        invalidLabel={formErrors.password}
-        onChange={(e) => handleInputChange("password", e.target.value)}
-      />
+      <div className="relative flex items-center w-full">
+        <TextBox
+          inputType={showPassword ? "text" : "password"}
+          className="w-full flex-1"
+          label="PASSWORD"
+          invalidLabel={formErrors.password}
+          onChange={(e) => handleInputChange("password", e.target.value)}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 text-gray-500 cursor-pointer bg-lightgray h-12"
+        >
+          {showPassword ? (
+            <EyeOff className="size-5" />
+          ) : (
+            <Eye className="size-5" />
+          )}
+        </button>
+      </div>
       <Button
         className="w-full h-[73px]"
         disabled={signUpMutation.isPending || !isFormValid}
         type="submit"
       >
-        {" "}
-        Create Account{" "}
+        Create Account
       </Button>
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-darkgray mt-1">
           Already have an account?{" "}
-          <a href="/login" className="text-blue">
+          <Link to="/login" className="text-blue">
             Log In
-          </a>
+          </Link>
         </p>
       </div>
     </form>

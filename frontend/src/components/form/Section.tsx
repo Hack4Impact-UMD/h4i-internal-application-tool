@@ -40,7 +40,7 @@ const Section: React.FC<SectionProps> = ({
   return (
     <div className="mt-2 mb-2 flex flex-col gap-5">
       <div>
-        <h1 className="font-bold text-xl">{section.sectionName}</h1>
+        <h1 className="font-bold text-3xl">{section.sectionName}</h1>
         <FormMarkdown>{section.description}</FormMarkdown>
       </div>
       {section.questions.map((question) => {

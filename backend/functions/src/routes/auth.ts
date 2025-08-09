@@ -15,8 +15,8 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
   const registerForm = req.body as UserRegisterForm;
 
   try {
-    if (!registerForm.email.trim().endsWith("umd.edu")) {
-      res.status(400).send("Only emails ending in umd.edu are allowed!")
+    if (!registerForm.email.trim().endsWith("umd.edu") && !registerForm.email.trim().endsWith("@hack4impact.org")) {
+      res.status(400).send("Only emails ending in umd.edu or hack4impact.org are allowed!")
       return;
     }
 

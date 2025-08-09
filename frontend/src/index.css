@@ -178,3 +178,13 @@ body,
     /* Firefox */
   }
 }
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hover\:animate-spin-slow:hover {
+  animation: spin-slow 2s linear infinite;
+}

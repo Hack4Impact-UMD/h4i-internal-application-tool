@@ -2,10 +2,10 @@ import { useState } from "react";
 import TextBox from "../../components/TextBox";
 import { Button } from "../../components/ui/button";
 import { useAuth } from "../../hooks/useAuth";
-import { validPassword } from "../../utils/verification";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
+import { Eye, EyeOff, InfoIcon } from "lucide-react";
 
 export default function LogInCard() {
   const { login } = useAuth();
@@ -34,6 +34,8 @@ export default function LogInCard() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   // check if all fields are filled
   const isFormValid =
     formData.email.trim() !== "" && formData.password.trim() !== "";
@@ -57,16 +59,8 @@ export default function LogInCard() {
 
   // using dummy conditionals for now
   const handleSubmit = async () => {
-    let valid = true;
+    const valid = true;
     const errors = { ...formErrors };
-
-    if (!validPassword(formData.password)) {
-      valid = false;
-      const errorMessage =
-        "Invalid Password, Please ensure your password meets the following requirements: At least 8 characters long, At least one uppercase letter (A-Z), At least one lowercase letter (a-z), At least one digit (0-9), At least one special character (e.g., @$!%*?&#).";
-      errors.password = errorMessage;
-      throwErrorToast(errorMessage);
-    }
 
     setFormErrors(errors);
 
@@ -106,34 +100,61 @@ export default function LogInCard() {
         e.stopPropagation();
         handleSubmit();
       }}
-      className="flex flex-col items-center justify-around w-full p-4 max-w-[430px] h-[700px]"
+      className="flex flex-col items-center justify-around w-full p-4 max-w-[430px] min-h-screen"
     >
       <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
-      <div className="flex flex-col items-center text-center justify-around w-[305px] h-[105px]">
+      <div className="flex flex-col items-center text-center w-[305px] h-[105px]">
         <h1 className="text-3xl font-bold text-black">Log In</h1>
         <h3 className="text-lg text-darkgray">
-          Lets get started by filling out your information below
+          Let's get started by filling out your information below
         </h3>
+      </div>
+      <div className="flex gap-1 items-center bg-lightblue p-2 text-blue rounded text-sm border-blue border mb-2">
+        <InfoIcon className="size-32 inline pr-1" />
+        <div>
+          <span>
+            We are aware of an issue where some users may experience an
+            "insufficient permissions" error upon logging in.
+            <strong>
+              {" "}
+              If you experience this issue, we recommend signing out and then
+              signing back in to access the application.
+            </strong>
+          </span>
+        </div>
       </div>
       <TextBox
         inputType="text"
-        className="w-full"
+        className="w-full mb-2"
         label="EMAIL"
         invalidLabel={formErrors.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
       />
-      <div className="w-full">
-        <TextBox
-          inputType="password"
-          className="w-full"
-          label="PASSWORD"
-          invalidLabel={formErrors.password}
-          onChange={(e) => handleInputChange("password", e.target.value)}
-        />
-        <div className="w-full flex justify-end">
-          <a href="/forgotpassword" className="text-blue">
+      <div className="w-full relative">
+        <div className="relative flex items-center">
+          <TextBox
+            inputType={showPassword ? "text" : "password"}
+            className="w-full flex-1"
+            label="PASSWORD"
+            invalidLabel={formErrors.password}
+            onChange={(e) => handleInputChange("password", e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 text-gray-500 cursor-pointer bg-lightgray h-12"
+          >
+            {showPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
+          </button>
+        </div>
+        <div className="w-full flex justify-end mb-2">
+          <Link to="/forgotpassword" className="text-blue">
             Forgot password?
-          </a>
+          </Link>
         </div>
       </div>
       <Button
@@ -141,16 +162,15 @@ export default function LogInCard() {
         disabled={loginMutation.isPending || !isFormValid}
         type="submit"
       >
-        {" "}
-        Log In{" "}
+        Log In
       </Button>
       <div className="w-full">
         <hr className="w-full text-darkgray m-0"></hr>
         <p className="text-gray-500 mt-1">
-          Dont have an account?{" "}
-          <a href="/signup" className="text-blue">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-blue">
             Create account
-          </a>
+          </Link>
         </p>
       </div>
     </form>

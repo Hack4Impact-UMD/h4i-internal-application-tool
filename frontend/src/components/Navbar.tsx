@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import { twMerge } from "tailwind-merge";
 import { PermissionRole } from "@/types/types";
 import NavProfile from "./NavProfile";
+import { HomeIcon } from "lucide-react";
 
 function Navbar({ className }: { className?: string }) {
   const { isLoading, isAuthed, user } = useAuth();
@@ -39,11 +40,17 @@ function Navbar({ className }: { className?: string }) {
             </>
           )}
         </div>
-        {!isLoading && isAuthed && user && (
-          <div className="ml-auto">
-            <NavProfile user={user} />
-          </div>
-        )}
+        <div className="ml-auto flex flex-row items-center">
+          <NavLink
+            to="/"
+            className="border-r border-solid border-gray-400 pr-1"
+          >
+            <HomeIcon className="w-8 h-8 text-black cursor-pointer hover:bg-darkgray/5 rounded-md p-1 transition-colors" />
+          </NavLink>
+          {!isLoading && isAuthed && user && (
+            <NavProfile user={user} className="hover:bg-darkgray/5 ml-1" />
+          )}
+        </div>
       </div>
     </div>
   );
