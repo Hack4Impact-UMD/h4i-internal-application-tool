@@ -1,25 +1,27 @@
 import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
-import { useAllApplicationForms } from "@/hooks/useApplicationForm";
+import { useAllApplicationForms, useUploadApplicationForm } from "@/hooks/useApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
 import { PermissionRole } from "@/types/types";
 import { displayUserRoleName } from "@/utils/display";
 import { Link, useNavigate } from "react-router-dom";
 import { h4iApplicationForm } from "@/data/h4i-application-form";
-import { createApplicationForm } from "@/services/applicationFormsService";
-import { useState } from "react";
+import { APPLICATION_RUBRICS } from "@/data/rubrics";
+import { useUploadRubrics } from "@/hooks/useRubrics";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 
 export default function AdminHome() {
   const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
   const { user, token } = useAuth();
-  const [uploadStatus, setUploadStatus] = useState<string>("");
 
-  const handleUploadForm = async () => {
+  const { mutate: uploadForm, isPending: isUploadingForm, error: formUploadError, data: formUploadData } = useUploadApplicationForm();
+  const { mutate: uploadRubrics, isPending: isUploadingRubrics, error: rubricUploadError, data: rubricUploadData } = useUploadRubrics();
+
+  const handleUploadForm = () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-        `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
+      `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
     );
 
     if (!confirmed || !token) return;
@@ -39,7 +41,7 @@ export default function AdminHome() {
 
       s.questions.forEach((q) => {
         if (questionIdSet.has(q.questionId)) {
-          throwErrorToast("Duplicate section ID: " + q.questionId);
+          throwErrorToast("Duplicate question ID: " + q.questionId);
           duplicates = true;
           return;
         } else {
@@ -50,15 +52,17 @@ export default function AdminHome() {
 
     if (duplicates) return;
 
-    try {
-      setUploadStatus("Uploading...");
-      const result = await createApplicationForm(h4iApplicationForm, token);
-      setUploadStatus(`Success! Form uploaded with ID: ${result.formId}`);
-    } catch (error) {
-      setUploadStatus(
-        `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
-    }
+    uploadForm({ form: h4iApplicationForm, token });
+  };
+
+  const handleUploadRubrics = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to upload the application rubrics?"
+    );
+
+    if (!confirmed || !token) return;
+
+    uploadRubrics({ rubrics: APPLICATION_RUBRICS, token });
   };
 
   if (!user) return <Loading />;
@@ -142,15 +146,41 @@ export default function AdminHome() {
             <Button
               className="mt-4"
               onClick={handleUploadForm}
-              disabled={uploadStatus === "Uploading..."}
+              disabled={isUploadingForm}
             >
-              {uploadStatus === "Uploading..." ? "Uploading..." : "Upload Form"}
+              {isUploadingForm ? "Uploading..." : "Upload Form"}
             </Button>
-            {uploadStatus && (
-              <p
-                className={`mt-2 text-sm ${uploadStatus.startsWith("Error") ? "text-red-600" : "text-green-600"}`}
-              >
-                {uploadStatus}
+            {formUploadData && (
+              <p className="mt-2 text-sm text-green-600">
+                Success! Form uploaded with ID: {formUploadData.formId}
+              </p>
+            )}
+            {formUploadError && (
+              <p className="mt-2 text-sm text-red-600">
+                {formUploadError.message}
+              </p>
+            )}
+          </div>
+          <div className="max-w-5xl w-full p-4 bg-white rounded-md">
+            <h1 className="text-xl">Upload Application Rubrics</h1>
+            <p className="text-muted-foreground">
+              Upload the application rubrics to Firestore.
+            </p>
+            <Button
+              className="mt-4"
+              onClick={handleUploadRubrics}
+              disabled={isUploadingRubrics}
+            >
+              {isUploadingRubrics ? "Uploading..." : "Upload Rubrics"}
+            </Button>
+            {rubricUploadData && (
+              <p className="mt-2 text-sm text-green-600">
+                Success! Uploaded {rubricUploadData.data.count} rubrics.
+              </p>
+            )}
+            {rubricUploadError && (
+              <p className="mt-2 text-sm text-red-600">
+                {rubricUploadError.message}
               </p>
             )}
           </div>

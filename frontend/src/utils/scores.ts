@@ -16,7 +16,7 @@ export async function calculateReviewScore(
     review.applicationFormId,
   );
 
-  if (!form.scoreWeights) {
+  if (true) {
     // fallback to simple average
     console.log("NO WEIGHTS");
     return roundScore(averageScore(review), 2);

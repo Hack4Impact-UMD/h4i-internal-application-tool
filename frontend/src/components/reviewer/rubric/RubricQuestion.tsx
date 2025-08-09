@@ -14,8 +14,8 @@ export function RubricQuestion({
   value,
 }: RubricQuestionProps) {
   return (
-    <div className="p-2 rounded">
-      <span className="text-lg font-medium mb-1">{question.prompt}</span>
+    <div className="">
+      <span className="text-lg">{question.prompt}</span>
       <FormMarkdown>{question.description}</FormMarkdown>
       <div className="bg-muted flex flex-row gap-4 items-stretch rounded-xl p-3">
         {Array.from(

@@ -1,17 +1,31 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Section from "@/components/form/Section";
-import ReviewCard from "@/components/reviewer/ReviewCard";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import Loading from "@/components/Loading";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";
-import { useReviewData } from "@/hooks/useReviewData";
+import { useReviewData, useUpdateReviewData } from "@/hooks/useReviewData";
 import Spinner from "@/components/Spinner";
 import { useApplicant } from "@/hooks/useApplicants";
-import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
 import { displayApplicantRoleName } from "@/utils/display";
 import { Button } from "@/components/ui/button";
-import { RubricQuestion } from "@/components/reviewer/rubric/RubricQuestion";
+import { useRubricsForFormRole } from "@/hooks/useRubrics";
+import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
+import { useReviewScore } from "@/hooks/useReviewScore";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -42,13 +56,14 @@ function UserHeader({ applicantId, form, role }: UserHeaderProps) {
     <div className="w-full flex flex-col gap-2">
       <h1 className="text-xl">
         {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
-        {displayApplicantRoleName(role).substring(1)} Application
+        {displayApplicantRoleName(role)} Application
       </h1>
     </div>
   );
 }
 
 const ApplicationPage: React.FC = () => {
+  const navigate = useNavigate();
   const { formId, responseId, reviewDataId } = useParams<{
     formId: string;
     reviewDataId: string;
@@ -73,13 +88,88 @@ const ApplicationPage: React.FC = () => {
     error: reviewError,
   } = useReviewData(reviewDataId ?? "");
 
-  if (formLoading || responseLoading || reviewPending) return <Loading />;
+  const { mutate: updateReviewData } = useUpdateReviewData(reviewDataId ?? "");
+  const { mutate: submitReview, isPending: isSubmitting } = useUpdateReviewData(reviewDataId ?? "");
+
+  const {
+    data: rubrics,
+    isPending: rubricsPending,
+    error: rubricsError
+  } = useRubricsForFormRole(form?.id, reviewData?.forRole)
+
+  const {
+    data: score,
+    isPending: scorePending,
+    error: scoreError
+  } = useReviewScore(reviewData!)
+
+  const [localNotes, setLocalNotes] = useState<Record<string, string> | null>(null);
+
+  useEffect(() => {
+    if (reviewData && localNotes === null) {
+      setLocalNotes(reviewData.reviewerNotes || {});
+    }
+  }, [reviewData, localNotes]);
+
+  const optimisticReviewData = useMemo(() => {
+    if (!reviewData) return null;
+    if (localNotes === null) return reviewData;
+    return {
+      ...reviewData,
+      reviewerNotes: localNotes,
+    };
+  }, [reviewData, localNotes]);
+
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const scoreChange = useCallback((key: string, value: number) => {
+    if (!reviewData || reviewData.submitted) return;
+
+    const newScores = {
+      ...reviewData.applicantScores,
+      [key]: value,
+    };
+
+    updateReviewData({ applicantScores: newScores });
+  }, [reviewData, updateReviewData]);
+
+  const commentChange = useCallback((id: string, value: string) => {
+    if (localNotes === null || reviewData?.submitted) return;
+
+    const newLocalNotes = { ...localNotes, [id]: value };
+    setLocalNotes(newLocalNotes);
+
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      updateReviewData({ reviewerNotes: newLocalNotes });
+    }, 1000);
+  }, [localNotes, reviewData, updateReviewData]);
+
+  const handleSubmitReview = () => {
+    submitReview({ submitted: true }, {
+      onSuccess: () => {
+        throwSuccessToast("Review submitted successfully!");
+        navigate(-1);
+      },
+      onError: () => {
+        throwErrorToast("Failed to submit review");
+      }
+    });
+  }
+
+  if (formLoading || responseLoading || reviewPending || rubricsPending || localNotes === null) return <Loading />;
   if (formError || !form)
     return <p>Failed to fetch form: {formError.message}</p>;
   if (responseError || !response)
     return <p>Failed to fetch response: {responseError?.message}</p>;
-  if (reviewError || !reviewData)
+  if (reviewError || !reviewData || !optimisticReviewData)
     return <p>Failed to fetch response: {reviewError.message}</p>;
+  if (rubricsError)
+    return <p>Failed to fetch response: {rubricsError.message}</p>;
+
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
@@ -89,7 +179,31 @@ const ApplicationPage: React.FC = () => {
           form={form}
           role={reviewData.forRole}
         />
-        <Button variant="default">Submit Review</Button>
+
+        {
+          scorePending ? <Spinner className="mr-4" /> :
+            scoreError ? `Failed to calculate score: ${scoreError.message}` :
+              <h1 className="text-lg text-blue w-64">Review Score: <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span>/4</h1>
+        }
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="default" disabled={isSubmitting || optimisticReviewData.submitted}>
+              {isSubmitting ? "Submitting..." : optimisticReviewData.submitted ? "Submitted" : "Submit Review"}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure you want to submit this review?</AlertDialogTitle>
+              <AlertDialogDescription>
+                You will not be able to edit it after submission.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleSubmitReview}>Confirm</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <div className="flex gap-2 justify-center grow overflow-scroll pt-4">
         <div className="w-1/2 flex h-full flex-col gap-2 overflow-scroll">
@@ -119,22 +233,14 @@ const ApplicationPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )!.questions
                   }
-                  onChangeResponse={() => {}}
+                  onChangeResponse={() => { }}
                 />
               </div>
             ))}
         </div>
-        <div className="bg-white p-4 w-1/2 h-full overflow-y-scroll rounded-md border border-gray-200">
-          {Array.from({ length: 20 }, () => (
-            <RubricQuestion
-              onChange={(k, v) => console.log(k, v)}
-              question={{
-                prompt: "Test rubric question",
-                scoreKey: "foo",
-                description: "*some description text*",
-              }}
-              value={0}
-            />
+        <div className="w-1/2 overflow-y-scroll flex flex-col gap-2">
+          {rubrics.sort((a, b) => a.roles.length - b.roles.length).map(r => (
+            <RoleRubric key={r.id} rubric={r} onScoreChange={scoreChange} onCommentChange={commentChange} reviewData={optimisticReviewData} disabled={optimisticReviewData.submitted} />
           ))}
         </div>
       </div>

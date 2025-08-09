@@ -1,5 +1,6 @@
-import { db } from "@/config/firebase";
+import { API_URL, db } from "@/config/firebase";
 import { ApplicantRole, RoleReviewRubric } from "@/types/types";
+import axios from "axios";
 import {
   collection,
   doc,
@@ -28,10 +29,9 @@ export async function getRoleRubricsForFormRole(
   const q = query(
     rubrics,
     where("formId", "==", formId),
-    where("role", "==", role),
   );
 
-  return (await getDocs(q)).docs.map((d) => d.data() as RoleReviewRubric);
+  return (await getDocs(q)).docs.map((d) => d.data() as RoleReviewRubric).filter(r => r.roles.length == 0 || r.roles.includes(role));
 }
 
 export async function updateRoleRubric(
@@ -42,4 +42,12 @@ export async function updateRoleRubric(
   const rubricRef = doc(rubrics, rubricId);
 
   await updateDoc(rubricRef, update);
+}
+
+export async function uploadRubrics(rubrics: RoleReviewRubric[], token: string) {
+  return await axios.post(API_URL + "/application/rubrics", rubrics, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
 }

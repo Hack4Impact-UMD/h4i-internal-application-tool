@@ -2,3 +2,4 @@ node_modules
 .firebase
 *.log
 CLAUDE.md
+rubric

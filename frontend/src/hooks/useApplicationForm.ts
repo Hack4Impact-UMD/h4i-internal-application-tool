@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApplicationForm } from "../types/types";
 import {
   getActiveForm,
   getAllForms,
   getApplicationForm,
+  createApplicationForm,
 } from "../services/applicationFormsService";
 
 export function useAllApplicationForms() {
@@ -27,3 +28,13 @@ export function useActiveForm() {
     queryFn: getActiveForm,
   });
 }
+
+export const useUploadApplicationForm = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ form, token }: { form: ApplicationForm, token: string }) => createApplicationForm(form, token),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["form", "all"] });
+        },
+    });
+};
