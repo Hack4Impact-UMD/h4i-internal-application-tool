@@ -21,10 +21,6 @@ service cloud.firestore {
     function isReviewer() {
     	return isAuthed() && (getCurrentUser().data.role == "reviewer" || isSuperReviewer());
     }
-
-    function isReviewerOnly() {
-      return isAuthed() && isReviewer() && !isSuperReviewer();
-    }
     
     function isSuperReviewer() {
     	return isAuthed() && getCurrentUser().data.role == "super-reviewer";
@@ -40,7 +36,7 @@ service cloud.firestore {
     	allow read: if isReviewer() || hasID(user_id);
       // user documents can be written to only by the user they represent or super-reviewers
       allow create: if false;
-      allow update: if (hasId(user_id) && (!request.resource.data.diff(resource.data).affectedKeys()
+      allow update: if (hasID(user_id) && (!request.resource.data.diff(resource.data).affectedKeys()
         .hasAny(['role']))) || isSuperReviewer(); //IMPORTANT: Role can't be updated for security reasons unless by super reviewer!
       allow delete: if isSuperReviewer();
     }
