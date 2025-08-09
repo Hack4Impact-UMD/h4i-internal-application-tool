@@ -3,6 +3,7 @@ import {
   ApplicantRole,
   QuestionType,
 } from "@/types/formBuilderTypes";
+import { ReviewStatus } from "@/types/types";
 import { Timestamp } from "firebase/firestore";
 
 const FORM_ID = "h4i-fall-2025-form-final";
@@ -63,16 +64,53 @@ We will have rolling applications that consist of this written application and m
 Please reach out to <umd@hack4impact.org> if you have any questions.
 
 All admission decisions will be communicated to applicants no later than September 1, 2025.
-`,
+  `,
   decisionsReleased: false,
   decisionLetter: {
-    [ApplicantRole.Bootcamp]: {
+    [ReviewStatus.Accepted]: {
+      [ApplicantRole.Bootcamp]: `
+Thank you for your patience during the application and interview process. *Based on your experience, comments, and our non-profit partners’ needs, we have placed you on the Bootcamp team.* Congratulations!
 
-    }, 
-    ["team"]: {
+Our first general body meeting is **[day, month date, year from time in location]**.
+      
+In terms of the next steps, please:
+      
+1. Join our Slack workspace (you'll receive an invite soon) and join the #umd-general, #umd-random, #umd-opportunities, and #umd-socialimpact channels. **Slack will be our main form of communication.**
+2. Update your Slack profile to include your preferred name, a profile picture, pronouns, and your email address.
+3. Join our org on [Terplink](https://terplink.umd.edu/organization/hack4impact)!
+4. Let me know if you are interested in taking on roles related to sourcing nonprofit projects, which would involve contacting different nonprofit organizations and developing projects for us to work on, marketing, or community development.
+      
+Once again, we’re looking forward to working with you. Let us know if you have any questions.
+      `,
+      ["team"]: `
+Congratulations! Welcome to our organization for Fall 2025! Thank you for your patience during the application and interview process. *Based on your experience, comments, and our non-profit partners’ needs, we have placed you on a project team as a [role].* You'll hear more about your project at the first team meeting.
 
-    }
-  }
+Our first general body meeting is **[day, month date, year from time in location]**.
+
+In terms of the next steps, please:
+
+1. Join our Slack workspace (you'll receive an invite soon) and join the #umd-general, #umd-random, #umd-opportunities, and #umd-pixels channels. **Slack will be our main form of communication.**
+2. Update your Slack profile to include your preferred name, a profile picture, pronouns, and your email address.
+3. Join our org on [Terplink](https://terplink.umd.edu/organization/hack4impact)!
+
+Once again, we’re looking forward to working with you. Let us know if you have any questions.
+    `,
+    },
+    [ReviewStatus.Waitlisted]: `
+Thank you for your patience during the application and interview process. Based on your experience, our openings, and our client’s needs, we have decided to place you on the *waitlist for [project team/bootcamp]* this semester.
+
+We believe that you would be a great fit for our **[project teams/bootcamp]**. However, this semester, the **[project team/bootcamp]** spots filled up quickly.
+    
+If there are any **[project team/bootcamp]** openings by **[XX/XX/XX]** before the waitlist closes, we will notify you and place you in **[a project team/bootcamp]**.
+    
+If there are no new openings, we will retain your email address and application status for **[Fall/Spring 20XX]**, our next recruiting season. We would then send you a form asking for an updated resume and if you are still interested in the same position.
+    
+**Please reply to this email to confirm your placement on the waitlist** and feel free to reach out if you have any questions or concerns.
+    `,
+    [ReviewStatus.Denied]: `
+Thank you for your patience during the application and interview process. Based on your experience, our openings, and our client's needs, we were unable to place you on a project or bootcamp this semester, but we invite you to apply in the future ([here](https://forms.gle/m1uVJ8kPihS6ihCh6) is our Spring 2026 Interest Form). We really appreciate your interest in our organization and mission, and we hope you have a good semester.
+    `,
+  },
   scoreWeights: {
     [ApplicantRole.Bootcamp]: {
       "Interest in the club": 0.5,
