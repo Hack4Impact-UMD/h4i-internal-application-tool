@@ -10,14 +10,14 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [],
     rubricQuestions: [
       {
-        scoreKey: "interestInClub",
+        scoreKey: "interest-in-club",
         prompt: "Interest in the club",
         description: `1: Applicant has generic responses and puts in the bare minimum into for responses, such as one or two line answers for why they want to join.\n2: Applicant seems to have put in at least some effort into constructing a response to why they want to join, but reasons are vague and unclear.\n3: Applicant has well-written reasons for wanting to join Hack4Impact. Things preventing a 3 from a 4 could be if the applicant’s reasons could be satisfied at other clubs and not mentioning anything Hack4Impact specific.\n4: Applicant has clear and well-written reasons for wanting to join Hack4Impact specifically. Things to look for would be mentioning past projects or information from our website (showing initiative in looking up our website). If they’ve attended one of our past events, that would be a plus as well.`,
         minValue: 1,
         maxValue: 4,
       },
       {
-        scoreKey: "interestInSocialGood",
+        scoreKey: "social-good",
         prompt: "Interest in social good",
         description: `1: Applicant doesn’t mention the social impact of the club - clearly just wants to use Hack4Impact as a resume booster.\n2: Applicant mentions social impact but reasons are vague and answers to specific social initiatives seem generic and insincere.\n3: Applicant has detailed response to social initiatives and shows passion for doing social good.\n4: Applicant goes above and beyond on social initiatives that they are passionate about. Applicant shows passion about using their abilities to do good in the community, and has shown past initiative in terms of giving back to the community.`,
         minValue: 1,
@@ -31,7 +31,7 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.Engineer, ApplicantRole.Bootcamp],
     rubricQuestions: [
       {
-        scoreKey: "technicalExpertiseEngBootcamp",
+        scoreKey: "technical-expertise",
         prompt: "Technical Expertise (Engineer, Bootcamp)",
         description: `1: Applicant does not have any experience with web dev or any relevant web dev projects. Applicant shows little interest in growing and learning as an engineer.\n2: Applicant has somewhat relevant experience, and shows drive and passion in learning and improving.\n3: Applicant has good relevant experience. Something stopping a 3 from a 4 would be no prior experience working on teams.\n4: Applicant has exemplary experience that would translate well to a Hack4Impact team (web dev personal projects, SWE internships). Applicant demonstrates through prior experience that they have worked proficiently on software teams (Agile) as well as exhibit great communication skills through the written application.`,
         minValue: 1,
@@ -45,7 +45,7 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.TechLead],
     rubricQuestions: [
       {
-        scoreKey: "technicalExpertiseTechLead",
+        scoreKey: "technical-expertise",
         prompt: "Technical Expertise (Tech Lead)",
         description: `1: Applicant does not earn a 3 or 4 in the engineer criterion.\n2: Applicant is an above average engineer, but may need to be paired with another more experienced tech lead on a team.\n3: Applicant is an exemplary engineer and is ready to take on a larger role. Things stopping a 3 from being a 4 is a lack of in-field experience leading a SWE team.\n4: Applicant has shown exemplary ability in writing and maintaining clean code (through GitHub or previous experience). Applicant has excelled at a similar leadership role on a SWE team previously. Applicant demonstrates understanding of what good code is like and has shown to be able to make good technical decisions on what technical stack to choose.`,
         minValue: 1,
@@ -59,7 +59,7 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.Designer],
     rubricQuestions: [
       {
-        scoreKey: "technicalExpertiseDesigner",
+        scoreKey: "technical-expertise",
         prompt: "Technical Expertise (Designers)",
         description: `1: Applicant demonstrates no projects to back up their artistic ability.\n2: Applicant has adequate ability in terms of creating and designing, but designs are not outstanding.\n3: Applicant is creative and has some artistic ability. Things separating a 3 from a 4 would be lack of experience in digital design or lack of clear communication in written responses.\n4: Applicant is creative and has great artistic ability (exemplified through projects / portfolios). Applicant is a great fit, having prior experience using Figma or other Figma-esque tools.`,
         minValue: 1,
@@ -73,7 +73,7 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.Product],
     rubricQuestions: [
       {
-        scoreKey: "technicalExpertisePM",
+        scoreKey: "technical-expertise",
         prompt: "Technical Expertise (PMs)",
         description: `1: Applicant does not show that they understand the scope and responsibility of the role of a PM through their responses.\n2: Applicant shows moderate ability in organization and communication - would be able to be a PM only if paired with a more experienced co-PM.\n3: Applicant shows good ability in organization and communication. Things stopping a three from a four could be inexperience with working on a rigorous software development team.\n4: Applicant clearly understands what is needed from a PM, has exemplary communication skills and has proven to be able to work proficiently in software team environments.`,
         minValue: 1,
@@ -87,7 +87,7 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.OutreachCoord, ApplicantRole.SocialMedia],
     rubricQuestions: [
       {
-        scoreKey: "communicationAndWriting",
+        scoreKey: "comm-and-writing-skills",
         prompt: "Communication & Writing Skills (PR & O)",
         description: `1: Applicant does not demonstrate the necessary writing and/or communication skills required for a professional setting.\n2: Applicant possesses coherent but non-professional writing skills and/or struggles with communicating openly and effectively.\n3: Applicant makes clear and sound statements/arguments throughout their writing and within their communication. They lack charisma and personality within their communication.\n4: Applicant consistently sounds professional throughout their writing and communication. Maintains a professional level of charisma within their communication.`,
         minValue: 1,
@@ -101,7 +101,7 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.OutreachCoord],
     rubricQuestions: [
       {
-        scoreKey: "npoExperience",
+        scoreKey: "npo-expertise",
         prompt: "NPO Experience (PR & O — Outreach Coordinator ONLY)",
         description: `1: Applicant does not show that they understand the scope and responsibility of the role of an NPO through their responses.\n2: Applicant has an adequate understanding of NPOs and their function within our society. They have a minimal amount of experience with NPOs.\n3: Applicant has an adequate understanding of NPOs and how they incorporate into Hack4Impacts mission. They have substantial knowledge and experience with NPOs. Little to no hands-on experience with NPOs in their personal lives.\n4: Applicant has an exceptional understanding of NPOs and how they can work in unison with Hack4Impact and our goals. They have a complete understanding of NPOs on all-levels and varied hands-on experience with them in their personal lives.`,
         minValue: 1,
@@ -115,7 +115,7 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.SocialMedia],
     rubricQuestions: [
       {
-        scoreKey: "marketingExpertise",
+        scoreKey: "marketing-expertise",
         prompt: "Marketing Expertise (PR & O — Social Media Manager ONLY)",
         description: `1: Applicant has no relevant experience with social media or content creation and provides no clear understanding of the platforms or goals of social media for a club/org.\n2: Applicant has limited experience with social media or content creation. They may have helped run accounts or contributed to posts but do not explain their role clearly.\n3: Applicant has relevant experience managing social media or content for a club/org. They provide some explanation of platforms used and content type.\n4: Applicant has strong, hands-on experience creating and managing social media or video content. They show clear understanding of audience engagement, platform strategy, or brand storytelling.`,
         minValue: 1,
