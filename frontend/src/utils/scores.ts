@@ -16,6 +16,8 @@ export async function calculateReviewScore(
     review.applicationFormId,
   );
 
+  //TODO: If experiencing issues, change this to if(true) to fallback to average scoring,
+  //it is likely that there is a mismatch between the formula keys and the review data keys
   if (!form.scoreWeights) {
     // fallback to simple average
     console.log("NO WEIGHTS");

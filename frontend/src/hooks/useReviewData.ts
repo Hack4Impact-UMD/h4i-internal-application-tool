@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApplicantRole, ApplicationReviewData } from "../types/types";
 import {
   getReviewDataById,
@@ -7,14 +7,59 @@ import {
   getReviewDataForApplication,
   getReviewDataForForm,
   getReviewDataForReviewer,
+  updateReviewData,
 } from "../services/reviewDataService";
 import { useAuth } from "./useAuth";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
 
 export function useReviewData(reviewDataId: string) {
   return useQuery<ApplicationReviewData>({
     queryKey: ["review-data", "id", reviewDataId],
     enabled: !!reviewDataId,
     queryFn: () => getReviewDataById(reviewDataId),
+  });
+}
+
+export function useUpdateReviewData(reviewDataId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (update: Partial<Omit<ApplicationReviewData, "id">>) => {
+      await updateReviewData(reviewDataId, update);
+    },
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({
+        queryKey: ["review-data", "id", reviewDataId],
+      });
+      const previousData = queryClient.getQueryData<ApplicationReviewData>([
+        "review-data",
+        "id",
+        reviewDataId,
+      ]);
+      queryClient.setQueryData<ApplicationReviewData>(
+        ["review-data", "id", reviewDataId],
+        (old) => {
+          if (!old) return undefined;
+          return {
+            ...old,
+            ...newData,
+          };
+        },
+      );
+      return { previousData };
+    },
+    onError: (_err, _newData, context) => {
+      queryClient.setQueryData(
+        ["review-data", "id", reviewDataId],
+        context?.previousData,
+      );
+      throwErrorToast("Failed to update review!");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["review-data", "id", reviewDataId],
+      });
+    },
   });
 }
 

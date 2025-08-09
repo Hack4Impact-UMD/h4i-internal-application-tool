@@ -15,6 +15,23 @@ export type UserProfile = {
     role: PermissionRole;
 };
 
+export type ReviewRubricQuestion = {
+    scoreKey: string;
+    prompt: string;
+    description?: string;
+    maxValue?: number;
+    minValue?: number;
+  };
+  
+export type RoleReviewRubric = {
+    id: string;
+    formId: string;
+    roles: ApplicantRole[];
+    rubricQuestions: ReviewRubricQuestion[];
+    detailLink?: string;
+    commentsDecription?: string;
+};
+
 export type ReviewAssignment = {
     applicantId: string, // the applicant that was assigned for review
     applicationId: string // the submitted application that was assigned for review
