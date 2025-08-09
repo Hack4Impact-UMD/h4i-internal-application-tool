@@ -30,11 +30,12 @@ export function useActiveForm() {
 }
 
 export const useUploadApplicationForm = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ form, token }: { form: ApplicationForm, token: string }) => createApplicationForm(form, token),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["form", "all"] });
-        },
-    });
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ form, token }: { form: ApplicationForm; token: string }) =>
+      createApplicationForm(form, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["form", "all"] });
+    },
+  });
 };

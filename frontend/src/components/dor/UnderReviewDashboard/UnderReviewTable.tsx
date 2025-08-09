@@ -264,9 +264,7 @@ export default function SuperReviewerApplicationsTable({
         columnHelper.accessor("reviews.averageScore", {
           id: "avg-score",
           header: ({ column }) => {
-            return (
-              <SortableHeader column={column}>AVG. SCORE</SortableHeader>
-            );
+            return <SortableHeader column={column}>AVG. SCORE</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
             if (row.original.reviews.completed == 0) return "N/A";
@@ -285,8 +283,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                        status: status,
-                      })
+                          status: status,
+                        })
                       : throwErrorToast("No status available!")
                   }
                 />

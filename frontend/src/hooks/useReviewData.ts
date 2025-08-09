@@ -25,7 +25,7 @@ export function useUpdateReviewData(reviewDataId: string) {
 
   return useMutation({
     mutationFn: async (update: Partial<Omit<ApplicationReviewData, "id">>) => {
-      await updateReviewData(reviewDataId, update)
+      await updateReviewData(reviewDataId, update);
     },
     onMutate: async (newData) => {
       await queryClient.cancelQueries({
@@ -53,7 +53,7 @@ export function useUpdateReviewData(reviewDataId: string) {
         ["review-data", "id", reviewDataId],
         context?.previousData,
       );
-      throwErrorToast("Failed to update review!")
+      throwErrorToast("Failed to update review!");
     },
     onSettled: () => {
       queryClient.invalidateQueries({

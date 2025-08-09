@@ -13,7 +13,7 @@ export function RubricQuestion({
   question,
   onChange,
   value,
-  disabled = false
+  disabled = false,
 }: RubricQuestionProps) {
   return (
     <div className="">
@@ -29,7 +29,7 @@ export function RubricQuestion({
             score={score}
             selected={value === score}
             onClick={() => {
-              if (!disabled) onChange(question.scoreKey, score)
+              if (!disabled) onChange(question.scoreKey, score);
             }}
           />
         ))}

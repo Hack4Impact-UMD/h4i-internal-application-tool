@@ -89,21 +89,25 @@ const ApplicationPage: React.FC = () => {
   } = useReviewData(reviewDataId ?? "");
 
   const { mutate: updateReviewData } = useUpdateReviewData(reviewDataId ?? "");
-  const { mutate: submitReview, isPending: isSubmitting } = useUpdateReviewData(reviewDataId ?? "");
+  const { mutate: submitReview, isPending: isSubmitting } = useUpdateReviewData(
+    reviewDataId ?? "",
+  );
 
   const {
     data: rubrics,
     isPending: rubricsPending,
-    error: rubricsError
-  } = useRubricsForFormRole(form?.id, reviewData?.forRole)
+    error: rubricsError,
+  } = useRubricsForFormRole(form?.id, reviewData?.forRole);
 
   const {
     data: score,
     isPending: scorePending,
-    error: scoreError
-  } = useReviewScore(reviewData!)
+    error: scoreError,
+  } = useReviewScore(reviewData!);
 
-  const [localNotes, setLocalNotes] = useState<Record<string, string> | undefined>(undefined);
+  const [localNotes, setLocalNotes] = useState<
+    Record<string, string> | undefined
+  >(undefined);
 
   useEffect(() => {
     if (reviewData && !localNotes) {
@@ -112,13 +116,17 @@ const ApplicationPage: React.FC = () => {
   }, [reviewData, localNotes]);
 
   useEffect(() => {
-    const ref = setTimeout(() => updateReviewData({
-      reviewerNotes: localNotes
-    }), 1000)
+    const ref = setTimeout(
+      () =>
+        updateReviewData({
+          reviewerNotes: localNotes,
+        }),
+      1000,
+    );
     return () => {
-      clearTimeout(ref)
-    }
-  }, [localNotes, updateReviewData])
+      clearTimeout(ref);
+    };
+  }, [localNotes, updateReviewData]);
 
   const optimisticReviewData = useMemo(() => {
     if (!reviewData) return undefined;
@@ -129,57 +137,72 @@ const ApplicationPage: React.FC = () => {
     };
   }, [reviewData, localNotes]);
 
+  const scoreChange = useCallback(
+    (key: string, value: number) => {
+      if (!reviewData || reviewData.submitted) return;
 
-  const scoreChange = useCallback((key: string, value: number) => {
-    if (!reviewData || reviewData.submitted) return;
+      const newScores = {
+        ...reviewData.applicantScores,
+        [key]: value,
+      };
 
-    const newScores = {
-      ...reviewData.applicantScores,
-      [key]: value,
-    };
+      updateReviewData({ applicantScores: newScores });
+    },
+    [reviewData, updateReviewData],
+  );
 
-    updateReviewData({ applicantScores: newScores });
-  }, [reviewData, updateReviewData]);
-
-  const commentChange = useCallback((id: string, value: string) => {
-    const newLocalNotes = { ...localNotes, [id]: value };
-    setLocalNotes(newLocalNotes);
-  }, [localNotes]);
+  const commentChange = useCallback(
+    (id: string, value: string) => {
+      const newLocalNotes = { ...localNotes, [id]: value };
+      setLocalNotes(newLocalNotes);
+    },
+    [localNotes],
+  );
 
   const handleSubmitReview = () => {
-    const requiredKeys = rubrics?.flatMap(r => r.rubricQuestions.map(q => q.scoreKey)) ?? []
-    const existingKeys = new Set(Object.keys(reviewData?.applicantScores ?? {}))
+    const requiredKeys =
+      rubrics?.flatMap((r) => r.rubricQuestions.map((q) => q.scoreKey)) ?? [];
+    const existingKeys = new Set(
+      Object.keys(reviewData?.applicantScores ?? {}),
+    );
 
     for (const req of requiredKeys) {
       if (!existingKeys.has(req)) {
-        throwErrorToast(`Review is incomplete, missing required key ${req}`)
+        throwErrorToast(`Review is incomplete, missing required key ${req}`);
         return;
       }
     }
 
-    submitReview({ submitted: true }, {
-      onSuccess: () => {
-        throwSuccessToast("Review submitted successfully!");
-        navigate(-1);
+    submitReview(
+      { submitted: true },
+      {
+        onSuccess: () => {
+          throwSuccessToast("Review submitted successfully!");
+          navigate(-1);
+        },
+        onError: () => {
+          throwErrorToast("Failed to submit review");
+        },
       },
-      onError: () => {
-        throwErrorToast("Failed to submit review");
-      }
-    });
-  }
+    );
+  };
 
-  if (formLoading || responseLoading || reviewPending || rubricsPending || !localNotes) return <Loading />;
+  if (
+    formLoading ||
+    responseLoading ||
+    reviewPending ||
+    rubricsPending ||
+    !localNotes
+  )
+    return <Loading />;
   if (formError || !form)
     return <p>Failed to fetch form: {formError.message}</p>;
   if (responseError || !response)
     return <p>Failed to fetch response: {responseError?.message}</p>;
-  if (reviewError)
-    return <p>Failed to fetch review: {reviewError.message}</p>;
+  if (reviewError) return <p>Failed to fetch review: {reviewError.message}</p>;
   if (rubricsError)
     return <p>Failed to fetch rubrics: {rubricsError.message}</p>;
-  if (!optimisticReviewData)
-    return <p>Failed to fetch review data</p>
-
+  if (!optimisticReviewData) return <p>Failed to fetch review data</p>;
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
@@ -190,27 +213,43 @@ const ApplicationPage: React.FC = () => {
           role={reviewData.forRole}
         />
 
-        {
-          scorePending ? <Spinner className="mr-4" /> :
-            scoreError ? `Failed to calculate score: ${scoreError.message}` :
-              <h1 className="text-lg text-blue w-64">Review Score: <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span>/4</h1>
-        }
+        {scorePending ? (
+          <Spinner className="mr-4" />
+        ) : scoreError ? (
+          `Failed to calculate score: ${scoreError.message}`
+        ) : (
+          <h1 className="text-lg text-blue w-64">
+            Review Score:{" "}
+            <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span>/4
+          </h1>
+        )}
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="default" disabled={isSubmitting || optimisticReviewData.submitted}>
-              {isSubmitting ? "Submitting..." : optimisticReviewData.submitted ? "Submitted" : "Submit Review"}
+            <Button
+              variant="default"
+              disabled={isSubmitting || optimisticReviewData.submitted}
+            >
+              {isSubmitting
+                ? "Submitting..."
+                : optimisticReviewData.submitted
+                  ? "Submitted"
+                  : "Submit Review"}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure you want to submit this review?</AlertDialogTitle>
+              <AlertDialogTitle>
+                Are you sure you want to submit this review?
+              </AlertDialogTitle>
               <AlertDialogDescription>
                 You will not be able to edit it after submission.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleSubmitReview}>Confirm</AlertDialogAction>
+              <AlertDialogAction onClick={handleSubmitReview}>
+                Confirm
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -243,15 +282,24 @@ const ApplicationPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )!.questions
                   }
-                  onChangeResponse={() => { }}
+                  onChangeResponse={() => {}}
                 />
               </div>
             ))}
         </div>
         <div className="w-1/2 overflow-y-scroll flex flex-col gap-2">
-          {rubrics.sort((a, b) => a.roles.length - b.roles.length).map(r => (
-            <RoleRubric key={r.id} rubric={r} onScoreChange={scoreChange} onCommentChange={commentChange} reviewData={optimisticReviewData} disabled={optimisticReviewData.submitted} />
-          ))}
+          {rubrics
+            .sort((a, b) => a.roles.length - b.roles.length)
+            .map((r) => (
+              <RoleRubric
+                key={r.id}
+                rubric={r}
+                onScoreChange={scoreChange}
+                onCommentChange={commentChange}
+                reviewData={optimisticReviewData}
+                disabled={optimisticReviewData.submitted}
+              />
+            ))}
         </div>
       </div>
     </div>

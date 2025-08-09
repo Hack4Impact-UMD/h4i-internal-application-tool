@@ -26,12 +26,11 @@ export async function getRoleRubricsForFormRole(
   role: ApplicantRole,
 ): Promise<RoleReviewRubric[]> {
   const rubrics = collection(db, RUBRIC_COLLECTION);
-  const q = query(
-    rubrics,
-    where("formId", "==", formId),
-  );
+  const q = query(rubrics, where("formId", "==", formId));
 
-  return (await getDocs(q)).docs.map((d) => d.data() as RoleReviewRubric).filter(r => r.roles.length == 0 || r.roles.includes(role));
+  return (await getDocs(q)).docs
+    .map((d) => d.data() as RoleReviewRubric)
+    .filter((r) => r.roles.length == 0 || r.roles.includes(role));
 }
 
 export async function updateRoleRubric(
@@ -44,10 +43,13 @@ export async function updateRoleRubric(
   await updateDoc(rubricRef, update);
 }
 
-export async function uploadRubrics(rubrics: RoleReviewRubric[], token: string) {
+export async function uploadRubrics(
+  rubrics: RoleReviewRubric[],
+  token: string,
+) {
   return await axios.post(API_URL + "/application/rubrics", rubrics, {
     headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }

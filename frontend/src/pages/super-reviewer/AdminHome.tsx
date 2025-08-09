@@ -1,6 +1,9 @@
 import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
-import { useAllApplicationForms, useUploadApplicationForm } from "@/hooks/useApplicationForm";
+import {
+  useAllApplicationForms,
+  useUploadApplicationForm,
+} from "@/hooks/useApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
 import { PermissionRole } from "@/types/types";
 import { displayUserRoleName } from "@/utils/display";
@@ -15,13 +18,23 @@ export default function AdminHome() {
   const { data: forms, isPending, error } = useAllApplicationForms();
   const { user, token } = useAuth();
 
-  const { mutate: uploadForm, isPending: isUploadingForm, error: formUploadError, data: formUploadData } = useUploadApplicationForm();
-  const { mutate: uploadRubrics, isPending: isUploadingRubrics, error: rubricUploadError, data: rubricUploadData } = useUploadRubrics();
+  const {
+    mutate: uploadForm,
+    isPending: isUploadingForm,
+    error: formUploadError,
+    data: formUploadData,
+  } = useUploadApplicationForm();
+  const {
+    mutate: uploadRubrics,
+    isPending: isUploadingRubrics,
+    error: rubricUploadError,
+    data: rubricUploadData,
+  } = useUploadRubrics();
 
   const handleUploadForm = () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-      `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
+        `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
     );
 
     if (!confirmed || !token) return;
@@ -57,7 +70,7 @@ export default function AdminHome() {
 
   const handleUploadRubrics = () => {
     const confirmed = window.confirm(
-      "Are you sure you want to upload the application rubrics?"
+      "Are you sure you want to upload the application rubrics?",
     );
 
     if (!confirmed || !token) return;

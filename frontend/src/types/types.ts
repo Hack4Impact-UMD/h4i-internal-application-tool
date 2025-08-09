@@ -96,8 +96,8 @@ export interface ApplicationReviewData {
   applicationFormId: string;
   applicationResponseId: string;
   applicantId: string;
-  applicantScores: Record<string, number>,
-  reviewerNotes: Record<string, string>  // reviewStatus: ReviewStatus;
+  applicantScores: Record<string, number>;
+  reviewerNotes: Record<string, string>; // reviewStatus: ReviewStatus;
   forRole: ApplicantRole; // what role is this review for
   submitted: boolean;
 }
