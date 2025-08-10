@@ -3,34 +3,30 @@ import { ApplicantRole, ReviewStatus } from "@/types/types";
 import { useParams } from "react-router-dom";
 import { useMyApplicationStatus } from "@/hooks/useApplicationStatus";
 import { displayApplicantRoleName } from "@/utils/display";
-import Spinner from "../Spinner";
 import FormMarkdown from "../form/FormMarkdown";
 import ErrorPage from "@/pages/ErrorPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
 import ConfettiExplosion from 'react-confetti-explosion';
+import Loading from "../Loading";
+
+const allowedStatuses: Set<string> = new Set([
+  ReviewStatus.Accepted,
+  ReviewStatus.Denied,
+  ReviewStatus.Waitlisted
+]);
 
 function DecisionPage() {
   const { user } = useAuth();
   const { responseId, role } = useParams();
 
-  if (!user) return <ErrorPage />;
-  if (!responseId) return <ErrorPage />;
-  if (!role) return <ErrorPage />;
+  if (!user || !responseId || !role) return <ErrorPage />;
 
   const {
     data: appStatus,
-    isPending: isStatusPending,
+    isPending: statusPending,
     error: statusError,
   } = useMyApplicationStatus(responseId, role as ApplicantRole);
-
-  if (isStatusPending) {
-    return <Spinner className="w-full" />
-  }
-
-  if (statusError) {
-    return <ErrorPage />
-  }
 
   const {
     data: form,
@@ -38,31 +34,28 @@ function DecisionPage() {
     error: formError,
   } = useApplicationFormForResponseId(responseId);
 
-  if (formPending) {
-    return <Spinner className="w-full" />
+  if (statusPending || formPending) {
+    return <Loading />
   }
 
-  if (formError) {
+  if (statusError || formError) {
     return <ErrorPage />
   }
 
-  if (!appStatus.released) {
+  if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
     return <NotFoundPage />
   }
 
-  if (appStatus.status !== ReviewStatus.Accepted && appStatus.status !== ReviewStatus.Denied && appStatus.status !== ReviewStatus.Waitlisted) {
-    return <NotFoundPage />
-  }
-
-  const decisionLetterText = appStatus.status === ReviewStatus.Accepted
-    ? form.decisionLetter?.accepted[
-        appStatus.role === ApplicantRole.Bootcamp ? appStatus.role : "team"
-      ]
+  const decisionLetterText = 
+    appStatus.status === ReviewStatus.Accepted
+      ? form.decisionLetter?.[ReviewStatus.Accepted][
+          appStatus.role === ApplicantRole.Bootcamp ? appStatus.role : "team"
+        ]
     : appStatus.status === ReviewStatus.Waitlisted 
-    ? form.decisionLetter?.waitlist[
-      appStatus.role === ApplicantRole.Bootcamp ? appStatus.role : "team"
-      ]
-    : form.decisionLetter?.[appStatus.status];
+      ? form.decisionLetter?.[ReviewStatus.Waitlisted][
+        appStatus.role === ApplicantRole.Bootcamp ? appStatus.role : "team"
+        ]
+    : form.decisionLetter?.[ReviewStatus.Denied];
 
   return (
     <>
