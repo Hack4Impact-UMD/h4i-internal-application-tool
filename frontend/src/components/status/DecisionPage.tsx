@@ -77,6 +77,10 @@ function DecisionPage() {
     ? form.decisionLetter?.accepted[
         appStatus.role === ApplicantRole.Bootcamp ? appStatus.role : "team"
       ]
+    : appStatus.status === ReviewStatus.Waitlisted 
+    ? form.decisionLetter?.waitlist[
+      appStatus.role === ApplicantRole.Bootcamp ? appStatus.role : "team"
+      ]
     : form.decisionLetter?.[appStatus.status];
 
   return (
