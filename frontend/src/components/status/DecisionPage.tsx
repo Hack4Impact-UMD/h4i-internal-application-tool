@@ -63,7 +63,7 @@ function DecisionPage() {
         <div className="flex gap-2 flex-col sm:flex-row items-start justify-between mb-5">
           <div className="flex flex-col">
             <h2 className="text-blue text-2xl">
-              Your Hack4Impact-UMD<br></br>
+              Your Hack4Impact-UMD {form.semester}<br></br>
               {displayApplicantRoleName(role as ApplicantRole)} Application
             </h2>
           </div>
