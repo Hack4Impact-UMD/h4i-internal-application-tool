@@ -29,7 +29,7 @@ function DecisionPage() {
   }
 
   if (statusError) {
-    return <p className="text-center">{statusError.message}</p>
+    return <ErrorPage />
   }
 
   const {
@@ -43,7 +43,7 @@ function DecisionPage() {
   }
 
   if (formError) {
-    return <p className="text-center">{formError.message}</p>
+    return <ErrorPage />
   }
 
   if (!appStatus.released) {
