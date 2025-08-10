@@ -17,6 +17,8 @@ import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { InterviewAssignmentRow, useRows } from "./useRows";
 import { createInterviewData } from "@/services/interviewDataService";
 import SortableHeader from "@/components/tables/SortableHeader";
+import { useNavigate } from "react-router-dom";
+import { getApplicationForm } from "@/services/applicationFormsService";
 
 type ReviewerApplicationsTableProps = {
   assignments: InterviewAssignment[];
@@ -34,6 +36,7 @@ export default function ReviewerInterviewsTable({
   statusFilter = "all",
 }: ReviewerApplicationsTableProps) {
   const { user } = useAuth();
+  const navigate = useNavigate()
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -147,19 +150,18 @@ export default function ReviewerInterviewsTable({
     responseId: string,
     role: ApplicantRole,
   ) {
-    // const form = await getApplicationForm(formId);
+    const form = await getApplicationForm(formId);
     if (appReviewData) {
       // there's an existing review, edit it
       if (appReviewData.submitted) {
         throwErrorToast("This review has already been submitted!");
       } else {
-        //TODO: IMPLEMENT
-        // navigate(
-        // 	`/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
-        // );
+        navigate(
+        	`/admin/interview/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
+        );
       }
     } else {
-      const review: Omit<ApplicationInterviewData, "id"> = {
+      const interview: Omit<ApplicationInterviewData, "id"> = {
         interviewScore: 0,
         applicantId: applicantId,
         applicationFormId: formId,
@@ -170,13 +172,10 @@ export default function ReviewerInterviewsTable({
         submitted: false,
       };
 
-      const newReview = await createInterviewData(review);
-      console.log(newReview);
-
-      //TODO: IMPLEMENT
-      // navigate(
-      // 	`/admin/review/f/${newReview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newReview.id}`,
-      // );
+      const newinterview = await createInterviewData(interview);
+      navigate(
+      	`/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newinterview.id}`,
+      );
     }
   }
 
