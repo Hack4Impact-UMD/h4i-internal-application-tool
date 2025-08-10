@@ -24,23 +24,13 @@ function DecisionPage() {
     error: statusError,
   } = useMyApplicationStatus(responseId, role as ApplicantRole);
 
-  if (isStatusPending)
-    return (
-      <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={4}>
-          <Spinner className="w-full" />
-        </td>
-      </tr>
-    );
+  if (isStatusPending) {
+    return <Spinner className="w-full" />
+  }
 
-  if (statusError)
-    return (
-      <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={4}>
-          <p className="text-center">{statusError.message}</p>
-        </td>
-      </tr>
-    );
+  if (statusError) {
+    return <p className="text-center">{statusError.message}</p>
+  }
 
   const {
     data: form,
@@ -48,23 +38,13 @@ function DecisionPage() {
     error: formError,
   } = useApplicationFormForResponseId(responseId);
 
-  if (formPending)
-    return (
-      <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={4}>
-          <Spinner className="w-full" />
-        </td>
-      </tr>
-    );
+  if (formPending) {
+    return <Spinner className="w-full" />
+  }
 
-  if (formError)
-    return (
-      <tr className="border-t border-gray-300">
-        <td className="text-center py-4 px-2" colSpan={4}>
-          <p className="text-center">{formError.message}</p>
-        </td>
-      </tr>
-    );
+  if (formError) {
+    return <p className="text-center">{formError.message}</p>
+  }
 
   if (!appStatus.released) {
     return <NotFoundPage />
