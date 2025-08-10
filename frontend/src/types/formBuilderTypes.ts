@@ -36,7 +36,9 @@ export interface ApplicationForm {
       [role in ApplicantRole.Bootcamp | "team"]: string;
     };
     [ReviewStatus.Denied]: string;
-    [ReviewStatus.Waitlisted]: string;
+    [ReviewStatus.Waitlisted]: {
+      [role in ApplicantRole.Bootcamp | "team"]: string;
+    };
   };
   scoreWeights: {
     [role in ApplicantRole]: {
