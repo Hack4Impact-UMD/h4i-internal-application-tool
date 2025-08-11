@@ -116,17 +116,12 @@ const ApplicationPage: React.FC = () => {
   }, [reviewData, localNotes]);
 
   useEffect(() => {
-    const ref = setTimeout(
-      () =>
-        updateReviewData({
-          reviewerNotes: localNotes,
-        }),
-      1000,
-    );
-    return () => {
-      clearTimeout(ref);
-    };
-  }, [localNotes, updateReviewData]);
+    if (localNotes === undefined || !reviewData || reviewData.submitted) return;
+    const ref = setTimeout(() => {
+      updateReviewData({ reviewerNotes: localNotes });
+    }, 1000);
+    return () => clearTimeout(ref);
+  }, [localNotes, reviewData, updateReviewData]);
 
   const optimisticReviewData = useMemo(() => {
     if (!reviewData) return undefined;
@@ -159,13 +154,9 @@ const ApplicationPage: React.FC = () => {
     [reviewData, updateReviewData],
   );
 
-  const commentChange = useCallback(
-    (id: string, value: string) => {
-      const newLocalNotes = { ...localNotes, [id]: value };
-      setLocalNotes(newLocalNotes);
-    },
-    [localNotes],
-  );
+  const commentChange = useCallback((id: string, value: string) => {
+    setLocalNotes(prev => ({ ...(prev ?? {}), [id]: value }));
+  }, []);
 
   const handleSubmitReview = () => {
     const requiredKeys =
@@ -182,7 +173,11 @@ const ApplicationPage: React.FC = () => {
     }
 
     submitReview(
-      { submitted: true },
+      {
+        ...optimisticReviewData,
+        reviewerNotes: localNotes,
+        submitted: true
+      },
       {
         onSuccess: () => {
           throwSuccessToast("Review submitted successfully!");
@@ -290,7 +285,7 @@ const ApplicationPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )?.questions ?? []
                   }
-                  onChangeResponse={() => {}}
+                  onChangeResponse={() => { }}
                 />
               </div>
             ))}

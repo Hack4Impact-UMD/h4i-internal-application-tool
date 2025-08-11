@@ -35,7 +35,6 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<string[]>(value || []);
 
   useEffect(() => {
-    console.log(value);
     setSelectedOptions(value || []);
   }, [value]);
 
