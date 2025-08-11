@@ -50,6 +50,7 @@ export default function RoleRubric({
       <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
       <Textarea
         disabled={disabled}
+        className="disabled:opacity-100"
         value={reviewData.reviewerNotes[rubric.id] ?? ""}
         onChange={(e) => onCommentChange(rubric.id, e.target.value)}
       ></Textarea>
