@@ -7,7 +7,7 @@ import { useReviewData, useUpdateReviewData } from "@/hooks/useReviewData";
 import Spinner from "@/components/Spinner";
 import { useApplicant } from "@/hooks/useApplicants";
 import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
-import { displayApplicantRoleName } from "@/utils/display";
+import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { Button } from "@/components/ui/button";
 import { useRubricsForFormRole } from "@/hooks/useRubrics";
 import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
@@ -26,14 +26,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 
 type UserHeaderProps = {
   applicantId: string;
   form: ApplicationForm;
   role: ApplicantRole;
+  lastSave?: number;
 };
 
-function UserHeader({ applicantId, form, role }: UserHeaderProps) {
+function UserHeader({ applicantId, form, role, lastSave }: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
 
   if (isPending)
@@ -53,11 +55,16 @@ function UserHeader({ applicantId, form, role }: UserHeaderProps) {
     );
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-0">
       <h1 className="text-xl">
         {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
-        {displayApplicantRoleName(role)} Application
+        {displayApplicantRoleNameNoEmoji(role)} Application
       </h1>
+      <span>
+        {
+          lastSave ? `Last saved ${new Date(lastSave).toLocaleTimeString()}` : `Not saved`
+        }
+      </span>
     </div>
   );
 }
@@ -88,7 +95,7 @@ const ApplicationPage: React.FC = () => {
     error: reviewError,
   } = useReviewData(reviewDataId ?? "");
 
-  const { mutate: updateReviewData } = useUpdateReviewData(reviewDataId ?? "");
+  const { mutate: updateReviewData, submittedAt: lastSave } = useUpdateReviewData(reviewDataId ?? "");
   const { mutate: submitReview, isPending: isSubmitting } = useUpdateReviewData(
     reviewDataId ?? "",
   );
@@ -214,14 +221,16 @@ const ApplicationPage: React.FC = () => {
           applicantId={response.userId}
           form={form}
           role={reviewData.forRole}
+          lastSave={lastSave}
         />
+
 
         {scorePending ? (
           <Spinner className="mr-4" />
         ) : scoreError ? (
           `Failed to calculate score: ${scoreError.message}`
         ) : (
-          <h1 className="text-lg text-blue w-64">
+          <h1 className="text-lg text-blue w-64 mr-2">
             Review Score:{" "}
             <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span>/4
           </h1>
@@ -257,52 +266,57 @@ const ApplicationPage: React.FC = () => {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="flex gap-2 justify-center grow overflow-scroll pt-2">
-        <div className="w-1/2 flex h-full flex-col gap-2 overflow-scroll">
-          {form.sections
-            .filter((s) => {
-              if (s.forRoles) {
-                return (
-                  s.forRoles.filter((r) => response.rolesApplied.includes(r))
-                    .length > 0
-                );
-              } else {
-                return true;
-              }
-            })
-            .map((s) => (
-              <div
-                className="shadow border border-gray-200 bg-white rounded-md p-4"
-                key={s.sectionId}
-              >
-                <Section
-                  responseId={response.id}
+      <ResizablePanelGroup direction="horizontal" className="flex gap-2 justify-center grow overflow-scroll pt-2">
+        <ResizablePanel defaultSize={50}>
+          <div className="w-full flex h-full flex-col gap-2 overflow-scroll">
+            {form.sections
+              .filter((s) => {
+                if (s.forRoles) {
+                  return (
+                    s.forRoles.filter((r) => response.rolesApplied.includes(r))
+                      .length > 0
+                  );
+                } else {
+                  return true;
+                }
+              })
+              .map((s) => (
+                <div
+                  className="shadow border border-gray-200 bg-white rounded-md p-4"
                   key={s.sectionId}
-                  disabled={true}
-                  section={s}
-                  responses={
-                    response.sectionResponses.find(
-                      (r) => r.sectionId == s.sectionId,
-                    )?.questions ?? []
-                  }
-                  onChangeResponse={() => { }}
-                />
-              </div>
+                >
+                  <Section
+                    responseId={response.id}
+                    key={s.sectionId}
+                    disabled={true}
+                    section={s}
+                    responses={
+                      response.sectionResponses.find(
+                        (r) => r.sectionId == s.sectionId,
+                      )?.questions ?? []
+                    }
+                    onChangeResponse={() => { }}
+                  />
+                </div>
+              ))}
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize={50}>
+          <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full">
+            {sortedRubrics.map((r) => (
+              <RoleRubric
+                key={r.id}
+                rubric={r}
+                onScoreChange={scoreChange}
+                onCommentChange={commentChange}
+                reviewData={optimisticReviewData}
+                disabled={optimisticReviewData.submitted}
+              />
             ))}
-        </div>
-        <div className="w-1/2 overflow-y-scroll flex flex-col gap-2">
-          {sortedRubrics.map((r) => (
-            <RoleRubric
-              key={r.id}
-              rubric={r}
-              onScoreChange={scoreChange}
-              onCommentChange={commentChange}
-              reviewData={optimisticReviewData}
-              disabled={optimisticReviewData.submitted}
-            />
-          ))}
-        </div>
-      </div>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
