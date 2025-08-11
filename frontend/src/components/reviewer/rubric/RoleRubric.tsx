@@ -1,5 +1,5 @@
 import { ApplicationReviewData, RoleReviewRubric } from "@/types/types";
-import { displayApplicantRoleName } from "@/utils/display";
+import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { RubricQuestion } from "./RubricQuestion";
 import FormMarkdown from "@/components/form/FormMarkdown";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,7 +23,7 @@ export default function RoleRubric({
     <div className="bg-white rounded-md border border-gray-200 p-4 flex flex-col gap-2">
       <h1 className="font-bold text-xl">
         {rubric.roles.length > 0
-          ? rubric.roles.map(displayApplicantRoleName).join(", ")
+          ? rubric.roles.map(displayApplicantRoleNameNoEmoji).join(", ")
           : "General"}{" "}
         Rubric
       </h1>

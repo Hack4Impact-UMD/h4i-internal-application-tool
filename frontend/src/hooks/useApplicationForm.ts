@@ -5,6 +5,7 @@ import {
   getAllForms,
   getApplicationForm,
   createApplicationForm,
+  getApplicationFormForResponseId,
 } from "../services/applicationFormsService";
 
 export function useAllApplicationForms() {
@@ -39,3 +40,11 @@ export const useUploadApplicationForm = () => {
     },
   });
 };
+
+export function useApplicationFormForResponseId(responseId?: string) {
+  return useQuery<ApplicationForm>({
+    queryKey: ["form", "responseId", responseId],
+    queryFn: () => getApplicationFormForResponseId(responseId!),
+    enabled: responseId != undefined,
+  });
+}

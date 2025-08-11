@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import { ReviewStatus } from "./types";
 
 export enum ApplicantRole {
   Bootcamp = "bootcamp",
@@ -29,6 +30,16 @@ export interface ApplicationForm {
   description: string;
   sections: ApplicationSection[];
   decisionsReleased: boolean;
+  decisionLetter?: {
+    // decision letters split like this by Board at time of writing, but can be changed easily
+    [ReviewStatus.Accepted]: {
+      [role in ApplicantRole.Bootcamp | "team"]: string;
+    };
+    [ReviewStatus.Denied]: string;
+    [ReviewStatus.Waitlisted]: {
+      [role in ApplicantRole.Bootcamp | "team"]: string;
+    };
+  };
   scoreWeights: {
     [role in ApplicantRole]: {
       [score in string]: number; // weight for role + score category, between 0-4
