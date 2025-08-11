@@ -32,6 +32,12 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { ApplicationReviewData } from "@/types/types";
+import { CheckIcon, CircleAlertIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -41,7 +47,13 @@ type UserHeaderProps = {
   reviewData: ApplicationReviewData;
 };
 
-function UserHeader({ applicantId, form, role, lastSave, reviewData }: UserHeaderProps) {
+function UserHeader({
+  applicantId,
+  form,
+  role,
+  lastSave,
+  reviewData,
+}: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
 
   if (isPending)
@@ -67,9 +79,15 @@ function UserHeader({ applicantId, form, role, lastSave, reviewData }: UserHeade
         {displayApplicantRoleNameNoEmoji(role)} Application
       </h1>
       <span>
-        {reviewData.submitted ? "Submitted" : lastSave
-          ? `Last saved ${new Date(lastSave).toLocaleTimeString()}`
-          : `Not saved`}
+        {reviewData.submitted ? (
+          <span>
+            <CheckIcon className="inline size-5" /> Submitted
+          </span>
+        ) : lastSave ? (
+          `Last saved ${new Date(lastSave).toLocaleTimeString()}`
+        ) : (
+          `Not saved`
+        )}
       </span>
     </div>
   );
@@ -237,10 +255,22 @@ const ApplicationPage: React.FC = () => {
         ) : scoreError ? (
           `Failed to calculate score: ${scoreError.message}`
         ) : (
-          <h1 className="text-lg text-blue w-64 mr-2">
+          <span className="text-lg text-blue w-64 mr-2">
             Review Score:{" "}
-            <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span>/4
-          </h1>
+            {typeof score === "number" ? (
+              <>
+                <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span> /
+                4
+              </>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CircleAlertIcon className="inline" />
+                </TooltipTrigger>
+                <TooltipContent>Score is undefined!</TooltipContent>
+              </Tooltip>
+            )}
+          </span>
         )}
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -248,11 +278,15 @@ const ApplicationPage: React.FC = () => {
               variant="default"
               disabled={isSubmitting || optimisticReviewData.submitted}
             >
-              {isSubmitting
-                ? "Submitting..."
-                : optimisticReviewData.submitted
-                  ? "Submitted"
-                  : "Submit Review"}
+              {isSubmitting ? (
+                "Submitting..."
+              ) : optimisticReviewData.submitted ? (
+                <span>
+                  <CheckIcon className="inline" /> Submitted
+                </span>
+              ) : (
+                "Submit Review"
+              )}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
@@ -278,7 +312,7 @@ const ApplicationPage: React.FC = () => {
         className="flex gap-2 justify-center grow overflow-scroll pt-2"
       >
         <ResizablePanel defaultSize={50}>
-          <div className="w-full flex h-full flex-col gap-2 overflow-scroll">
+          <div className="w-full flex h-full flex-col gap-2 overflow-scroll rounded-md">
             {form.sections
               .filter((s) => {
                 if (s.forRoles) {
@@ -305,7 +339,7 @@ const ApplicationPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => { }}
+                    onChangeResponse={() => {}}
                   />
                 </div>
               ))}
@@ -313,7 +347,7 @@ const ApplicationPage: React.FC = () => {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={50}>
-          <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full">
+          <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full rounded-md">
             {sortedRubrics.map((r) => (
               <RoleRubric
                 key={r.id}

@@ -43,6 +43,14 @@ export function useUpdateReviewData(reviewDataId: string) {
           return {
             ...old,
             ...newData,
+            applicantScores: {
+              ...old.applicantScores,
+              ...(newData.applicantScores ?? {}),
+            },
+            reviewerNotes: {
+              ...old.reviewerNotes,
+              ...(newData.reviewerNotes ?? {}),
+            },
           };
         },
       );
@@ -58,6 +66,9 @@ export function useUpdateReviewData(reviewDataId: string) {
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["review-data", "id", reviewDataId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["score", "review", reviewDataId],
       });
     },
   });

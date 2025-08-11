@@ -70,6 +70,18 @@ export const roleReviewRubricSchema = z.object({
     rubricQuestions: z.array(reviewRubricQuestionSchema).min(1),
     detailLink: z.string().url().optional(),
     commentsDescription: z.string().optional(),
+}).superRefine((rubric, ctx) => {
+    const seen = new Set<string>();
+    for (const [idx, q] of rubric.rubricQuestions.entries()) {
+        if (seen.has(q.scoreKey)) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ["rubricQuestions", idx, "scoreKey"],
+                message: `Duplicate scoreKey "${q.scoreKey}" in rubric "${rubric.id}"`,
+            });
+        }
+        seen.add(q.scoreKey);
+    }
 });
 
 export const updateReviewSchema = reviewSchema.partial();
