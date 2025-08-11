@@ -16,6 +16,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { Timestamp } from "firebase/firestore";
 import { throwErrorToast } from "../toasts/ErrorToast";
 import { Button } from "../ui/button";
+import Spinner from "../Spinner";
 
 export default function FormProvider() {
   const queryClient = useQueryClient();
@@ -31,12 +32,10 @@ export default function FormProvider() {
   const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>([]);
 
   useEffect(() => {
-    if (response) {
-      setResponse({
-        ...response,
-        rolesApplied: selectedRoles,
-      });
-    }
+    setResponse(old => old ? ({
+      ...old,
+      rolesApplied: selectedRoles,
+    }) : old);
   }, [selectedRoles]);
 
   useEffect(() => {
@@ -63,17 +62,8 @@ export default function FormProvider() {
   }, [data]);
 
   useEffect(() => {
-    if (data != undefined) {
-      console.log(
-        `local response time: ${response?.dateSubmitted.toMillis()}, server time ${data.response.dateSubmitted.toMillis()}`,
-      );
-
-      if (
-        JSON.stringify(response?.sectionResponses) !==
-        JSON.stringify(data.response.sectionResponses)
-      ) {
-        // first load, use existing response data on firebase
-        console.log("here");
+    if (data !== undefined) {
+      if (response === undefined) {
         setResponse(data.response);
       }
     }
@@ -127,7 +117,7 @@ export default function FormProvider() {
     resp: string | string[],
   ) {
     if (response) {
-      setResponse({
+      setResponse(response => response ? ({
         ...response,
         dateSubmitted: Timestamp.now(),
         sectionResponses:
@@ -150,7 +140,7 @@ export default function FormProvider() {
               return s;
             }
           }) ?? response.sectionResponses,
-      });
+      }) : response);
     }
   }
 
@@ -205,7 +195,7 @@ export default function FormProvider() {
               className={`w-fit ${saveMutation.isError ? "bg-red-100" : "bg-lightblue"} rounded-full px-2 text-blue`}
             >
               {saveMutation.isPending ? (
-                <p className="pulse font-bold">Saving...</p>
+                <p className="pulse font-bold flex flex-row items-center gap-1"><Spinner className="inline size-4" />Saving...</p>
               ) : saveMutation.submittedAt != 0 && !saveMutation.isError ? (
                 <p>
                   Last save:{" "}
