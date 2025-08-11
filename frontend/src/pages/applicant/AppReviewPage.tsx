@@ -26,7 +26,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -61,9 +65,9 @@ function UserHeader({ applicantId, form, role, lastSave }: UserHeaderProps) {
         {displayApplicantRoleNameNoEmoji(role)} Application
       </h1>
       <span>
-        {
-          lastSave ? `Last saved ${new Date(lastSave).toLocaleTimeString()}` : `Not saved`
-        }
+        {lastSave
+          ? `Last saved ${new Date(lastSave).toLocaleTimeString()}`
+          : `Not saved`}
       </span>
     </div>
   );
@@ -95,7 +99,8 @@ const ApplicationPage: React.FC = () => {
     error: reviewError,
   } = useReviewData(reviewDataId ?? "");
 
-  const { mutate: updateReviewData, submittedAt: lastSave } = useUpdateReviewData(reviewDataId ?? "");
+  const { mutate: updateReviewData, submittedAt: lastSave } =
+    useUpdateReviewData(reviewDataId ?? "");
   const { mutate: submitReview, isPending: isSubmitting } = useUpdateReviewData(
     reviewDataId ?? "",
   );
@@ -162,7 +167,7 @@ const ApplicationPage: React.FC = () => {
   );
 
   const commentChange = useCallback((id: string, value: string) => {
-    setLocalNotes(prev => ({ ...(prev ?? {}), [id]: value }));
+    setLocalNotes((prev) => ({ ...(prev ?? {}), [id]: value }));
   }, []);
 
   const handleSubmitReview = () => {
@@ -183,7 +188,7 @@ const ApplicationPage: React.FC = () => {
       {
         ...optimisticReviewData,
         reviewerNotes: localNotes,
-        submitted: true
+        submitted: true,
       },
       {
         onSuccess: () => {
@@ -223,7 +228,6 @@ const ApplicationPage: React.FC = () => {
           role={reviewData.forRole}
           lastSave={lastSave}
         />
-
 
         {scorePending ? (
           <Spinner className="mr-4" />
@@ -266,7 +270,10 @@ const ApplicationPage: React.FC = () => {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <ResizablePanelGroup direction="horizontal" className="flex gap-2 justify-center grow overflow-scroll pt-2">
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex gap-2 justify-center grow overflow-scroll pt-2"
+      >
         <ResizablePanel defaultSize={50}>
           <div className="w-full flex h-full flex-col gap-2 overflow-scroll">
             {form.sections
@@ -295,7 +302,7 @@ const ApplicationPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => { }}
+                    onChangeResponse={() => {}}
                   />
                 </div>
               ))}

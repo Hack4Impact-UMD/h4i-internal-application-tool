@@ -23,8 +23,7 @@ export function displayApplicantRoleNameNoEmoji(role: ApplicantRole) {
   else if (role == ApplicantRole.TechLead) return "Tech Lead";
   else if (role == ApplicantRole.Product) return "Product Manager";
   else if (role == ApplicantRole.SocialMedia) return "Social Media Manager";
-  else if (role == ApplicantRole.OutreachCoord)
-    return "Outreach Coordinator";
+  else if (role == ApplicantRole.OutreachCoord) return "Outreach Coordinator";
   else if (role == ApplicantRole.Engineer) return "Engineer";
   else if (role == ApplicantRole.Designer) return "Designer";
   else return role;
