@@ -107,7 +107,7 @@ export function useReviewDataForApplicantAndRole(
 
 export function useReviewDataForApplication(applicationResponseId: string) {
   return useQuery<ApplicationReviewData[]>({
-    queryKey: ["review-data", "applicantion-response", applicationResponseId],
+    queryKey: ["review-data", "application-response", applicationResponseId],
     queryFn: () => {
       return getReviewDataForApplication(applicationResponseId);
     },
