@@ -31,15 +31,17 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { ApplicationReviewData } from "@/types/types";
 
 type UserHeaderProps = {
   applicantId: string;
   form: ApplicationForm;
   role: ApplicantRole;
   lastSave?: number;
+  reviewData: ApplicationReviewData;
 };
 
-function UserHeader({ applicantId, form, role, lastSave }: UserHeaderProps) {
+function UserHeader({ applicantId, form, role, lastSave, reviewData }: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
 
   if (isPending)
@@ -65,7 +67,7 @@ function UserHeader({ applicantId, form, role, lastSave }: UserHeaderProps) {
         {displayApplicantRoleNameNoEmoji(role)} Application
       </h1>
       <span>
-        {lastSave
+        {reviewData.submitted ? "Submitted" : lastSave
           ? `Last saved ${new Date(lastSave).toLocaleTimeString()}`
           : `Not saved`}
       </span>
@@ -223,6 +225,7 @@ const ApplicationPage: React.FC = () => {
     <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
       <div className="flex flex-row w-full py-2 px-4 items-center rounded border border-blue-300 bg-blue-100 text-blue">
         <UserHeader
+          reviewData={reviewData}
           applicantId={response.userId}
           form={form}
           role={reviewData.forRole}
@@ -302,7 +305,7 @@ const ApplicationPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => {}}
+                    onChangeResponse={() => { }}
                   />
                 </div>
               ))}
