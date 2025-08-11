@@ -28,6 +28,7 @@ export function RubricQuestion({
             key={score}
             score={score}
             selected={value === score}
+            disabled={disabled}
             onClick={() => {
               if (!disabled) onChange(question.scoreKey, score);
             }}
