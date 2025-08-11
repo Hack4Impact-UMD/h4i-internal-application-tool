@@ -1,0 +1,22 @@
+{
+  "name": "resume/21d74f35-708c-49f6-8dab-13af7029c77e",
+  "bucket": "h4i-applications.firebasestorage.app",
+  "metageneration": 1,
+  "generation": 1754706999942,
+  "contentType": "application/pdf",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "downloadTokens": [
+    "96dbb985-675a-4a99-ae11-e598fbb23341"
+  ],
+  "etag": "6AjZ6Vyc9btl4Xf/r+YifGsciD8",
+  "customMetadata": {
+    "name": "Kenneth Rosen - Discrete Mathematics and Its Applications - 8th edition.pdf",
+    "ownerId": "6XY1u2IiKW8BLa2sHWuWv4kGxSA0"
+  },
+  "timeCreated": "2025-08-09T02:36:39.942Z",
+  "updated": "2025-08-09T02:36:39.942Z",
+  "size": 8729085,
+  "md5Hash": "Y41ewlR97wGUWKuIrTmgQA==",
+  "crc32c": "3409619401"
+}

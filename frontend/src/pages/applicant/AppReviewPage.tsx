@@ -1,21 +1,84 @@
-import { useParams, useNavigate } from "react-router-dom";
-import Section from "../../components/form/Section";
-import Timeline from "../../components/status/Timeline"; // Import Timeline component
-import { Button } from "../../components/ui/button";
-import { useMemo } from "react";
-import ReviewCard from "../../components/reviewer/ReviewCard";
+import { useNavigate, useParams } from "react-router-dom";
+import Section from "@/components/form/Section";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import Loading from "@/components/Loading";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";
-import { useReviewData } from "@/hooks/useReviewData";
+import { useReviewData, useUpdateReviewData } from "@/hooks/useReviewData";
+import Spinner from "@/components/Spinner";
+import { useApplicant } from "@/hooks/useApplicants";
+import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
+import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
+import { Button } from "@/components/ui/button";
+import { useRubricsForFormRole } from "@/hooks/useRubrics";
+import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
+import { useReviewScore } from "@/hooks/useReviewScore";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+
+type UserHeaderProps = {
+  applicantId: string;
+  form: ApplicationForm;
+  role: ApplicantRole;
+  lastSave?: number;
+};
+
+function UserHeader({ applicantId, form, role, lastSave }: UserHeaderProps) {
+  const { data: applicant, isPending, error } = useApplicant(applicantId);
+
+  if (isPending)
+    return (
+      <div className="w-full flex flex-row items-center justify-center p-2">
+        <Spinner />
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="w-full bg-red-200 rounded p-2">
+        <p className="text-destructive font-bold">
+          Failed to fetch user: {error.message}
+        </p>
+      </div>
+    );
+
+  return (
+    <div className="w-full flex flex-col gap-0">
+      <h1 className="text-xl">
+        {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
+        {displayApplicantRoleNameNoEmoji(role)} Application
+      </h1>
+      <span>
+        {lastSave
+          ? `Last saved ${new Date(lastSave).toLocaleTimeString()}`
+          : `Not saved`}
+      </span>
+    </div>
+  );
+}
 
 const ApplicationPage: React.FC = () => {
   const navigate = useNavigate();
-  const { sectionId, formId, responseId, reviewDataId } = useParams<{
+  const { formId, responseId, reviewDataId } = useParams<{
     formId: string;
     reviewDataId: string;
     responseId: string;
-    sectionId: string;
   }>();
 
   const {
@@ -36,157 +99,231 @@ const ApplicationPage: React.FC = () => {
     error: reviewError,
   } = useReviewData(reviewDataId ?? "");
 
-  const availableSections = useMemo(() => {
-    return (
-      form?.sections
-        .filter((s) => {
-          if (s.forRoles) {
-            return (
-              s.forRoles.filter((r) => response?.rolesApplied?.includes(r))
-                .length > 0
-            );
-          } else {
-            return true;
-          }
-        })
-        .map((s) => s.sectionId) ?? []
-    );
-  }, [response?.rolesApplied, form]);
+  const { mutate: updateReviewData, submittedAt: lastSave } =
+    useUpdateReviewData(reviewDataId ?? "");
+  const { mutate: submitReview, isPending: isSubmitting } = useUpdateReviewData(
+    reviewDataId ?? "",
+  );
 
-  const timelineItems = useMemo(
+  const {
+    data: rubrics,
+    isPending: rubricsPending,
+    error: rubricsError,
+  } = useRubricsForFormRole(form?.id, reviewData?.forRole);
+
+  const {
+    data: score,
+    isPending: scorePending,
+    error: scoreError,
+  } = useReviewScore(reviewData!);
+
+  const [localNotes, setLocalNotes] = useState<
+    Record<string, string> | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (reviewData && !localNotes) {
+      setLocalNotes(reviewData.reviewerNotes || {});
+    }
+  }, [reviewData, localNotes]);
+
+  useEffect(() => {
+    if (localNotes === undefined || !reviewData || reviewData.submitted) return;
+    const ref = setTimeout(() => {
+      updateReviewData({ reviewerNotes: localNotes });
+    }, 1000);
+    return () => clearTimeout(ref);
+  }, [localNotes, reviewData, updateReviewData]);
+
+  const optimisticReviewData = useMemo(() => {
+    if (!reviewData) return undefined;
+    if (!localNotes) return reviewData;
+    return {
+      ...reviewData,
+      reviewerNotes: localNotes,
+    };
+  }, [reviewData, localNotes]);
+
+  const sortedRubrics = useMemo(
     () =>
-      form?.sections
-        .filter((section) => availableSections.includes(section.sectionId))
-        .map((s) => {
-          return {
-            id: s.sectionId,
-            label: s.sectionName,
-          };
-        }),
-    [availableSections, form],
+      rubrics
+        ? [...rubrics].sort((a, b) => a.roles.length - b.roles.length)
+        : [],
+    [rubrics],
   );
 
-  const currentSection = useMemo(
-    () => form?.sections.find((section) => section.sectionId === sectionId),
-    [form, sectionId],
+  const scoreChange = useCallback(
+    (key: string, value: number) => {
+      if (!reviewData || reviewData.submitted) return;
+
+      const newScores = {
+        ...reviewData.applicantScores,
+        [key]: value,
+      };
+
+      updateReviewData({ applicantScores: newScores });
+    },
+    [reviewData, updateReviewData],
   );
 
-  const responses = useMemo(() => {
-    return (
-      response?.sectionResponses.find(
-        (sectionResp) => sectionResp.sectionId === currentSection?.sectionId,
-      )?.questions || []
+  const commentChange = useCallback((id: string, value: string) => {
+    setLocalNotes((prev) => ({ ...(prev ?? {}), [id]: value }));
+  }, []);
+
+  const handleSubmitReview = () => {
+    const requiredKeys =
+      rubrics?.flatMap((r) => r.rubricQuestions.map((q) => q.scoreKey)) ?? [];
+    const existingKeys = new Set(
+      Object.keys(reviewData?.applicantScores ?? {}),
     );
-  }, [response, currentSection]);
 
-  if (formLoading || responseLoading || reviewPending) return <Loading />;
+    for (const req of requiredKeys) {
+      if (!existingKeys.has(req)) {
+        throwErrorToast(`Review is incomplete, missing required key ${req}`);
+        return;
+      }
+    }
+
+    submitReview(
+      {
+        ...optimisticReviewData,
+        reviewerNotes: localNotes,
+        submitted: true,
+      },
+      {
+        onSuccess: () => {
+          throwSuccessToast("Review submitted successfully!");
+          navigate(-1);
+        },
+        onError: () => {
+          throwErrorToast("Failed to submit review");
+        },
+      },
+    );
+  };
+
+  if (
+    formLoading ||
+    responseLoading ||
+    reviewPending ||
+    rubricsPending ||
+    !localNotes
+  )
+    return <Loading />;
   if (formError || !form)
     return <p>Failed to fetch form: {formError.message}</p>;
   if (responseError || !response)
     return <p>Failed to fetch response: {responseError?.message}</p>;
-  if (reviewError || !reviewData)
-    return <p>Failed to fetch response: {reviewError.message}</p>;
-
-  if (!currentSection) {
-    return (
-      <div>Section not found. Please navigate back to the application.</div>
-    );
-  }
-
-  function nextSection() {
-    if (!form) return;
-    const idx = availableSections.findIndex((s) => s == sectionId);
-    if (idx >= 0 && idx + 1 < availableSections.length) {
-      return availableSections[idx + 1];
-    } else {
-      return sectionId ?? "";
-    }
-  }
-
-  function previousSection() {
-    const idx = availableSections.findIndex((s) => s == sectionId);
-    if (idx >= 1) {
-      return availableSections[idx - 1];
-    } else {
-      return sectionId ?? "";
-    }
-  }
-
-  const handleNext = () => {
-    const currentIndex = availableSections.findIndex(
-      (section) => section === sectionId,
-    );
-    if (currentIndex < form.sections.length - 1) {
-      navigate(
-        `/admin/review/f/${formId}/${responseId}/${nextSection()}/${reviewDataId}`,
-      );
-    } else {
-      //TODO: Handle Submit
-    }
-  };
-
-  const handlePrevious = () => {
-    console.log(previousSection());
-    navigate(
-      `/admin/review/f/${formId}/${responseId}/${previousSection()}/${reviewDataId}`,
-    );
-  };
-
-  const currentStep = availableSections.findIndex(
-    (section) => section === sectionId,
-  );
+  if (reviewError) return <p>Failed to fetch review: {reviewError.message}</p>;
+  if (rubricsError)
+    return <p>Failed to fetch rubrics: {rubricsError.message}</p>;
+  if (!optimisticReviewData) return <p>Failed to fetch review data</p>;
 
   return (
-    <div className="flex flex-col items-center justify-center p-3">
-      <Timeline
-        className={"py-5"}
-        items={timelineItems ?? []}
-        currentStep={currentStep}
-        maxStepReached={currentStep}
-        onStepClick={(_, item) => {
-          navigate(`/review/f/${form.id}/${item.id}`);
-        }}
-      />
-      <div className="flex justify-center items-start">
-        <div className="flex flex-col justify-self-center m-3 pt-16 pb-8 px-16 rounded-xl shadow-sm border border-gray-200 bg-white min-w-[600px] max-w-60">
-          <Section
-            responseId={response.id}
-            section={currentSection}
-            responses={responses}
-            disabled={true}
-          />
-        </div>
-        <div className="justify-self-start my-0 min-w-[400px] max-w-40">
-          <ReviewCard></ReviewCard>
-        </div>
-      </div>
+    <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
+      <div className="flex flex-row w-full py-2 px-4 items-center rounded border border-blue-300 bg-blue-100 text-blue">
+        <UserHeader
+          applicantId={response.userId}
+          form={form}
+          role={reviewData.forRole}
+          lastSave={lastSave}
+        />
 
-      <div className="flex gap-1 mt-4">
-        {availableSections[0] !== sectionId ? (
-          <Button
-            className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-            disabled={form.sections[0].sectionId === sectionId}
-            onClick={handlePrevious}
-          >
-            Back
-          </Button>
+        {scorePending ? (
+          <Spinner className="mr-4" />
+        ) : scoreError ? (
+          `Failed to calculate score: ${scoreError.message}`
         ) : (
-          <div></div>
+          <h1 className="text-lg text-blue w-64 mr-2">
+            Review Score:{" "}
+            <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span>/4
+          </h1>
         )}
-        {availableSections[availableSections.length - 1] !== sectionId ? (
-          <Button
-            className="bg-[#317FD0] text-white px-8 rounded-full flex items-center justify-center"
-            disabled={
-              form.sections[form.sections.length - 1].sectionId === sectionId
-            }
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        ) : (
-          <div></div>
-        )}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="default"
+              disabled={isSubmitting || optimisticReviewData.submitted}
+            >
+              {isSubmitting
+                ? "Submitting..."
+                : optimisticReviewData.submitted
+                  ? "Submitted"
+                  : "Submit Review"}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Are you sure you want to submit this review?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                You will not be able to edit it after submission.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleSubmitReview}>
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex gap-2 justify-center grow overflow-scroll pt-2"
+      >
+        <ResizablePanel defaultSize={50}>
+          <div className="w-full flex h-full flex-col gap-2 overflow-scroll">
+            {form.sections
+              .filter((s) => {
+                if (s.forRoles) {
+                  return (
+                    s.forRoles.filter((r) => response.rolesApplied.includes(r))
+                      .length > 0
+                  );
+                } else {
+                  return true;
+                }
+              })
+              .map((s) => (
+                <div
+                  className="shadow border border-gray-200 bg-white rounded-md p-4"
+                  key={s.sectionId}
+                >
+                  <Section
+                    responseId={response.id}
+                    key={s.sectionId}
+                    disabled={true}
+                    section={s}
+                    responses={
+                      response.sectionResponses.find(
+                        (r) => r.sectionId == s.sectionId,
+                      )?.questions ?? []
+                    }
+                    onChangeResponse={() => {}}
+                  />
+                </div>
+              ))}
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize={50}>
+          <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full">
+            {sortedRubrics.map((r) => (
+              <RoleRubric
+                key={r.id}
+                rubric={r}
+                onScoreChange={scoreChange}
+                onCommentChange={commentChange}
+                reviewData={optimisticReviewData}
+                disabled={optimisticReviewData.submitted}
+              />
+            ))}
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };

@@ -6,9 +6,10 @@ import { CollectionReference, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { ApplicationForm } from "../models/appForm";
-import { PermissionRole } from "../models/appReview";
+import { PermissionRole, RoleReviewRubric, roleReviewRubricSchema } from "../models/appReview";
 import { InternalApplicationStatus, ReviewStatus } from "../models/appStatus";
 import { v4 as uuidv4 } from "uuid"
+import { z } from "zod";
 // import * as admin from "firebase-admin"
 
 const router = Router();
@@ -16,6 +17,7 @@ const router = Router();
 const APPLICATION_RESPONSE_COLLECTION = "application-responses"
 const APPLICATION_FORMS_COLLECTION = "application-forms"
 const APPLICATION_STATUS_COLLECTION = "app-status"
+const RUBRICS_COLLECTION = "rubrics";
 
 interface QuestionMetadata {
   optional: boolean;
@@ -279,6 +281,43 @@ router.post("/forms", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])
   } catch (error) {
     logger.error("Failed to create application form:", error);
     return res.status(500).send("Failed to create application form");
+  }
+});
+
+router.post("/rubrics", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer]), validateSchema(z.array(roleReviewRubricSchema))], async (req: Request, res: Response) => {
+  try {
+    const rubrics = req.body as RoleReviewRubric[];
+    if (!Array.isArray(rubrics)) {
+      return res.status(400).send("Request body must be an array of rubrics.");
+    }
+
+    // Fail fast on duplicate IDs in the payload
+    const seen = new Set<string>();
+    for (const r of rubrics) {
+      if (!r?.id) {
+        return res.status(400).send("Each rubric must have a non-empty 'id'.");
+      }
+      if (seen.has(r.id)) {
+        return res.status(400).send(`Duplicate rubric id in payload: ${r.id}`);
+      }
+      seen.add(r.id);
+    }
+
+    const rubricsCollection = db.collection(RUBRICS_COLLECTION) as CollectionReference<RoleReviewRubric>;
+    const batch = db.batch();
+
+    rubrics.forEach(rubric => {
+      const docRef = rubricsCollection.doc(rubric.id);
+      batch.set(docRef, rubric);
+    });
+
+    await batch.commit();
+
+    logger.info(`Successfully uploaded ${rubrics.length} rubrics.`);
+    return res.status(201).json({ status: "success", count: rubrics.length });
+  } catch (error) {
+    logger.error("Failed to upload rubrics:", error);
+    return res.status(500).send("Failed to upload rubrics");
   }
 });
 
