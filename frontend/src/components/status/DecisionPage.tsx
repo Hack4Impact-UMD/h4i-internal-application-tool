@@ -18,21 +18,21 @@ const allowedStatuses: Set<string> = new Set([
 
 function DecisionPage() {
   const { user } = useAuth();
-  const { responseId, role } = useParams();
-
-  if (!user || !responseId || !role) return <ErrorPage />;
+  const { responseId, role } = useParams<{ responseId: string, role: ApplicantRole }>();
 
   const {
     data: appStatus,
     isPending: statusPending,
     error: statusError,
-  } = useMyApplicationStatus(responseId, role as ApplicantRole);
+  } = useMyApplicationStatus(responseId, role);
 
   const {
     data: form,
     isPending: formPending,
     error: formError,
   } = useApplicationFormForResponseId(responseId);
+
+  if (!user || !responseId || !role) return <ErrorPage />;
 
   if (statusPending || formPending) {
     return <Loading />
@@ -46,16 +46,19 @@ function DecisionPage() {
     return <NotFoundPage />
   }
 
-  const decisionLetterText = 
-    appStatus.status === ReviewStatus.Accepted
-      ? form.decisionLetter?.[ReviewStatus.Accepted][
-          appStatus.role === ApplicantRole.Bootcamp ? appStatus.role : "team"
-        ]
-    : appStatus.status === ReviewStatus.Waitlisted 
-      ? form.decisionLetter?.[ReviewStatus.Waitlisted][
-        appStatus.role === ApplicantRole.Bootcamp ? appStatus.role : "team"
-        ]
-    : form.decisionLetter?.[ReviewStatus.Denied];
+  // compute a single key for Bootcamp vs. team
+  const roleKey =
+    appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
+  // pick the right letter based on status, reusing the same lookup for Accepted & Waitlisted
+  const decisionLetterText =
+    appStatus.status === ReviewStatus.Accepted ||
+      appStatus.status === ReviewStatus.Waitlisted
+      ? form?.decisionLetter?.[appStatus.status]?.[roleKey]
+      : form?.decisionLetter?.[ReviewStatus.Denied];
+  // guard against missing content
+  if (!decisionLetterText) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>
@@ -73,8 +76,8 @@ function DecisionPage() {
             Dear {user.firstName} {user.lastName},
           </p>
           <br></br>
-          {appStatus.status === ReviewStatus.Accepted && 
-            <ConfettiExplosion 
+          {appStatus.status === ReviewStatus.Accepted &&
+            <ConfettiExplosion
               className="justify-self-center self-start"
               force={0.8}
               duration={3000}
