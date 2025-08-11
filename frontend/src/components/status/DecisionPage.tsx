@@ -7,18 +7,21 @@ import FormMarkdown from "../form/FormMarkdown";
 import ErrorPage from "@/pages/ErrorPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
-import ConfettiExplosion from 'react-confetti-explosion';
+import ConfettiExplosion from "react-confetti-explosion";
 import Loading from "../Loading";
 
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
   ReviewStatus.Denied,
-  ReviewStatus.Waitlisted
+  ReviewStatus.Waitlisted,
 ]);
 
 function DecisionPage() {
   const { user } = useAuth();
-  const { responseId, role } = useParams<{ responseId: string, role: ApplicantRole }>();
+  const { responseId, role } = useParams<{
+    responseId: string;
+    role: ApplicantRole;
+  }>();
 
   const {
     data: appStatus,
@@ -35,15 +38,15 @@ function DecisionPage() {
   if (!user || !responseId || !role) return <ErrorPage />;
 
   if (statusPending || formPending) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (statusError || formError) {
-    return <ErrorPage />
+    return <ErrorPage />;
   }
 
   if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
-    return <NotFoundPage />
+    return <NotFoundPage />;
   }
 
   // compute a single key for Bootcamp vs. team
@@ -52,7 +55,7 @@ function DecisionPage() {
   // pick the right letter based on status, reusing the same lookup for Accepted & Waitlisted
   const decisionLetterText =
     appStatus.status === ReviewStatus.Accepted ||
-      appStatus.status === ReviewStatus.Waitlisted
+    appStatus.status === ReviewStatus.Waitlisted
       ? form?.decisionLetter?.[appStatus.status]?.[roleKey]
       : form?.decisionLetter?.[ReviewStatus.Denied];
   // guard against missing content
@@ -66,7 +69,8 @@ function DecisionPage() {
         <div className="flex gap-2 flex-col sm:flex-row items-start justify-between mb-5">
           <div className="flex flex-col">
             <h2 className="text-blue text-2xl">
-              Your Hack4Impact-UMD {form.semester}<br></br>
+              Your Hack4Impact-UMD {form.semester}
+              <br></br>
               {displayApplicantRoleName(role as ApplicantRole)} Application
             </h2>
           </div>
@@ -76,7 +80,7 @@ function DecisionPage() {
             Dear {user.firstName} {user.lastName},
           </p>
           <br></br>
-          {appStatus.status === ReviewStatus.Accepted &&
+          {appStatus.status === ReviewStatus.Accepted && (
             <ConfettiExplosion
               className="justify-self-center self-start"
               force={0.8}
@@ -84,7 +88,7 @@ function DecisionPage() {
               particleCount={250}
               width={1600}
             />
-          }
+          )}
           <FormMarkdown>{decisionLetterText}</FormMarkdown>
         </div>
       </div>

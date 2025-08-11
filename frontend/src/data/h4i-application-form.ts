@@ -97,8 +97,7 @@ Once again, we’re looking forward to working with you. Let us know if you have
     `,
     },
     [ReviewStatus.Waitlisted]: {
-      [ApplicantRole.Bootcamp]: 
-    `
+      [ApplicantRole.Bootcamp]: `
 Thank you for your patience during the application and interview process. Based on your experience, our openings, and our client’s needs, we have decided to place you on the *waitlist for bootcamp* this semester.
 
 We believe that you would be a great fit for our **bootcamp**. However, this semester, the **bootcamp** spots filled up quickly.
@@ -109,8 +108,7 @@ If there are no new openings, we will retain your email address and application 
     
 **Please reply to this email to confirm your placement on the waitlist** and feel free to reach out if you have any questions or concerns.
     `,
-      ["team"]: 
-    `
+      ["team"]: `
 Thank you for your patience during the application and interview process. Based on your experience, our openings, and our client’s needs, we have decided to place you on the *waitlist for project teams* this semester.
 
 We believe that you would be a great fit for our **project teams**. However, this semester, the **project team** spots filled up quickly.
@@ -120,7 +118,7 @@ If there are any **project team** openings by **[XX/XX/XX]** before the waitlist
 If there are no new openings, we will retain your email address and application status for **Spring 2026**, our next recruiting season. We would then send you a form asking for an updated resume and if you are still interested in the same position.
     
 **Please reply to this email to confirm your placement on the waitlist** and feel free to reach out if you have any questions or concerns.
-    `
+    `,
     },
     [ReviewStatus.Denied]: `
 Thank you for your patience during the application and interview process. Based on your experience, our openings, and our client's needs, we were unable to place you on a project or bootcamp this semester, but we invite you to apply in the future ([here](https://forms.gle/m1uVJ8kPihS6ihCh6) is our Spring 2026 Interest Form). We really appreciate your interest in our organization and mission, and we hope you have a good semester.

@@ -34,5 +34,5 @@ export function useApplicationFormForResponseId(responseId?: string) {
     queryKey: ["form", "responseId", responseId],
     queryFn: () => getApplicationFormForResponseId(responseId!),
     enabled: responseId != undefined,
-  })
+  });
 }
