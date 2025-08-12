@@ -150,7 +150,12 @@ const AppReviewPage: React.FC = () => {
   useEffect(() => {
     if (localNotes === undefined || !reviewData || reviewData.submitted) return;
     const ref = setTimeout(() => {
-      updateReviewData({ reviewerNotes: localNotes });
+      updateReviewData({ reviewerNotes: localNotes }, {
+        onError: (err) => {
+          console.log("Autosave failed:", err)
+          throwErrorToast("Failed to autosave notes!")
+        }
+      });
     }, 1000);
     return () => clearTimeout(ref);
   }, [localNotes, reviewData, updateReviewData]);
@@ -339,7 +344,7 @@ const AppReviewPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => {}}
+                    onChangeResponse={() => { }}
                   />
                 </div>
               ))}

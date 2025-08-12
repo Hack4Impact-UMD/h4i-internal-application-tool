@@ -51,7 +51,7 @@ export default function RoleRubric({
             key={q.scoreKey}
             question={q}
             onChange={onScoreChange}
-            weight={form?.scoreWeights[role][q.scoreKey]}
+            weight={form?.scoreWeights[role]?.[q.scoreKey]}
             value={reviewData.applicantScores[q.scoreKey]}
           />
         ))}
