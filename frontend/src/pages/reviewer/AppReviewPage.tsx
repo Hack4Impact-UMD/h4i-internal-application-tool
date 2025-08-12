@@ -93,7 +93,7 @@ function UserHeader({
   );
 }
 
-const ApplicationPage: React.FC = () => {
+const AppReviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { formId, responseId, reviewDataId } = useParams<{
     formId: string;
@@ -339,7 +339,7 @@ const ApplicationPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => {}}
+                    onChangeResponse={() => { }}
                   />
                 </div>
               ))}
@@ -365,4 +365,4 @@ const ApplicationPage: React.FC = () => {
   );
 };
 
-export default ApplicationPage;
+export default AppReviewPage;
