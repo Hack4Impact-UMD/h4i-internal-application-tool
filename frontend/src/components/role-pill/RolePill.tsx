@@ -8,11 +8,13 @@ import { twMerge } from "tailwind-merge";
 
 type ApplicantRolePillProps = {
   role: ApplicantRole;
+  maxLength?: number;
   className?: string;
 };
 
 export default function ApplicantRolePill({
   role,
+  maxLength,
   className = "",
 }: ApplicantRolePillProps) {
   return (
@@ -26,7 +28,7 @@ export default function ApplicantRolePill({
         className,
       )}
     >
-      {displayApplicantRoleName(role)}
+      {displayApplicantRoleName(role, maxLength)}
     </span>
   );
 }
