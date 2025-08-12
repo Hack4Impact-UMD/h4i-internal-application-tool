@@ -103,8 +103,8 @@ const InterviewPage: React.FC = () => {
 
   const {
     data: interviewRubrics,
-    isPending: rubricsPending,
-    error: rubricsError,
+    isPending: interviewRubricsPending,
+    error: interviewRubricsError,
   } = useInterviewRubricsForFormRole(form?.id, interviewData?.forRole);
 
   const {
@@ -198,7 +198,7 @@ const InterviewPage: React.FC = () => {
     formLoading ||
     responseLoading ||
     interviewPending ||
-    rubricsPending ||
+    interviewRubricsPending ||
     !localNotes
   )
     return <Loading />;
@@ -207,8 +207,8 @@ const InterviewPage: React.FC = () => {
   if (responseError || !response)
     return <p>Failed to fetch response: {responseError?.message}</p>;
   if (interviewError) return <p>Failed to fetch interview: {interviewError.message}</p>;
-  if (rubricsError)
-    return <p>Failed to fetch rubrics: {rubricsError.message}</p>;
+  if (interviewRubricsError)
+    return <p>Failed to fetch rubrics: {interviewRubricsError.message}</p>;
   if (!optimisticInterviewData) return <p>Failed to fetch interview data</p>;
 
   return (

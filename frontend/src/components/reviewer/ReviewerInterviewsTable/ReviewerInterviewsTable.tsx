@@ -162,13 +162,13 @@ export default function ReviewerInterviewsTable({
       }
     } else {
       const interview: Omit<ApplicationInterviewData, "id"> = {
-        interviewScore: 0,
+        interviewScores: {},
         applicantId: applicantId,
         applicationFormId: formId,
         applicationResponseId: responseId,
         forRole: role,
         interviewerId: user!.id,
-        interviewNotes: "",
+        interviewerNotes: {},
         submitted: false,
       };
 
