@@ -93,7 +93,7 @@ export function ApplicationResponseRow({
             ? semesterDisplay.slice(0, 23) + "..."
             : semesterDisplay}
         </Link>
-        <ApplicantRolePill role={role} />
+        <ApplicantRolePill role={role} maxLength={20} />
       </td>
       <td className="text-center">
         <span className={`px-3 py-1 rounded-full bg-lightblue`}>
