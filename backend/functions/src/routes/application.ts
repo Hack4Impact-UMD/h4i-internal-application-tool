@@ -260,6 +260,25 @@ router.post("/forms", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])
     const formData = req.body as ApplicationForm;
     const formsCollection = db.collection(APPLICATION_FORMS_COLLECTION) as CollectionReference<ApplicationForm>;
 
+    const existingFormDoc = await formsCollection.doc(formData.id).get();
+    if (existingFormDoc.exists) {
+      const existingForm = existingFormDoc.data() as ApplicationForm;
+      const existingSectionIds = existingForm.sections.map(s => s.sectionId);
+      const newSectionIds = formData.sections.map(s => s.sectionId);
+
+      if (JSON.stringify(existingSectionIds) !== JSON.stringify(newSectionIds)) {
+        return res.status(400).send("New form has different section IDs or section order from existing form.");
+      }
+
+      for (let i = 0; i < existingForm.sections.length; i++) {
+        const existingQuestionIds = existingForm.sections[i].questions.map(q => q.questionId);
+        const newQuestionIds = formData.sections[i].questions.map(q => q.questionId);
+        if (JSON.stringify(existingQuestionIds) !== JSON.stringify(newQuestionIds)) {
+          return res.status(400).send(`New form has different question IDs or question order in section ${existingForm.sections[i].sectionId}.`);
+        }
+      }
+    }
+
     if (!formData.dueDate || typeof formData.dueDate !== "object") {
       return res.status(400).send("Invalid dueDate format");
     }
