@@ -145,19 +145,18 @@ export default function ReviewerInterviewsTable({
   );
 
   async function handleInterview(
-    appReviewData: ApplicationInterviewData | undefined,
+    appInterviewData: ApplicationInterviewData | undefined,
     applicantId: string,
     responseId: string,
     role: ApplicantRole,
   ) {
-    const form = await getApplicationForm(formId);
-    if (appReviewData) {
-      // there's an existing review, edit it
-      if (appReviewData.submitted) {
-        throwErrorToast("This review has already been submitted!");
+    if (appInterviewData) {
+      // there's an existing interview, edit it
+      if (appInterviewData.submitted) {
+        throwErrorToast("This interview has already been submitted!");
       } else {
         navigate(
-        	`/admin/interview/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
+        	`/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
         );
       }
     } else {
@@ -174,7 +173,7 @@ export default function ReviewerInterviewsTable({
 
       const newinterview = await createInterviewData(interview);
       navigate(
-      	`/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newinterview.id}`,
+      	`/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${newinterview.id}`,
       );
     }
   }

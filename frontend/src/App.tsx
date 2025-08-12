@@ -305,7 +305,7 @@ function App() {
                     element={<AppReviewPage />}
                   />
                   <Route
-                    path="interview/f/:formId/:responseId/:sectionId/:reviewDataId"
+                    path="interview/f/:formId/:responseId/:interviewDataId"
                     element={<InterviewPage />}
                   />
                 </Route>
