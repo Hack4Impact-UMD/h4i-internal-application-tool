@@ -6,9 +6,10 @@ import { CollectionReference, Timestamp } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { ApplicationForm } from "../models/appForm";
-import { PermissionRole, RoleReviewRubric } from "../models/appReview";
+import { PermissionRole, RoleReviewRubric, roleReviewRubricSchema } from "../models/appReview";
 import { InternalApplicationStatus, ReviewStatus } from "../models/appStatus";
 import { v4 as uuidv4 } from "uuid"
+import { z } from "zod";
 // import * as admin from "firebase-admin"
 
 const router = Router();
@@ -283,14 +284,26 @@ router.post("/forms", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])
   }
 });
 
-router.post("/rubrics", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])], async (req: Request, res: Response) => {
+router.post("/rubrics", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer]), validateSchema(z.array(roleReviewRubricSchema))], async (req: Request, res: Response) => {
   try {
     const rubrics = req.body as RoleReviewRubric[];
     if (!Array.isArray(rubrics)) {
       return res.status(400).send("Request body must be an array of rubrics.");
     }
 
-    const rubricsCollection = db.collection(RUBRICS_COLLECTION);
+    // Fail fast on duplicate IDs in the payload
+    const seen = new Set<string>();
+    for (const r of rubrics) {
+      if (!r?.id) {
+        return res.status(400).send("Each rubric must have a non-empty 'id'.");
+      }
+      if (seen.has(r.id)) {
+        return res.status(400).send(`Duplicate rubric id in payload: ${r.id}`);
+      }
+      seen.add(r.id);
+    }
+
+    const rubricsCollection = db.collection(RUBRICS_COLLECTION) as CollectionReference<RoleReviewRubric>;
     const batch = db.batch();
 
     rubrics.forEach(rubric => {

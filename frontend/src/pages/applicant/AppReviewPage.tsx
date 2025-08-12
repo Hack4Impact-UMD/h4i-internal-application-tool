@@ -7,7 +7,7 @@ import { useReviewData, useUpdateReviewData } from "@/hooks/useReviewData";
 import Spinner from "@/components/Spinner";
 import { useApplicant } from "@/hooks/useApplicants";
 import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
-import { displayApplicantRoleName } from "@/utils/display";
+import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { Button } from "@/components/ui/button";
 import { useRubricsForFormRole } from "@/hooks/useRubrics";
 import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
@@ -26,14 +26,34 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { ApplicationReviewData } from "@/types/types";
+import { CheckIcon, CircleAlertIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type UserHeaderProps = {
   applicantId: string;
   form: ApplicationForm;
   role: ApplicantRole;
+  lastSave?: number;
+  reviewData: ApplicationReviewData;
 };
 
-function UserHeader({ applicantId, form, role }: UserHeaderProps) {
+function UserHeader({
+  applicantId,
+  form,
+  role,
+  lastSave,
+  reviewData,
+}: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
 
   if (isPending)
@@ -53,11 +73,22 @@ function UserHeader({ applicantId, form, role }: UserHeaderProps) {
     );
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-0">
       <h1 className="text-xl">
         {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
-        {displayApplicantRoleName(role)} Application
+        {displayApplicantRoleNameNoEmoji(role)} Application
       </h1>
+      <span>
+        {reviewData.submitted ? (
+          <span>
+            <CheckIcon className="inline size-5" /> Submitted
+          </span>
+        ) : lastSave ? (
+          `Last saved ${new Date(lastSave).toLocaleTimeString()}`
+        ) : (
+          `Not saved`
+        )}
+      </span>
     </div>
   );
 }
@@ -88,7 +119,8 @@ const ApplicationPage: React.FC = () => {
     error: reviewError,
   } = useReviewData(reviewDataId ?? "");
 
-  const { mutate: updateReviewData } = useUpdateReviewData(reviewDataId ?? "");
+  const { mutate: updateReviewData, submittedAt: lastSave } =
+    useUpdateReviewData(reviewDataId ?? "");
   const { mutate: submitReview, isPending: isSubmitting } = useUpdateReviewData(
     reviewDataId ?? "",
   );
@@ -116,17 +148,12 @@ const ApplicationPage: React.FC = () => {
   }, [reviewData, localNotes]);
 
   useEffect(() => {
-    const ref = setTimeout(
-      () =>
-        updateReviewData({
-          reviewerNotes: localNotes,
-        }),
-      1000,
-    );
-    return () => {
-      clearTimeout(ref);
-    };
-  }, [localNotes, updateReviewData]);
+    if (localNotes === undefined || !reviewData || reviewData.submitted) return;
+    const ref = setTimeout(() => {
+      updateReviewData({ reviewerNotes: localNotes });
+    }, 1000);
+    return () => clearTimeout(ref);
+  }, [localNotes, reviewData, updateReviewData]);
 
   const optimisticReviewData = useMemo(() => {
     if (!reviewData) return undefined;
@@ -159,13 +186,9 @@ const ApplicationPage: React.FC = () => {
     [reviewData, updateReviewData],
   );
 
-  const commentChange = useCallback(
-    (id: string, value: string) => {
-      const newLocalNotes = { ...localNotes, [id]: value };
-      setLocalNotes(newLocalNotes);
-    },
-    [localNotes],
-  );
+  const commentChange = useCallback((id: string, value: string) => {
+    setLocalNotes((prev) => ({ ...(prev ?? {}), [id]: value }));
+  }, []);
 
   const handleSubmitReview = () => {
     const requiredKeys =
@@ -182,7 +205,11 @@ const ApplicationPage: React.FC = () => {
     }
 
     submitReview(
-      { submitted: true },
+      {
+        ...optimisticReviewData,
+        reviewerNotes: localNotes,
+        submitted: true,
+      },
       {
         onSuccess: () => {
           throwSuccessToast("Review submitted successfully!");
@@ -216,9 +243,11 @@ const ApplicationPage: React.FC = () => {
     <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
       <div className="flex flex-row w-full py-2 px-4 items-center rounded border border-blue-300 bg-blue-100 text-blue">
         <UserHeader
+          reviewData={reviewData}
           applicantId={response.userId}
           form={form}
           role={reviewData.forRole}
+          lastSave={lastSave}
         />
 
         {scorePending ? (
@@ -226,10 +255,22 @@ const ApplicationPage: React.FC = () => {
         ) : scoreError ? (
           `Failed to calculate score: ${scoreError.message}`
         ) : (
-          <h1 className="text-lg text-blue w-64">
+          <span className="text-lg text-blue w-64 mr-2">
             Review Score:{" "}
-            <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span>/4
-          </h1>
+            {typeof score === "number" ? (
+              <>
+                <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span> /
+                4
+              </>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CircleAlertIcon className="inline" />
+                </TooltipTrigger>
+                <TooltipContent>Score is undefined!</TooltipContent>
+              </Tooltip>
+            )}
+          </span>
         )}
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -237,11 +278,15 @@ const ApplicationPage: React.FC = () => {
               variant="default"
               disabled={isSubmitting || optimisticReviewData.submitted}
             >
-              {isSubmitting
-                ? "Submitting..."
-                : optimisticReviewData.submitted
-                  ? "Submitted"
-                  : "Submit Review"}
+              {isSubmitting ? (
+                "Submitting..."
+              ) : optimisticReviewData.submitted ? (
+                <span>
+                  <CheckIcon className="inline" /> Submitted
+                </span>
+              ) : (
+                "Submit Review"
+              )}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
@@ -262,52 +307,60 @@ const ApplicationPage: React.FC = () => {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="flex gap-2 justify-center grow overflow-scroll pt-2">
-        <div className="w-1/2 flex h-full flex-col gap-2 overflow-scroll">
-          {form.sections
-            .filter((s) => {
-              if (s.forRoles) {
-                return (
-                  s.forRoles.filter((r) => response.rolesApplied.includes(r))
-                    .length > 0
-                );
-              } else {
-                return true;
-              }
-            })
-            .map((s) => (
-              <div
-                className="shadow border border-gray-200 bg-white rounded-md p-4"
-                key={s.sectionId}
-              >
-                <Section
-                  responseId={response.id}
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex gap-2 justify-center grow overflow-scroll pt-2"
+      >
+        <ResizablePanel defaultSize={50}>
+          <div className="w-full flex h-full flex-col gap-2 overflow-scroll rounded-md">
+            {form.sections
+              .filter((s) => {
+                if (s.forRoles) {
+                  return (
+                    s.forRoles.filter((r) => response.rolesApplied.includes(r))
+                      .length > 0
+                  );
+                } else {
+                  return true;
+                }
+              })
+              .map((s) => (
+                <div
+                  className="shadow border border-gray-200 bg-white rounded-md p-4"
                   key={s.sectionId}
-                  disabled={true}
-                  section={s}
-                  responses={
-                    response.sectionResponses.find(
-                      (r) => r.sectionId == s.sectionId,
-                    )?.questions ?? []
-                  }
-                  onChangeResponse={() => {}}
-                />
-              </div>
+                >
+                  <Section
+                    responseId={response.id}
+                    key={s.sectionId}
+                    disabled={true}
+                    section={s}
+                    responses={
+                      response.sectionResponses.find(
+                        (r) => r.sectionId == s.sectionId,
+                      )?.questions ?? []
+                    }
+                    onChangeResponse={() => {}}
+                  />
+                </div>
+              ))}
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize={50}>
+          <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full rounded-md">
+            {sortedRubrics.map((r) => (
+              <RoleRubric
+                key={r.id}
+                rubric={r}
+                onScoreChange={scoreChange}
+                onCommentChange={commentChange}
+                reviewData={optimisticReviewData}
+                disabled={optimisticReviewData.submitted}
+              />
             ))}
-        </div>
-        <div className="w-1/2 overflow-y-scroll flex flex-col gap-2">
-          {sortedRubrics.map((r) => (
-            <RoleRubric
-              key={r.id}
-              rubric={r}
-              onScoreChange={scoreChange}
-              onCommentChange={commentChange}
-              reviewData={optimisticReviewData}
-              disabled={optimisticReviewData.submitted}
-            />
-          ))}
-        </div>
-      </div>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };

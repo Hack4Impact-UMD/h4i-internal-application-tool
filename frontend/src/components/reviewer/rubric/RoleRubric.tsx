@@ -1,5 +1,5 @@
 import { ApplicationReviewData, RoleReviewRubric } from "@/types/types";
-import { displayApplicantRoleName } from "@/utils/display";
+import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { RubricQuestion } from "./RubricQuestion";
 import FormMarkdown from "@/components/form/FormMarkdown";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,14 +23,14 @@ export default function RoleRubric({
     <div className="bg-white rounded-md border border-gray-200 p-4 flex flex-col gap-2">
       <h1 className="font-bold text-xl">
         {rubric.roles.length > 0
-          ? rubric.roles.map(displayApplicantRoleName).join(", ")
+          ? rubric.roles.map(displayApplicantRoleNameNoEmoji).join(", ")
           : "General"}{" "}
         Rubric
       </h1>
       {rubric.detailLink && (
         <span>
           Details:{" "}
-          <a href={rubric.detailLink} target="_black">
+          <a href={rubric.detailLink} target="_black" rel="noopener noreferrer">
             {rubric.detailLink}
           </a>
         </span>
@@ -50,6 +50,7 @@ export default function RoleRubric({
       <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
       <Textarea
         disabled={disabled}
+        className="disabled:opacity-100"
         value={reviewData.reviewerNotes[rubric.id] ?? ""}
         onChange={(e) => onCommentChange(rubric.id, e.target.value)}
       ></Textarea>

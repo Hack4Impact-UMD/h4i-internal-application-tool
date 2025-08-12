@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getRoleRubricsForFormRole,
   uploadRubrics as uploadRubricsService,
@@ -6,6 +6,8 @@ import {
 import { ApplicantRole, RoleReviewRubric } from "@/types/types";
 
 export const useUploadRubrics = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({
       rubrics,
@@ -14,6 +16,9 @@ export const useUploadRubrics = () => {
       rubrics: RoleReviewRubric[];
       token: string;
     }) => uploadRubricsService(rubrics, token),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["rubrics"] });
+    },
   });
 };
 

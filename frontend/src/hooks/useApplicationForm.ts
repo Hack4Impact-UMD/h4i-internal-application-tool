@@ -48,3 +48,11 @@ export const useUploadApplicationForm = () => {
     },
   });
 };
+
+export function useApplicationFormForResponseId(responseId?: string) {
+  return useQuery<ApplicationForm>({
+    queryKey: ["form", "responseId", responseId],
+    queryFn: () => getApplicationFormForResponseId(responseId!),
+    enabled: responseId != undefined,
+  });
+}
