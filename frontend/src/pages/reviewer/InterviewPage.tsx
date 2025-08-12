@@ -7,7 +7,6 @@ import { useApplicant } from "@/hooks/useApplicants";
 import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
 import { displayApplicantRoleName } from "@/utils/display";
 import { Button } from "@/components/ui/button";
-import { useRubricsForFormRole } from "@/hooks/useRubrics";
 import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
@@ -24,6 +23,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { useInterviewData, useUpdateInterviewData } from "@/hooks/useInterviewData";
+import { useInterviewRubricsForFormRole } from "@/hooks/useInterviewRubrics";
+import { useInterviewScore } from "@/hooks/useInterviewScore";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { CircleAlertIcon } from "lucide-react";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -87,6 +94,7 @@ const InterviewPage: React.FC = () => {
     isPending: interviewPending,
     error: interviewError,
   } = useInterviewData(interviewDataId ?? "");
+  
 
   const { mutate: updateInterviewData } = useUpdateInterviewData(interviewDataId ?? "");
   const { mutate: submitInterview, isPending: isSubmitting } = useUpdateInterviewData(
@@ -94,33 +102,34 @@ const InterviewPage: React.FC = () => {
   );
 
   const {
-    data: rubrics,
+    data: interviewRubrics,
     isPending: rubricsPending,
     error: rubricsError,
-  } = useRubricsForFormRole(form?.id, interviewData?.forRole);
+  } = useInterviewRubricsForFormRole(form?.id, interviewData?.forRole);
+
+  const {
+    data: interviewScore,
+    isPending: interviewScorePending,
+    error: interviewScoreError,
+  } = useInterviewScore(interviewData!);
 
   const [localNotes, setLocalNotes] = useState<
-    string | undefined
+    Record<string, string> | undefined
   >(undefined);
 
   useEffect(() => {
     if (interviewData && !localNotes) {
-      setLocalNotes(interviewData.interviewNotes || "");
+      setLocalNotes(interviewData.interviewerNotes || {});
     }
   }, [interviewData, localNotes]);
 
   useEffect(() => {
-    const ref = setTimeout(
-      () =>
-        updateInterviewData({
-          interviewNotes: localNotes,
-        }),
-      1000,
-    );
-    return () => {
-      clearTimeout(ref);
-    };
-  }, [localNotes, updateInterviewData]);
+    if (localNotes === undefined || !interviewData || interviewData.submitted) return;
+    const ref = setTimeout(() => {
+      updateInterviewData({ interviewerNotes: localNotes });
+    }, 1000);
+    return () => clearTimeout(ref);
+  }, [localNotes, interviewData, updateInterviewData])
 
   const optimisticInterviewData = useMemo(() => {
     if (!interviewData) return undefined;
@@ -131,40 +140,42 @@ const InterviewPage: React.FC = () => {
     };
   }, [interviewData, localNotes]);
 
-  const sortedRubrics = useMemo(
+  const sortedInterviewRubrics = useMemo(
     () =>
-      rubrics
-        ? [...rubrics].sort((a, b) => a.roles.length - b.roles.length)
+      interviewRubrics
+        ? [...interviewRubrics].sort((a, b) => a.roles.length - b.roles.length)
         : [],
-    [rubrics],
+    [interviewRubrics],
   );
 
-  const scoreChange = useCallback(
-    (newScore: number) => {
+  const interviewScoreChange = useCallback(
+    (key: string, value: number) => {
       if (!interviewData || interviewData.submitted) return;
-      updateInterviewData({ interviewScore: newScore });
+
+      const newScores = {
+        ...interviewData.interviewScores,
+        [key]: value,
+      };
+
+      updateInterviewData({ interviewScores: newScores });
     },
     [interviewData, updateInterviewData],
   );
 
-  const commentChange = useCallback(
-    (newLocalNotes: string) => {
-      setLocalNotes(newLocalNotes);
-    },
-    [localNotes],
-  );
+  const commentChange = useCallback((id: string, value: string) => {
+    setLocalNotes((prev) => ({ ...(prev ?? {}), [id]: value }));
+  }, []);
 
   const handleSubmitInterview = () => {
-    // TODO: refactor this only one question
     const requiredKeys =
-      rubrics?.flatMap((r) => r.rubricQuestions.map((q) => q.scoreKey)) ?? [];
+      interviewRubrics?.flatMap((r) => r.rubricQuestions.map((q) => q.scoreKey)) ?? [];
     const existingKeys = new Set(
-      Object.keys(reviewData?.applicantScores ?? {}),
+      Object.keys(interviewData?.interviewScores ?? {}),
     );
 
     for (const req of requiredKeys) {
       if (!existingKeys.has(req)) {
-        throwErrorToast(`Review is incomplete, missing required key ${req}`);
+        throwErrorToast(`Interview is incomplete, missing required key ${req}`);
         return;
       }
     }
@@ -209,10 +220,28 @@ const InterviewPage: React.FC = () => {
           role={interviewData.forRole}
         />
 
-        <h1 className="text-lg text-blue w-64">
-            Interview Score:{" "}
-            <span className="font-bold">{optimisticInterviewData.interviewScore ?? "N/A"}</span>/4
-        </h1>
+        {interviewScorePending ? (
+          <Spinner className="mr-4" />
+        ) : interviewScoreError ? (
+          `Failed to calculate score: ${interviewScoreError.message}`
+        ) : (
+          <span className="text-lg text-blue w-64 mr-2">
+            Review Score:{" "}
+            {typeof interviewScore === "number" ? (
+              <>
+                <span className="font-bold">{interviewScore.toFixed(2) ?? "N/A"}</span> /
+                4
+              </>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <CircleAlertIcon className="inline" />
+                </TooltipTrigger>
+                <TooltipContent>Score is undefined!</TooltipContent>
+              </Tooltip>
+            )}
+          </span>
+        )}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
@@ -246,11 +275,11 @@ const InterviewPage: React.FC = () => {
       </div>
       <div className="flex gap-2 justify-center grow overflow-scroll pt-2">
         <div className="w-1/2 overflow-y-scroll flex flex-col gap-2">
-          {sortedRubrics.map((r) => (
+          {sortedInterviewRubrics.map((r) => (
             <RoleRubric
               key={r.id}
               rubric={r}
-              onScoreChange={scoreChange}
+              onScoreChange={interviewScoreChange}
               onCommentChange={commentChange}
               reviewData={interviewData}
               disabled={optimisticInterviewData.submitted}

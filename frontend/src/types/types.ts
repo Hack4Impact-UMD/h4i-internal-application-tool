@@ -116,8 +116,8 @@ export interface ApplicationInterviewData {
   applicationFormId: string;
   applicationResponseId: string;
   applicantId: string;
-  interviewScore: number;
-  interviewNotes: string;
+  interviewScores: Record<string, number>;
+  interviewerNotes: Record<string, string>; 
   forRole: ApplicantRole;
   submitted: boolean;
 }
