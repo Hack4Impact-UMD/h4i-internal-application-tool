@@ -6,16 +6,24 @@ export function displayUserRoleName(role: PermissionRole) {
   else return "Reviewer";
 }
 
-export function displayApplicantRoleName(role: ApplicantRole) {
-  if (role == ApplicantRole.Bootcamp) return "🥾 Bootcamp";
-  else if (role == ApplicantRole.TechLead) return "🤖 Tech Lead";
-  else if (role == ApplicantRole.Product) return "🤝 Product Manager";
-  else if (role == ApplicantRole.SocialMedia) return "📱 Social Media Manager";
-  else if (role == ApplicantRole.OutreachCoord)
-    return "📢 Outreach Coordinator";
-  else if (role == ApplicantRole.Engineer) return "⚙️ Engineer";
-  else if (role == ApplicantRole.Designer) return "🎨 Designer";
-  else return role;
+export function displayApplicantRoleName(role: ApplicantRole, maxLength?: number) {
+  let name: string;
+
+  if (role === ApplicantRole.Bootcamp) name = "🥾 Bootcamp";
+  else if (role === ApplicantRole.TechLead) name = "🤖 Tech Lead";
+  else if (role === ApplicantRole.Product) name = "🤝 Product Manager";
+  else if (role === ApplicantRole.SocialMedia) name = "📱 Social Media Manager";
+  else if (role === ApplicantRole.OutreachCoord) name = "📢 Outreach Coordinator";
+  else if (role === ApplicantRole.Engineer) name = "⚙️ Engineer";
+  else if (role === ApplicantRole.Designer) name = "🎨 Designer";
+  else name = role;
+
+  // end with ... to fix styling when names are too long 
+  if (maxLength && name.length > maxLength) {
+    return name.slice(0, maxLength - 3) + "...";
+  }
+
+  return name;
 }
 
 export function displayApplicantRoleNameNoEmoji(role: ApplicantRole) {
