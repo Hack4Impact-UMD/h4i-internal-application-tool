@@ -281,7 +281,7 @@ const InterviewPage: React.FC = () => {
               rubric={r}
               onScoreChange={interviewScoreChange}
               onCommentChange={commentChange}
-              reviewData={interviewData}
+              interviewData={interviewData}
               disabled={optimisticInterviewData.submitted}
             />
           ))}

@@ -1,4 +1,4 @@
-import { ApplicationReviewData, RoleReviewRubric } from "@/types/types";
+import { ApplicationInterviewData, ApplicationReviewData, RoleReviewRubric } from "@/types/types";
 import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { RubricQuestion } from "./RubricQuestion";
 import FormMarkdown from "@/components/form/FormMarkdown";
@@ -8,7 +8,8 @@ type RoleRubricProps = {
   rubric: RoleReviewRubric;
   onScoreChange: (key: string, value: number) => void;
   onCommentChange: (rubricId: string, comments: string) => void;
-  reviewData: ApplicationReviewData;
+  reviewData?: ApplicationReviewData;
+  interviewData?: ApplicationInterviewData;
   disabled?: boolean;
 };
 
@@ -17,6 +18,7 @@ export default function RoleRubric({
   onScoreChange,
   onCommentChange,
   reviewData,
+  interviewData,
   disabled = false,
 }: RoleRubricProps) {
   return (
@@ -42,7 +44,7 @@ export default function RoleRubric({
             key={q.scoreKey}
             question={q}
             onChange={onScoreChange}
-            value={reviewData.applicantScores[q.scoreKey]}
+            value={reviewData ? reviewData.applicantScores[q.scoreKey] : interviewData ? interviewData.interviewScores[rubric.id] : 0}
           />
         ))}
       </div>
@@ -51,7 +53,7 @@ export default function RoleRubric({
       <Textarea
         disabled={disabled}
         className="disabled:opacity-100"
-        value={reviewData.reviewerNotes[rubric.id] ?? ""}
+        value={reviewData ? reviewData.reviewerNotes[rubric.id] : interviewData ? interviewData.interviewerNotes[rubric.id] : ""}
         onChange={(e) => onCommentChange(rubric.id, e.target.value)}
       ></Textarea>
     </div>
