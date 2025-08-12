@@ -25,26 +25,20 @@ export type AssignmentRow = {
 
 export function useRows(
   assignments: AppReviewAssignment[],
-  pageIndex: number,
-  rowCount: number,
   formId: string,
 ) {
   return useQuery({
-    queryKey: ["my-assignment-rows", pageIndex, assignments, rowCount, formId],
+    queryKey: ["my-assignment-rows", assignments, formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
         assignments
-          .slice(
-            pageIndex * rowCount,
-            Math.min(assignments.length, (pageIndex + 1) * rowCount),
-          )
           .map(async (assignment, index) => {
             const user = await getApplicantById(assignment.applicantId);
             const review = await getReviewDataForAssignment(assignment);
 
             const row: AssignmentRow = {
-              index: 1 + pageIndex * rowCount + index,
+              index: 1 + index,
               applicant: {
                 id: user.id,
                 name: `${user.firstName} ${user.lastName}`,

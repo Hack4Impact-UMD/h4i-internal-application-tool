@@ -37,21 +37,15 @@ export type ApplicationRow = {
 };
 
 export function useRows(
-  pageIndex: number,
   applications: ApplicationResponse[],
-  rowCount: number,
   formId: string,
 ) {
   return useQuery({
-    queryKey: ["all-apps-rows", pageIndex, applications],
+    queryKey: ["all-apps-rows", applications, formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
         applications
-          .slice(
-            pageIndex * rowCount,
-            Math.min(applications.length, (pageIndex + 1) * rowCount),
-          )
           .map(async (app, index) => {
             const user = await getApplicantById(app.userId);
             const reviews = await getReviewDataForResponseRole(
@@ -68,12 +62,12 @@ export function useRows(
               completedReviews == 0
                 ? 0
                 : (
-                    await Promise.all(
-                      reviews
-                        .filter((r) => r.submitted)
-                        .map(async (r) => await calculateReviewScore(r)),
-                    )
-                  ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                  await Promise.all(
+                    reviews
+                      .filter((r) => r.submitted)
+                      .map(async (r) => await calculateReviewScore(r)),
+                  )
+                ).reduce((acc, v) => acc + v, 0) / completedReviews;
             let status: InternalApplicationStatus | undefined;
 
             try {
@@ -88,7 +82,7 @@ export function useRows(
               status = undefined;
             }
             const row: ApplicationRow = {
-              index: 1 + pageIndex * rowCount + index,
+              index: 1 + index,
               applicant: {
                 id: user.id,
                 name: `${user.firstName} ${user.lastName}`,

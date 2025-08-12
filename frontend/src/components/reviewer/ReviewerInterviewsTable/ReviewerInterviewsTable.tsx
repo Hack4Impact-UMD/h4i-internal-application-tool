@@ -184,7 +184,7 @@ export default function ReviewerInterviewsTable({
     data: rows,
     isPending,
     error,
-  } = useRows(assignments, pagination.pageIndex, rowCount, formId);
+  } = useRows(assignments, formId);
 
   if (isPending || !rows) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
@@ -197,8 +197,6 @@ export default function ReviewerInterviewsTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           state: {

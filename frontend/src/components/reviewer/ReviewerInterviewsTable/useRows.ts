@@ -24,26 +24,20 @@ export type InterviewAssignmentRow = {
 
 export function useRows(
   interviewAssignments: InterviewAssignment[],
-  pageIndex: number,
-  rowCount: number,
   formId: string,
 ) {
   return useQuery({
-    queryKey: ["all-interview-assignments", pageIndex, rowCount, formId],
+    queryKey: ["all-interview-assignments", formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
         interviewAssignments
-          .slice(
-            pageIndex * rowCount,
-            Math.min(interviewAssignments.length, (pageIndex + 1) * rowCount),
-          )
           .map(async (assignment, index) => {
             const applicant = await getApplicantById(assignment.applicantId);
             const reviewData = await getInterviewDataForAssignment(assignment);
 
             const row: InterviewAssignmentRow = {
-              index: 1 + pageIndex * rowCount + index,
+              index: 1 + index,
               applicant: applicant,
               applicantName: `${applicant.firstName} ${applicant.lastName}`,
               role: assignment.forRole,
@@ -51,9 +45,9 @@ export function useRows(
               interviewReviewData: reviewData,
               score: reviewData
                 ? {
-                    value: await calculateInterviewScore(reviewData),
-                    outOf: 4,
-                  }
+                  value: await calculateInterviewScore(reviewData),
+                  outOf: 4,
+                }
                 : undefined,
             };
 

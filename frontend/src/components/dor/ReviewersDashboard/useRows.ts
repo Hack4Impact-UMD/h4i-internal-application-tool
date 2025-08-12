@@ -27,22 +27,16 @@ export type FlatReviewerRow = {
 };
 
 export function useRows(
-  pageIndex: number,
   reviewers: ReviewerUserProfile[],
   assignments: AppReviewAssignment[],
   reviewData: ApplicationReviewData[],
-  rowCount: number,
 ) {
   return useQuery({
-    queryKey: ["all-reviewers-rows", pageIndex, reviewers],
+    queryKey: ["all-reviewers-rows", reviewers, assignments, reviewData],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
         reviewers
-          .slice(
-            pageIndex * rowCount,
-            Math.min(reviewers.length, (pageIndex + 1) * rowCount),
-          )
           .map(async (reviewer, index) => {
             const reviewerAssignments = assignments.filter(
               (assignment) => assignment.reviewerId == reviewer.id,
@@ -52,7 +46,7 @@ export function useRows(
             );
 
             const row: ReviewerRow = {
-              index: 1 + pageIndex * rowCount + index,
+              index: 1 + index,
               reviewer: {
                 id: reviewer.id,
                 name: `${reviewer.firstName} ${reviewer.lastName}`,

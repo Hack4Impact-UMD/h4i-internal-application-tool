@@ -197,9 +197,9 @@ export default function InterviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.interviewer.id,
+                        formId +
+                        "/" +
+                        row.original.interviewer.id,
                       );
                     }}
                   >
@@ -219,11 +219,9 @@ export default function InterviewersTable({
     isPending,
     error,
   } = useRows(
-    pagination.pageIndex,
     interviewers,
     interviewData,
     assignments,
-    rowCount,
   );
 
   if (isPending) return <p>Loading...</p>;
@@ -238,8 +236,6 @@ export default function InterviewersTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           enableColumnFilters: true,

@@ -208,9 +208,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                          formId +
-                          "/" +
-                          row.original.reviewer.id,
+                        formId +
+                        "/" +
+                        row.original.reviewer.id,
                       );
                     }}
                   >
@@ -230,11 +230,9 @@ export default function ReviewersTable({
     isPending,
     error,
   } = useRows(
-    pagination.pageIndex,
     reviewers,
     assignments,
     reviewData,
-    rowCount,
   );
 
   if (isPending) return <p>Loading...</p>;
@@ -249,8 +247,6 @@ export default function ReviewersTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           enableColumnFilters: true,

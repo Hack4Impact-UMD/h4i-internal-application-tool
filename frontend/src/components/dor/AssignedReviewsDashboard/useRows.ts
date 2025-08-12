@@ -27,26 +27,18 @@ export type AssignedAppRow = {
 
 export function useRows(
   assignments: AppReviewAssignment[],
-  pageIndex: number,
-  rowCount: number,
   formId: string,
 ) {
   return useQuery({
     queryKey: [
       "reviewer-assignment-rows",
-      pageIndex,
       assignments,
-      rowCount,
       formId,
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
         assignments
-          .slice(
-            pageIndex * rowCount,
-            Math.min(assignments.length, (pageIndex + 1) * rowCount),
-          )
           .map(async (assignment, index) => {
             const reviewer = await getUserById(assignment.reviewerId);
 
@@ -59,16 +51,16 @@ export function useRows(
               reviewer: reviewer,
               applicantId: assignment.applicantId,
               reviewerName: `${reviewer.firstName} ${reviewer.lastName}`,
-              index: 1 + pageIndex * rowCount + index,
+              index: 1 + index,
               formId: assignment.formId,
               responseId: assignment.applicationResponseId,
               role: assignment.forRole,
               review: review,
               score: review
                 ? {
-                    value: await calculateReviewScore(review),
-                    outOf: 4, // NOTE: All scores are assummed to be out of 4
-                  }
+                  value: await calculateReviewScore(review),
+                  outOf: 4, // NOTE: All scores are assummed to be out of 4
+                }
                 : undefined,
             };
 

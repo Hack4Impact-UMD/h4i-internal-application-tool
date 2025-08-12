@@ -319,8 +319,7 @@ export default function QualifiedApplicationsTable({
       const queryKey = [
         "qualified-apps-rows",
         formId,
-        pagination.pageIndex,
-        rowCount,
+        applications
       ];
       await queryClient.cancelQueries({ queryKey });
 
@@ -442,7 +441,7 @@ export default function QualifiedApplicationsTable({
     data: rows,
     isPending,
     error,
-  } = useRows(pagination.pageIndex, applications, rowCount, formId);
+  } = useRows(applications, formId);
 
   const columnHelper = createColumnHelper<QualifiedAppRow>();
   const cols = useMemo(
@@ -559,8 +558,6 @@ export default function QualifiedApplicationsTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           state: {

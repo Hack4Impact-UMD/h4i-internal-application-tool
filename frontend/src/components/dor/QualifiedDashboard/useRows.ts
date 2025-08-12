@@ -30,27 +30,19 @@ export type QualifiedAppRow = {
 };
 
 export function useRows(
-  pageIndex: number,
   applications: ApplicationResponse[],
-  rowCount: number,
   formId: string,
 ) {
   return useQuery<QualifiedAppRow[]>({
     queryKey: [
       "qualified-apps-rows",
       formId,
-      pageIndex,
-      rowCount,
       applications,
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
         applications
-          .slice(
-            pageIndex * rowCount,
-            Math.min(applications.length, (pageIndex + 1) * rowCount),
-          )
           .map(async (app, index) => {
             const user = await getApplicantById(app.userId);
             // Get interview assignments for this application
@@ -91,7 +83,7 @@ export function useRows(
               app.rolesApplied[0],
             );
             return {
-              index: 1 + pageIndex * rowCount + index,
+              index: 1 + index,
               name: `${user.firstName} ${user.lastName}`,
               role: app.rolesApplied[0],
               interviewers: { assigned: assignedInterviewers },
