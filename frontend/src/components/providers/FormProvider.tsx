@@ -117,30 +117,24 @@ export default function FormProvider() {
     resp: string | string[],
   ) {
     if (response) {
-      setResponse(response => response ? ({
-        ...response,
-        dateSubmitted: Timestamp.now(),
-        sectionResponses:
-          response.sectionResponses.map((s) => {
-            if (s.sectionId == sectionId) {
+      setResponse((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          dateSubmitted: Timestamp.now(),
+          sectionResponses: prev.sectionResponses.map((s) => {
+            if (s.sectionId === sectionId) {
               return {
                 ...s,
-                questions: s.questions.map((q) => {
-                  if (q.questionId == questionId) {
-                    return {
-                      ...q,
-                      response: resp,
-                    };
-                  } else {
-                    return q;
-                  }
-                }),
+                questions: s.questions.map((q) =>
+                  q.questionId === questionId ? { ...q, response: resp } : q
+                ),
               };
-            } else {
-              return s;
             }
-          }) ?? response.sectionResponses,
-      }) : response);
+            return s;
+          }),
+        };
+      });
     }
   }
 
