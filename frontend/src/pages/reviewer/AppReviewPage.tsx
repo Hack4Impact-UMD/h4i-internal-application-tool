@@ -133,7 +133,7 @@ const AppReviewPage: React.FC = () => {
 
   const {
     data: score,
-    isPending: scorePending,
+    isFetching: scorePending,
     error: scoreError,
   } = useReviewScore(reviewData!);
 
@@ -339,7 +339,7 @@ const AppReviewPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => { }}
+                    onChangeResponse={() => {}}
                   />
                 </div>
               ))}
@@ -350,12 +350,14 @@ const AppReviewPage: React.FC = () => {
           <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full rounded-md">
             {sortedRubrics.map((r) => (
               <RoleRubric
+                role={reviewData.forRole}
                 key={r.id}
                 rubric={r}
                 onScoreChange={scoreChange}
                 onCommentChange={commentChange}
                 reviewData={optimisticReviewData}
                 disabled={optimisticReviewData.submitted}
+                form={form}
               />
             ))}
           </div>

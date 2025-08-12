@@ -35,6 +35,7 @@ export async function calculateReviewScore(
     scoreKeys.every((k) => k in weightsForRole);
   if (!keysMatch) {
     console.warn("SCORE KEY MISMATCH: Falling back to average scoring!");
+    console.warn(`Expected: ${weightKeys}. Got: ${scoreKeys}`);
     throwWarningToast(
       "Score key mismatch found, falling back to simple average!",
     );

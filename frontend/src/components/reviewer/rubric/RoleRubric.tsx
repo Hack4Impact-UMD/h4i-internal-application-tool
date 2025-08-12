@@ -1,4 +1,9 @@
-import { ApplicationReviewData, RoleReviewRubric } from "@/types/types";
+import {
+  ApplicantRole,
+  ApplicationForm,
+  ApplicationReviewData,
+  RoleReviewRubric,
+} from "@/types/types";
 import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { RubricQuestion } from "./RubricQuestion";
 import FormMarkdown from "@/components/form/FormMarkdown";
@@ -10,14 +15,18 @@ type RoleRubricProps = {
   onCommentChange: (rubricId: string, comments: string) => void;
   reviewData: ApplicationReviewData;
   disabled?: boolean;
+  form?: ApplicationForm; //optional, for displaying score weights
+  role: ApplicantRole;
 };
 
 export default function RoleRubric({
   rubric,
+  role,
   onScoreChange,
   onCommentChange,
   reviewData,
   disabled = false,
+  form = undefined,
 }: RoleRubricProps) {
   return (
     <div className="bg-white rounded-md border border-gray-200 p-4 flex flex-col gap-2">
@@ -42,6 +51,7 @@ export default function RoleRubric({
             key={q.scoreKey}
             question={q}
             onChange={onScoreChange}
+            weight={form?.scoreWeights[role][q.scoreKey]}
             value={reviewData.applicantScores[q.scoreKey]}
           />
         ))}
@@ -51,7 +61,7 @@ export default function RoleRubric({
       <Textarea
         disabled={disabled}
         className="disabled:opacity-100"
-        value={reviewData.reviewerNotes[rubric.id] ?? ""}
+        defaultValue={reviewData.reviewerNotes[rubric.id] ?? ""}
         onChange={(e) => onCommentChange(rubric.id, e.target.value)}
       ></Textarea>
     </div>

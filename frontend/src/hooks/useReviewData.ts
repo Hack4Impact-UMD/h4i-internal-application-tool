@@ -68,7 +68,7 @@ export function useUpdateReviewData(reviewDataId: string) {
         queryKey: ["review-data", "id", reviewDataId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["score", "review", reviewDataId],
+        queryKey: ["score"],
       });
     },
   });
