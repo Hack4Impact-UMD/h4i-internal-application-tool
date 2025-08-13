@@ -10,7 +10,7 @@ import {
 } from "../ui/alert-dialog";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { ApplicantRole } from "@/types/types";
-import { displayApplicantRoleName } from "@/utils/display";
+import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { useMemo, useState } from "react";
 
 type ReviewerRoleSelectDialogProps = {
@@ -54,23 +54,27 @@ export default function ReviewerRoleSelectDialog({
             </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <ToggleGroup
-          variant="outline"
-          type="multiple"
-          defaultValue={selectedRoles}
-          value={selectedRoles}
-          onValueChange={(v) => setSelectedRoles(v as ApplicantRole[])}
-        >
-          {Object.entries(ApplicantRole).map((e) => (
-            <ToggleGroupItem
-              key={e[1]}
-              value={e[1]}
-              className="data-[state=on]:bg-blue data-[state=on]:text-white cursor-pointer"
-            >
-              <p>{displayApplicantRoleName(e[1])}</p>
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
+
+        <div className="w-full overflow-x-scroll">
+          <ToggleGroup
+            variant="outline"
+            type="multiple"
+            defaultValue={selectedRoles}
+            value={selectedRoles}
+            onValueChange={(v) => setSelectedRoles(v as ApplicantRole[])}
+          >
+            {Object.entries(ApplicantRole).map((e) => (
+              <ToggleGroupItem
+                key={e[1]}
+                value={e[1]}
+                size={"lg"}
+                className="data-[state=on]:bg-blue data-[state=on]:text-white cursor-pointer w-48"
+              >
+                <p className="overflow-x-hidden w-full">{displayApplicantRoleNameNoEmoji(e[1])}</p>
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </div>
         <AlertDialogFooter>
           <AlertDialogAction
             onClick={() => onSubmit(selectedRoles)}
