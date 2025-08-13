@@ -57,8 +57,12 @@ function UserHeader({
   reviewData,
 }: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
-  const { user } = useAuth()
-  const { data: reviewer, isPending: reviewerPending, error: reviewerError } = useUser(user?.id)
+  const { user } = useAuth();
+  const {
+    data: reviewer,
+    isPending: reviewerPending,
+    error: reviewerError,
+  } = useUser(user?.id ?? "");
 
   if (isPending)
     return (
@@ -85,9 +89,23 @@ function UserHeader({
       <span>
         {reviewData.submitted ? (
           <span>
-            <CheckIcon className="inline size-5" /> Submitted {
-              (user?.role === PermissionRole.SuperReviewer && reviewer) ? <>by <strong>{reviewer.firstName} {reviewer.lastName}</strong></> : <></>
-            }
+            <CheckIcon className="inline size-5" /> Submitted{" "}
+            {user?.role === PermissionRole.SuperReviewer ? (
+              reviewerPending ? (
+                <p>by ...</p>
+              ) : reviewerError ? (
+                <p>by (failed to load reviewer) </p>
+              ) : (
+                <>
+                  by{" "}
+                  <strong>
+                    {reviewer.firstName} {reviewer.lastName}
+                  </strong>
+                </>
+              )
+            ) : (
+              <></>
+            )}
           </span>
         ) : lastSave ? (
           `Last saved ${new Date(lastSave).toLocaleTimeString()}`
@@ -156,12 +174,15 @@ const AppReviewPage: React.FC = () => {
   useEffect(() => {
     if (localNotes === undefined || !reviewData || reviewData.submitted) return;
     const ref = setTimeout(() => {
-      updateReviewData({ reviewerNotes: localNotes }, {
-        onError: (err) => {
-          console.log("Autosave failed:", err)
-          throwErrorToast("Failed to autosave notes!")
-        }
-      });
+      updateReviewData(
+        { reviewerNotes: localNotes },
+        {
+          onError: (err) => {
+            console.log("Autosave failed:", err);
+            throwErrorToast("Failed to autosave notes!");
+          },
+        },
+      );
     }, 1000);
     return () => clearTimeout(ref);
   }, [localNotes, reviewData, updateReviewData]);
@@ -350,7 +371,7 @@ const AppReviewPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => { }}
+                    onChangeResponse={() => {}}
                   />
                 </div>
               ))}

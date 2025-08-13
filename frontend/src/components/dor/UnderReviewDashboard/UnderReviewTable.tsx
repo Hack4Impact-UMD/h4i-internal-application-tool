@@ -136,7 +136,7 @@ export default function SuperReviewerApplicationsTable({
       const oldRows = queryClient.getQueryData([
         "all-apps-rows",
         applications,
-        formId
+        formId,
       ]);
 
       queryClient.setQueryData(
@@ -162,10 +162,7 @@ export default function SuperReviewerApplicationsTable({
       };
     },
     onError: (error, _resp, ctx) => {
-      queryClient.setQueriesData(
-        { queryKey: ["all-apps-rows"] },
-        ctx?.oldRows,
-      );
+      queryClient.setQueriesData({ queryKey: ["all-apps-rows"] }, ctx?.oldRows);
       throwErrorToast("Failed to update qualified status: " + error);
     },
     onSettled: () => {
@@ -283,8 +280,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                        status: status,
-                      })
+                          status: status,
+                        })
                       : throwErrorToast("No status available!")
                   }
                 />
@@ -350,11 +347,7 @@ export default function SuperReviewerApplicationsTable({
     ],
   );
 
-  const {
-    data: rows,
-    isPending,
-    error,
-  } = useRows(applications, formId);
+  const { data: rows, isPending, error } = useRows(applications, formId);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

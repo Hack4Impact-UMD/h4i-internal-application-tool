@@ -31,35 +31,38 @@ export function useRows(
   assignments: InterviewAssignment[],
 ) {
   return useQuery({
-    queryKey: ["all-interviewers-rows", interviewers, interviewData, assignments],
+    queryKey: [
+      "all-interviewers-rows",
+      interviewers,
+      interviewData,
+      assignments,
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
-        interviewers
-          .map(async (interviewer, index) => {
-            const interviewerAssignments = assignments.filter(
-              (assignment) => assignment.interviewerId == interviewer.id,
-            );
-            const interviewerInterviewData = interviewData.filter(
-              (reviewData) => reviewData.interviewerId == interviewer.id,
-            );
+        interviewers.map(async (interviewer, index) => {
+          const interviewerAssignments = assignments.filter(
+            (assignment) => assignment.interviewerId == interviewer.id,
+          );
+          const interviewerInterviewData = interviewData.filter(
+            (reviewData) => reviewData.interviewerId == interviewer.id,
+          );
 
-            const row: InterviewerRow = {
-              index: 1 + index,
-              interviewer: {
-                id: interviewer.id,
-                name: `${interviewer.firstName} ${interviewer.lastName}`,
-              },
-              //   rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
-              assignments: interviewerAssignments.length,
-              pendingAssignments:
-                interviewerAssignments.length -
-                interviewerInterviewData.filter((data) => data.submitted)
-                  .length,
-            };
+          const row: InterviewerRow = {
+            index: 1 + index,
+            interviewer: {
+              id: interviewer.id,
+              name: `${interviewer.firstName} ${interviewer.lastName}`,
+            },
+            //   rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
+            assignments: interviewerAssignments.length,
+            pendingAssignments:
+              interviewerAssignments.length -
+              interviewerInterviewData.filter((data) => data.submitted).length,
+          };
 
-            return row;
-          }),
+          return row;
+        }),
       );
     },
   });

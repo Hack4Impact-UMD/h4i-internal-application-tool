@@ -316,11 +316,7 @@ export default function QualifiedApplicationsTable({
       newStatus: ReviewStatus;
     }) => updateApplicationStatus(statusId, { status: newStatus }),
     onMutate: async ({ statusId, newStatus }) => {
-      const queryKey = [
-        "qualified-apps-rows",
-        formId,
-        applications
-      ];
+      const queryKey = ["qualified-apps-rows", formId, applications];
       await queryClient.cancelQueries({ queryKey });
 
       const previousRows =
@@ -437,11 +433,7 @@ export default function QualifiedApplicationsTable({
     },
   });
 
-  const {
-    data: rows,
-    isPending,
-    error,
-  } = useRows(applications, formId);
+  const { data: rows, isPending, error } = useRows(applications, formId);
 
   const columnHelper = createColumnHelper<QualifiedAppRow>();
   const cols = useMemo(

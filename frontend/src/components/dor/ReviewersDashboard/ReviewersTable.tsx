@@ -208,9 +208,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                        formId +
-                        "/" +
-                        row.original.reviewer.id,
+                          formId +
+                          "/" +
+                          row.original.reviewer.id,
                       );
                     }}
                   >
@@ -229,11 +229,7 @@ export default function ReviewersTable({
     data: rows,
     isPending,
     error,
-  } = useRows(
-    reviewers,
-    assignments,
-    reviewData,
-  );
+  } = useRows(reviewers, assignments, reviewData);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

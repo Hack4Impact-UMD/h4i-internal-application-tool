@@ -227,11 +227,7 @@ export default function AssignedApplicationsTable({
     }
   }
 
-  const {
-    data: rows,
-    isPending,
-    error,
-  } = useRows(assignments, formId);
+  const { data: rows, isPending, error } = useRows(assignments, formId);
 
   if (isPending || !rows) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

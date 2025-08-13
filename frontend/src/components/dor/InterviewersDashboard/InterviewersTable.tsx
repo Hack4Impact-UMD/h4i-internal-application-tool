@@ -197,9 +197,9 @@ export default function InterviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/dor/applications/" +
-                        formId +
-                        "/" +
-                        row.original.interviewer.id,
+                          formId +
+                          "/" +
+                          row.original.interviewer.id,
                       );
                     }}
                   >
@@ -218,11 +218,7 @@ export default function InterviewersTable({
     data: rows,
     isPending,
     error,
-  } = useRows(
-    interviewers,
-    interviewData,
-    assignments,
-  );
+  } = useRows(interviewers, interviewData, assignments);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

@@ -36,30 +36,29 @@ export function useRows(
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
-        reviewers
-          .map(async (reviewer, index) => {
-            const reviewerAssignments = assignments.filter(
-              (assignment) => assignment.reviewerId == reviewer.id,
-            );
-            const reviewerReviewData = reviewData.filter(
-              (reviewData) => reviewData.reviewerId == reviewer.id,
-            );
+        reviewers.map(async (reviewer, index) => {
+          const reviewerAssignments = assignments.filter(
+            (assignment) => assignment.reviewerId == reviewer.id,
+          );
+          const reviewerReviewData = reviewData.filter(
+            (reviewData) => reviewData.reviewerId == reviewer.id,
+          );
 
-            const row: ReviewerRow = {
-              index: 1 + index,
-              reviewer: {
-                id: reviewer.id,
-                name: `${reviewer.firstName} ${reviewer.lastName}`,
-              },
-              rolePreferences: reviewer.applicantRolePreferences,
-              assignments: reviewerAssignments.length,
-              pendingAssignments:
-                reviewerAssignments.length -
-                reviewerReviewData.filter((data) => data.submitted).length,
-            };
+          const row: ReviewerRow = {
+            index: 1 + index,
+            reviewer: {
+              id: reviewer.id,
+              name: `${reviewer.firstName} ${reviewer.lastName}`,
+            },
+            rolePreferences: reviewer.applicantRolePreferences,
+            assignments: reviewerAssignments.length,
+            pendingAssignments:
+              reviewerAssignments.length -
+              reviewerReviewData.filter((data) => data.submitted).length,
+          };
 
-            return row;
-          }),
+          return row;
+        }),
       );
     },
   });

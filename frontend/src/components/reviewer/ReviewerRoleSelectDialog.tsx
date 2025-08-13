@@ -70,7 +70,9 @@ export default function ReviewerRoleSelectDialog({
                 size={"lg"}
                 className="data-[state=on]:bg-blue data-[state=on]:text-white cursor-pointer w-48"
               >
-                <p className="overflow-x-hidden w-full">{displayApplicantRoleNameNoEmoji(e[1])}</p>
+                <p className="overflow-x-hidden w-full">
+                  {displayApplicantRoleNameNoEmoji(e[1])}
+                </p>
               </ToggleGroupItem>
             ))}
           </ToggleGroup>

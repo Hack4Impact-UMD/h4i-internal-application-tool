@@ -25,47 +25,39 @@ export type AssignedAppRow = {
   responseId: string;
 };
 
-export function useRows(
-  assignments: AppReviewAssignment[],
-  formId: string,
-) {
+export function useRows(assignments: AppReviewAssignment[], formId: string) {
   return useQuery({
-    queryKey: [
-      "reviewer-assignment-rows",
-      assignments,
-      formId,
-    ],
+    queryKey: ["reviewer-assignment-rows", assignments, formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
-        assignments
-          .map(async (assignment, index) => {
-            const reviewer = await getUserById(assignment.reviewerId);
+        assignments.map(async (assignment, index) => {
+          const reviewer = await getUserById(assignment.reviewerId);
 
-            if (!reviewer || reviewer.role !== PermissionRole.Reviewer)
-              throw new Error("Invalid reviewer!");
+          if (!reviewer || reviewer.role !== PermissionRole.Reviewer)
+            throw new Error("Invalid reviewer!");
 
-            const review = await getReviewDataForAssignment(assignment);
+          const review = await getReviewDataForAssignment(assignment);
 
-            const row: AssignedAppRow = {
-              reviewer: reviewer,
-              applicantId: assignment.applicantId,
-              reviewerName: `${reviewer.firstName} ${reviewer.lastName}`,
-              index: 1 + index,
-              formId: assignment.formId,
-              responseId: assignment.applicationResponseId,
-              role: assignment.forRole,
-              review: review,
-              score: review
-                ? {
+          const row: AssignedAppRow = {
+            reviewer: reviewer,
+            applicantId: assignment.applicantId,
+            reviewerName: `${reviewer.firstName} ${reviewer.lastName}`,
+            index: 1 + index,
+            formId: assignment.formId,
+            responseId: assignment.applicationResponseId,
+            role: assignment.forRole,
+            review: review,
+            score: review
+              ? {
                   value: await calculateReviewScore(review),
                   outOf: 4, // NOTE: All scores are assummed to be out of 4
                 }
-                : undefined,
-            };
+              : undefined,
+          };
 
-            return row;
-          }),
+          return row;
+        }),
       );
     },
   });

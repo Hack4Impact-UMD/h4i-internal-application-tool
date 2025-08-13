@@ -12,6 +12,6 @@ export function useUsers() {
 export function useUser(id: string) {
   return useQuery<UserProfile>({
     queryKey: ["users", "id", id],
-    queryFn: () => getUserById(id)
-  })
+    queryFn: () => getUserById(id),
+  });
 }

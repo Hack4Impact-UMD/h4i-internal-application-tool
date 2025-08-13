@@ -31,28 +31,27 @@ export function useRows(
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
-        interviewAssignments
-          .map(async (assignment, index) => {
-            const applicant = await getApplicantById(assignment.applicantId);
-            const reviewData = await getInterviewDataForAssignment(assignment);
+        interviewAssignments.map(async (assignment, index) => {
+          const applicant = await getApplicantById(assignment.applicantId);
+          const reviewData = await getInterviewDataForAssignment(assignment);
 
-            const row: InterviewAssignmentRow = {
-              index: 1 + index,
-              applicant: applicant,
-              applicantName: `${applicant.firstName} ${applicant.lastName}`,
-              role: assignment.forRole,
-              responseId: assignment.applicationResponseId,
-              interviewReviewData: reviewData,
-              score: reviewData
-                ? {
+          const row: InterviewAssignmentRow = {
+            index: 1 + index,
+            applicant: applicant,
+            applicantName: `${applicant.firstName} ${applicant.lastName}`,
+            role: assignment.forRole,
+            responseId: assignment.applicationResponseId,
+            interviewReviewData: reviewData,
+            score: reviewData
+              ? {
                   value: await calculateInterviewScore(reviewData),
                   outOf: 4,
                 }
-                : undefined,
-            };
+              : undefined,
+          };
 
-            return row;
-          }),
+          return row;
+        }),
       );
     },
   });
