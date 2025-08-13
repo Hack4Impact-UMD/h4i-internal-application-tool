@@ -31,13 +31,15 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { ApplicationReviewData } from "@/types/types";
+import { ApplicationReviewData, PermissionRole } from "@/types/types";
 import { CheckIcon, CircleAlertIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useUsers";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -55,6 +57,8 @@ function UserHeader({
   reviewData,
 }: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
+  const { user } = useAuth()
+  const { data: reviewer, isPending: reviewerPending, error: reviewerError } = useUser(user?.id)
 
   if (isPending)
     return (
@@ -81,7 +85,9 @@ function UserHeader({
       <span>
         {reviewData.submitted ? (
           <span>
-            <CheckIcon className="inline size-5" /> Submitted
+            <CheckIcon className="inline size-5" /> Submitted {
+              (user?.role === PermissionRole.SuperReviewer && reviewer) ? <>by <strong>{reviewer.firstName} {reviewer.lastName}</strong></> : <></>
+            }
           </span>
         ) : lastSave ? (
           `Last saved ${new Date(lastSave).toLocaleTimeString()}`
