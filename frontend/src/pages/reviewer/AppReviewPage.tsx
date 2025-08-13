@@ -62,7 +62,7 @@ function UserHeader({
     data: reviewer,
     isPending: reviewerPending,
     error: reviewerError,
-  } = useUser(user?.id ?? "");
+  } = useUser(reviewData.reviewerId);
 
   if (isPending)
     return (
@@ -371,7 +371,7 @@ const AppReviewPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => {}}
+                    onChangeResponse={() => { }}
                   />
                 </div>
               ))}
