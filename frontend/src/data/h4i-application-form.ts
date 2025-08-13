@@ -6,7 +6,7 @@ import {
 import { ReviewStatus } from "@/types/types";
 import { Timestamp } from "firebase/firestore";
 
-const FORM_ID = "h4i-fall-2025-form-final";
+const FORM_ID = "h4i-fall-2025-form-internal";
 
 export const h4iApplicationForm: ApplicationForm = {
   id: FORM_ID,
