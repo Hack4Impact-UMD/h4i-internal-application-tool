@@ -6,11 +6,11 @@ import {
 import { ReviewStatus } from "@/types/types";
 import { Timestamp } from "firebase/firestore";
 
-const FORM_ID = "h4i-fall-2025-form-internal";
+const FORM_ID = "h4i-fall-2025-form-final";
 
 export const h4iApplicationForm: ApplicationForm = {
   id: FORM_ID,
-  isActive: false,
+  isActive: true,
   dueDate: Timestamp.fromDate(new Date("2025-08-20T03:59:59Z")),
   semester: "Fall 2025",
   description: `
