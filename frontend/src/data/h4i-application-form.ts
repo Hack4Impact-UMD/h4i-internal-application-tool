@@ -10,7 +10,7 @@ const FORM_ID = "h4i-fall-2025-form-internal";
 
 export const h4iApplicationForm: ApplicationForm = {
   id: FORM_ID,
-  isActive: true,
+  isActive: false,
   dueDate: Timestamp.fromDate(new Date("2025-08-20T03:59:59Z")),
   semester: "Fall 2025",
   description: `
