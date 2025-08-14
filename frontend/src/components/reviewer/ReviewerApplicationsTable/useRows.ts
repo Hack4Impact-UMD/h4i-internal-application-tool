@@ -25,7 +25,11 @@ export type AssignmentRow = {
 
 export function useRows(assignments: AppReviewAssignment[], formId: string) {
   return useQuery({
-    queryKey: ["my-assignment-rows", assignments.map(a => a.id), formId],
+    queryKey: [
+      "my-assignment-rows",
+      assignments.map((a) => a.id).sort(),
+      formId,
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

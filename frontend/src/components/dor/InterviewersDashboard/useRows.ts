@@ -33,9 +33,9 @@ export function useRows(
   return useQuery({
     queryKey: [
       "all-interviewers-rows",
-      interviewers.map(x => x.id),
-      interviewData.map(x => x.id),
-      assignments.map(x => x.id),
+      interviewers.map((x) => x.id).sort(),
+      interviewData.map((x) => x.id).sort(),
+      assignments.map((x) => x.id).sort(),
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {

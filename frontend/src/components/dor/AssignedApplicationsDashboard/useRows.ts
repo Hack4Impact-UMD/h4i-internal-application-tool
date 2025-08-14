@@ -27,18 +27,22 @@ export type AssignedAppRow = {
 
 export function useRows(assignments: AppReviewAssignment[], formId: string) {
   return useQuery({
-    queryKey: ["application-assignment-rows", assignments.map(x => x.id), formId],
+    queryKey: [
+      "application-assignment-rows",
+      assignments.map((x) => x.id).sort(),
+      formId,
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
         assignments.map(async (assignment, index) => {
-
           const [applicant, review] = await Promise.all([
             getUserById(assignment.applicantId),
-            getReviewDataForAssignment(assignment)
+            getReviewDataForAssignment(assignment),
           ]);
 
-          if (applicant.role != PermissionRole.Applicant) throw new Error(`User ${applicant.id} is not an applicant`)
+          if (applicant.role != PermissionRole.Applicant)
+            throw new Error(`User ${applicant.id} is not an applicant`);
 
           const row: AssignedAppRow = {
             applicant: applicant,
@@ -51,12 +55,14 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             review: review,
             score: review
               ? {
-                value: await calculateReviewScore(review).catch((err) => {
-                  console.warn(`Failed to calculate score for ${applicant.id}: ${err}`)
-                  return NaN
-                }),
-                outOf: 4, // NOTE: All scores are assumed to be out of 4
-              }
+                  value: await calculateReviewScore(review).catch((err) => {
+                    console.warn(
+                      `Failed to calculate score for ${applicant.id}: ${err}`,
+                    );
+                    return NaN;
+                  }),
+                  outOf: 4, // NOTE: All scores are assumed to be out of 4
+                }
               : undefined,
           };
 

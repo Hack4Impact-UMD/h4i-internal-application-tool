@@ -32,7 +32,12 @@ export function useRows(
   reviewData: ApplicationReviewData[],
 ) {
   return useQuery({
-    queryKey: ["all-reviewers-rows", reviewers.map(x => x.id), assignments.map(x => x.id), reviewData.map(x => x.id)],
+    queryKey: [
+      "all-reviewers-rows",
+      reviewers.map((x) => x.id).sort(),
+      assignments.map((x) => x.id).sort(),
+      reviewData.map((x) => x.id).sort(),
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       const assignmentsByReviewer = new Map<string, number>();
@@ -55,8 +60,8 @@ export function useRows(
 
       return Promise.all(
         reviewers.map(async (reviewer, index) => {
-          const assigned = assignmentsByReviewer.get(reviewer.id) ?? 0
-          const submitted = submittedByReviewer.get(reviewer.id) ?? 0
+          const assigned = assignmentsByReviewer.get(reviewer.id) ?? 0;
+          const submitted = submittedByReviewer.get(reviewer.id) ?? 0;
 
           const row: ReviewerRow = {
             index: 1 + index,
@@ -66,9 +71,7 @@ export function useRows(
             },
             rolePreferences: reviewer.applicantRolePreferences,
             assignments: assigned,
-            pendingAssignments:
-              assigned -
-              submitted,
+            pendingAssignments: assigned - submitted,
           };
 
           return row;

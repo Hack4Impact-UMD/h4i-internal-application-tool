@@ -31,7 +31,11 @@ export type QualifiedAppRow = {
 
 export function useRows(applications: ApplicationResponse[], formId: string) {
   return useQuery<QualifiedAppRow[]>({
-    queryKey: ["qualified-apps-rows", formId, applications.map(x => x.id)],
+    queryKey: [
+      "qualified-apps-rows",
+      formId,
+      applications.map((x) => x.id).sort(),
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

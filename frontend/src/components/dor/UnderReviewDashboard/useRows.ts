@@ -38,7 +38,7 @@ export type ApplicationRow = {
 
 export function useRows(applications: ApplicationResponse[], formId: string) {
   return useQuery({
-    queryKey: ["all-apps-rows", applications.map(a => a.id), formId],
+    queryKey: ["all-apps-rows", applications.map((a) => a.id).sort(), formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
@@ -47,13 +47,9 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
 
           const [user, reviews, allAssignments] = await Promise.all([
             getApplicantById(app.userId),
-            getReviewDataForResponseRole(
-              formId,
-              app.id,
-              role,
-            ),
-            getReviewAssignmentsForApplication(app.id)
-          ])
+            getReviewDataForResponseRole(formId, app.id, role),
+            getReviewAssignmentsForApplication(app.id),
+          ]);
           const assignments = allAssignments.filter((a) => a.forRole === role);
 
           const completedReviews = reviews.filter((r) => r.submitted).length;
@@ -61,19 +57,19 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             completedReviews == 0
               ? 0
               : (
-                await Promise.all(
-                  reviews
-                    .filter((r) => r.submitted)
-                    .map(async (r) => await calculateReviewScore(r).catch(() => NaN)),
-                )
-              ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                  await Promise.all(
+                    reviews
+                      .filter((r) => r.submitted)
+                      .map(
+                        async (r) =>
+                          await calculateReviewScore(r).catch(() => NaN),
+                      ),
+                  )
+                ).reduce((acc, v) => acc + v, 0) / completedReviews;
           let status: InternalApplicationStatus | undefined;
 
           try {
-            status = await getApplicationStatusForResponseRole(
-              app.id,
-              role
-            );
+            status = await getApplicationStatusForResponseRole(app.id, role);
           } catch (error) {
             console.log(
               `Failed to fetch application status for application ${app.id}-${role}: ${error}`,
