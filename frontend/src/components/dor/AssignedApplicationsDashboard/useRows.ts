@@ -25,55 +25,49 @@ export type AssignedAppRow = {
   responseId: string;
 };
 
-export function useRows(
-  assignments: AppReviewAssignment[],
-  pageIndex: number,
-  rowCount: number,
-  formId: string,
-) {
+export function useRows(assignments: AppReviewAssignment[], formId: string) {
   return useQuery({
     queryKey: [
       "application-assignment-rows",
-      pageIndex,
-      assignments,
-      rowCount,
+      assignments.map((x) => x.id).sort(),
       formId,
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
-        assignments
-          .slice(
-            pageIndex * rowCount,
-            Math.min(assignments.length, (pageIndex + 1) * rowCount),
-          )
-          .map(async (assignment, index) => {
-            const applicant = await getUserById(assignment.applicantId);
+        assignments.map(async (assignment, index) => {
+          const [applicant, review] = await Promise.all([
+            getUserById(assignment.applicantId),
+            getReviewDataForAssignment(assignment),
+          ]);
 
-            if (!applicant || applicant.role !== PermissionRole.Applicant)
-              throw new Error("Invalid applicant!");
+          if (applicant.role != PermissionRole.Applicant)
+            throw new Error(`User ${applicant.id} is not an applicant`);
 
-            const review = await getReviewDataForAssignment(assignment);
+          const row: AssignedAppRow = {
+            applicant: applicant,
+            applicantId: assignment.applicantId,
+            applicantName: `${applicant.firstName} ${applicant.lastName}`,
+            index: 1 + index,
+            formId: assignment.formId,
+            responseId: assignment.applicationResponseId,
+            role: assignment.forRole,
+            review: review,
+            score: review
+              ? {
+                  value: await calculateReviewScore(review).catch((err) => {
+                    console.warn(
+                      `Failed to calculate score for ${applicant.id}: ${err}`,
+                    );
+                    return NaN;
+                  }),
+                  outOf: 4, // NOTE: All scores are assumed to be out of 4
+                }
+              : undefined,
+          };
 
-            const row: AssignedAppRow = {
-              applicant: applicant,
-              applicantId: assignment.applicantId,
-              applicantName: `${applicant.firstName} ${applicant.lastName}`,
-              index: 1 + pageIndex * rowCount + index,
-              formId: assignment.formId,
-              responseId: assignment.applicationResponseId,
-              role: assignment.forRole,
-              review: review,
-              score: review
-                ? {
-                    value: await calculateReviewScore(review),
-                    outOf: 4, // NOTE: All scores are assummed to be out of 4
-                  }
-                : undefined,
-            };
-
-            return row;
-          }),
+          return row;
+        }),
       );
     },
   });

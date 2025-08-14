@@ -29,79 +29,64 @@ export type QualifiedAppRow = {
   status?: InternalApplicationStatus;
 };
 
-export function useRows(
-  pageIndex: number,
-  applications: ApplicationResponse[],
-  rowCount: number,
-  formId: string,
-) {
+export function useRows(applications: ApplicationResponse[], formId: string) {
   return useQuery<QualifiedAppRow[]>({
     queryKey: [
       "qualified-apps-rows",
       formId,
-      pageIndex,
-      rowCount,
-      applications,
+      applications.map((x) => x.id).sort(),
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
-        applications
-          .slice(
-            pageIndex * rowCount,
-            Math.min(applications.length, (pageIndex + 1) * rowCount),
-          )
-          .map(async (app, index) => {
-            const user = await getApplicantById(app.userId);
-            // Get interview assignments for this application
-            const assignments = (
-              await getInterviewAssignmentsForApplication(app.id)
-            ).filter((a) => a.forRole === app.rolesApplied[0]);
-            // Get all assigned interviewer profiles
-            const assignedInterviewers: ReviewerUserProfile[] = (
-              await Promise.all(
-                assignments.map(
-                  async (a) => await getUserById(a.interviewerId),
-                ),
-              )
-            ).filter(
-              (u): u is ReviewerUserProfile =>
-                u.role === PermissionRole.Reviewer,
+        applications.map(async (app, index) => {
+          const user = await getApplicantById(app.userId);
+          // Get interview assignments for this application
+          const assignments = (
+            await getInterviewAssignmentsForApplication(app.id)
+          ).filter((a) => a.forRole === app.rolesApplied[0]);
+          // Get all assigned interviewer profiles
+          const assignedInterviewers: ReviewerUserProfile[] = (
+            await Promise.all(
+              assignments.map((a) => getUserById(a.interviewerId)),
+            )
+          ).filter(
+            (u): u is ReviewerUserProfile => u.role === PermissionRole.Reviewer,
+          );
+          // Get interview data for this application/role
+          const interviews = await getInterviewDataForResponseRole(
+            formId,
+            app.id,
+            app.rolesApplied[0],
+          );
+          const submittedInterviews = interviews.filter((i) => i.submitted);
+          // Calculate average score
+          let averageScore: number | null = null;
+          if (submittedInterviews.length > 0) {
+            const scores = await Promise.all(
+              submittedInterviews.map(
+                async (i) => await calculateInterviewScore(i),
+              ),
             );
-            // Get interview data for this application/role
-            const interviews = await getInterviewDataForResponseRole(
-              formId,
-              app.id,
-              app.rolesApplied[0],
-            );
-            const submittedInterviews = interviews.filter((i) => i.submitted);
-            // Calculate average score
-            let averageScore: number | null = null;
-            if (submittedInterviews.length > 0) {
-              const scores = await Promise.all(
-                submittedInterviews.map(
-                  async (i) => await calculateInterviewScore(i),
-                ),
-              );
-              averageScore =
-                scores.reduce((acc, v) => acc + v, 0) / scores.length;
-            }
-            const status = await getApplicationStatusForResponseRole(
-              app.id,
-              app.rolesApplied[0],
-            );
-            return {
-              index: 1 + pageIndex * rowCount + index,
-              name: `${user.firstName} ${user.lastName}`,
-              role: app.rolesApplied[0],
-              interviewers: { assigned: assignedInterviewers },
-              assignments,
-              averageScore,
-              responseId: app.id,
-              interviews,
-              status,
-            } as QualifiedAppRow;
-          }),
+            averageScore =
+              scores.reduce((acc, v) => acc + v, 0) / scores.length;
+          }
+          const status = await getApplicationStatusForResponseRole(
+            app.id,
+            app.rolesApplied[0],
+          );
+          return {
+            index: 1 + index,
+            name: `${user.firstName} ${user.lastName}`,
+            role: app.rolesApplied[0],
+            interviewers: { assigned: assignedInterviewers },
+            assignments,
+            averageScore,
+            responseId: app.id,
+            interviews,
+            status,
+          } as QualifiedAppRow;
+        }),
       );
     },
     refetchOnWindowFocus: true,

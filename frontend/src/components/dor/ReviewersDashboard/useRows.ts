@@ -27,45 +27,55 @@ export type FlatReviewerRow = {
 };
 
 export function useRows(
-  pageIndex: number,
   reviewers: ReviewerUserProfile[],
   assignments: AppReviewAssignment[],
   reviewData: ApplicationReviewData[],
-  rowCount: number,
 ) {
   return useQuery({
-    queryKey: ["all-reviewers-rows", pageIndex, reviewers],
+    queryKey: [
+      "all-reviewers-rows",
+      reviewers.map((x) => x.id).sort(),
+      assignments.map((x) => x.id).sort(),
+      reviewData.map((x) => x.id).sort(),
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
+      const assignmentsByReviewer = new Map<string, number>();
+      for (const a of assignments) {
+        assignmentsByReviewer.set(
+          a.reviewerId,
+          (assignmentsByReviewer.get(a.reviewerId) ?? 0) + 1,
+        );
+      }
+
+      const submittedByReviewer = new Map<string, number>();
+      for (const d of reviewData) {
+        if (d.submitted) {
+          submittedByReviewer.set(
+            d.reviewerId,
+            (submittedByReviewer.get(d.reviewerId) ?? 0) + 1,
+          );
+        }
+      }
+
       return Promise.all(
-        reviewers
-          .slice(
-            pageIndex * rowCount,
-            Math.min(reviewers.length, (pageIndex + 1) * rowCount),
-          )
-          .map(async (reviewer, index) => {
-            const reviewerAssignments = assignments.filter(
-              (assignment) => assignment.reviewerId == reviewer.id,
-            );
-            const reviewerReviewData = reviewData.filter(
-              (reviewData) => reviewData.reviewerId == reviewer.id,
-            );
+        reviewers.map(async (reviewer, index) => {
+          const assigned = assignmentsByReviewer.get(reviewer.id) ?? 0;
+          const submitted = submittedByReviewer.get(reviewer.id) ?? 0;
 
-            const row: ReviewerRow = {
-              index: 1 + pageIndex * rowCount + index,
-              reviewer: {
-                id: reviewer.id,
-                name: `${reviewer.firstName} ${reviewer.lastName}`,
-              },
-              rolePreferences: reviewer.applicantRolePreferences,
-              assignments: reviewerAssignments.length,
-              pendingAssignments:
-                reviewerAssignments.length -
-                reviewerReviewData.filter((data) => data.submitted).length,
-            };
+          const row: ReviewerRow = {
+            index: 1 + index,
+            reviewer: {
+              id: reviewer.id,
+              name: `${reviewer.firstName} ${reviewer.lastName}`,
+            },
+            rolePreferences: reviewer.applicantRolePreferences,
+            assignments: assigned,
+            pendingAssignments: assigned - submitted,
+          };
 
-            return row;
-          }),
+          return row;
+        }),
       );
     },
   });

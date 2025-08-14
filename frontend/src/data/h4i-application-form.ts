@@ -126,41 +126,53 @@ Thank you for your patience during the application and interview process. Based 
   },
   scoreWeights: {
     [ApplicantRole.Bootcamp]: {
-      "Interest in the club": 0.5,
-      "Interest in Social Good": 0.5,
-      "Technical Expertise": 0, // noted but not weighted
+      "interest-in-club": 0.5,
+      "social-good": 0.5,
+      "technical-expertise": 0, // noted but not weighted
     },
     [ApplicantRole.Engineer]: {
-      "Technical Expertise": 0.5,
-      "Interest in the club": 0.25,
-      "Interest in Social Good": 0.25,
+      "technical-expertise": 0.5,
+      "interest-in-club": 0.25,
+      "social-good": 0.25,
+      /*
+      "tech-assessment-functionality": 0.3215 / 2,
+      "tech-assessment-visual": 0.21875 / 2,
+      "tech-assessment-coding-practices": 0.28125 / 2,
+      "tech-assessment-coding-style": 0.1875 / 2,
+      */
     },
     [ApplicantRole.Designer]: {
-      "Technical Expertise": 0.5,
-      "Interest in the club": 0.25,
-      "Interest in Social Good": 0.25,
+      "technical-expertise": 0.5,
+      "interest-in-club": 0.25,
+      "social-good": 0.25,
     },
     [ApplicantRole.Product]: {
-      "Technical Expertise": 0.5,
-      "Interest in the club": 0.25,
-      "Interest in Social Good": 0.25,
+      "technical-expertise": 0.5,
+      "interest-in-club": 0.25,
+      "social-good": 0.25,
     },
     [ApplicantRole.TechLead]: {
-      "Technical Expertise": 0.5,
-      "Interest in the club": 0.25,
-      "Interest in Social Good": 0.25,
+      "technical-expertise": 0.5,
+      "interest-in-club": 0.25,
+      "social-good": 0.25,
+      /*
+      "tech-assessment-functionality": 0.3215 / 2,
+      "tech-assessment-visual": 0.21875 / 2,
+      "tech-assessment-coding-practices": 0.28125 / 2,
+      "tech-assessment-coding-style": 0.1875 / 2,
+      */
     },
     [ApplicantRole.SocialMedia]: {
-      "Interest in the club": 0.3,
-      "Interest in Social Good": 0.3,
-      "Marketing Expertise": 0.3,
-      "Communication & Writing Skills": 0.1,
+      "interest-in-club": 0.3,
+      "social-good": 0.3,
+      "marketing-expertise": 0.3,
+      "comm-and-writing-skills": 0.1,
     },
     [ApplicantRole.OutreachCoord]: {
-      "Interest in the club": 0.3,
-      "Interest in Social Good": 0.3,
-      "NPO Expertise": 0.3,
-      "Communication & Writing Skills": 0.1,
+      "interest-in-club": 0.3,
+      "social-good": 0.3,
+      "npo-expertise": 0.3,
+      "comm-and-writing-skills": 0.1,
     },
   },
   sections: [

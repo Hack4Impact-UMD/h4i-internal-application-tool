@@ -1,3 +1,4 @@
+import { throwWarningToast } from "@/components/toasts/WarningToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import {
   ApplicantRole,
@@ -15,6 +16,31 @@ export async function calculateReviewScore(
   const form: ApplicationForm = await getApplicationForm(
     review.applicationFormId,
   );
+
+  const weightsForRole = form.scoreWeights?.[review.forRole];
+  if (!weightsForRole) {
+    console.warn(
+      "Form does not have weights, falling back to average scoring!",
+    );
+    throwWarningToast(
+      "Form does not have weights, falling back to average scoring!",
+    );
+    return roundScore(averageScore(review), 2);
+  }
+  const formWeightKeys = Object.keys(weightsForRole);
+  const scoreKeys = Object.keys(review.applicantScores ?? {});
+  const keysMatch =
+    formWeightKeys.length === scoreKeys.length &&
+    formWeightKeys.every((k) => k in review.applicantScores) &&
+    scoreKeys.every((k) => k in weightsForRole);
+  if (!keysMatch && scoreKeys.length >= formWeightKeys.length) {
+    console.warn("SCORE KEY MISMATCH: Falling back to average scoring!");
+    console.warn(`Expected: ${formWeightKeys}. Got: ${scoreKeys}`);
+    throwWarningToast(
+      "Score key mismatch found, falling back to simple average!",
+    );
+    return roundScore(averageScore(review), 2);
+  }
 
   if (!form.scoreWeights) {
     // fallback to simple average

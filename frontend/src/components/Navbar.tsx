@@ -25,7 +25,7 @@ function Navbar({ className }: { className?: string }) {
             />
           </NavLink>
           <span className="text-blue font-bold text-lg sm:hidden block">
-            H4I-UMD
+            <img className="w-7" src="/h4i-logo.png" alt="hack4impact-UMD" />
           </span>
           {user?.role && user.role != PermissionRole.Applicant && (
             <>

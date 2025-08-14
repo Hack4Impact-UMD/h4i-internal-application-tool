@@ -229,13 +229,7 @@ export default function ReviewersTable({
     data: rows,
     isPending,
     error,
-  } = useRows(
-    pagination.pageIndex,
-    reviewers,
-    assignments,
-    reviewData,
-    rowCount,
-  );
+  } = useRows(reviewers, assignments, reviewData);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
@@ -249,8 +243,6 @@ export default function ReviewersTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           enableColumnFilters: true,

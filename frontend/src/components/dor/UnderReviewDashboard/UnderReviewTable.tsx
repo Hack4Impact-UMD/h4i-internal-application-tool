@@ -77,9 +77,9 @@ export default function SuperReviewerApplicationsTable({
       throwErrorToast("Failed to assign reviewer!");
       console.log(error);
     },
-    onSettled: (_data, _err, variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["all-apps-rows", variables.pageIndex, applications],
+        queryKey: ["all-apps-rows"],
       });
       queryClient.invalidateQueries({
         predicate: (q) =>
@@ -111,9 +111,9 @@ export default function SuperReviewerApplicationsTable({
       );
       console.log(error);
     },
-    onSettled: (_data, _err, variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["all-apps-rows", variables.pageIndex, applications],
+        queryKey: ["all-apps-rows"],
       });
       queryClient.invalidateQueries({
         predicate: (q) =>
@@ -131,16 +131,16 @@ export default function SuperReviewerApplicationsTable({
     },
     onMutate: async ({ status }) => {
       await queryClient.cancelQueries({
-        queryKey: ["all-apps-rows", pagination.pageIndex, applications],
+        queryKey: ["all-apps-rows"],
       });
       const oldRows = queryClient.getQueryData([
         "all-apps-rows",
-        pagination.pageIndex,
         applications,
+        formId,
       ]);
 
       queryClient.setQueryData(
-        ["all-apps-rows", pagination.pageIndex, applications],
+        ["all-apps-rows", applications, formId],
         (old: ApplicationRow[]) =>
           old.map((row) => {
             if (row.status?.id === status.id) {
@@ -162,15 +162,12 @@ export default function SuperReviewerApplicationsTable({
       };
     },
     onError: (error, _resp, ctx) => {
-      queryClient.setQueryData(
-        ["all-apps-rows", pagination.pageIndex, applications],
-        ctx?.oldRows,
-      );
+      queryClient.setQueriesData({ queryKey: ["all-apps-rows"] }, ctx?.oldRows);
       throwErrorToast("Failed to update qualified status: " + error);
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["all-apps-rows", pagination.pageIndex, applications],
+        queryKey: ["all-apps-rows"],
       });
       queryClient.invalidateQueries({
         predicate: (q) => q.queryKey.includes("qualified-apps-rows"),
@@ -264,9 +261,7 @@ export default function SuperReviewerApplicationsTable({
         columnHelper.accessor("reviews.averageScore", {
           id: "avg-score",
           header: ({ column }) => {
-            return (
-              <SortableHeader column={column}>REV. COMPLETE</SortableHeader>
-            );
+            return <SortableHeader column={column}>AVG. SCORE</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
             if (row.original.reviews.completed == 0) return "N/A";
@@ -352,11 +347,7 @@ export default function SuperReviewerApplicationsTable({
     ],
   );
 
-  const {
-    data: rows,
-    isPending,
-    error,
-  } = useRows(pagination.pageIndex, applications, rowCount, formId);
+  const { data: rows, isPending, error } = useRows(applications, formId);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
@@ -369,8 +360,6 @@ export default function SuperReviewerApplicationsTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           state: {

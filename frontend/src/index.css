@@ -7,20 +7,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
-  --color-blue: #317fd0;
-  --color-white: #ffffff;
-  --color-red: #fd1fff;
-  --color-lightgray: #f1f1f1;
-  --color-gray: #fafafa;
-  --color-darkgray: #636363;
-  --color-black: #202020;
-  --color-fg: #565656;
-  --color-lightblue: rgb(194, 224, 251);
-  --color-darkblue: rgb(41, 105, 196);
-  --color-teal: rgb(203, 248, 243);
-}
-
 * {
   /* margin: 0; */
   /* padding: 0; */
@@ -83,6 +69,20 @@ body,
 }
 
 @theme inline {
+  --color-blue: #317fd0;
+  --color-white: #ffffff;
+  --color-red: #fd1fff;
+  --color-lightgray: #f1f1f1;
+  --color-gray: #fafafa;
+  --color-darkgray: #636363;
+  --color-black: #202020;
+  --color-fg: #565656;
+  --color-lightblue: rgb(194, 224, 251);
+  --color-darkblue: rgb(41, 105, 196);
+  --color-teal: rgb(203, 248, 243);
+  /*
+  * SHADCN VARS:
+  */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

@@ -27,7 +27,7 @@ const AppSubmitted = lazy(
   () => import("./pages/applicant/app-submitted/AppSubmitted"),
 );
 const AppSubmitPage = lazy(() => import("./pages/applicant/AppSubmitPage"));
-const AppReviewPage = lazy(() => import("./pages/applicant/AppReviewPage"));
+const AppReviewPage = lazy(() => import("./pages/reviewer/AppReviewPage"));
 const UserRolePage = lazy(
   () => import("./pages/super-reviewer/dashboards/UserRolePage"),
 );

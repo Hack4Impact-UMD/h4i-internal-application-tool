@@ -32,10 +32,14 @@ export default function FormProvider() {
   const [selectedRoles, setSelectedRoles] = useState<ApplicantRole[]>([]);
 
   useEffect(() => {
-    setResponse(old => old ? ({
-      ...old,
-      rolesApplied: selectedRoles,
-    }) : old);
+    setResponse((old) =>
+      old
+        ? {
+            ...old,
+            rolesApplied: selectedRoles,
+          }
+        : old,
+    );
   }, [selectedRoles]);
 
   useEffect(() => {
@@ -127,7 +131,7 @@ export default function FormProvider() {
               return {
                 ...s,
                 questions: s.questions.map((q) =>
-                  q.questionId === questionId ? { ...q, response: resp } : q
+                  q.questionId === questionId ? { ...q, response: resp } : q,
                 ),
               };
             }
@@ -189,7 +193,10 @@ export default function FormProvider() {
               className={`w-fit ${saveMutation.isError ? "bg-red-100" : "bg-lightblue"} rounded-full px-2 text-blue`}
             >
               {saveMutation.isPending ? (
-                <p className="pulse font-bold flex flex-row items-center gap-1"><Spinner className="inline size-4" />Saving...</p>
+                <p className="pulse font-bold flex flex-row items-center gap-1">
+                  <Spinner className="inline size-4" />
+                  Saving...
+                </p>
               ) : saveMutation.submittedAt != 0 && !saveMutation.isError ? (
                 <p>
                   Last save:{" "}
