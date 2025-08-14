@@ -38,7 +38,7 @@ export type ApplicationRow = {
 
 export function useRows(applications: ApplicationResponse[], formId: string) {
   return useQuery({
-    queryKey: ["all-apps-rows", applications, formId],
+    queryKey: ["all-apps-rows", applications.map(a => a.id), formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
@@ -58,12 +58,12 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             completedReviews == 0
               ? 0
               : (
-                  await Promise.all(
-                    reviews
-                      .filter((r) => r.submitted)
-                      .map(async (r) => await calculateReviewScore(r)),
-                  )
-                ).reduce((acc, v) => acc + v, 0) / completedReviews;
+                await Promise.all(
+                  reviews
+                    .filter((r) => r.submitted)
+                    .map(async (r) => await calculateReviewScore(r)),
+                )
+              ).reduce((acc, v) => acc + v, 0) / completedReviews;
           let status: InternalApplicationStatus | undefined;
 
           try {

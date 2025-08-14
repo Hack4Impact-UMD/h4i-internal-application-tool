@@ -32,7 +32,7 @@ export function useRows(
   reviewData: ApplicationReviewData[],
 ) {
   return useQuery({
-    queryKey: ["all-reviewers-rows", reviewers, assignments, reviewData],
+    queryKey: ["all-reviewers-rows", reviewers.map(x => x.id), assignments.map(x => x.id), reviewData.map(x => x.id)],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(

@@ -27,7 +27,7 @@ export type AssignedAppRow = {
 
 export function useRows(assignments: AppReviewAssignment[], formId: string) {
   return useQuery({
-    queryKey: ["application-assignment-rows", assignments, formId],
+    queryKey: ["application-assignment-rows", assignments.map(x => x.id), formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
@@ -50,9 +50,9 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             review: review,
             score: review
               ? {
-                  value: await calculateReviewScore(review),
-                  outOf: 4, // NOTE: All scores are assummed to be out of 4
-                }
+                value: await calculateReviewScore(review),
+                outOf: 4, // NOTE: All scores are assummed to be out of 4
+              }
               : undefined,
           };
 
