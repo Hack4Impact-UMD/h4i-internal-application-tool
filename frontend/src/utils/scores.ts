@@ -63,10 +63,11 @@ export async function calculateReviewScore(
   return roundScore(score, 2);
 }
 
+// TODO replicate review score here
 export async function calculateInterviewScore(
   interviewData: ApplicationInterviewData,
 ): Promise<number> {
-  return Promise.resolve(interviewData.interviewScore);
+  return Promise.resolve(-1);
 }
 
 function averageScore(review: ApplicationReviewData) {

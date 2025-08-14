@@ -225,8 +225,8 @@ const InterviewPage: React.FC = () => {
         ) : interviewScoreError ? (
           `Failed to calculate score: ${interviewScoreError.message}`
         ) : (
-          <span className="text-lg text-blue w-64 mr-2">
-            Review Score:{" "}
+          <span className="text-lg text-blue w-66 mr-2">
+            Interview Score:{" "}
             {typeof interviewScore === "number" ? (
               <>
                 <span className="font-bold">{interviewScore.toFixed(2) ?? "N/A"}</span> /
@@ -273,8 +273,8 @@ const InterviewPage: React.FC = () => {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="flex gap-2 justify-center grow overflow-scroll pt-2">
-        <div className="w-1/2 overflow-y-scroll flex flex-col gap-2">
+      <div className="flex gap-2 justify-center grow pt-2">
+        <div className="w-1/2 flex flex-col gap-2">
           {sortedInterviewRubrics.map((r) => (
             <RoleRubric
               key={r.id}
@@ -283,6 +283,7 @@ const InterviewPage: React.FC = () => {
               onCommentChange={commentChange}
               interviewData={interviewData}
               disabled={optimisticInterviewData.submitted}
+              role={interviewData.forRole}
             />
           ))}
         </div>

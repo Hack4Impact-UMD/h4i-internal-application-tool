@@ -159,3 +159,28 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     ],
   },
 ];
+
+// TODO: manually add the interview rubrics here!
+export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
+  {
+    id: "2025-general-interview-rubric",
+    formId: FORM_ID,
+    roles: [],
+    rubricQuestions: [
+      {
+        scoreKey: "interest-in-club",
+        prompt: "Interest in the club",
+        description: `1. Applicant has generic responses and puts in the bare minimum into for responses, such as one or two line answers for why they want to join.\n2. Applicant seems to have put in at least some effort into constructing a response to why they want to join, but reasons are vague and unclear.\n3. Applicant has well-written reasons for wanting to join Hack4Impact. Things preventing a 3 from a 4 could be if the applicant’s reasons could be satisfied at other clubs and not mentioning anything Hack4Impact specific.\n4. Applicant has clear and well-written reasons for wanting to join Hack4Impact specifically. Things to look for would be mentioning past projects or information from our website (showing initiative in looking up our website). If they’ve attended one of our past events, that would be a plus as well.`,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "social-good",
+        prompt: "Interest in social good",
+        description: `1. Applicant doesn’t mention the social impact of the club - clearly just wants to use Hack4Impact as a resume booster.\n2. Applicant mentions social impact but reasons are vague and answers to specific social initiatives seem generic and insincere.\n3. Applicant has detailed response to social initiatives and shows passion for doing social good.\n4. Applicant goes above and beyond on social initiatives that they are passionate about. Applicant shows passion about using their abilities to do good in the community, and has shown past initiative in terms of giving back to the community.`,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+];
