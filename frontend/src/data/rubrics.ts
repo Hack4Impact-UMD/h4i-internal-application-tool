@@ -123,6 +123,7 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
       },
     ],
   },
+  /*
   {
     id: "2025-tech-assessment-rubric",
     formId: FORM_ID,
@@ -158,4 +159,5 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
       },
     ],
   },
+  */
 ];
