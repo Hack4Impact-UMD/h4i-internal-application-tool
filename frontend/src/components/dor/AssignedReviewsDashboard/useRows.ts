@@ -32,12 +32,13 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
     queryFn: async () => {
       return Promise.all(
         assignments.map(async (assignment, index) => {
-          const reviewer = await getUserById(assignment.reviewerId);
+          const [reviewer, review] = await Promise.all([
+            getUserById(assignment.reviewerId),
+            getReviewDataForAssignment(assignment)
+          ]);
 
           if (!reviewer || reviewer.role !== PermissionRole.Reviewer)
             throw new Error("Invalid reviewer!");
-
-          const review = await getReviewDataForAssignment(assignment);
 
           const row: AssignedAppRow = {
             reviewer: reviewer,
@@ -50,8 +51,11 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             review: review,
             score: review
               ? {
-                value: await calculateReviewScore(review),
-                outOf: 4, // NOTE: All scores are assummed to be out of 4
+                value: await calculateReviewScore(review).catch(err => {
+                  console.warn(`Failed to calculate score for review ${review.id}: ${err}`)
+                  return NaN
+                }),
+                outOf: 4, // NOTE: All scores are assumed to be out of 4
               }
               : undefined,
           };
