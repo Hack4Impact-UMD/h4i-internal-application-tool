@@ -27,45 +27,38 @@ export type FlatReviewerRow = {
 };
 
 export function useRows(
-  pageIndex: number,
   reviewers: ReviewerUserProfile[],
   assignments: AppReviewAssignment[],
   reviewData: ApplicationReviewData[],
-  rowCount: number,
 ) {
   return useQuery({
-    queryKey: ["all-reviewers-rows", pageIndex, reviewers],
+    queryKey: ["all-reviewers-rows", reviewers, assignments, reviewData],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
-        reviewers
-          .slice(
-            pageIndex * rowCount,
-            Math.min(reviewers.length, (pageIndex + 1) * rowCount),
-          )
-          .map(async (reviewer, index) => {
-            const reviewerAssignments = assignments.filter(
-              (assignment) => assignment.reviewerId == reviewer.id,
-            );
-            const reviewerReviewData = reviewData.filter(
-              (reviewData) => reviewData.reviewerId == reviewer.id,
-            );
+        reviewers.map(async (reviewer, index) => {
+          const reviewerAssignments = assignments.filter(
+            (assignment) => assignment.reviewerId == reviewer.id,
+          );
+          const reviewerReviewData = reviewData.filter(
+            (reviewData) => reviewData.reviewerId == reviewer.id,
+          );
 
-            const row: ReviewerRow = {
-              index: 1 + pageIndex * rowCount + index,
-              reviewer: {
-                id: reviewer.id,
-                name: `${reviewer.firstName} ${reviewer.lastName}`,
-              },
-              rolePreferences: reviewer.applicantRolePreferences,
-              assignments: reviewerAssignments.length,
-              pendingAssignments:
-                reviewerAssignments.length -
-                reviewerReviewData.filter((data) => data.submitted).length,
-            };
+          const row: ReviewerRow = {
+            index: 1 + index,
+            reviewer: {
+              id: reviewer.id,
+              name: `${reviewer.firstName} ${reviewer.lastName}`,
+            },
+            rolePreferences: reviewer.applicantRolePreferences,
+            assignments: reviewerAssignments.length,
+            pendingAssignments:
+              reviewerAssignments.length -
+              reviewerReviewData.filter((data) => data.submitted).length,
+          };
 
-            return row;
-          }),
+          return row;
+        }),
       );
     },
   });

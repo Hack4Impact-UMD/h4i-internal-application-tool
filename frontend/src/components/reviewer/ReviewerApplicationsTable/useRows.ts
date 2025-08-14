@@ -23,43 +23,33 @@ export type AssignmentRow = {
   };
 };
 
-export function useRows(
-  assignments: AppReviewAssignment[],
-  pageIndex: number,
-  rowCount: number,
-  formId: string,
-) {
+export function useRows(assignments: AppReviewAssignment[], formId: string) {
   return useQuery({
-    queryKey: ["my-assignment-rows", pageIndex, assignments, rowCount, formId],
+    queryKey: ["my-assignment-rows", assignments, formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
-        assignments
-          .slice(
-            pageIndex * rowCount,
-            Math.min(assignments.length, (pageIndex + 1) * rowCount),
-          )
-          .map(async (assignment, index) => {
-            const user = await getApplicantById(assignment.applicantId);
-            const review = await getReviewDataForAssignment(assignment);
+        assignments.map(async (assignment, index) => {
+          const user = await getApplicantById(assignment.applicantId);
+          const review = await getReviewDataForAssignment(assignment);
 
-            const row: AssignmentRow = {
-              index: 1 + pageIndex * rowCount + index,
-              applicant: {
-                id: user.id,
-                name: `${user.firstName} ${user.lastName}`,
-              },
-              responseId: assignment.applicationResponseId,
-              role: assignment.forRole,
-              review: review,
-              score: {
-                value: review ? await calculateReviewScore(review) : undefined,
-                outOf: 4, // NOTE: All scores are assummed to be out of 4
-              },
-            };
+          const row: AssignmentRow = {
+            index: 1 + index,
+            applicant: {
+              id: user.id,
+              name: `${user.firstName} ${user.lastName}`,
+            },
+            responseId: assignment.applicationResponseId,
+            role: assignment.forRole,
+            review: review,
+            score: {
+              value: review ? await calculateReviewScore(review) : undefined,
+              outOf: 4, // NOTE: All scores are assummed to be out of 4
+            },
+          };
 
-            return row;
-          }),
+          return row;
+        }),
       );
     },
   });

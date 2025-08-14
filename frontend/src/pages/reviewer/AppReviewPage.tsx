@@ -31,13 +31,15 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { ApplicationReviewData } from "@/types/types";
+import { ApplicationReviewData, PermissionRole } from "@/types/types";
 import { CheckIcon, CircleAlertIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useUsers";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -55,6 +57,12 @@ function UserHeader({
   reviewData,
 }: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
+  const { user } = useAuth();
+  const {
+    data: reviewer,
+    isPending: reviewerPending,
+    error: reviewerError,
+  } = useUser(reviewData.reviewerId);
 
   if (isPending)
     return (
@@ -81,7 +89,23 @@ function UserHeader({
       <span>
         {reviewData.submitted ? (
           <span>
-            <CheckIcon className="inline size-5" /> Submitted
+            <CheckIcon className="inline size-5" /> Submitted{" "}
+            {user?.role === PermissionRole.SuperReviewer ? (
+              reviewerPending ? (
+                <p>by ...</p>
+              ) : reviewerError ? (
+                <p>by (failed to load reviewer) </p>
+              ) : (
+                <>
+                  by{" "}
+                  <strong>
+                    {reviewer.firstName} {reviewer.lastName}
+                  </strong>
+                </>
+              )
+            ) : (
+              <></>
+            )}
           </span>
         ) : lastSave ? (
           `Last saved ${new Date(lastSave).toLocaleTimeString()}`
@@ -93,7 +117,7 @@ function UserHeader({
   );
 }
 
-const ApplicationPage: React.FC = () => {
+const AppReviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { formId, responseId, reviewDataId } = useParams<{
     formId: string;
@@ -133,7 +157,7 @@ const ApplicationPage: React.FC = () => {
 
   const {
     data: score,
-    isPending: scorePending,
+    isFetching: scorePending,
     error: scoreError,
   } = useReviewScore(reviewData!);
 
@@ -150,7 +174,15 @@ const ApplicationPage: React.FC = () => {
   useEffect(() => {
     if (localNotes === undefined || !reviewData || reviewData.submitted) return;
     const ref = setTimeout(() => {
-      updateReviewData({ reviewerNotes: localNotes });
+      updateReviewData(
+        { reviewerNotes: localNotes },
+        {
+          onError: (err) => {
+            console.log("Autosave failed:", err);
+            throwErrorToast("Failed to autosave notes!");
+          },
+        },
+      );
     }, 1000);
     return () => clearTimeout(ref);
   }, [localNotes, reviewData, updateReviewData]);
@@ -339,7 +371,7 @@ const ApplicationPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => {}}
+                    onChangeResponse={() => { }}
                   />
                 </div>
               ))}
@@ -350,12 +382,14 @@ const ApplicationPage: React.FC = () => {
           <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full rounded-md">
             {sortedRubrics.map((r) => (
               <RoleRubric
+                role={reviewData.forRole}
                 key={r.id}
                 rubric={r}
                 onScoreChange={scoreChange}
                 onCommentChange={commentChange}
                 reviewData={optimisticReviewData}
                 disabled={optimisticReviewData.submitted}
+                form={form}
               />
             ))}
           </div>
@@ -365,4 +399,4 @@ const ApplicationPage: React.FC = () => {
   );
 };
 
-export default ApplicationPage;
+export default AppReviewPage;

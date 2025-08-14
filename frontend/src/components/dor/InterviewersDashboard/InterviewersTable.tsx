@@ -218,13 +218,7 @@ export default function InterviewersTable({
     data: rows,
     isPending,
     error,
-  } = useRows(
-    pagination.pageIndex,
-    interviewers,
-    interviewData,
-    assignments,
-    rowCount,
-  );
+  } = useRows(interviewers, interviewData, assignments);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
@@ -238,8 +232,6 @@ export default function InterviewersTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           enableColumnFilters: true,

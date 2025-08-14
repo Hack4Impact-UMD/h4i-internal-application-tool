@@ -316,12 +316,7 @@ export default function QualifiedApplicationsTable({
       newStatus: ReviewStatus;
     }) => updateApplicationStatus(statusId, { status: newStatus }),
     onMutate: async ({ statusId, newStatus }) => {
-      const queryKey = [
-        "qualified-apps-rows",
-        formId,
-        pagination.pageIndex,
-        rowCount,
-      ];
+      const queryKey = ["qualified-apps-rows", formId, applications];
       await queryClient.cancelQueries({ queryKey });
 
       const previousRows =
@@ -438,11 +433,7 @@ export default function QualifiedApplicationsTable({
     },
   });
 
-  const {
-    data: rows,
-    isPending,
-    error,
-  } = useRows(pagination.pageIndex, applications, rowCount, formId);
+  const { data: rows, isPending, error } = useRows(applications, formId);
 
   const columnHelper = createColumnHelper<QualifiedAppRow>();
   const cols = useMemo(
@@ -559,8 +550,6 @@ export default function QualifiedApplicationsTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           state: {

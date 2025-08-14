@@ -27,14 +27,15 @@ export async function calculateReviewScore(
     );
     return roundScore(averageScore(review), 2);
   }
-  const weightKeys = Object.keys(weightsForRole);
+  const formWeightKeys = Object.keys(weightsForRole);
   const scoreKeys = Object.keys(review.applicantScores ?? {});
   const keysMatch =
-    weightKeys.length === scoreKeys.length &&
-    weightKeys.every((k) => k in review.applicantScores) &&
+    formWeightKeys.length === scoreKeys.length &&
+    formWeightKeys.every((k) => k in review.applicantScores) &&
     scoreKeys.every((k) => k in weightsForRole);
-  if (!keysMatch) {
+  if (!keysMatch && scoreKeys.length >= formWeightKeys.length) {
     console.warn("SCORE KEY MISMATCH: Falling back to average scoring!");
+    console.warn(`Expected: ${formWeightKeys}. Got: ${scoreKeys}`);
     throwWarningToast(
       "Score key mismatch found, falling back to simple average!",
     );

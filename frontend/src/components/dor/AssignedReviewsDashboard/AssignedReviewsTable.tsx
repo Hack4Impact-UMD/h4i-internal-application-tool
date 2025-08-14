@@ -132,11 +132,7 @@ export default function AssignedReviewsTable({
     }
   }
 
-  const {
-    data: rows,
-    isPending,
-    error,
-  } = useRows(assignments, pagination.pageIndex, rowCount, formId);
+  const { data: rows, isPending, error } = useRows(assignments, formId);
 
   if (isPending || !rows) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
@@ -149,8 +145,6 @@ export default function AssignedReviewsTable({
         className="border-none rounded-none"
         options={{
           getPaginationRowModel: getPaginationRowModel(),
-          manualPagination: true,
-          onPaginationChange: setPagination,
           rowCount: rowCount,
           enableGlobalFilter: true,
           state: {

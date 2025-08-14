@@ -11,7 +11,7 @@ export default function WarningToast({ message }: { message: string }) {
 }
 
 export function throwWarningToast(message: string) {
-  toast.success(<WarningToast message={message} />, {
+  toast.warn(<WarningToast message={message} />, {
     closeButton: false,
     hideProgressBar: true,
     icon: false,

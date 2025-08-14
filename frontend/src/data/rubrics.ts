@@ -123,35 +123,34 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
       },
     ],
   },
-  //TODO: keys here need to be incorporated in to the formulas. The current formulas don't account for technical assessment scoring!!!
   {
     id: "2025-tech-assessment-rubric",
     formId: FORM_ID,
     roles: [ApplicantRole.Engineer, ApplicantRole.TechLead],
     rubricQuestions: [
       {
-        scoreKey: "techAssessmentFunctionality",
+        scoreKey: "tech-assessment-functionality",
         prompt: "Functionality",
         description: `1. The code barely functions. Clicking buttons doesn’t do anything.\n2. The code somewhat functions. There may be large errors, such as all artists display at once, but there is some level of functionality.\n3. It is mostly functional with a 1-2 minor errors (usually the artists do not cycle properly).\n4. Code is fully functional. The buttons do what they are supposed to. The artists cycle properly when the buttons clicked. If the cursor is not a pointer when the button is hovered, give a 3.5.`,
         minValue: 1,
         maxValue: 4,
       },
       {
-        scoreKey: "techAssessmentVisual",
+        scoreKey: "tech-assessment-visual",
         prompt: "Visual",
         description: `1. The design is not reflected in the submission. Elements are missing or completely different from the design.\n2. The page looks somewhat like the Figma. Major discrepancies exist in the design, but all features are displayed. Elements may be incorrectly aligned or sized. The key difference between a 2 and a 3 is that a 2 demonstrates that there was a large visual error that was clearly not addressed (such as the arrows being just lines instead of 2D).\n3. Different from the Figma in minor ways (e.g. corners not rounded, colors off). Objects are still oriented correctly on the page. Sizing and spacing should roughly match the Figma. A 3 usually indicates a minor spacing or margin errors, rather than any major error. A 3 can also be given if the components are different sizes for different artists.\n4. Looks almost identical to the Figma design. Colors are correct. Hover interactions and selected buttons look correct. Images are correctly sized. If the sizing is a bit big, and the page has a scrollbar it can still be given a 4 (if the sizing is comically big, maybe put it as a 3. If the top or bottom of the page has no margins, then give a 3.5.`,
         minValue: 1,
         maxValue: 4,
       },
       {
-        scoreKey: "techAssessmentCodingPractices",
+        scoreKey: "tech-assessment-coding-practices",
         prompt: "Coding Practices",
         description: `1. The code is full of bad practices. Lots of hard coding. Solutions are comically overcomplicated.\n2. Values or data are hard coded. Solutions do not take advantage of key React features like state and components. Things to Look Out For: Frequent in-line styling for style that does not change. Frequent use of “position: absolute”.\n3. The code is effective but could be more efficient. Solutions are more complicated than necessary. Code is repeated when not necessary (such as in the CSS for hovering an element). Things that Could Indicate 3: - No usage of props - 1-2 instances of position: absolute - 1-2 instances of in-line styling\n4. The code is minimal to accomplish the required functionality. React states and parameters are used effectively to store and pass down information. The data is handled responsively so that if the data files were to be altered the code would still work perfectly. Things to Look For: - Usage of .map when displaying an artist’s songs - Usage of the modulus operator to cycle between artists. If either of those things are missing, give it a 3.5 instead of a 4.`,
         minValue: 1,
         maxValue: 4,
       },
       {
-        scoreKey: "techAssessmentCodingStyle",
+        scoreKey: "tech-assessment-coding-style",
         prompt: "Coding Style",
         description: `1. The code cannot be understood.\n2. The code is hard to read. There might be weird chains of parentheses or brackets. The class names don’t really make sense.\n3. The code is mostly easy to read. There might be some really long lines or some weird class names, but it’s good for the most part. Things that Could Indicate a 3: - There might be components only containing a few lines (shouldn’t really be a component). - On the other hand, there might not be enough components. Maybe one file is really big and contains too much code to the point where it affects the readability of the code. - There might be some functions which don’t need to be separate functions (such as a function whose only purpose is to setState). - A few bad class names\n4. The code is easy to read. There is good documentation and comments when appropriate. The class names are chosen well. If only a couple class names are chosen badly, give it a 3.5 or 3 depending on how many class names are bad.`,
         minValue: 1,

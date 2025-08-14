@@ -12,6 +12,7 @@ const app = express();
 const ALLOWED_ORIGINS = [
   "https://h4i-applications.web.app",
   "https://apply.umd.hack4impact.org",
+  "https://h4i-applications--pr54-reviewer-side-testin-9exyqrca.web.app",
   "http://localhost:5173"
 ]
 
