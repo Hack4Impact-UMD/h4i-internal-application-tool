@@ -12,6 +12,7 @@ export function useUsers() {
 export function useUser(id: string) {
   return useQuery<UserProfile>({
     queryKey: ["users", "id", id],
+    enabled: !!id,
     queryFn: () => getUserById(id),
   });
 }
