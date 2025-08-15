@@ -209,7 +209,7 @@ export default function AdminHome() {
                 onClick={handleUploadInterviewRubrics}
                 disabled={isUploadingInterviewRubrics}
               >
-                {isUploadingRubrics ? "Uploading..." : "Upload Interview Rubrics"}
+                {isUploadingInterviewRubrics ? "Uploading..." : "Upload Interview Rubrics"}
               </Button>
             </div>
             {rubricUploadData && (
