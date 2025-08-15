@@ -4,7 +4,7 @@ import { UserProfile } from "../types/types";
 
 export type AuthProviderContext = {
   user?: UserProfile;
-  token?: string;
+  token: () => Promise<string | undefined>;
   isAuthed: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<UserProfile>;
@@ -15,6 +15,7 @@ export type AuthProviderContext = {
 export const AuthContext = createContext<AuthProviderContext>({
   isAuthed: false,
   isLoading: true,
+  token: () => Promise.resolve(undefined),
   login: loginUser,
   logout: logoutUser,
   setUser: () => {},

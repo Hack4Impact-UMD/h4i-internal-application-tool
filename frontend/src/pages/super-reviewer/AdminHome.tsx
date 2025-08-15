@@ -31,7 +31,7 @@ export default function AdminHome() {
     data: rubricUploadData,
   } = useUploadRubrics();
 
-  const handleUploadForm = () => {
+  const handleUploadForm = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
         `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
@@ -65,17 +65,20 @@ export default function AdminHome() {
 
     if (duplicates) return;
 
-    uploadForm({ form: h4iApplicationForm, token });
+    uploadForm({ form: h4iApplicationForm, token: (await token()) ?? "" });
   };
 
-  const handleUploadRubrics = () => {
+  const handleUploadRubrics = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the application rubrics?",
     );
 
     if (!confirmed || !token) return;
 
-    uploadRubrics({ rubrics: APPLICATION_RUBRICS, token });
+    uploadRubrics({
+      rubrics: APPLICATION_RUBRICS,
+      token: (await token()) ?? "",
+    });
   };
 
   if (!user) return <Loading />;

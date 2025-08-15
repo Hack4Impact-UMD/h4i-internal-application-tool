@@ -25,7 +25,8 @@ export default function FormProvider() {
   const { data, isPending, error } = useMyApplicationResponseAndForm(formId);
   const saveMutation = useMutation({
     mutationFn: async (r: ApplicationResponse) => {
-      if (token) return await saveApplicationResponse(r, token);
+      const tok = await token();
+      if (tok) return await saveApplicationResponse(r, tok);
     },
   });
   const [response, setResponse] = useState<ApplicationResponse | undefined>();

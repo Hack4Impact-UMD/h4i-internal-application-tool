@@ -20,7 +20,7 @@ interface AuthProviderProps {
 
 interface AuthState {
   user?: UserProfile;
-  token?: string;
+  token: () => Promise<string | undefined>;
   isAuthed: boolean;
   isLoading: boolean;
 }
@@ -30,7 +30,7 @@ export default function AuthProvider(props: AuthProviderProps) {
 
   const [authState, setAuthState] = useState<AuthState>({
     user: undefined,
-    token: undefined,
+    token: () => Promise.resolve(undefined),
     isAuthed: false,
     isLoading: true,
   });
@@ -60,18 +60,17 @@ export default function AuthProvider(props: AuthProviderProps) {
       console.log(`Auth state changed: ${userInfo?.email}`);
       if (userInfo != null) {
         const user = await getUserById(userInfo.uid);
-        const token = await auth.currentUser?.getIdToken();
 
         setAuthState({
           isAuthed: true,
-          token: token,
+          token: async () => await auth.currentUser?.getIdToken(),
           user: user,
           isLoading: false,
         });
       } else {
         setAuthState({
           isAuthed: false,
-          token: undefined,
+          token: () => Promise.resolve(undefined),
           user: undefined,
           isLoading: false,
         });
