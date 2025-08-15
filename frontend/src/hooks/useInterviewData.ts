@@ -41,10 +41,10 @@ export function useUpdateInterviewData(interviewDataId: string) {
     },
     onError: (_err, _newData, context) => {
       queryClient.setQueryData(
-        ["review-data", "id", interviewDataId],
+        ["interview-data", "id", interviewDataId],
         context?.previousData,
       );
-      throwErrorToast("Failed to update review!");
+      throwErrorToast("Failed to update interview!");
     },
     onSettled: () => {
       queryClient.invalidateQueries({
