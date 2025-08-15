@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
+import Section from "@/components/form/Section";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import Loading from "@/components/Loading";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";
@@ -31,6 +32,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CircleAlertIcon } from "lucide-react";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -273,21 +275,62 @@ const InterviewPage: React.FC = () => {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="flex gap-2 justify-center grow pt-2">
-        <div className="w-1/2 flex flex-col gap-2">
-          {sortedInterviewRubrics.map((r) => (
-            <RoleRubric
-              key={r.id}
-              rubric={r}
-              onScoreChange={interviewScoreChange}
-              onCommentChange={commentChange}
-              interviewData={interviewData}
-              disabled={optimisticInterviewData.submitted}
-              role={interviewData.forRole}
-            />
-          ))}
-        </div>
-      </div>
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex gap-2 justify-center grow overflow-scroll pt-2"
+      >
+        <ResizablePanel defaultSize={50}>
+          <div className="w-full flex h-full flex-col gap-2 overflow-scroll rounded-md">
+            {form.sections
+              .filter((s) => {
+                if (s.forRoles) {
+                  return (
+                    s.forRoles.filter((r) => response.rolesApplied.includes(r))
+                      .length > 0
+                  );
+                } else {
+                  return true;
+                }
+              })
+              .map((s) => (
+                <div
+                  className="shadow border border-gray-200 bg-white rounded-md p-4"
+                  key={s.sectionId}
+                >
+                  <Section
+                    responseId={response.id}
+                    key={s.sectionId}
+                    disabled={true}
+                    section={s}
+                    responses={
+                      response.sectionResponses.find(
+                        (r) => r.sectionId == s.sectionId,
+                      )?.questions ?? []
+                    }
+                    onChangeResponse={() => {}}
+                  />
+                </div>
+              ))}
+          </div>
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize={50}>
+          <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full rounded-md">
+            {sortedInterviewRubrics.map((r) => (
+              <RoleRubric
+                role={interviewData.forRole}
+                key={r.id}
+                rubric={r}
+                onScoreChange={interviewScoreChange}
+                onCommentChange={commentChange}
+                interviewData={optimisticInterviewData}
+                disabled={optimisticInterviewData.submitted}
+                form={form}
+              />
+            ))}
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
