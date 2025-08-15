@@ -69,8 +69,6 @@ function UserHeader({ applicantId, form, role }: UserHeaderProps) {
   );
 }
 
-// TODO figure out what we're doing for rubrics here; unsure how many scores there are
-// this was refactored for there being only one interview score but this seems to be wrong
 const InterviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { formId, responseId, interviewDataId } = useParams<{
@@ -138,7 +136,7 @@ const InterviewPage: React.FC = () => {
     if (!localNotes) return interviewData;
     return {
       ...interviewData,
-      reviewerNotes: localNotes,
+      interviewerNotes: localNotes,
     };
   }, [interviewData, localNotes]);
 
@@ -183,8 +181,11 @@ const InterviewPage: React.FC = () => {
     }
 
     submitInterview(
-      { submitted: true },
       {
+        ...optimisticInterviewData,
+        interviewerNotes: localNotes,
+        submitted: true,
+      },      {
         onSuccess: () => {
           throwSuccessToast("Interview submitted successfully!");
           navigate(-1);
