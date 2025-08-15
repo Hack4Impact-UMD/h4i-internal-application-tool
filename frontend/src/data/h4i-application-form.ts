@@ -131,13 +131,15 @@ Thank you for your patience during the application and interview process. Based 
       "technical-expertise": 0, // noted but not weighted
     },
     [ApplicantRole.Engineer]: {
-      "technical-expertise": 0.5 / 2,
-      "interest-in-club": 0.25 / 2,
-      "social-good": 0.25 / 2,
+      "technical-expertise": 0.5,
+      "interest-in-club": 0.25,
+      "social-good": 0.25,
+      /*
       "tech-assessment-functionality": 0.3215 / 2,
       "tech-assessment-visual": 0.21875 / 2,
       "tech-assessment-coding-practices": 0.28125 / 2,
       "tech-assessment-coding-style": 0.1875 / 2,
+      */
     },
     [ApplicantRole.Designer]: {
       "technical-expertise": 0.5,
@@ -150,13 +152,15 @@ Thank you for your patience during the application and interview process. Based 
       "social-good": 0.25,
     },
     [ApplicantRole.TechLead]: {
-      "technical-expertise": 0.5 / 2,
-      "interest-in-club": 0.25 / 2,
-      "social-good": 0.25 / 2,
+      "technical-expertise": 0.5,
+      "interest-in-club": 0.25,
+      "social-good": 0.25,
+      /*
       "tech-assessment-functionality": 0.3215 / 2,
       "tech-assessment-visual": 0.21875 / 2,
       "tech-assessment-coding-practices": 0.28125 / 2,
       "tech-assessment-coding-style": 0.1875 / 2,
+      */
     },
     [ApplicantRole.SocialMedia]: {
       "interest-in-club": 0.3,

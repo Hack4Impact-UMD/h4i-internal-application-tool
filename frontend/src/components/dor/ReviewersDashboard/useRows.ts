@@ -32,17 +32,36 @@ export function useRows(
   reviewData: ApplicationReviewData[],
 ) {
   return useQuery({
-    queryKey: ["all-reviewers-rows", reviewers, assignments, reviewData],
+    queryKey: [
+      "all-reviewers-rows",
+      reviewers.map((x) => x.id).sort(),
+      assignments.map((x) => x.id).sort(),
+      reviewData.map((x) => x.id).sort(),
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
+      const assignmentsByReviewer = new Map<string, number>();
+      for (const a of assignments) {
+        assignmentsByReviewer.set(
+          a.reviewerId,
+          (assignmentsByReviewer.get(a.reviewerId) ?? 0) + 1,
+        );
+      }
+
+      const submittedByReviewer = new Map<string, number>();
+      for (const d of reviewData) {
+        if (d.submitted) {
+          submittedByReviewer.set(
+            d.reviewerId,
+            (submittedByReviewer.get(d.reviewerId) ?? 0) + 1,
+          );
+        }
+      }
+
       return Promise.all(
         reviewers.map(async (reviewer, index) => {
-          const reviewerAssignments = assignments.filter(
-            (assignment) => assignment.reviewerId == reviewer.id,
-          );
-          const reviewerReviewData = reviewData.filter(
-            (reviewData) => reviewData.reviewerId == reviewer.id,
-          );
+          const assigned = assignmentsByReviewer.get(reviewer.id) ?? 0;
+          const submitted = submittedByReviewer.get(reviewer.id) ?? 0;
 
           const row: ReviewerRow = {
             index: 1 + index,
@@ -51,10 +70,8 @@ export function useRows(
               name: `${reviewer.firstName} ${reviewer.lastName}`,
             },
             rolePreferences: reviewer.applicantRolePreferences,
-            assignments: reviewerAssignments.length,
-            pendingAssignments:
-              reviewerAssignments.length -
-              reviewerReviewData.filter((data) => data.submitted).length,
+            assignments: assigned,
+            pendingAssignments: assigned - submitted,
           };
 
           return row;

@@ -38,20 +38,19 @@ export type ApplicationRow = {
 
 export function useRows(applications: ApplicationResponse[], formId: string) {
   return useQuery({
-    queryKey: ["all-apps-rows", applications, formId],
+    queryKey: ["all-apps-rows", applications.map((a) => a.id).sort(), formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
         applications.map(async (app, index) => {
-          const user = await getApplicantById(app.userId);
-          const reviews = await getReviewDataForResponseRole(
-            formId,
-            app.id,
-            app.rolesApplied[0],
-          );
-          const assignments = (
-            await getReviewAssignmentsForApplication(app.id)
-          ).filter((a) => a.forRole === app.rolesApplied[0]);
+          const role = app.rolesApplied[0];
+
+          const [user, reviews, allAssignments] = await Promise.all([
+            getApplicantById(app.userId),
+            getReviewDataForResponseRole(formId, app.id, role),
+            getReviewAssignmentsForApplication(app.id),
+          ]);
+          const assignments = allAssignments.filter((a) => a.forRole === role);
 
           const completedReviews = reviews.filter((r) => r.submitted).length;
           const avgScore =
@@ -61,22 +60,23 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
                   await Promise.all(
                     reviews
                       .filter((r) => r.submitted)
-                      .map(async (r) => await calculateReviewScore(r)),
+                      .map(
+                        async (r) =>
+                          await calculateReviewScore(r).catch(() => NaN),
+                      ),
                   )
                 ).reduce((acc, v) => acc + v, 0) / completedReviews;
           let status: InternalApplicationStatus | undefined;
 
           try {
-            status = await getApplicationStatusForResponseRole(
-              app.id,
-              app.rolesApplied[0],
-            );
+            status = await getApplicationStatusForResponseRole(app.id, role);
           } catch (error) {
             console.log(
-              `Failed to fetch application status for application ${app.id}-${app.rolesApplied[0]}: ${error}`,
+              `Failed to fetch application status for application ${app.id}-${role}: ${error}`,
             );
             status = undefined;
           }
+
           const row: ApplicationRow = {
             index: 1 + index,
             applicant: {
@@ -84,7 +84,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
               name: `${user.firstName} ${user.lastName}`,
             },
             responseId: app.id,
-            role: app.rolesApplied[0], //These have already been expanded into their separate roles
+            role: role, //These have already been expanded into their separate roles
             reviews: {
               assigned: assignments.length,
               completed: reviews.filter((r) => r.submitted).length,

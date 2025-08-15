@@ -33,37 +33,46 @@ export function useRows(
   return useQuery({
     queryKey: [
       "all-interviewers-rows",
-      interviewers,
-      interviewData,
-      assignments,
+      interviewers.map((x) => x.id).sort(),
+      interviewData.map((x) => x.id).sort(),
+      assignments.map((x) => x.id).sort(),
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
-      return Promise.all(
-        interviewers.map(async (interviewer, index) => {
-          const interviewerAssignments = assignments.filter(
-            (assignment) => assignment.interviewerId == interviewer.id,
-          );
-          const interviewerInterviewData = interviewData.filter(
-            (reviewData) => reviewData.interviewerId == interviewer.id,
-          );
+      const assignmentsByInterviewer = new Map<string, number>();
+      for (const a of assignments) {
+        assignmentsByInterviewer.set(
+          a.interviewerId,
+          (assignmentsByInterviewer.get(a.interviewerId) ?? 0) + 1,
+        );
+      }
 
-          const row: InterviewerRow = {
-            index: 1 + index,
-            interviewer: {
-              id: interviewer.id,
-              name: `${interviewer.firstName} ${interviewer.lastName}`,
-            },
-            //   rolePreferences: await getRolePreferencesForReviewer(reviewer.id),
-            assignments: interviewerAssignments.length,
-            pendingAssignments:
-              interviewerAssignments.length -
-              interviewerInterviewData.filter((data) => data.submitted).length,
-          };
+      const submittedByInterviewer = new Map<string, number>();
+      for (const d of interviewData) {
+        if (d.submitted) {
+          submittedByInterviewer.set(
+            d.interviewerId,
+            (submittedByInterviewer.get(d.interviewerId) ?? 0) + 1,
+          );
+        }
+      }
 
-          return row;
-        }),
-      );
+      return interviewers.map((interviewer, index) => {
+        const total = assignmentsByInterviewer.get(interviewer.id) ?? 0;
+        const submitted = submittedByInterviewer.get(interviewer.id) ?? 0;
+
+        const row: InterviewerRow = {
+          index: index + 1,
+          interviewer: {
+            id: interviewer.id,
+            name: `${interviewer.firstName} ${interviewer.lastName}`,
+          },
+          assignments: total,
+          pendingAssignments: total - submitted,
+        };
+
+        return row;
+      });
     },
   });
 }

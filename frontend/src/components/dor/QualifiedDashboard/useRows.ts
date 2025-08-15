@@ -31,7 +31,11 @@ export type QualifiedAppRow = {
 
 export function useRows(applications: ApplicationResponse[], formId: string) {
   return useQuery<QualifiedAppRow[]>({
-    queryKey: ["qualified-apps-rows", formId, applications],
+    queryKey: [
+      "qualified-apps-rows",
+      formId,
+      applications.map((x) => x.id).sort(),
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       return Promise.all(
@@ -44,7 +48,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
           // Get all assigned interviewer profiles
           const assignedInterviewers: ReviewerUserProfile[] = (
             await Promise.all(
-              assignments.map(async (a) => await getUserById(a.interviewerId)),
+              assignments.map((a) => getUserById(a.interviewerId)),
             )
           ).filter(
             (u): u is ReviewerUserProfile => u.role === PermissionRole.Reviewer,
