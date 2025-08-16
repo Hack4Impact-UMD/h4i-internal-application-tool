@@ -90,6 +90,11 @@ service cloud.firestore {
       allow read: if isReviewer();
       allow write: if isSuperReviewer();
     }
+
+    match /interview-rubrics/{rubric_id} {
+      allow read: if isReviewer();
+      allow write: if isSuperReviewer();
+    }
     
     // by default, all documents should be inaccessible to reads and writes
     match /{document=**} {

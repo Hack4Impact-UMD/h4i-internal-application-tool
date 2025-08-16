@@ -28,6 +28,7 @@ const AppSubmitted = lazy(
 );
 const AppSubmitPage = lazy(() => import("./pages/applicant/AppSubmitPage"));
 const AppReviewPage = lazy(() => import("./pages/reviewer/AppReviewPage"));
+const InterviewPage = lazy(() => import("./pages/reviewer/InterviewPage"));
 const UserRolePage = lazy(
   () => import("./pages/super-reviewer/dashboards/UserRolePage"),
 );
@@ -302,6 +303,10 @@ function App() {
                   <Route
                     path="review/f/:formId/:responseId/:sectionId/:reviewDataId"
                     element={<AppReviewPage />}
+                  />
+                  <Route
+                    path="interview/f/:formId/:responseId/:interviewDataId"
+                    element={<InterviewPage />}
                   />
                 </Route>
               </Route>
