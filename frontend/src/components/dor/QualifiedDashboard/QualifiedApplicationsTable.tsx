@@ -316,7 +316,7 @@ export default function QualifiedApplicationsTable({
       newStatus: ReviewStatus;
     }) => updateApplicationStatus(statusId, { status: newStatus }),
     onMutate: async ({ statusId, newStatus }) => {
-      const queryKey = ["qualified-apps-rows", formId, applications];
+      const queryKey = ["qualified-apps-rows", formId, applications.map(a => a.id).sort()];
       await queryClient.cancelQueries({ queryKey });
 
       const previousRows =
