@@ -50,6 +50,9 @@ export function useUpdateInterviewData(interviewDataId: string) {
       queryClient.invalidateQueries({
         queryKey: ["interview-data", "id", interviewDataId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["score", "interview", interviewDataId],
+      });
     },
   });
 }
