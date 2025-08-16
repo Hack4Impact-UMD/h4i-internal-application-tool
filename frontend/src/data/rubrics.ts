@@ -177,7 +177,7 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
       },
     ],
   },
-    {
+  {
     id: "2025-general-engineering-interview-rubric",
     formId: FORM_ID,
     roles: [ApplicantRole.Engineer, ApplicantRole.TechLead],
