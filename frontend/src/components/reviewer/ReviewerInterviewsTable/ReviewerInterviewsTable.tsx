@@ -18,7 +18,6 @@ import { InterviewAssignmentRow, useRows } from "./useRows";
 import { createInterviewData } from "@/services/interviewDataService";
 import SortableHeader from "@/components/tables/SortableHeader";
 import { useNavigate } from "react-router-dom";
-import { getApplicationForm } from "@/services/applicationFormsService";
 
 type ReviewerApplicationsTableProps = {
   assignments: InterviewAssignment[];
@@ -156,7 +155,7 @@ export default function ReviewerInterviewsTable({
         throwErrorToast("This interview has already been submitted!");
       } else {
         navigate(
-        	`/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
+          `/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
         );
       }
     } else {
@@ -173,7 +172,7 @@ export default function ReviewerInterviewsTable({
 
       const newinterview = await createInterviewData(interview);
       navigate(
-      	`/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${newinterview.id}`,
+        `/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${newinterview.id}`,
       );
     }
   }
