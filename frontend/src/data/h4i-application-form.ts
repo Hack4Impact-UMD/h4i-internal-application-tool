@@ -175,6 +175,35 @@ Thank you for your patience during the application and interview process. Based 
       "comm-and-writing-skills": 0.1,
     },
   },
+  interviewScoreWeights: {
+    [ApplicantRole.Bootcamp]: {
+    },
+    [ApplicantRole.Engineer]: {
+      "interview-technical-competency": 0.34,
+      "interview-teamwork": 0.33,
+      "interview-problem-solving": 0.33,
+    },
+    [ApplicantRole.Designer]: {
+      "interview-design-thinking": 0.34,
+      "interview-communication": 0.33,
+      "interview-technical-skills": 0.33,
+    },
+    [ApplicantRole.Product]: {
+      "interview-general": 0.34,
+      "interview-behavorial": 0.33,
+      "interview-pm-skills": 0.33,
+    },
+    [ApplicantRole.TechLead]: {
+      "interview-technical-competency": 0.25,
+      "interview-teamwork": 0.25,
+      "interview-problem-solving": 0.25,
+      "interview-leadership": 0.25,
+    },
+    [ApplicantRole.SocialMedia]: {
+    },
+    [ApplicantRole.OutreachCoord]: {
+    },
+  },
   sections: [
     {
       sectionId: "basic-info",

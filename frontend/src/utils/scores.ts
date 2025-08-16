@@ -43,6 +43,8 @@ export async function calculateInterviewScore(
   const form: ApplicationForm = await getApplicationForm(
     interview.applicationFormId
   );
+
+  console.log("this is running");
   
   if (!form.interviewScoreWeights) {
     throwWarningToast(
@@ -105,6 +107,9 @@ function hasScoreKeyMismatch(
     formWeightKeys.length === scoreKeys.length &&
     formWeightKeys.every((k) => k in scores) &&
     scoreKeys.every((k) => k in weights);
+
+  console.log("weights" + formWeightKeys)
+  console.log("scores" + scoreKeys);
     
   return !keysMatch && scoreKeys.length >= formWeightKeys.length;
 }

@@ -162,24 +162,120 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
   */
 ];
 
-// TODO: manually add the interview rubrics here!
 export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
   {
-    id: "2025-general-interview-rubric",
+    id: "2025-tech-lead-interview-rubric",
     formId: FORM_ID,
-    roles: [],
+    roles: [ApplicantRole.TechLead],
     rubricQuestions: [
       {
-        scoreKey: "interest-in-club",
-        prompt: "Interest in the club",
-        description: `1. Applicant has generic responses and puts in the bare minimum into for responses, such as one or two line answers for why they want to join.\n2. Applicant seems to have put in at least some effort into constructing a response to why they want to join, but reasons are vague and unclear.\n3. Applicant has well-written reasons for wanting to join Hack4Impact. Things preventing a 3 from a 4 could be if the applicant’s reasons could be satisfied at other clubs and not mentioning anything Hack4Impact specific.\n4. Applicant has clear and well-written reasons for wanting to join Hack4Impact specifically. Things to look for would be mentioning past projects or information from our website (showing initiative in looking up our website). If they’ve attended one of our past events, that would be a plus as well.`,
+        scoreKey: "interview-leadership",
+        prompt: "Leadership and Mentorship",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+    {
+    id: "2025-general-engineering-interview-rubric",
+    formId: FORM_ID,
+    roles: [ApplicantRole.Engineer, ApplicantRole.TechLead],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-technical-competency",
+        prompt: "Technical Competency",
+        description: ``,
         minValue: 1,
         maxValue: 4,
       },
       {
-        scoreKey: "social-good",
-        prompt: "Interest in social good",
-        description: `1. Applicant doesn’t mention the social impact of the club - clearly just wants to use Hack4Impact as a resume booster.\n2. Applicant mentions social impact but reasons are vague and answers to specific social initiatives seem generic and insincere.\n3. Applicant has detailed response to social initiatives and shows passion for doing social good.\n4. Applicant goes above and beyond on social initiatives that they are passionate about. Applicant shows passion about using their abilities to do good in the community, and has shown past initiative in terms of giving back to the community.`,
+        scoreKey: "interview-teamwork",
+        prompt: "Teamwork and Collaboration",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-problem-solving",
+        prompt: "Problem Solving and Adaptability",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+  {
+    id: "2025-design-interview-rubric",
+    formId: FORM_ID,
+    roles: [ApplicantRole.Designer],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-design-thinking",
+        prompt: "Design Process and Thinking",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-communication",
+        prompt: "Communication and Collaboration",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-technical-skills",
+        prompt: "Technical Skills and Tools Proficiency",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+  {
+    id: "2025-product-interview-rubric",
+    formId: FORM_ID,
+    roles: [ApplicantRole.Product],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-general",
+        prompt: "General",
+        description: `
+        - Tell me about yourself
+        - What do you like to do in your spare time?
+        - How would you describe your work/life balance?
+        - Have you ever been in a leadership position before? Can you tell us a bit about it?
+        - Can you tell us about the last project you worked on?
+        - Have you ever held a different role in a project team before (either in H4I or in an internship/job/etc)?
+        - What would you say your greatest weakness is? How have you made an effort to improve on it?
+        - How much time would you be willing to commit per week to this position?`,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-behavorial",
+        prompt: "Behavorial",
+        description: `
+        - Give us an example of when you resolved a conflict between teammates.
+        - Have you ever given the wrong advice to someone to solve a conflict? What was the result of that?
+        - One of your team members is asking for more time to complete a task. How would you handle this situation?
+        - How would you handle a nonresponsive non-profit partner?
+        - How would you describe your leadership style?`,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-pm-skills",
+        prompt: "PM-Specific Skills",
+        description: `
+        - What do you think it means to be a PM?
+        - What is a PM’s most desirable skill?
+        - Why do you want this position?
+        - How does this position fit into your overall career trajectory?
+        - How do you prioritize tasks in a project?
+        - How would you create an environment of collaboration on your team?
+        - Have you ever worked within an agile workflow?`,
         minValue: 1,
         maxValue: 4,
       },
