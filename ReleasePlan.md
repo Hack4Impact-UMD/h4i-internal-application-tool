@@ -36,7 +36,7 @@ See `README.md` for some screenshots of app progress. Also, try running the app.
 | Application Submitted Page     | ✅     |                                                                        |
 | Status Page                    | ✅     |                                                                        |
 | Revisit Application Page       | ✅     |                                                                        |
-| Decision Page                   | ❌     | Design submitted recently                                              |
+| Decision Page                  | ✅     |                                                                        |
 
 ### Reviewer
 
@@ -45,8 +45,8 @@ See `README.md` for some screenshots of app progress. Also, try running the app.
 | Overview Page                 | ✅     |                                                                               |
 | Assigned Reviews Dashboard    | ✅     |                                                                               |
 | Assigned Interviews Dashboard | ✅     |                                                                               |
-| Submit Review Page            | ❌     | Has a non-functional and sketchy frontend                                     |
-| Submit Interview Page         | ❌     | Not started. This is simpler than submitting reviews, so this should be first |
+| Submit Review Page            | ✅     |                                                                               |
+| Submit Interview Page         | ✅     |                                                                                |
 
 ### Super Reviewer
 
