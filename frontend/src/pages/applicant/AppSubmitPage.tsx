@@ -26,8 +26,8 @@ export default function AppSubmitPage() {
   );
 
   const submitMutation = useMutation({
-    mutationFn: (response: ApplicationResponse) =>
-      submitApplicationResponse(response, token!),
+    mutationFn: async (response: ApplicationResponse) =>
+      submitApplicationResponse(response, (await token()) ?? ""),
   });
 
   if (isPending) return <Loading />;
