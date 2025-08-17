@@ -82,7 +82,9 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
 
           return row;
         }),
-      );
+      ).catch(e => {
+        console.error("Promise.all rejected: ", e);
+      });
     },
   });
 }
