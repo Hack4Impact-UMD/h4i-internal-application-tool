@@ -34,20 +34,54 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
     queryFn: async () => {
       return Promise.all(
         assignments.map(async (assignment, index) => {
-          const user = await getApplicantById(assignment.applicantId);
-          const review = await getReviewDataForAssignment(assignment);
+          console.log(
+            `Loading data for row ${index}, assignemnt ${assignment}...`,
+          );
+
+          const user = await getApplicantById(assignment.applicantId).catch(
+            (e) => {
+              console.error(
+                "Failed to load user with ID: ",
+                assignment.applicantId,
+              );
+              console.error(e);
+              return undefined;
+            },
+          );
+          const review = await getReviewDataForAssignment(assignment).catch(
+            (e) => {
+              console.error(
+                "Failed to load review data for assignemnt: ",
+                assignment,
+              );
+              console.error(e);
+              return undefined;
+            },
+          );
+
+          console.log("Successfully loaded row for assignemnt:", assignment);
 
           const row: AssignmentRow = {
             index: 1 + index,
             applicant: {
-              id: user.id,
-              name: `${user.firstName} ${user.lastName}`,
+              id: user?.id ?? "error",
+              name: `${user?.firstName ?? "Error"} ${user?.lastName ?? "Error"}`,
             },
             responseId: assignment.applicationResponseId,
             role: assignment.forRole,
             review: review,
             score: {
-              value: review ? await calculateReviewScore(review) : undefined,
+              value:
+                review && review.submitted
+                  ? await calculateReviewScore(review).catch((e) => {
+                      console.error(
+                        "Score calculation failed for review: ",
+                        review,
+                      );
+                      console.error(e);
+                      return NaN;
+                    })
+                  : undefined,
               outOf: 4, // NOTE: All scores are assummed to be out of 4
             },
           };

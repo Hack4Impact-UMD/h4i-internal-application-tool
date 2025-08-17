@@ -45,7 +45,7 @@ export async function calculateInterviewScore(
   );
 
   console.log("this is running");
-  
+
   if (!form.interviewScoreWeights) {
     throwWarningToast(
       "Form does not have interview weights, falling back to average scoring!"
@@ -77,9 +77,9 @@ export function calculateScore(
 
   if (missingRequiredScoreKeys(weights, scores)) {
     throwWarningToast(
-      "Score does not have all requirement weights, falling back to average scoring!"
+      "Score is missing required keys, returning -1 score!",
     );
-    return 0;
+    return -1;
   }
 
   const score = Object.keys(weights).reduce((acc, scoreCategory) => {
@@ -110,7 +110,7 @@ function hasScoreKeyMismatch(
 
   console.log("weights" + formWeightKeys)
   console.log("scores" + scoreKeys);
-    
+
   return !keysMatch && scoreKeys.length >= formWeightKeys.length;
 }
 
