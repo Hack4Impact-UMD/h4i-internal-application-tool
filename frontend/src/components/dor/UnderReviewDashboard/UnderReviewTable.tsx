@@ -135,12 +135,12 @@ export default function SuperReviewerApplicationsTable({
       });
       const oldRows = queryClient.getQueryData([
         "all-apps-rows",
-        applications.map(a => a.id).sort(),
+        applications.map((a) => a.id).sort(),
         formId,
       ]);
 
       queryClient.setQueryData(
-        ["all-apps-rows", applications.map(a => a.id).sort(), formId],
+        ["all-apps-rows", applications.map((a) => a.id).sort(), formId],
         (old: ApplicationRow[]) =>
           old.map((row) => {
             if (row.status?.id === status.id) {
@@ -280,8 +280,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                        status: status,
-                      })
+                          status: status,
+                        })
                       : throwErrorToast("No status available!")
                   }
                 />
