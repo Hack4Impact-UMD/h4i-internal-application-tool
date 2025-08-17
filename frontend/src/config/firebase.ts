@@ -4,8 +4,10 @@ import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
 
+const FIREBASE_API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
+
 export const firebaseConfig = {
-  apiKey: "AIzaSyB7FYsjDJiszoQaUnFADEZxPPTQJ2px8W0",
+  apiKey: FIREBASE_API_KEY,
   authDomain: "h4i-applications.firebaseapp.com",
   projectId: "h4i-applications",
   storageBucket: "h4i-applications.firebasestorage.app",
