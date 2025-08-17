@@ -54,7 +54,10 @@ export async function calculateReviewScore(
       review.applicantScores,
     )
   ) {
-    return Promise.reject(-1);
+    throwWarningToast(
+      "validateScoreCategoriesForFormAndRole failed, returning -1 score!",
+    );
+    return Promise.resolve(-1);
   }
   const score = calculateScoreForFormAndRole(
     form.scoreWeights[review.forRole],

@@ -71,11 +71,17 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             role: assignment.forRole,
             review: review,
             score: {
-              value: review && review.submitted ? (await calculateReviewScore(review).catch(e => {
-                console.error("Score calculation failed for review: ", review)
-                console.error(e);
-                return NaN;
-              })) : undefined,
+              value:
+                review && review.submitted
+                  ? await calculateReviewScore(review).catch((e) => {
+                      console.error(
+                        "Score calculation failed for review: ",
+                        review,
+                      );
+                      console.error(e);
+                      return NaN;
+                    })
+                  : undefined,
               outOf: 4, // NOTE: All scores are assummed to be out of 4
             },
           };
