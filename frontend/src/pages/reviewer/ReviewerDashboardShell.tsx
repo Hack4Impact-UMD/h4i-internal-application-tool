@@ -13,7 +13,7 @@ export default function ReviewerDashboardShell() {
             className={({ isActive }) =>
               isActive
                 ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue/80 hover:text-white"
             }
             to={`/admin/reviewer/dashboard/${formId}/apps`}
           >
@@ -23,7 +23,7 @@ export default function ReviewerDashboardShell() {
             className={({ isActive }) =>
               isActive
                 ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue hover:text-white"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue/80 hover:text-white"
             }
             to={`/admin/reviewer/dashboard/${formId}/interviews`}
           >
