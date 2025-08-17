@@ -177,6 +177,7 @@ Thank you for your patience during the application and interview process. Based 
   },
   interviewScoreWeights: {
     [ApplicantRole.Bootcamp]: {
+      "interview-overall": 1,
     },
     [ApplicantRole.Engineer]: {
       "interview-technical-competency": 0.34,
@@ -200,8 +201,10 @@ Thank you for your patience during the application and interview process. Based 
       "interview-leadership": 0.25,
     },
     [ApplicantRole.SocialMedia]: {
+      "interview-overall": 1,
     },
     [ApplicantRole.OutreachCoord]: {
+      "interview-overall": 1,
     },
   },
   sections: [

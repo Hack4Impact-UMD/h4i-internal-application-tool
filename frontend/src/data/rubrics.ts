@@ -239,43 +239,30 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.Product],
     rubricQuestions: [
       {
-        scoreKey: "interview-general",
-        prompt: "General",
-        description: `
-        - Tell me about yourself
-        - What do you like to do in your spare time?
-        - How would you describe your work/life balance?
-        - Have you ever been in a leadership position before? Can you tell us a bit about it?
-        - Can you tell us about the last project you worked on?
-        - Have you ever held a different role in a project team before (either in H4I or in an internship/job/etc)?
-        - What would you say your greatest weakness is? How have you made an effort to improve on it?
-        - How much time would you be willing to commit per week to this position?`,
-        minValue: 1,
-        maxValue: 4,
-      },
-      {
         scoreKey: "interview-behavorial",
-        prompt: "Behavorial",
-        description: `
-        - Give us an example of when you resolved a conflict between teammates.
-        - Have you ever given the wrong advice to someone to solve a conflict? What was the result of that?
-        - One of your team members is asking for more time to complete a task. How would you handle this situation?
-        - How would you handle a nonresponsive non-profit partner?
-        - How would you describe your leadership style?`,
+        prompt: "General and Behavorial",
+        description: ``,
         minValue: 1,
         maxValue: 4,
       },
       {
         scoreKey: "interview-pm-skills",
         prompt: "PM-Specific Skills",
-        description: `
-        - What do you think it means to be a PM?
-        - What is a PM’s most desirable skill?
-        - Why do you want this position?
-        - How does this position fit into your overall career trajectory?
-        - How do you prioritize tasks in a project?
-        - How would you create an environment of collaboration on your team?
-        - Have you ever worked within an agile workflow?`,
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+  {
+    id: "2025-general-interview-rubric",
+    formId: FORM_ID,
+    roles: [ApplicantRole.Bootcamp, ApplicantRole.OutreachCoord, ApplicantRole.SocialMedia],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-overall",
+        prompt: "Overall Score",
+        description: ``,
         minValue: 1,
         maxValue: 4,
       },
