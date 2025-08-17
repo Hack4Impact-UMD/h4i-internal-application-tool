@@ -40,7 +40,7 @@ export function RubricQuestion({
         ) : (
           <></>
         )}
-        <Tooltip>
+        {question.description && (<Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant={"ghost"}
@@ -54,7 +54,7 @@ export function RubricQuestion({
               ? "Collapse rubric description"
               : "Expand rubric description"}
           </TooltipContent>
-        </Tooltip>
+        </Tooltip>)}
       </div>
       {showDesc && <FormMarkdown>{question.description}</FormMarkdown>}
       <div className="bg-muted flex flex-row gap-4 items-stretch rounded-xl p-3">
