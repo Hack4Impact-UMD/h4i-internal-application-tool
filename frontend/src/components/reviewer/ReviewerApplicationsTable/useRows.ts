@@ -84,6 +84,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
         }),
       ).catch(e => {
         console.error("Promise.all rejected: ", e);
+        return [];
       });
     },
   });
