@@ -72,7 +72,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             review: review,
             score: {
               value: review ? (await calculateReviewScore(review).catch(e => {
-                console.error("Score calculation failed!")
+                console.error("Score calculation failed for review: ", review)
                 console.error(e);
                 return 999;
               })) : undefined,
@@ -82,10 +82,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
 
           return row;
         }),
-      ).catch(e => {
-        console.error("Promise.all rejected: ", e);
-        return [];
-      });
+      );
     },
   });
 }
