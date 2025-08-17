@@ -40,21 +40,23 @@ export function RubricQuestion({
         ) : (
           <></>
         )}
-        {question.description && (<Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={"ghost"}
-              onClick={() => setShowDesc((prev) => !prev)}
-            >
-              {showDesc ? <ChevronUp /> : <ChevronDown />}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            {showDesc
-              ? "Collapse rubric description"
-              : "Expand rubric description"}
-          </TooltipContent>
-        </Tooltip>)}
+        {question.description && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={"ghost"}
+                onClick={() => setShowDesc((prev) => !prev)}
+              >
+                {showDesc ? <ChevronUp /> : <ChevronDown />}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {showDesc
+                ? "Collapse rubric description"
+                : "Expand rubric description"}
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
       {showDesc && <FormMarkdown>{question.description}</FormMarkdown>}
       <div className="bg-muted flex flex-row gap-4 items-stretch rounded-xl p-3">

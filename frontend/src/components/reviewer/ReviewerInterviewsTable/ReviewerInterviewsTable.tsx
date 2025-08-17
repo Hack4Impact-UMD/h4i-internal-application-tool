@@ -35,7 +35,7 @@ export default function ReviewerInterviewsTable({
   statusFilter = "all",
 }: ReviewerApplicationsTableProps) {
   const { user } = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,

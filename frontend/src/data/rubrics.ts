@@ -257,7 +257,11 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
   {
     id: "2025-general-interview-rubric",
     formId: FORM_ID,
-    roles: [ApplicantRole.Bootcamp, ApplicantRole.OutreachCoord, ApplicantRole.SocialMedia],
+    roles: [
+      ApplicantRole.Bootcamp,
+      ApplicantRole.OutreachCoord,
+      ApplicantRole.SocialMedia,
+    ],
     rubricQuestions: [
       {
         scoreKey: "interview-overall",

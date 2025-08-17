@@ -9,7 +9,10 @@ import { PermissionRole } from "@/types/types";
 import { displayUserRoleName } from "@/utils/display";
 import { Link, useNavigate } from "react-router-dom";
 import { h4iApplicationForm } from "@/data/h4i-application-form";
-import { APPLICATION_INTERVIEW_RUBRICS, APPLICATION_RUBRICS } from "@/data/rubrics";
+import {
+  APPLICATION_INTERVIEW_RUBRICS,
+  APPLICATION_RUBRICS,
+} from "@/data/rubrics";
 import { useUploadRubrics } from "@/hooks/useRubrics";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { useUploadInterviewRubrics } from "@/hooks/useInterviewRubrics";
@@ -41,7 +44,7 @@ export default function AdminHome() {
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-      `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
+        `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
     );
 
     if (!confirmed || !token) return;
@@ -95,7 +98,10 @@ export default function AdminHome() {
 
     if (!confirmed || !token) return;
 
-    uploadInterviewRubrics({ interviewRubrics: APPLICATION_INTERVIEW_RUBRICS, token: (await token() ?? "") });
+    uploadInterviewRubrics({
+      interviewRubrics: APPLICATION_INTERVIEW_RUBRICS,
+      token: (await token()) ?? "",
+    });
   };
 
   if (!user) return <Loading />;
@@ -212,7 +218,9 @@ export default function AdminHome() {
                 onClick={handleUploadInterviewRubrics}
                 disabled={isUploadingInterviewRubrics}
               >
-                {isUploadingInterviewRubrics ? "Uploading..." : "Upload Interview Rubrics"}
+                {isUploadingInterviewRubrics
+                  ? "Uploading..."
+                  : "Upload Interview Rubrics"}
               </Button>
             </div>
             {rubricUploadData && (
@@ -227,7 +235,8 @@ export default function AdminHome() {
             )}
             {interviewRubricUploadData && (
               <p className="mt-2 text-sm text-green-600">
-                Success! Uploaded {interviewRubricUploadData.data.count} rubrics.
+                Success! Uploaded {interviewRubricUploadData.data.count}{" "}
+                rubrics.
               </p>
             )}
             {interviewRubricUploadError && (

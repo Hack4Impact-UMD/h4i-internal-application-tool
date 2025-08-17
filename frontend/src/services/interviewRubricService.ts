@@ -47,9 +47,13 @@ export async function uploadInterviewRubrics(
   interviewRubrics: RoleReviewRubric[],
   token: string,
 ) {
-  return await axios.post(API_URL + "/application/interview-rubrics", interviewRubrics, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  return await axios.post(
+    API_URL + "/application/interview-rubrics",
+    interviewRubrics,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  });
+  );
 }

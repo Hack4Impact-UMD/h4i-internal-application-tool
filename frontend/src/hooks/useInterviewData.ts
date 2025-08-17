@@ -1,5 +1,9 @@
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import { getInterviewDataById, getInterviewDataForForm, updateInterviewData } from "@/services/interviewDataService";
+import {
+  getInterviewDataById,
+  getInterviewDataForForm,
+  updateInterviewData,
+} from "@/services/interviewDataService";
 import { ApplicationInterviewData } from "@/types/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -15,7 +19,9 @@ export function useUpdateInterviewData(interviewDataId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (update: Partial<Omit<ApplicationInterviewData, "id">>) => {
+    mutationFn: async (
+      update: Partial<Omit<ApplicationInterviewData, "id">>,
+    ) => {
       await updateInterviewData(interviewDataId, update);
     },
     onMutate: async (newData) => {

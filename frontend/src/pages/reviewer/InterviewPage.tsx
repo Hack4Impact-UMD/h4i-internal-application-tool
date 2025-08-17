@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import {
   AlertDialog,
-  AlertDialogAction,    
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -23,7 +23,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
-import { useInterviewData, useUpdateInterviewData } from "@/hooks/useInterviewData";
+import {
+  useInterviewData,
+  useUpdateInterviewData,
+} from "@/hooks/useInterviewData";
 import { useInterviewRubricsForFormRole } from "@/hooks/useInterviewRubrics";
 import { useInterviewScore } from "@/hooks/useInterviewScore";
 import {
@@ -32,7 +35,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CircleAlertIcon } from "lucide-react";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -94,12 +101,12 @@ const InterviewPage: React.FC = () => {
     isPending: interviewPending,
     error: interviewError,
   } = useInterviewData(interviewDataId ?? "");
-  
 
-  const { mutate: updateInterviewData } = useUpdateInterviewData(interviewDataId ?? "");
-  const { mutate: submitInterview, isPending: isSubmitting } = useUpdateInterviewData(
+  const { mutate: updateInterviewData } = useUpdateInterviewData(
     interviewDataId ?? "",
   );
+  const { mutate: submitInterview, isPending: isSubmitting } =
+    useUpdateInterviewData(interviewDataId ?? "");
 
   const {
     data: interviewRubrics,
@@ -124,12 +131,13 @@ const InterviewPage: React.FC = () => {
   }, [interviewData, localNotes]);
 
   useEffect(() => {
-    if (localNotes === undefined || !interviewData || interviewData.submitted) return;
+    if (localNotes === undefined || !interviewData || interviewData.submitted)
+      return;
     const ref = setTimeout(() => {
       updateInterviewData({ interviewerNotes: localNotes });
     }, 1000);
     return () => clearTimeout(ref);
-  }, [localNotes, interviewData, updateInterviewData])
+  }, [localNotes, interviewData, updateInterviewData]);
 
   const optimisticInterviewData = useMemo(() => {
     if (!interviewData) return undefined;
@@ -168,7 +176,9 @@ const InterviewPage: React.FC = () => {
 
   const handleSubmitInterview = () => {
     const requiredKeys =
-      interviewRubrics?.flatMap((r) => r.rubricQuestions.map((q) => q.scoreKey)) ?? [];
+      interviewRubrics?.flatMap((r) =>
+        r.rubricQuestions.map((q) => q.scoreKey),
+      ) ?? [];
     const existingKeys = new Set(
       Object.keys(interviewData?.interviewScores ?? {}),
     );
@@ -185,7 +195,8 @@ const InterviewPage: React.FC = () => {
         ...optimisticInterviewData,
         interviewerNotes: localNotes,
         submitted: true,
-      },      {
+      },
+      {
         onSuccess: () => {
           throwSuccessToast("Interview submitted successfully!");
           navigate(-1);
@@ -209,7 +220,8 @@ const InterviewPage: React.FC = () => {
     return <p>Failed to fetch form: {formError.message}</p>;
   if (responseError || !response)
     return <p>Failed to fetch response: {responseError?.message}</p>;
-  if (interviewError) return <p>Failed to fetch interview: {interviewError.message}</p>;
+  if (interviewError)
+    return <p>Failed to fetch interview: {interviewError.message}</p>;
   if (interviewRubricsError)
     return <p>Failed to fetch rubrics: {interviewRubricsError.message}</p>;
   if (!optimisticInterviewData) return <p>Failed to fetch interview data</p>;
@@ -232,8 +244,10 @@ const InterviewPage: React.FC = () => {
             Interview Score:{" "}
             {typeof interviewScore === "number" ? (
               <>
-                <span className="font-bold">{interviewScore.toFixed(2) ?? "N/A"}</span> /
-                4
+                <span className="font-bold">
+                  {interviewScore.toFixed(2) ?? "N/A"}
+                </span>{" "}
+                / 4
               </>
             ) : (
               <Tooltip>

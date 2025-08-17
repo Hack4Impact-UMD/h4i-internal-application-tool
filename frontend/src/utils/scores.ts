@@ -7,18 +7,18 @@ import {
 } from "@/types/types";
 
 export async function calculateReviewScore(
-  review: ApplicationReviewData
+  review: ApplicationReviewData,
 ): Promise<number> {
   const scores = Object.keys(review.applicantScores);
   if (scores.length === 0) return 0;
 
   const form: ApplicationForm = await getApplicationForm(
-    review.applicationFormId
+    review.applicationFormId,
   );
 
   if (!form.scoreWeights) {
     throwWarningToast(
-      "Form does not have review weights, falling back to average scoring!"
+      "Form does not have review weights, falling back to average scoring!",
     );
     return roundScore(averageScore(review.applicantScores), 2);
   }
@@ -26,7 +26,7 @@ export async function calculateReviewScore(
   const weightsForRole = form.scoreWeights?.[review.forRole];
   if (!weightsForRole) {
     throwWarningToast(
-      "Form does not have review weights for this role, falling back to average scoring!"
+      "Form does not have review weights for this role, falling back to average scoring!",
     );
     return roundScore(averageScore(review.applicantScores), 2);
   }
@@ -35,20 +35,20 @@ export async function calculateReviewScore(
 }
 
 export async function calculateInterviewScore(
-  interview: ApplicationInterviewData
+  interview: ApplicationInterviewData,
 ): Promise<number> {
   const scores = Object.keys(interview.interviewScores);
   if (scores.length === 0) return 0;
 
   const form: ApplicationForm = await getApplicationForm(
-    interview.applicationFormId
+    interview.applicationFormId,
   );
 
   console.log("this is running");
 
   if (!form.interviewScoreWeights) {
     throwWarningToast(
-      "Form does not have interview weights, falling back to average scoring!"
+      "Form does not have interview weights, falling back to average scoring!",
     );
     return roundScore(averageScore(interview.interviewScores), 2);
   }
@@ -56,7 +56,7 @@ export async function calculateInterviewScore(
   const weightsForRole = form.interviewScoreWeights?.[interview.forRole];
   if (!weightsForRole) {
     throwWarningToast(
-      "Form does not have interview weights for this role, falling back to average scoring!"
+      "Form does not have interview weights for this role, falling back to average scoring!",
     );
     return roundScore(averageScore(interview.interviewScores), 2);
   }
@@ -70,15 +70,13 @@ export function calculateScore(
 ): number {
   if (hasScoreKeyMismatch(weights, scores)) {
     throwWarningToast(
-      "Form and scores don't have matching keys, falling back to average scoring!"
+      "Form and scores don't have matching keys, falling back to average scoring!",
     );
     return roundScore(averageScore(scores), 2);
   }
 
   if (missingRequiredScoreKeys(weights, scores)) {
-    throwWarningToast(
-      "Score is missing required keys, returning -1 score!",
-    );
+    throwWarningToast("Score is missing required keys, returning -1 score!");
     return -1;
   }
 
@@ -108,7 +106,7 @@ function hasScoreKeyMismatch(
     formWeightKeys.every((k) => k in scores) &&
     scoreKeys.every((k) => k in weights);
 
-  console.log("weights" + formWeightKeys)
+  console.log("weights" + formWeightKeys);
   console.log("scores" + scoreKeys);
 
   return !keysMatch && scoreKeys.length >= formWeightKeys.length;
@@ -118,7 +116,7 @@ function missingRequiredScoreKeys(
   weights: Record<string, number>,
   scores: Record<string, number>,
 ): boolean {
-  return !Object.keys(weights).every(weight => weight in scores,);
+  return !Object.keys(weights).every((weight) => weight in scores);
 }
 
 function roundScore(score: number, decimalPlaces: number) {

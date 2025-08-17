@@ -22,7 +22,10 @@ export const useUploadInterviewRubrics = () => {
   });
 };
 
-export function useInterviewRubricsForFormRole(formId?: string, role?: ApplicantRole) {
+export function useInterviewRubricsForFormRole(
+  formId?: string,
+  role?: ApplicantRole,
+) {
   return useQuery({
     queryKey: ["interview-rubrics", "form", "role", formId, role],
     enabled: !!formId && !!role,

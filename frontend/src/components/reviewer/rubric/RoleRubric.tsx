@@ -1,4 +1,5 @@
-import { ApplicationInterviewData,
+import {
+  ApplicationInterviewData,
   ApplicantRole,
   ApplicationForm,
   ApplicationReviewData,
@@ -53,8 +54,20 @@ export default function RoleRubric({
             key={q.scoreKey}
             question={q}
             onChange={onScoreChange}
-            weight={reviewData ? form?.scoreWeights[role]?.[q.scoreKey] : interviewData ? form?.interviewScoreWeights[role]?.[q.scoreKey] : 0}
-            value={reviewData ? reviewData.applicantScores[q.scoreKey] : interviewData ? interviewData.interviewScores[q.scoreKey] : 0}
+            weight={
+              reviewData
+                ? form?.scoreWeights[role]?.[q.scoreKey]
+                : interviewData
+                  ? form?.interviewScoreWeights[role]?.[q.scoreKey]
+                  : 0
+            }
+            value={
+              reviewData
+                ? reviewData.applicantScores[q.scoreKey]
+                : interviewData
+                  ? interviewData.interviewScores[q.scoreKey]
+                  : 0
+            }
           />
         ))}
       </div>
@@ -63,7 +76,13 @@ export default function RoleRubric({
       <Textarea
         disabled={disabled}
         className="disabled:opacity-100"
-        defaultValue={reviewData ? reviewData.reviewerNotes[rubric.id] : interviewData ? interviewData.interviewerNotes[rubric.id] : ""}
+        defaultValue={
+          reviewData
+            ? reviewData.reviewerNotes[rubric.id]
+            : interviewData
+              ? interviewData.interviewerNotes[rubric.id]
+              : ""
+        }
         onChange={(e) => onCommentChange(rubric.id, e.target.value)}
       ></Textarea>
     </div>
