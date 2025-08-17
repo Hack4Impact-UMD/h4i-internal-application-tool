@@ -53,16 +53,16 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             responseId: assignment.applicationResponseId,
             role: assignment.forRole,
             review: review,
-            score: review
+            score: review && review.submitted
               ? {
-                  value: await calculateReviewScore(review).catch((err) => {
-                    console.warn(
-                      `Failed to calculate score for ${applicant.id}: ${err}`,
-                    );
-                    return NaN;
-                  }),
-                  outOf: 4, // NOTE: All scores are assumed to be out of 4
-                }
+                value: await calculateReviewScore(review).catch((err) => {
+                  console.warn(
+                    `Failed to calculate score for ${applicant.id}: ${err}`,
+                  );
+                  return NaN;
+                }),
+                outOf: 4, // NOTE: All scores are assumed to be out of 4
+              }
               : undefined,
           };
 
