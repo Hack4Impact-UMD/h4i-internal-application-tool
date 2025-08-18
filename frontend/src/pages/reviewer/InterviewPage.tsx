@@ -49,10 +49,16 @@ type UserHeaderProps = {
   form: ApplicationForm;
   role: ApplicantRole;
   interviewData: ApplicationInterviewData;
-  lastSave?: number
+  lastSave?: number;
 };
 
-function UserHeader({ applicantId, form, role, interviewData, lastSave }: UserHeaderProps) {
+function UserHeader({
+  applicantId,
+  form,
+  role,
+  interviewData,
+  lastSave,
+}: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
   const { user } = useAuth();
   const {
@@ -140,9 +146,8 @@ const InterviewPage: React.FC = () => {
     error: interviewError,
   } = useInterviewData(interviewDataId ?? "");
 
-  const { mutate: updateInterviewData, submittedAt: lastSave } = useUpdateInterviewData(
-    interviewDataId ?? "",
-  );
+  const { mutate: updateInterviewData, submittedAt: lastSave } =
+    useUpdateInterviewData(interviewDataId ?? "");
   const { mutate: submitInterview, isPending: isSubmitting } =
     useUpdateInterviewData(interviewDataId ?? "");
 
@@ -362,7 +367,7 @@ const InterviewPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => { }}
+                    onChangeResponse={() => {}}
                   />
                 </div>
               ))}
@@ -371,11 +376,13 @@ const InterviewPage: React.FC = () => {
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={50}>
           <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full rounded-md">
-            {sortedInterviewRubrics.length === 0 ?
+            {sortedInterviewRubrics.length === 0 ? (
               <div className="w-full h-full flex items-center justify-center">
-                <p className="text-center">No interview rubrics found for this role</p>
+                <p className="text-center">
+                  No interview rubrics found for this role
+                </p>
               </div>
-              :
+            ) : (
               sortedInterviewRubrics.map((r) => (
                 <RoleRubric
                   role={interviewData.forRole}
@@ -388,7 +395,7 @@ const InterviewPage: React.FC = () => {
                   form={form}
                 />
               ))
-            }
+            )}
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>

@@ -3,7 +3,10 @@ import { getAnalytics } from "firebase/analytics";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check"
+import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider,
+} from "firebase/app-check";
 
 const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 const FIREBASE_API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
@@ -29,7 +32,6 @@ console.log(`Using base API URL at: ${API_URL}`);
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-
 declare global {
   // eslint-disable-next-line no-var
   var FIREBASE_APPCHECK_DEBUG_TOKEN: boolean | string | undefined;
@@ -37,15 +39,20 @@ declare global {
 
 if (import.meta.env.MODE === "development") {
   console.warn("====USING APPCHECK DEBUG TOKEN====");
-  console.warn("IMPORTANT: The app won't work locally if this token is not registered!");
-  console.warn("Read the docs for debug tokens here: https://firebase.google.com/docs/app-check/web/debug-provider#web");
-  self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_APPCHECK_DEBUG_TOKEN ?? true;
+  console.warn(
+    "IMPORTANT: The app won't work locally if this token is not registered!",
+  );
+  console.warn(
+    "Read the docs for debug tokens here: https://firebase.google.com/docs/app-check/web/debug-provider#web",
+  );
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN =
+    import.meta.env.VITE_APPCHECK_DEBUG_TOKEN ?? true;
 }
 
 initializeAppCheck(app, {
   provider: new ReCaptchaEnterpriseProvider(SITE_KEY),
-  isTokenAutoRefreshEnabled: true
-})
+  isTokenAutoRefreshEnabled: true,
+});
 
 export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
