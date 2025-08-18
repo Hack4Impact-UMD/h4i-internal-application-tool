@@ -1,4 +1,5 @@
 import {
+  ApplicationInterviewData,
   ApplicantRole,
   ApplicationForm,
   ApplicationReviewData,
@@ -13,7 +14,8 @@ type RoleRubricProps = {
   rubric: RoleReviewRubric;
   onScoreChange: (key: string, value: number) => void;
   onCommentChange: (rubricId: string, comments: string) => void;
-  reviewData: ApplicationReviewData;
+  reviewData?: ApplicationReviewData;
+  interviewData?: ApplicationInterviewData;
   disabled?: boolean;
   form?: ApplicationForm; //optional, for displaying score weights
   role: ApplicantRole;
@@ -25,6 +27,7 @@ export default function RoleRubric({
   onScoreChange,
   onCommentChange,
   reviewData,
+  interviewData,
   disabled = false,
   form = undefined,
 }: RoleRubricProps) {
@@ -51,8 +54,20 @@ export default function RoleRubric({
             key={q.scoreKey}
             question={q}
             onChange={onScoreChange}
-            weight={form?.scoreWeights[role]?.[q.scoreKey]}
-            value={reviewData.applicantScores[q.scoreKey]}
+            weight={
+              reviewData
+                ? form?.scoreWeights[role]?.[q.scoreKey]
+                : interviewData
+                  ? form?.interviewScoreWeights[role]?.[q.scoreKey]
+                  : 0
+            }
+            value={
+              reviewData
+                ? reviewData.applicantScores[q.scoreKey]
+                : interviewData
+                  ? interviewData.interviewScores[q.scoreKey]
+                  : 0
+            }
           />
         ))}
       </div>
@@ -61,7 +76,13 @@ export default function RoleRubric({
       <Textarea
         disabled={disabled}
         className="disabled:opacity-100"
-        defaultValue={reviewData.reviewerNotes[rubric.id] ?? ""}
+        defaultValue={
+          reviewData
+            ? reviewData.reviewerNotes[rubric.id]
+            : interviewData
+              ? interviewData.interviewerNotes[rubric.id]
+              : ""
+        }
         onChange={(e) => onCommentChange(rubric.id, e.target.value)}
       ></Textarea>
     </div>

@@ -9,9 +9,13 @@ import { PermissionRole } from "@/types/types";
 import { displayUserRoleName } from "@/utils/display";
 import { Link, useNavigate } from "react-router-dom";
 import { h4iApplicationForm } from "@/data/h4i-application-form";
-import { APPLICATION_RUBRICS } from "@/data/rubrics";
+import {
+  APPLICATION_INTERVIEW_RUBRICS,
+  APPLICATION_RUBRICS,
+} from "@/data/rubrics";
 import { useUploadRubrics } from "@/hooks/useRubrics";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { useUploadInterviewRubrics } from "@/hooks/useInterviewRubrics";
 
 export default function AdminHome() {
   const navigate = useNavigate();
@@ -30,6 +34,12 @@ export default function AdminHome() {
     error: rubricUploadError,
     data: rubricUploadData,
   } = useUploadRubrics();
+  const {
+    mutate: uploadInterviewRubrics,
+    isPending: isUploadingInterviewRubrics,
+    error: interviewRubricUploadError,
+    data: interviewRubricUploadData,
+  } = useUploadInterviewRubrics();
 
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
@@ -77,6 +87,19 @@ export default function AdminHome() {
 
     uploadRubrics({
       rubrics: APPLICATION_RUBRICS,
+      token: (await token()) ?? "",
+    });
+  };
+
+  const handleUploadInterviewRubrics = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to upload the application interview rubrics?",
+    );
+
+    if (!confirmed || !token) return;
+
+    uploadInterviewRubrics({
+      interviewRubrics: APPLICATION_INTERVIEW_RUBRICS,
       token: (await token()) ?? "",
     });
   };
@@ -182,13 +205,24 @@ export default function AdminHome() {
             <p className="text-muted-foreground">
               Upload the application rubrics to Firestore.
             </p>
-            <Button
-              className="mt-4"
-              onClick={handleUploadRubrics}
-              disabled={isUploadingRubrics}
-            >
-              {isUploadingRubrics ? "Uploading..." : "Upload Rubrics"}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                className="mt-4"
+                onClick={handleUploadRubrics}
+                disabled={isUploadingRubrics}
+              >
+                {isUploadingRubrics ? "Uploading..." : "Upload Review Rubrics"}
+              </Button>
+              <Button
+                className="mt-4"
+                onClick={handleUploadInterviewRubrics}
+                disabled={isUploadingInterviewRubrics}
+              >
+                {isUploadingInterviewRubrics
+                  ? "Uploading..."
+                  : "Upload Interview Rubrics"}
+              </Button>
+            </div>
             {rubricUploadData && (
               <p className="mt-2 text-sm text-green-600">
                 Success! Uploaded {rubricUploadData.data.count} rubrics.
@@ -197,6 +231,17 @@ export default function AdminHome() {
             {rubricUploadError && (
               <p className="mt-2 text-sm text-red-600">
                 {rubricUploadError.message}
+              </p>
+            )}
+            {interviewRubricUploadData && (
+              <p className="mt-2 text-sm text-green-600">
+                Success! Uploaded {interviewRubricUploadData.data.count}{" "}
+                rubrics.
+              </p>
+            )}
+            {interviewRubricUploadError && (
+              <p className="mt-2 text-sm text-red-600">
+                {interviewRubricUploadError.message}
               </p>
             )}
           </div>

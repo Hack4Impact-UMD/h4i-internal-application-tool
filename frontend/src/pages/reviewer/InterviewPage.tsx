@@ -3,15 +3,12 @@ import Section from "@/components/form/Section";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import Loading from "@/components/Loading";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";
-import { useReviewData, useUpdateReviewData } from "@/hooks/useReviewData";
 import Spinner from "@/components/Spinner";
 import { useApplicant } from "@/hooks/useApplicants";
 import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
-import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
+import { displayApplicantRoleName } from "@/utils/display";
 import { Button } from "@/components/ui/button";
-import { useRubricsForFormRole } from "@/hooks/useRubrics";
 import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
-import { useReviewScore } from "@/hooks/useReviewScore";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import {
@@ -27,17 +24,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import { ApplicationReviewData, PermissionRole } from "@/types/types";
-import { CheckIcon, CircleAlertIcon } from "lucide-react";
+  useInterviewData,
+  useUpdateInterviewData,
+} from "@/hooks/useInterviewData";
+import { useInterviewRubricsForFormRole } from "@/hooks/useInterviewRubrics";
+import { useInterviewScore } from "@/hooks/useInterviewScore";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { CheckIcon, CircleAlertIcon } from "lucide-react";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { ApplicationInterviewData, PermissionRole } from "@/types/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useUser } from "@/hooks/useUsers";
 
@@ -45,16 +48,16 @@ type UserHeaderProps = {
   applicantId: string;
   form: ApplicationForm;
   role: ApplicantRole;
+  interviewData: ApplicationInterviewData;
   lastSave?: number;
-  reviewData: ApplicationReviewData;
 };
 
 function UserHeader({
   applicantId,
   form,
   role,
+  interviewData,
   lastSave,
-  reviewData,
 }: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
   const { user } = useAuth();
@@ -62,7 +65,7 @@ function UserHeader({
     data: reviewer,
     isPending: reviewerPending,
     error: reviewerError,
-  } = useUser(reviewData.reviewerId);
+  } = useUser(interviewData.interviewerId);
 
   if (isPending)
     return (
@@ -81,13 +84,13 @@ function UserHeader({
     );
 
   return (
-    <div className="w-full flex flex-col gap-0">
+    <div className="w-full flex flex-col gap-1">
       <h1 className="text-xl">
         {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
-        {displayApplicantRoleNameNoEmoji(role)} Application
+        {displayApplicantRoleName(role)} Interview
       </h1>
       <span>
-        {reviewData.submitted ? (
+        {interviewData.submitted ? (
           <span>
             <CheckIcon className="inline size-5" /> Submitted{" "}
             {user?.role === PermissionRole.SuperReviewer ? (
@@ -117,11 +120,11 @@ function UserHeader({
   );
 }
 
-const AppReviewPage: React.FC = () => {
+const InterviewPage: React.FC = () => {
   const navigate = useNavigate();
-  const { formId, responseId, reviewDataId } = useParams<{
+  const { formId, responseId, interviewDataId } = useParams<{
     formId: string;
-    reviewDataId: string;
+    interviewDataId: string;
     responseId: string;
   }>();
 
@@ -138,117 +141,111 @@ const AppReviewPage: React.FC = () => {
   } = useApplicationForm(formId);
 
   const {
-    data: reviewData,
-    isPending: reviewPending,
-    error: reviewError,
-  } = useReviewData(reviewDataId ?? "");
+    data: interviewData,
+    isPending: interviewPending,
+    error: interviewError,
+  } = useInterviewData(interviewDataId ?? "");
 
-  const { mutate: updateReviewData, submittedAt: lastSave } =
-    useUpdateReviewData(reviewDataId ?? "");
-  const { mutate: submitReview, isPending: isSubmitting } = useUpdateReviewData(
-    reviewDataId ?? "",
-  );
-
-  const {
-    data: rubrics,
-    isPending: rubricsPending,
-    error: rubricsError,
-  } = useRubricsForFormRole(form?.id, reviewData?.forRole);
+  const { mutate: updateInterviewData, submittedAt: lastSave } =
+    useUpdateInterviewData(interviewDataId ?? "");
+  const { mutate: submitInterview, isPending: isSubmitting } =
+    useUpdateInterviewData(interviewDataId ?? "");
 
   const {
-    data: score,
-    isFetching: scorePending,
-    error: scoreError,
-  } = useReviewScore(reviewData!);
+    data: interviewRubrics,
+    isPending: interviewRubricsPending,
+    error: interviewRubricsError,
+  } = useInterviewRubricsForFormRole(form?.id, interviewData?.forRole);
+
+  const {
+    data: interviewScore,
+    isFetching: interviewScorePending,
+    error: interviewScoreError,
+  } = useInterviewScore(interviewData!);
 
   const [localNotes, setLocalNotes] = useState<
     Record<string, string> | undefined
   >(undefined);
 
   useEffect(() => {
-    if (reviewData && !localNotes) {
-      setLocalNotes(reviewData.reviewerNotes || {});
+    if (interviewData && !localNotes) {
+      setLocalNotes(interviewData.interviewerNotes || {});
     }
-  }, [reviewData, localNotes]);
+  }, [interviewData, localNotes]);
 
   useEffect(() => {
-    if (localNotes === undefined || !reviewData || reviewData.submitted) return;
+    if (localNotes === undefined || !interviewData || interviewData.submitted)
+      return;
     const ref = setTimeout(() => {
-      updateReviewData(
-        { reviewerNotes: localNotes },
-        {
-          onError: (err) => {
-            console.log("Autosave failed:", err);
-            throwErrorToast("Failed to autosave notes!");
-          },
-        },
-      );
+      updateInterviewData({ interviewerNotes: localNotes });
     }, 1000);
     return () => clearTimeout(ref);
-  }, [localNotes, reviewData, updateReviewData]);
+  }, [localNotes, interviewData, updateInterviewData]);
 
-  const optimisticReviewData = useMemo(() => {
-    if (!reviewData) return undefined;
-    if (!localNotes) return reviewData;
+  const optimisticInterviewData = useMemo(() => {
+    if (!interviewData) return undefined;
+    if (!localNotes) return interviewData;
     return {
-      ...reviewData,
-      reviewerNotes: localNotes,
+      ...interviewData,
+      interviewerNotes: localNotes,
     };
-  }, [reviewData, localNotes]);
+  }, [interviewData, localNotes]);
 
-  const sortedRubrics = useMemo(
+  const sortedInterviewRubrics = useMemo(
     () =>
-      rubrics
-        ? [...rubrics].sort((a, b) => a.roles.length - b.roles.length)
+      interviewRubrics
+        ? [...interviewRubrics].sort((a, b) => a.roles.length - b.roles.length)
         : [],
-    [rubrics],
+    [interviewRubrics],
   );
 
-  const scoreChange = useCallback(
+  const interviewScoreChange = useCallback(
     (key: string, value: number) => {
-      if (!reviewData || reviewData.submitted) return;
+      if (!interviewData || interviewData.submitted) return;
 
       const newScores = {
-        ...reviewData.applicantScores,
+        ...interviewData.interviewScores,
         [key]: value,
       };
 
-      updateReviewData({ applicantScores: newScores });
+      updateInterviewData({ interviewScores: newScores });
     },
-    [reviewData, updateReviewData],
+    [interviewData, updateInterviewData],
   );
 
   const commentChange = useCallback((id: string, value: string) => {
     setLocalNotes((prev) => ({ ...(prev ?? {}), [id]: value }));
   }, []);
 
-  const handleSubmitReview = () => {
+  const handleSubmitInterview = () => {
     const requiredKeys =
-      rubrics?.flatMap((r) => r.rubricQuestions.map((q) => q.scoreKey)) ?? [];
+      interviewRubrics?.flatMap((r) =>
+        r.rubricQuestions.map((q) => q.scoreKey),
+      ) ?? [];
     const existingKeys = new Set(
-      Object.keys(reviewData?.applicantScores ?? {}),
+      Object.keys(interviewData?.interviewScores ?? {}),
     );
 
     for (const req of requiredKeys) {
       if (!existingKeys.has(req)) {
-        throwErrorToast(`Review is incomplete, missing required key ${req}`);
+        throwErrorToast(`Interview is incomplete, missing required key ${req}`);
         return;
       }
     }
 
-    submitReview(
+    submitInterview(
       {
-        ...optimisticReviewData,
-        reviewerNotes: localNotes,
+        ...optimisticInterviewData,
+        interviewerNotes: localNotes,
         submitted: true,
       },
       {
         onSuccess: () => {
-          throwSuccessToast("Review submitted successfully!");
+          throwSuccessToast("Interview submitted successfully!");
           navigate(-1);
         },
         onError: () => {
-          throwErrorToast("Failed to submit review");
+          throwErrorToast("Failed to submit interview");
         },
       },
     );
@@ -257,8 +254,8 @@ const AppReviewPage: React.FC = () => {
   if (
     formLoading ||
     responseLoading ||
-    reviewPending ||
-    rubricsPending ||
+    interviewPending ||
+    interviewRubricsPending ||
     !localNotes
   )
     return <Loading />;
@@ -266,33 +263,36 @@ const AppReviewPage: React.FC = () => {
     return <p>Failed to fetch form: {formError.message}</p>;
   if (responseError || !response)
     return <p>Failed to fetch response: {responseError?.message}</p>;
-  if (reviewError) return <p>Failed to fetch review: {reviewError.message}</p>;
-  if (rubricsError)
-    return <p>Failed to fetch rubrics: {rubricsError.message}</p>;
-  if (!optimisticReviewData) return <p>Failed to fetch review data</p>;
+  if (interviewError)
+    return <p>Failed to fetch interview: {interviewError.message}</p>;
+  if (interviewRubricsError)
+    return <p>Failed to fetch rubrics: {interviewRubricsError.message}</p>;
+  if (!optimisticInterviewData) return <p>Failed to fetch interview data</p>;
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
       <div className="flex flex-row w-full py-2 px-4 items-center rounded border border-blue-300 bg-blue-100 text-blue">
         <UserHeader
-          reviewData={reviewData}
           applicantId={response.userId}
           form={form}
-          role={reviewData.forRole}
+          role={interviewData.forRole}
+          interviewData={interviewData}
           lastSave={lastSave}
         />
 
-        {scorePending ? (
+        {interviewScorePending ? (
           <Spinner className="mr-4" />
-        ) : scoreError ? (
-          `Failed to calculate score: ${scoreError.message}`
+        ) : interviewScoreError ? (
+          `Failed to calculate score: ${interviewScoreError.message}`
         ) : (
-          <span className="text-lg text-blue w-64 mr-2">
-            Review Score:{" "}
-            {typeof score === "number" && score >= 0 ? (
+          <span className="text-lg text-blue w-72 mr-2">
+            Interview Score:{" "}
+            {typeof interviewScore === "number" && interviewScore >= 0 ? (
               <>
-                <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span> /
-                4
+                <span className="font-bold">
+                  {interviewScore.toFixed(2) ?? "N/A"}
+                </span>{" "}
+                / 4
               </>
             ) : (
               <Tooltip>
@@ -308,23 +308,19 @@ const AppReviewPage: React.FC = () => {
           <AlertDialogTrigger asChild>
             <Button
               variant="default"
-              disabled={isSubmitting || optimisticReviewData.submitted}
+              disabled={isSubmitting || optimisticInterviewData.submitted}
             >
-              {isSubmitting ? (
-                "Submitting..."
-              ) : optimisticReviewData.submitted ? (
-                <span>
-                  <CheckIcon className="inline" /> Submitted
-                </span>
-              ) : (
-                "Submit Review"
-              )}
+              {isSubmitting
+                ? "Submitting..."
+                : optimisticInterviewData.submitted
+                  ? "Submitted"
+                  : "Submit Interview"}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                Are you sure you want to submit this review?
+                Are you sure you want to submit this interview?
               </AlertDialogTitle>
               <AlertDialogDescription>
                 You will not be able to edit it after submission.
@@ -332,7 +328,7 @@ const AppReviewPage: React.FC = () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleSubmitReview}>
+              <AlertDialogAction onClick={handleSubmitInterview}>
                 Confirm
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -380,18 +376,26 @@ const AppReviewPage: React.FC = () => {
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={50}>
           <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full rounded-md">
-            {sortedRubrics.map((r) => (
-              <RoleRubric
-                role={reviewData.forRole}
-                key={r.id}
-                rubric={r}
-                onScoreChange={scoreChange}
-                onCommentChange={commentChange}
-                reviewData={optimisticReviewData}
-                disabled={optimisticReviewData.submitted}
-                form={form}
-              />
-            ))}
+            {sortedInterviewRubrics.length === 0 ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <p className="text-center">
+                  No interview rubrics found for this role
+                </p>
+              </div>
+            ) : (
+              sortedInterviewRubrics.map((r) => (
+                <RoleRubric
+                  role={interviewData.forRole}
+                  key={r.id}
+                  rubric={r}
+                  onScoreChange={interviewScoreChange}
+                  onCommentChange={commentChange}
+                  interviewData={optimisticInterviewData}
+                  disabled={optimisticInterviewData.submitted}
+                  form={form}
+                />
+              ))
+            )}
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
@@ -399,4 +403,4 @@ const AppReviewPage: React.FC = () => {
   );
 };
 
-export default AppReviewPage;
+export default InterviewPage;

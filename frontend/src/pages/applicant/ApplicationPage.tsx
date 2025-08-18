@@ -39,7 +39,7 @@ const ApplicationPage: React.FC = () => {
         .filter((section) => availableSections.includes(section.sectionId))
         .map((s) => {
           return {
-            label: s.sectionName,
+            label: s.sectionName.substring(0, 17) + "...",
             id: s.sectionId,
           };
         }),

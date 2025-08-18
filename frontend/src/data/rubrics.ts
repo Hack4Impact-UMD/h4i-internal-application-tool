@@ -161,3 +161,115 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
   },
   */
 ];
+
+export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
+  {
+    id: "2025-tech-lead-interview-rubric",
+    formId: FORM_ID,
+    roles: [ApplicantRole.TechLead],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-leadership",
+        prompt: "Leadership and Mentorship",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+  {
+    id: "2025-general-engineering-interview-rubric",
+    formId: FORM_ID,
+    roles: [ApplicantRole.Engineer, ApplicantRole.TechLead],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-technical-competency",
+        prompt: "Technical Competency",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-teamwork",
+        prompt: "Teamwork and Collaboration",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-problem-solving",
+        prompt: "Problem Solving and Adaptability",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+  {
+    id: "2025-design-interview-rubric",
+    formId: FORM_ID,
+    roles: [ApplicantRole.Designer],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-design-thinking",
+        prompt: "Design Process and Thinking",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-communication",
+        prompt: "Communication and Collaboration",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-technical-skills",
+        prompt: "Technical Skills and Tools Proficiency",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+  {
+    id: "2025-product-interview-rubric",
+    formId: FORM_ID,
+    roles: [ApplicantRole.Product],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-behavioral",
+        prompt: "General and Behavioral",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-pm-skills",
+        prompt: "PM-Specific Skills",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+  {
+    id: "2025-general-interview-rubric",
+    formId: FORM_ID,
+    roles: [
+      ApplicantRole.Bootcamp,
+      ApplicantRole.OutreachCoord,
+      ApplicantRole.SocialMedia,
+    ],
+    rubricQuestions: [
+      {
+        scoreKey: "interview-overall",
+        prompt: "Overall Score",
+        description: ``,
+        minValue: 1,
+        maxValue: 4,
+      },
+    ],
+  },
+];

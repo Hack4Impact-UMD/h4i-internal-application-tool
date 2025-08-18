@@ -1,7 +1,6 @@
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import {
-  ApplicantRole,
   ApplicationForm,
   ApplicationInterviewData,
   ApplicationReviewData,
@@ -11,91 +10,113 @@ export async function calculateReviewScore(
   review: ApplicationReviewData,
 ): Promise<number> {
   const scores = Object.keys(review.applicantScores);
-  if (scores.length == 0) return 0;
+  if (scores.length === 0) return 0;
 
   const form: ApplicationForm = await getApplicationForm(
     review.applicationFormId,
   );
 
+  if (!form.scoreWeights) {
+    throwWarningToast(
+      "Form does not have review weights, falling back to average scoring!",
+    );
+    return roundScore(averageScore(review.applicantScores), 2);
+  }
+
   const weightsForRole = form.scoreWeights?.[review.forRole];
   if (!weightsForRole) {
-    console.warn(
-      "Form does not have weights, falling back to average scoring!",
-    );
     throwWarningToast(
-      "Form does not have weights, falling back to average scoring!",
+      "Form does not have review weights for this role, falling back to average scoring!",
     );
-    return roundScore(averageScore(review), 2);
-  }
-  const formWeightKeys = Object.keys(weightsForRole);
-  const scoreKeys = Object.keys(review.applicantScores ?? {});
-  const keysMatch =
-    formWeightKeys.length === scoreKeys.length &&
-    formWeightKeys.every((k) => k in review.applicantScores) &&
-    scoreKeys.every((k) => k in weightsForRole);
-  if (!keysMatch && scoreKeys.length >= formWeightKeys.length) {
-    console.warn("SCORE KEY MISMATCH: Falling back to average scoring!");
-    console.warn(`Expected: ${formWeightKeys}. Got: ${scoreKeys}`);
-    throwWarningToast(
-      "Score key mismatch found, falling back to simple average!",
-    );
-    return roundScore(averageScore(review), 2);
+    return roundScore(averageScore(review.applicantScores), 2);
   }
 
-  if (!form.scoreWeights) {
-    // fallback to simple average
-    console.log("NO WEIGHTS");
-    return roundScore(averageScore(review), 2);
-  }
-
-  if (
-    !validateScoreCategoriesForFormAndRole(
-      form.scoreWeights[review.forRole],
-      review.applicantScores,
-    )
-  ) {
-    throwWarningToast(
-      "validateScoreCategoriesForFormAndRole failed, returning -1 score!",
-    );
-    return Promise.resolve(-1);
-  }
-  const score = calculateScoreForFormAndRole(
-    form.scoreWeights[review.forRole],
-    review.applicantScores,
-  );
-  return roundScore(score, 2);
+  return calculateScore(weightsForRole, review.applicantScores);
 }
 
 export async function calculateInterviewScore(
-  interviewData: ApplicationInterviewData,
+  interview: ApplicationInterviewData,
 ): Promise<number> {
-  return Promise.resolve(interviewData.interviewScore);
-}
+  const scores = Object.keys(interview.interviewScores);
+  if (scores.length === 0) return 0;
 
-function averageScore(review: ApplicationReviewData) {
-  if (Object.values(review.applicantScores).length == 0) return 0;
-  const scores = Object.values(review.applicantScores);
-  return scores.reduce((acc, s) => acc + s, 0) / scores.length;
-}
-
-function validateScoreCategoriesForFormAndRole(
-  scoreWeightsForRole: ApplicationForm["scoreWeights"][ApplicantRole],
-  applicantScores: ApplicationReviewData["applicantScores"],
-): boolean {
-  return Object.keys(scoreWeightsForRole).every(
-    (weight) => weight in applicantScores,
+  const form: ApplicationForm = await getApplicationForm(
+    interview.applicationFormId,
   );
+
+  console.log("this is running");
+
+  if (!form.interviewScoreWeights) {
+    throwWarningToast(
+      "Form does not have interview weights, falling back to average scoring!",
+    );
+    return roundScore(averageScore(interview.interviewScores), 2);
+  }
+
+  const weightsForRole = form.interviewScoreWeights?.[interview.forRole];
+  if (!weightsForRole) {
+    throwWarningToast(
+      "Form does not have interview weights for this role, falling back to average scoring!",
+    );
+    return roundScore(averageScore(interview.interviewScores), 2);
+  }
+
+  return calculateScore(weightsForRole, interview.interviewScores);
 }
 
-function calculateScoreForFormAndRole(
-  scoreWeightsForRole: ApplicationForm["scoreWeights"][ApplicantRole],
-  applicantScores: ApplicationReviewData["applicantScores"],
+export function calculateScore(
+  weights: Record<string, number>,
+  scores: Record<string, number>,
 ): number {
-  return Object.keys(scoreWeightsForRole).reduce((acc, scoreCategory) => {
-    const weight = scoreWeightsForRole[scoreCategory] ?? 0;
-    const score = applicantScores[scoreCategory] ?? 0;
+  if (hasScoreKeyMismatch(weights, scores)) {
+    throwWarningToast(
+      "Form and scores don't have matching keys, falling back to average scoring!",
+    );
+    return roundScore(averageScore(scores), 2);
+  }
+
+  if (missingRequiredScoreKeys(weights, scores)) {
+    throwWarningToast("Score is missing required keys, returning -1 score!");
+    return -1;
+  }
+
+  const score = Object.keys(weights).reduce((acc, scoreCategory) => {
+    const weight = weights[scoreCategory] ?? 0;
+    const score = scores[scoreCategory] ?? 0;
     return acc + weight * score;
   }, 0);
+  return roundScore(score, 2);
+}
+
+function averageScore(scores: Record<string, number>) {
+  if (Object.values(scores).length == 0) return 0;
+  const scoreValues = Object.values(scores);
+  return scoreValues.reduce((acc, s) => acc + s, 0) / scoreValues.length;
+}
+
+function hasScoreKeyMismatch(
+  weights: Record<string, number>,
+  scores: Record<string, number>,
+): boolean {
+  const formWeightKeys = Object.keys(weights);
+  const scoreKeys = Object.keys(scores ?? {});
+
+  const keysMatch =
+    formWeightKeys.length === scoreKeys.length &&
+    formWeightKeys.every((k) => k in scores) &&
+    scoreKeys.every((k) => k in weights);
+
+  console.log("weights" + formWeightKeys);
+  console.log("scores" + scoreKeys);
+
+  return !keysMatch && scoreKeys.length >= formWeightKeys.length;
+}
+
+function missingRequiredScoreKeys(
+  weights: Record<string, number>,
+  scores: Record<string, number>,
+): boolean {
+  return !Object.keys(weights).every((weight) => weight in scores);
 }
 
 function roundScore(score: number, decimalPlaces: number) {

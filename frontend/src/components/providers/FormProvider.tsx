@@ -26,7 +26,8 @@ export default function FormProvider() {
   const saveMutation = useMutation({
     mutationFn: async (r: ApplicationResponse) => {
       const tok = await token();
-      if (tok) return await saveApplicationResponse(r, tok);
+      if (!tok) throw new Error("Not authenticated");
+      return await saveApplicationResponse(r, tok);
     },
   });
   const [response, setResponse] = useState<ApplicationResponse | undefined>();

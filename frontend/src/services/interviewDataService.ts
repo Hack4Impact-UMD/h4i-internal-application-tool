@@ -1,9 +1,11 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import {
@@ -31,6 +33,23 @@ export async function getInterviewDataForResponseRole(
   const result = await getDocs(q);
 
   return result.docs.map((doc) => doc.data() as ApplicationInterviewData);
+}
+
+export async function getInterviewDataById(id: string) {
+  const interviewData = collection(db, INTERVIEW_DATA_COLLECTION);
+  const docRef = doc(interviewData, id);
+
+  return (await getDoc(docRef)).data() as ApplicationInterviewData;
+}
+
+export async function updateInterviewData(
+  interviewDataId: string,
+  update: Partial<Omit<ApplicationInterviewData, "id">>,
+) {
+  const interviewData = collection(db, INTERVIEW_DATA_COLLECTION);
+  const interviewRef = doc(interviewData, interviewDataId);
+
+  await updateDoc(interviewRef, update);
 }
 
 export async function getInterviewDataForAssignment(
