@@ -282,7 +282,7 @@ const InterviewPage: React.FC = () => {
         ) : (
           <span className="text-lg text-blue w-72 mr-2">
             Interview Score:{" "}
-            {typeof interviewScore === "number" ? (
+            {typeof interviewScore === "number" && interviewScore >= 0 ? (
               <>
                 <span className="font-bold">
                   {interviewScore.toFixed(2) ?? "N/A"}

@@ -9,7 +9,7 @@ export function useMyApplicationStatus(
 ) {
   const { token } = useAuth();
   return useQuery({
-    queryKey: ["status", token, responseId, role],
+    queryKey: ["status", responseId, role],
     enabled: !!role && !!responseId,
     queryFn: async () =>
       getApplicationStatus((await token()) ?? "", responseId!, role!),

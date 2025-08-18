@@ -239,8 +239,8 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.Product],
     rubricQuestions: [
       {
-        scoreKey: "interview-behavorial",
-        prompt: "General and Behavorial",
+        scoreKey: "interview-behavioral",
+        prompt: "General and Behavioral",
         description: ``,
         minValue: 1,
         maxValue: 4,

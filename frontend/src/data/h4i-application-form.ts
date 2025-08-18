@@ -191,7 +191,7 @@ Thank you for your patience during the application and interview process. Based 
     },
     [ApplicantRole.Product]: {
       "interview-general": 0.34,
-      "interview-behavorial": 0.33,
+      "interview-behavioral": 0.33,
       "interview-pm-skills": 0.33,
     },
     [ApplicantRole.TechLead]: {

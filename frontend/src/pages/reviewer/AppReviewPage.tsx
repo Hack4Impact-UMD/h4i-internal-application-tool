@@ -289,7 +289,7 @@ const AppReviewPage: React.FC = () => {
         ) : (
           <span className="text-lg text-blue w-64 mr-2">
             Review Score:{" "}
-            {typeof score === "number" ? (
+            {typeof score === "number" && score >= 0 ? (
               <>
                 <span className="font-bold">{score.toFixed(2) ?? "N/A"}</span> /
                 4
@@ -371,7 +371,7 @@ const AppReviewPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => {}}
+                    onChangeResponse={() => { }}
                   />
                 </div>
               ))}
