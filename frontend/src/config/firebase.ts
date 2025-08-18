@@ -6,7 +6,6 @@ import { connectStorageEmulator, getStorage } from "firebase/storage";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check"
 
 const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-
 const FIREBASE_API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
 
 export const firebaseConfig = {

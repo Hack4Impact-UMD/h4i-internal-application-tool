@@ -34,21 +34,32 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CircleAlertIcon } from "lucide-react";
+import { CheckIcon, CircleAlertIcon } from "lucide-react";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { ApplicationInterviewData, PermissionRole } from "@/types/types";
+import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useUsers";
 
 type UserHeaderProps = {
   applicantId: string;
   form: ApplicationForm;
   role: ApplicantRole;
+  interviewData: ApplicationInterviewData;
+  lastSave?: number
 };
 
-function UserHeader({ applicantId, form, role }: UserHeaderProps) {
+function UserHeader({ applicantId, form, role, interviewData, lastSave }: UserHeaderProps) {
   const { data: applicant, isPending, error } = useApplicant(applicantId);
+  const { user } = useAuth();
+  const {
+    data: reviewer,
+    isPending: reviewerPending,
+    error: reviewerError,
+  } = useUser(interviewData.interviewerId);
 
   if (isPending)
     return (
@@ -67,11 +78,38 @@ function UserHeader({ applicantId, form, role }: UserHeaderProps) {
     );
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-1">
       <h1 className="text-xl">
         {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
         {displayApplicantRoleName(role)} Interview
       </h1>
+      <span>
+        {interviewData.submitted ? (
+          <span>
+            <CheckIcon className="inline size-5" /> Submitted{" "}
+            {user?.role === PermissionRole.SuperReviewer ? (
+              reviewerPending ? (
+                <p>by ...</p>
+              ) : reviewerError ? (
+                <p>by (failed to load reviewer) </p>
+              ) : (
+                <>
+                  by{" "}
+                  <strong>
+                    {reviewer.firstName} {reviewer.lastName}
+                  </strong>
+                </>
+              )
+            ) : (
+              <></>
+            )}
+          </span>
+        ) : lastSave ? (
+          `Last saved ${new Date(lastSave).toLocaleTimeString()}`
+        ) : (
+          `Not saved`
+        )}
+      </span>
     </div>
   );
 }
@@ -102,7 +140,7 @@ const InterviewPage: React.FC = () => {
     error: interviewError,
   } = useInterviewData(interviewDataId ?? "");
 
-  const { mutate: updateInterviewData } = useUpdateInterviewData(
+  const { mutate: updateInterviewData, submittedAt: lastSave } = useUpdateInterviewData(
     interviewDataId ?? "",
   );
   const { mutate: submitInterview, isPending: isSubmitting } =
@@ -116,7 +154,7 @@ const InterviewPage: React.FC = () => {
 
   const {
     data: interviewScore,
-    isPending: interviewScorePending,
+    isFetching: interviewScorePending,
     error: interviewScoreError,
   } = useInterviewScore(interviewData!);
 
@@ -233,6 +271,8 @@ const InterviewPage: React.FC = () => {
           applicantId={response.userId}
           form={form}
           role={interviewData.forRole}
+          interviewData={interviewData}
+          lastSave={lastSave}
         />
 
         {interviewScorePending ? (
@@ -240,7 +280,7 @@ const InterviewPage: React.FC = () => {
         ) : interviewScoreError ? (
           `Failed to calculate score: ${interviewScoreError.message}`
         ) : (
-          <span className="text-lg text-blue w-66 mr-2">
+          <span className="text-lg text-blue w-72 mr-2">
             Interview Score:{" "}
             {typeof interviewScore === "number" ? (
               <>
@@ -322,7 +362,7 @@ const InterviewPage: React.FC = () => {
                         (r) => r.sectionId == s.sectionId,
                       )?.questions ?? []
                     }
-                    onChangeResponse={() => {}}
+                    onChangeResponse={() => { }}
                   />
                 </div>
               ))}
@@ -331,18 +371,24 @@ const InterviewPage: React.FC = () => {
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={50}>
           <div className="w-full overflow-y-scroll flex flex-col gap-2 h-full rounded-md">
-            {sortedInterviewRubrics.map((r) => (
-              <RoleRubric
-                role={interviewData.forRole}
-                key={r.id}
-                rubric={r}
-                onScoreChange={interviewScoreChange}
-                onCommentChange={commentChange}
-                interviewData={optimisticInterviewData}
-                disabled={optimisticInterviewData.submitted}
-                form={form}
-              />
-            ))}
+            {sortedInterviewRubrics.length === 0 ?
+              <div className="w-full h-full flex items-center justify-center">
+                <p className="text-center">No interview rubrics found for this role</p>
+              </div>
+              :
+              sortedInterviewRubrics.map((r) => (
+                <RoleRubric
+                  role={interviewData.forRole}
+                  key={r.id}
+                  rubric={r}
+                  onScoreChange={interviewScoreChange}
+                  onCommentChange={commentChange}
+                  interviewData={optimisticInterviewData}
+                  disabled={optimisticInterviewData.submitted}
+                  form={form}
+                />
+              ))
+            }
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
