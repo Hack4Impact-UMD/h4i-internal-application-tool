@@ -14,6 +14,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { getAppCheckToken } from "./appCheckService";
 
 const STATUS_COLLECTION = "app-status";
 
@@ -25,6 +26,7 @@ export async function getApplicationStatus(
   const res = await axios.get(API_URL + `/status/${responseId}/${role}`, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "X-APPCHECK": await getAppCheckToken(),
     },
   });
 

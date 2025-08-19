@@ -4,6 +4,7 @@ import { ApplicationForm } from "../types/types";
 import { query } from "firebase/firestore";
 import axios from "axios";
 import { getApplicationResponseById } from "./applicationResponsesService";
+import { getAppCheckToken } from "./appCheckService";
 
 export const APPLICATION_FORMS_COLLECTION = "application-forms";
 
@@ -58,6 +59,7 @@ export async function createApplicationForm(
   const res = await axios.post(API_URL + "/application/forms", form, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "X-APPCHECK": await getAppCheckToken(),
     },
   });
   return res.data;

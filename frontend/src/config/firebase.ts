@@ -49,7 +49,7 @@ if (import.meta.env.MODE === "development") {
     import.meta.env.VITE_APPCHECK_DEBUG_TOKEN ?? true;
 }
 
-initializeAppCheck(app, {
+export const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaEnterpriseProvider(SITE_KEY),
   isTokenAutoRefreshEnabled: true,
 });

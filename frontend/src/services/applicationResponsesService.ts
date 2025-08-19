@@ -20,6 +20,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { getReviewAssignments } from "./reviewAssignmentService";
+import { getAppCheckToken } from "./appCheckService";
 
 export const APPLICATION_RESPONSES_COLLECTION = "application-responses";
 
@@ -28,12 +29,14 @@ export async function saveApplicationResponse(
   token: string,
 ) {
   console.log("saving...");
+  const appCheckToken = await getAppCheckToken();
   const res = await axios.put(
     API_URL + "/application/save/" + response.id,
     response,
     {
       headers: {
         Authorization: `Bearer ${token}`,
+        "X-APPCHECK": appCheckToken,
       },
     },
   );
@@ -192,9 +195,11 @@ export async function submitApplicationResponse(
   response: ApplicationResponse,
   token: string,
 ): Promise<ApplicationSubmitResponse> {
+  const appCheckToken = await getAppCheckToken();
   const res = await axios.post(API_URL + "/application/submit", response, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "X-APPCHECK": appCheckToken,
     },
   });
 

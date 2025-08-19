@@ -1,6 +1,7 @@
 import { API_URL, db } from "@/config/firebase";
 import { ApplicantRole, RoleReviewRubric } from "@/types/types";
 import axios from "axios";
+import { getAppCheckToken } from "./appCheckService";
 import {
   collection,
   doc,
@@ -47,12 +48,14 @@ export async function uploadInterviewRubrics(
   interviewRubrics: RoleReviewRubric[],
   token: string,
 ) {
+  const appCheckToken = await getAppCheckToken();
   return await axios.post(
     API_URL + "/application/interview-rubrics",
     interviewRubrics,
     {
       headers: {
         Authorization: `Bearer ${token}`,
+        "X-APPCHECK": appCheckToken,
       },
     },
   );

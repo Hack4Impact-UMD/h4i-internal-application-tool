@@ -9,6 +9,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { getAppCheckToken } from "./appCheckService";
 
 export const RUBRIC_COLLECTION = "rubrics";
 
@@ -50,6 +51,7 @@ export async function uploadRubrics(
   return await axios.post(API_URL + "/application/rubrics", rubrics, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "X-APPCHECK": await getAppCheckToken(),
     },
   });
 }
