@@ -453,7 +453,7 @@ export default function QualifiedApplicationsTable({
         columnHelper.accessor("dateSubmitted", {
           id: "date-submitted",
           header: ({ column }) => {
-            return <SortableHeader column={column}>DATE MOD.</SortableHeader>;
+            return <SortableHeader column={column}>DATE SUB.</SortableHeader>;
           },
           cell: ({ getValue }) => displayTimestamp(getValue()),
         }),
