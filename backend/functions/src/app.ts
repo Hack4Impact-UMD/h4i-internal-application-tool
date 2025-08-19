@@ -5,6 +5,7 @@ import applicationRouter from "./routes/application";
 import interviewRouter from "./routes/interview";
 import bodyParser from "body-parser";
 import cors from "cors"
+import appcheck from "./middleware/appcheck";
 // import { uploadMockData } from "./utils/mockData";
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(cors({
 }))
 
 app.use(bodyParser.json());
+app.use(appcheck)
 
 app.use("/auth", authRouter);
 app.use("/status", statusRouter);
