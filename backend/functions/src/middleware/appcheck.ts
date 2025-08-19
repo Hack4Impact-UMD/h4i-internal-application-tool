@@ -11,13 +11,9 @@ export default async function appcheck(req: Request, res: Response, next: NextFu
   }
 
   try {
-    try {
-        await admin.appCheck().verifyToken(token);
-        logger.info("App Check token verified.");
-        return next();
-    } catch (err) {
-        // …
-    }
+    await admin.appCheck().verifyToken(token);
+    logger.info("App Check token verified.");
+    return next();
   } catch (err) {
     logger.error("App check verification failed!", err)
     return res.status(403).send();
