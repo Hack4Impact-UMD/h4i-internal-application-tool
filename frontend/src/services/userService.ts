@@ -60,7 +60,7 @@ export async function registerUser(
           "X-APPCHECK": await getAppCheckToken(),
         },
       },
-    )) as UserProfile;
+    )).data as UserProfile;
 
     const { user } = await signInWithEmailAndPassword(auth, email, password);
 
