@@ -14,9 +14,11 @@ import {
 } from "@/types/types";
 import { calculateInterviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
+import { Timestamp } from "firebase/firestore";
 
 export type QualifiedAppRow = {
   index: number;
+  dateSubmitted: Timestamp;
   name: string;
   role: ApplicantRole;
   interviewers: {
@@ -77,6 +79,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
           );
           return {
             index: 1 + index,
+            dateSubmitted: app.dateSubmitted,
             name: `${user.firstName} ${user.lastName}`,
             role: app.rolesApplied[0],
             interviewers: { assigned: assignedInterviewers },

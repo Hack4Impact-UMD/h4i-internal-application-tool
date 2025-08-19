@@ -13,9 +13,11 @@ import {
 } from "@/types/types";
 import { calculateReviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
+import { Timestamp } from "firebase/firestore";
 
 export type ApplicationRow = {
   index: number;
+  dateSubmitted: Timestamp;
   applicant: {
     name: string;
     id: string;
@@ -79,6 +81,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
 
           const row: ApplicationRow = {
             index: 1 + index,
+            dateSubmitted: app.dateSubmitted,
             applicant: {
               id: user.id,
               name: `${user.firstName} ${user.lastName}`,

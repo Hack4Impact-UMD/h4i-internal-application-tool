@@ -35,6 +35,7 @@ import {
 import SortableHeader from "../../tables/SortableHeader";
 import { ApplicationRow, useRows } from "./useRows";
 import { ReviewerSelect } from "./ReviewerSelect";
+import { displayTimestamp } from "@/utils/dates";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -193,6 +194,13 @@ export default function SuperReviewerApplicationsTable({
             return <SortableHeader column={column}>S. NO</SortableHeader>;
           },
           cell: ({ getValue }) => getValue(),
+        }),
+        columnHelper.accessor("dateSubmitted", {
+          id: "date-submitted",
+          header: ({ column }) => {
+            return <SortableHeader column={column}>DATE MOD.</SortableHeader>;
+          },
+          cell: ({ getValue }) => displayTimestamp(getValue()),
         }),
         columnHelper.accessor("applicant.name", {
           id: "applicant-name",

@@ -55,6 +55,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { displayTimestamp } from "@/utils/dates";
 
 function InterviewerSelect({
   onAdd,
@@ -448,6 +449,13 @@ export default function QualifiedApplicationsTable({
           header: ({ column }) => (
             <SortableHeader column={column}>S. NO</SortableHeader>
           ),
+        }),
+        columnHelper.accessor("dateSubmitted", {
+          id: "date-submitted",
+          header: ({ column }) => {
+            return <SortableHeader column={column}>DATE MOD.</SortableHeader>;
+          },
+          cell: ({ getValue }) => displayTimestamp(getValue()),
         }),
         columnHelper.accessor("name", {
           id: "name",
