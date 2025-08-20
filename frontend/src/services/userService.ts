@@ -26,6 +26,7 @@ import {
 import { throwErrorToast } from "../components/toasts/ErrorToast";
 import { clearQueryCache } from "@/config/query";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import { getAppCheckToken } from "./appCheckService";
 
 export const USER_COLLECTION = "users";
 
@@ -46,12 +47,20 @@ export async function registerUser(
   password: string,
 ): Promise<UserProfile> {
   try {
-    const createdUser = (await axios.post(API_URL + "/auth/register", {
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
-    })) as UserProfile;
+    const createdUser = (await axios.post(
+      API_URL + "/auth/register",
+      {
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+      },
+      {
+        headers: {
+          "X-APPCHECK": await getAppCheckToken(),
+        },
+      },
+    )).data as UserProfile;
 
     const { user } = await signInWithEmailAndPassword(auth, email, password);
 
@@ -93,6 +102,7 @@ export async function updateUser(
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          "X-APPCHECK": await getAppCheckToken(),
         },
       },
     );
