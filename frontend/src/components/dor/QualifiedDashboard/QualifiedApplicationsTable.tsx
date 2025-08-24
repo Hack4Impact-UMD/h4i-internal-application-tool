@@ -49,7 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleAlertIcon } from "lucide-react";
+import { CircleAlertIcon, Clipboard } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -462,6 +462,25 @@ export default function QualifiedApplicationsTable({
           header: ({ column }) => (
             <SortableHeader column={column}>NAME</SortableHeader>
           ),
+          cell: ({ getValue, row }) => { 
+            return (
+              <span className="flex items-center">
+                <span>{getValue()}</span>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Clipboard className="hover:bg-lightgray p-1 rounded cursor-pointer text-blue" size={24} onClick={async () => {                  
+                        try {
+                          await navigator.clipboard.writeText(row.original.email);
+                          throwSuccessToast(`${row.original.email} added to clipboard!`)
+                        } catch (err) {
+                          throwErrorToast(`Failed to add email to clipboard.`)
+                        }
+                    }}/>
+                  </TooltipTrigger>
+                  <TooltipContent>Copy Applicant Email</TooltipContent>
+                </Tooltip>
+              </span>
+          )}
         }),
         columnHelper.accessor("role", {
           id: "role",

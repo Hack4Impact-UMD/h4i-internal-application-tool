@@ -20,6 +20,7 @@ export type QualifiedAppRow = {
   index: number;
   dateSubmitted: Timestamp;
   name: string;
+  email: string;
   role: ApplicantRole;
   interviewers: {
     assigned: ReviewerUserProfile[];
@@ -81,6 +82,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             index: 1 + index,
             dateSubmitted: app.dateSubmitted,
             name: `${user.firstName} ${user.lastName}`,
+            email: user.email,
             role: app.rolesApplied[0],
             interviewers: { assigned: assignedInterviewers },
             assignments,
