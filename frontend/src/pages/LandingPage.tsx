@@ -1,3 +1,4 @@
+import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { displayUserRoleName } from "@/utils/display";
@@ -6,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -25,21 +26,25 @@ export default function LandingPage() {
           </h3>
         </div>
         <div>
-          {user ? (
-            <div className="flex flex-row gap-1">
-              <Button onClick={() => navigate("/login")}>
-                Enter {displayUserRoleName(user?.role)} Home
-              </Button>
-              <Button onClick={logout}>Log out</Button>
-            </div>
-          ) : (
-            <div className="flex flex-row gap-1">
-              <Button onClick={() => navigate("/signup")}>
-                Create Account
-              </Button>
-              <Button onClick={() => navigate("/login")}>Log In</Button>
-            </div>
-          )}
+          {
+            isLoading ? (
+              <Spinner />
+            ) :
+              user ? (
+                <div className="flex flex-row gap-1">
+                  <Button onClick={() => navigate("/login")}>
+                    Enter {displayUserRoleName(user?.role)} Home
+                  </Button>
+                  <Button onClick={logout}>Log out</Button>
+                </div>
+              ) : (
+                <div className="flex flex-row gap-1">
+                  <Button onClick={() => navigate("/signup")}>
+                    Create Account
+                  </Button>
+                  <Button onClick={() => navigate("/login")}>Log In</Button>
+                </div>
+              )}
         </div>
       </main>
 
