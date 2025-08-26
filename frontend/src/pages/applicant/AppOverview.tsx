@@ -94,7 +94,7 @@ const AppOverview: React.FC = () => {
           {
             <Button
               onClick={handleApply}
-              disabled={wait || Timestamp.now() > form.dueDate}
+              disabled={wait || (Timestamp.now() > form.dueDate && !applied)}
               className="w-full sm:w-fit cursor-pointer inline-flex items-center justify-center px-10 py-2 rounded-full bg-black 
                 text-white transition-colors hover:bg-darkgray"
             >
