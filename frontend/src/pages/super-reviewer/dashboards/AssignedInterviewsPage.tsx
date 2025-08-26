@@ -52,8 +52,10 @@ export function AssignedInterviewsPage() {
 
   const numInterviewed = useMemo(
     () =>
-      interviews?.reduce((acc, interview) => (interview.submitted ? acc + 1 : acc), 0) ??
-      0,
+      interviews?.reduce(
+        (acc, interview) => (interview.submitted ? acc + 1 : acc),
+        0,
+      ) ?? 0,
     [interviews],
   );
 

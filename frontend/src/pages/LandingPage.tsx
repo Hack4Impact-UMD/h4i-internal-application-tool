@@ -26,25 +26,23 @@ export default function LandingPage() {
           </h3>
         </div>
         <div>
-          {
-            isLoading ? (
-              <Spinner />
-            ) :
-              user ? (
-                <div className="flex flex-row gap-1">
-                  <Button onClick={() => navigate("/login")}>
-                    Enter {displayUserRoleName(user?.role)} Home
-                  </Button>
-                  <Button onClick={logout}>Log out</Button>
-                </div>
-              ) : (
-                <div className="flex flex-row gap-1">
-                  <Button onClick={() => navigate("/signup")}>
-                    Create Account
-                  </Button>
-                  <Button onClick={() => navigate("/login")}>Log In</Button>
-                </div>
-              )}
+          {isLoading ? (
+            <Spinner />
+          ) : user ? (
+            <div className="flex flex-row gap-1">
+              <Button onClick={() => navigate("/login")}>
+                Enter {displayUserRoleName(user?.role)} Home
+              </Button>
+              <Button onClick={logout}>Log out</Button>
+            </div>
+          ) : (
+            <div className="flex flex-row gap-1">
+              <Button onClick={() => navigate("/signup")}>
+                Create Account
+              </Button>
+              <Button onClick={() => navigate("/login")}>Log In</Button>
+            </div>
+          )}
         </div>
       </main>
 
