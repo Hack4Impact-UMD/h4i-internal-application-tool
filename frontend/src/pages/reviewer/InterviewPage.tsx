@@ -9,7 +9,7 @@ import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
 import { displayApplicantRoleName } from "@/utils/display";
 import { Button } from "@/components/ui/button";
 import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import {
   AlertDialog,
@@ -43,6 +43,7 @@ import {
 import { ApplicationInterviewData, PermissionRole } from "@/types/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useUser } from "@/hooks/useUsers";
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -146,6 +147,9 @@ const InterviewPage: React.FC = () => {
     error: interviewError,
   } = useInterviewData(interviewDataId ?? "");
 
+  const sectionRefs = useRef<Map<string, HTMLDivElement | null>>(new Map())
+  const [isCommandPaletteOpen, setCommandPaletteOpen] = useState(false)
+
   const { mutate: updateInterviewData, submittedAt: lastSave } =
     useUpdateInterviewData(interviewDataId ?? "");
   const { mutate: submitInterview, isPending: isSubmitting } =
@@ -181,6 +185,17 @@ const InterviewPage: React.FC = () => {
     }, 1000);
     return () => clearTimeout(ref);
   }, [localNotes, interviewData, updateInterviewData]);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setCommandPaletteOpen((open) => !open);
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   const optimisticInterviewData = useMemo(() => {
     if (!interviewData) return undefined;
@@ -251,6 +266,24 @@ const InterviewPage: React.FC = () => {
     );
   };
 
+  const visibleSections = useMemo(() => form?.sections.filter((s) => {
+    if (s.hideFromReviewers) return false;
+    if (s.forRoles) {
+      return (
+        s.forRoles.filter((r) => response?.rolesApplied.includes(r)).length > 0
+      );
+    } else {
+      return true;
+    }
+  }) ?? [], [form?.sections, response?.rolesApplied]);
+
+  const handleJumpToSection = (sectionId: string) => {
+    sectionRefs.current
+      .get(sectionId)
+      ?.scrollIntoView({ behavior: "smooth" });
+    setCommandPaletteOpen(false);
+  };
+
   if (
     formLoading ||
     responseLoading ||
@@ -271,6 +304,25 @@ const InterviewPage: React.FC = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
+      <CommandDialog
+        open={isCommandPaletteOpen}
+        onOpenChange={setCommandPaletteOpen}
+      >
+        <CommandInput placeholder="Jump to section..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Sections">
+            {visibleSections.map((s) => (
+              <CommandItem
+                key={s.sectionId}
+                onSelect={() => handleJumpToSection(s.sectionId)}
+              >
+                {s.sectionName}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
       <div className="flex flex-row w-full py-2 px-4 items-center rounded border border-blue-300 bg-blue-100 text-blue">
         <UserHeader
           applicantId={response.userId}
@@ -341,36 +393,37 @@ const InterviewPage: React.FC = () => {
       >
         <ResizablePanel defaultSize={50}>
           <div className="w-full flex h-full flex-col gap-2 overflow-scroll rounded-md">
-            {form.sections
-              .filter((s) => {
-                if (s.forRoles) {
-                  return (
-                    s.forRoles.filter((r) => response.rolesApplied.includes(r))
-                      .length > 0
-                  );
-                } else {
-                  return true;
-                }
-              })
-              .map((s) => (
-                <div
-                  className="shadow border border-gray-200 bg-white rounded-md p-4"
+            <div className="shadow border border-gray-200 bg-white rounded-md p-4">
+              <p className="text-muted-foreground text-sm">
+                Press{" "}
+                <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+                {" "} to jump to a section
+              </p>
+            </div>
+            {visibleSections.map((s) => (
+              <div
+                ref={el => {
+                  sectionRefs.current.set(s.sectionId, el)
+                }}
+                className="shadow border border-gray-200 bg-white rounded-md p-4"
+                key={s.sectionId}
+              >
+                <Section
+                  responseId={response.id}
                   key={s.sectionId}
-                >
-                  <Section
-                    responseId={response.id}
-                    key={s.sectionId}
-                    disabled={true}
-                    section={s}
-                    responses={
-                      response.sectionResponses.find(
-                        (r) => r.sectionId == s.sectionId,
-                      )?.questions ?? []
-                    }
-                    onChangeResponse={() => {}}
-                  />
-                </div>
-              ))}
+                  disabled={true}
+                  section={s}
+                  responses={
+                    response.sectionResponses.find(
+                      (r) => r.sectionId == s.sectionId,
+                    )?.questions ?? []
+                  }
+                  onChangeResponse={() => { }}
+                />
+              </div>
+            ))}
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />

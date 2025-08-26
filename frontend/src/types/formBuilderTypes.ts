@@ -58,6 +58,7 @@ export interface ApplicationSection {
   description?: string;
   forRoles?: ApplicantRole[]; // some sections are role specific
   questions: ApplicationQuestion[];
+  hideFromReviewers?: boolean;
 }
 
 export interface IApplicationQuestion {
