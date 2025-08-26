@@ -49,13 +49,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleAlertIcon, Clipboard } from "lucide-react";
+import { CircleAlertIcon, Clipboard, EllipsisVertical } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { displayTimestamp } from "@/utils/dates";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../../ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 function InterviewerSelect({
   onAdd,
@@ -307,6 +314,7 @@ export default function QualifiedApplicationsTable({
     pageSize: rowCount,
   });
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const updateStatusMutation = useMutation({
     mutationFn: ({
@@ -560,6 +568,45 @@ export default function QualifiedApplicationsTable({
               />
             );
           },
+        }),
+        columnHelper.display({
+          id: "actions",
+          header: () => (
+            <div className="flex items-center justify-center">
+              <span className="text-center mx-auto">ACTIONS</span>
+            </div>
+          ),
+          cell: ({ row }) => (
+            <div className="flex items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost">
+                    <EllipsisVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate("/admin/dor/interviews/" + row.original.responseId);
+                    }}
+                  >
+                    View Interviews
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate(
+                        `/admin/dor/application/${formId}/${row.original.responseId}`,
+                      );
+                    }}
+                  >
+                    View Application
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ),
         }),
       ] as ColumnDef<QualifiedAppRow>[],
     [

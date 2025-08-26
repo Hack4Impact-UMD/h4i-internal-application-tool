@@ -108,3 +108,16 @@ export async function getInterviewDataForInterviewer(
 
   return result.docs.map((doc) => doc.data() as ApplicationInterviewData);
 }
+
+export async function getInterviewDataForResponse(
+  applicationResponseId: string,
+) {
+  const interviewData = collection(db, INTERVIEW_DATA_COLLECTION);
+  const q = query(
+    interviewData,
+    where("applicationResponseId", "==", applicationResponseId),
+  );
+  const result = await getDocs(q);
+
+  return result.docs.map((doc) => doc.data() as ApplicationInterviewData);
+}
