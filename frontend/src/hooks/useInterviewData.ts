@@ -1,6 +1,7 @@
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import {
   getInterviewDataById,
+  getInterviewDataForResponse,
   getInterviewDataForForm,
   updateInterviewData,
 } from "@/services/interviewDataService";
@@ -59,6 +60,15 @@ export function useUpdateInterviewData(interviewDataId: string) {
       queryClient.invalidateQueries({
         queryKey: ["score", "interview", interviewDataId],
       });
+    },
+  });
+}
+
+export function useInterviewDataForResponse(applicationResponseId: string) {
+  return useQuery<ApplicationInterviewData[]>({
+    queryKey: ["interview-data", "application-response", applicationResponseId],
+    queryFn: () => {
+      return getInterviewDataForResponse(applicationResponseId);
     },
   });
 }

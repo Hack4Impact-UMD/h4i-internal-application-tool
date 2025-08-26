@@ -47,20 +47,22 @@ export async function registerUser(
   password: string,
 ): Promise<UserProfile> {
   try {
-    const createdUser = (await axios.post(
-      API_URL + "/auth/register",
-      {
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-      },
-      {
-        headers: {
-          "X-APPCHECK": await getAppCheckToken(),
+    const createdUser = (
+      await axios.post(
+        API_URL + "/auth/register",
+        {
+          email: email,
+          password: password,
+          firstName: firstName,
+          lastName: lastName,
         },
-      },
-    )).data as UserProfile;
+        {
+          headers: {
+            "X-APPCHECK": await getAppCheckToken(),
+          },
+        },
+      )
+    ).data as UserProfile;
 
     const { user } = await signInWithEmailAndPassword(auth, email, password);
 

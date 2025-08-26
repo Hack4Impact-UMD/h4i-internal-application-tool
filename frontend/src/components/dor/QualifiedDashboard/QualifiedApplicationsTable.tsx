@@ -49,13 +49,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleAlertIcon, Clipboard } from "lucide-react";
+import { CircleAlertIcon, Clipboard, EllipsisVertical } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { displayTimestamp } from "@/utils/dates";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../../ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 function InterviewerSelect({
   onAdd,
@@ -307,6 +314,7 @@ export default function QualifiedApplicationsTable({
     pageSize: rowCount,
   });
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const updateStatusMutation = useMutation({
     mutationFn: ({
@@ -462,25 +470,34 @@ export default function QualifiedApplicationsTable({
           header: ({ column }) => (
             <SortableHeader column={column}>NAME</SortableHeader>
           ),
-          cell: ({ getValue, row }) => { 
+          cell: ({ getValue, row }) => {
             return (
               <span className="flex items-center">
                 <span>{getValue()}</span>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Clipboard className="hover:bg-lightgray p-1 rounded cursor-pointer text-blue" size={24} onClick={async () => {                  
+                    <Clipboard
+                      className="hover:bg-lightgray p-1 rounded cursor-pointer text-blue"
+                      size={24}
+                      onClick={async () => {
                         try {
-                          await navigator.clipboard.writeText(row.original.email);
-                          throwSuccessToast(`${row.original.email} added to clipboard!`)
+                          await navigator.clipboard.writeText(
+                            row.original.email,
+                          );
+                          throwSuccessToast(
+                            `${row.original.email} added to clipboard!`,
+                          );
                         } catch (err) {
-                          throwErrorToast(`Failed to add email to clipboard.`)
+                          throwErrorToast(`Failed to add email to clipboard.`);
                         }
-                    }}/>
+                      }}
+                    />
                   </TooltipTrigger>
                   <TooltipContent>Copy Applicant Email</TooltipContent>
                 </Tooltip>
               </span>
-          )}
+            );
+          },
         }),
         columnHelper.accessor("role", {
           id: "role",
@@ -560,6 +577,47 @@ export default function QualifiedApplicationsTable({
               />
             );
           },
+        }),
+        columnHelper.display({
+          id: "actions",
+          header: () => (
+            <div className="flex items-center justify-center">
+              <span className="text-center mx-auto">ACTIONS</span>
+            </div>
+          ),
+          cell: ({ row }) => (
+            <div className="flex items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost">
+                    <EllipsisVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate(
+                        "/admin/dor/interviews/" + row.original.responseId,
+                      );
+                    }}
+                  >
+                    View Interviews
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate(
+                        `/admin/dor/application/${formId}/${row.original.responseId}`,
+                      );
+                    }}
+                  >
+                    View Application
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ),
         }),
       ] as ColumnDef<QualifiedAppRow>[],
     [
