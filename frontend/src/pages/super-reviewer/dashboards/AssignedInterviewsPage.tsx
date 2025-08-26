@@ -26,7 +26,7 @@ function useApplicantForResponse(responseId: string) {
 
 export function AssignedInterviewsPage() {
   const [statusFilter, setStatusFilter] = useState<
-    "reviewed" | "pending" | "all"
+    "interviewed" | "pending" | "all"
   >("all");
   const { responseId } = useParams<{ responseId: string }>();
   const {
@@ -113,8 +113,8 @@ export function AssignedInterviewsPage() {
           </Button>
           <Button
             className={`h-28 min-w-40 p-4 flex flex-col items-start 
-					${statusFilter != "reviewed" ? "bg-[#DCEBDD] hover:bg-[#DCEBDD]/90 text-[#1D3829]" : "bg-[#1D3829] hover:bg-[#1D3829]/90 text-[#DCEBDD]"}`}
-            onClick={() => setStatusFilter("reviewed")}
+					${statusFilter != "interviewed" ? "bg-[#DCEBDD] hover:bg-[#DCEBDD]/90 text-[#1D3829]" : "bg-[#1D3829] hover:bg-[#1D3829]/90 text-[#DCEBDD]"}`}
+            onClick={() => setStatusFilter("interviewed")}
           >
             <span className="text-3xl">{numInterviewed}</span>
             <span className="mt-auto">Interviewed</span>
