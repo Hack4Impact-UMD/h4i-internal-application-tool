@@ -113,12 +113,12 @@ function hasScoreKeyMismatch(
   return !keysMatch && scoreKeys.length >= formWeightKeys.length;
 }
 
-function missingRequiredScoreKeys(
-  weights: Record<string, number>,
-  scores: Record<string, number>,
-): boolean {
-  return !Object.keys(weights).every((weight) => weight in scores);
-}
+// function missingRequiredScoreKeys(
+//   weights: Record<string, number>,
+//   scores: Record<string, number>,
+// ): boolean {
+//   return !Object.keys(weights).every((weight) => weight in scores);
+// }
 
 function roundScore(score: number, decimalPlaces: number) {
   const factor = Math.pow(10, decimalPlaces);
