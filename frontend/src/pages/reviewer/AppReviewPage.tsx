@@ -291,7 +291,7 @@ const AppReviewPage: React.FC = () => {
     if (s.hideFromReviewers) return false;
     if (s.forRoles) {
       return (
-        s.forRoles.filter((r) => response?.rolesApplied.includes(r)).length > 0
+        s.forRoles.some((r) => response?.rolesApplied?.includes(r))
       );
     } else {
       return true;
