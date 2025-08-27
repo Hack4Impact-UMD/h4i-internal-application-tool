@@ -87,9 +87,9 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.OutreachCoord, ApplicantRole.SocialMedia],
     rubricQuestions: [
       {
-        scoreKey: "interview-overall",
-        prompt: "General (PR & O)",
-        description: ``,
+        scoreKey: "comm-and-writing-skills",
+        prompt: "Communication & Writing Skills (PR & O)",
+        description: `1. Applicant does not demonstrate the necessary writing and/or communication skills required for a professional setting.\n2. Applicant possesses coherent but non-professional writing skills and/or struggles with communicating openly and effectively.\n3. Applicant makes clear and sound statements/arguments throughout their writing and within their communication. They lack charisma and personality within their communication.\n4. Applicant consistently sounds professional throughout their writing and communication. Maintains a professional level of charisma within their communication.`,
         minValue: 1,
         maxValue: 4,
       },
