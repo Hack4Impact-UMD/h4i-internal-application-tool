@@ -236,7 +236,7 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
       },
       {
         scoreKey: "interview-design-teamwork",
-        prompt: "Technical Skills and Tools Proficiency",
+        prompt: "Teamwork & Collaboration",
         description: `5 – Excellent: Applicant is a strong collaborator, gives specific examples of effective teamwork (especially with devs/PMs/designers); and is self-aware and adaptable.
 4 – Strong: Applicant works well with others; provides good examples of experience working in teams; and understands group roles.
 3 – Satisfactory: Applicant has some teamwork experience, but their contributions in projects are unclear and/or they don’t provide specific examples of how they collaborated cross-functionally.
@@ -260,7 +260,7 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
       },
       {
         scoreKey: "interview-designer-adapt",
-        prompt: "Adapdability & Open-Mindedness",
+        prompt: "Adaptability & Open-Mindedness",
         description: `5 – Excellent: Applicant is highly flexible; integrates feedback gracefully; balances usability with client needs; proactively seeks feedback.
 4 – Strong: Applicant is open to feedback and can adapt with some guidance or prompting.
 3 – Satisfactory: Applicant is receptive to feedback but may be hesitant or defensive; showing limited indication of valuing others’ perspectives or willingness to compromise.
