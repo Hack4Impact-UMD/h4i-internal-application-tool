@@ -75,10 +75,11 @@ export function calculateScore(
     return roundScore(averageScore(scores), 2);
   }
 
-  if (missingRequiredScoreKeys(weights, scores)) {
-    throwWarningToast("Score is missing required keys, returning -1 score!");
-    return -1;
-  }
+  //NOTE: this causes an annoying amount of warnings while the review is in progress, the first check is sufficient
+  // if (missingRequiredScoreKeys(weights, scores)) {
+  //   throwWarningToast("Score is missing required keys, returning -1 score!");
+  //   return -1;
+  // }
 
   const score = Object.keys(weights).reduce((acc, scoreCategory) => {
     const weight = weights[scoreCategory] ?? 0;
