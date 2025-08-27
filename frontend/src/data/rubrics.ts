@@ -171,7 +171,15 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
       {
         scoreKey: "interview-leadership",
         prompt: "Leadership and Mentorship",
-        description: ``,
+        description: `1 – Candidate gives no clear examples of mentoring or leadership. Example: Struggles to describe a time they helped another engineer grow.
+
+2 – Candidate has some leadership experience but impact is limited.
+     Example: Mentions code reviews but not structured mentorship or coaching.
+
+3 – Candidate shows consistent mentorship and leadership behaviors. Example: Describes guiding another developer or a group of developers through a major project.
+
+4 – Candidate demonstrates a strong leadership philosophy with concrete results. Example: Shares how they built a culture of learning or successfully led a team with concrete results and statistics.
+`,
         minValue: 1,
         maxValue: 4,
       },
@@ -185,21 +193,52 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
       {
         scoreKey: "interview-technical-competency",
         prompt: "Technical Competency",
-        description: ``,
+        description: `1 – Candidate struggles to explain technical work or show ownership (for perhaps a project on their resume).
+Example: Cannot clearly describe how their code fits into a larger system.
+
+2 – Candidate demonstrates solid skills within a limited domain.
+Example: Talks confidently about implementing features but not about trade-offs or scaling.
+
+3 – Candidate shows strong technical expertise and system-level thinking.
+Example: Explains design choices, debugging strategies, and how they ensure performance and reliability.
+
+4 – Candidate demonstrates technical leadership within projects (even if not a TL, but consider more if this is a TL candidate).
+Example: Shares how they set coding standards, optimized an architecture, or influenced team-wide best practices.
+`,
         minValue: 1,
         maxValue: 4,
       },
       {
         scoreKey: "interview-teamwork",
         prompt: "Teamwork and Collaboration",
-        description: ``,
+        description: `1 – Candidate struggles to describe positive collaboration experiences. Example: Focuses solely on personal contributions without mention of teamwork.
+
+2 – Candidate shows basic collaboration but limited impact.
+     Example: Mentions attending standups or participating in reviews but doesn’t highlight teamwork dynamics.
+
+3 – Candidate demonstrates strong collaboration and communication.
+     Example: Describes resolving disagreements constructively or documenting decisions for the team.
+
+4 – Candidate goes beyond their role to strengthen team alignment and inclusion.
+     Example: Shares how they proactively worked with a teammate, bridged gaps with product/design, or improved team processes.
+`,
         minValue: 1,
         maxValue: 4,
       },
       {
         scoreKey: "interview-problem-solving",
         prompt: "Problem Solving and Adaptability",
-        description: ``,
+        description: `1 – Candidate struggles to explain how they handle problems or ambiguity.
+     Example: Provides vague answers or waits for direction instead of problem-solving.
+
+2 – Candidate shows ability to solve well-defined problems but limited adaptability.
+     Example: Talks about fixing bugs or finishing tasks but not adapting when scope changed.
+
+3 – Candidate demonstrates structured problem-solving and adaptability.
+     Example: Explains how they broke down a complex issue into steps or adjusted to shifting requirements.
+
+4 – Candidate thrives in complexity and drives solutions.
+     Example: Shares how they proposed a creative workaround to a blocker or led debugging during a critical incident.`,
         minValue: 1,
         maxValue: 4,
       },
@@ -214,9 +253,13 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
         scoreKey: "interview-design-passion",
         prompt: "Passion for H4I & Social Impact",
         description: `5 – Excellent: Applicant is extremely passionate and deeply committed to social good, provides strong examples of past involvement/passion in design work, and clearly articulates why Hack4Impact’s mission resonates with them.
+
 4 – Strong: Applicant demonstrates strong interest in Hack4Impact, providing one or more examples or a clear motivation for applying design to social good.
+
 3 – Satisfactory: Applicant expresses interest, but their answers are somewhat generic, surface-level, or lack genuine enthusiasm.
+
 2 – Weak: Applicant is vague or uncertain about why social good matters to them. They may mention wanting to join Hack4Impact but do not connect it to their skills or values; their answers lack genuine passion.
+
 1 – Poor: Applicant has little to no interest in H4I’s mission and/or doesn’t mention anything about H4I or why they are excited to be a part of the club.
 `,
         minValue: 1,
@@ -226,9 +269,13 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
         scoreKey: "interview-communication",
         prompt: "Communication and Collaboration",
         description: `5 – Excellent: Applicant explains work clearly, professionally, and confidently; and can tailor their explanations for NPO clients or team members.
+
 4 – Strong: Applicant is mostly clear and confident in their communication, with some minor gaps but overall is a strong communicator.
+
 3 – Satisfactory: Applicant can explain design ideas, but their delivery is unpolished, scattered, or overly technical.
+
 2 – Weak: Applicant has difficulty explaining ideas clearly; relies too much on jargon; and/or shows little awareness of how to adjust communication for their team and/or a nonprofit client.
+
 1 – Poor: Applicant cannot explain work or ideas and is a poor communicator.
 `,
         minValue: 1,
@@ -250,9 +297,13 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
         scoreKey: "interview-technical-skills",
         prompt: "Design Thinking & Technical Skills",
         description: `5 – Excellent: Applicant demonstrates a structured, thoughtful end-to-end process (e.g., research → ideation → iteration → testing); considers trade-offs and limitations such as technical, business, or team/stakeholder constraints; shows strong UX reasoning, fluent in using design tools, and produces polished work.
+
 4 – Strong: Applicant has a clear process; solid grasp of UX principles; and comfortable with tools like Figma. Applicant shows understanding of design workflow and reasoning; their design process may lack some depth but is clearly structured.
+
 3 – Satisfactory: Applicant has a basic understanding of workflows and some design tool proficiency; their process is described but shallow or incomplete; they demonstrate UX awareness.
+
 2 – Weak: Applicant has an unclear or shallow process; little applied design experience, little sense of structured design thinking.
+
 1 – Poor: Applicant cannot describe their design process or problem-solving approach. Applicant demonstrates no evident design thinking or technical skill, cannot describe their design process or problem-solving approach.
 `,
         minValue: 1,
@@ -262,9 +313,13 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
         scoreKey: "interview-designer-adapt",
         prompt: "Adaptability & Open-Mindedness",
         description: `5 – Excellent: Applicant is highly flexible; integrates feedback gracefully; balances usability with client needs; proactively seeks feedback.
+
 4 – Strong: Applicant is open to feedback and can adapt with some guidance or prompting.
+
 3 – Satisfactory: Applicant is receptive to feedback but may be hesitant or defensive; showing limited indication of valuing others’ perspectives or willingness to compromise.
+
 2 – Weak: Applicant struggles to adapt ideas or may resist differing perspectives.
+
 1 – Poor: Applicant is rigid in thinking and dismissive of feedback.
 `,
         minValue: 1,
@@ -281,8 +336,11 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
         scoreKey: "interview-product-statements",
         prompt: "Problem Statements and Product Vision",
         description: `1 - The applicant struggles to ideate features and empathize with the client. They miss key points of the client’s needs and fail to understand the problem they are being approached with. Overall product vision struggles to come together when developing user flows. They have a hard time talking about feature development and the technical aspects of them.  
+
 2 - The applicant is able to ideate some features while empathizing with the client’s needs. Their features somewhat relate to the needs and kind of address them directly, demonstrating some understanding of the problem. Their overall product vision is a little weak, but holds up by connecting various features together in an okay way. They are able to talk to a few technical aspects of a feature they wish to implement. 
+
 3 - The applicant is able to ideate a majority of features when empathizing with the client’s needs. Their features mostly address the client needs and address them directly, demonstrating a good understanding of the problem. The applicant somewhat considers priorities in what features would have higher overall impact for the NPO. Their overall product vision is strong, connecting various features together in a logical way that would make sense to a user. They speak to a good amount of technical aspects of a feature they wish to implement. 
+
 4 - The applicant is able to ideate most if not all features necessary for the applicant when empathizing with the client’s needs. Their features completely address the client needs and address them directly, demonstrating an advanced understanding of the problem. The applicant strongly considers priorities in what features would have higher overall impact for the NPO. Their overall product vision is very robust, connecting all of their features together in a very logical way that a user would be able to use with ease. They speak to most if not all of the technical aspects of a feature they wish to implement.`,
         minValue: 1,
         maxValue: 4,
@@ -291,8 +349,11 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
         scoreKey: "interview-product-leadership",
         prompt: "Leadership",
         description: `1 -  The applicant struggles to break down the suggested feature into smaller tasks, unable to see where things could become more singular tasks. They have difficulty handling delegation when they do not have an appropriate amount of engineers, unable to find potential alternatives. They do not handle situations well with their engineer, resulting from a poor leadership style. They are unable to identify an off track project and are unable to account for this when building a project roadmap. 
+
 2 - The applicant is somewhat able to break down the suggested feature into smaller tasks, potentially leaving things less broken down than they should be. They have some difficulty handling the delegation, not considering long term sprint planning or other alternatives. They handle the situation with their engineer in an okay way, giving some confidence in their leadership style. They can somewhat identify an off track project, but struggle to account for changes in their roadmap. 
+
 3 - The applicant is able to break down the suggested feature into smaller tasks, leaving few things as small tasks. They think about ways to delegate tasks, considering one possible solution. They are capable of handling an issue with an engineer falling behind, showing leadership skills. They identify an off track project, and can adapt their roadmap to handle mid-semester changes. 
+
 4 - The applicant is very capable of breaking down the suggested feature into smaller tasks, leaving no task or feature with too much content. They have multiple solutions to delegating tasks, considering multiple scenarios the project state is in. They strongly handle an engineer falling behind, leading with empathy but also thinking big picture about the project. They identify an off track project, adapting their roadmap to handle mid-semester changes. 
 `,
         minValue: 1,
@@ -302,8 +363,11 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
         scoreKey: "interview-product-client",
         prompt: "Client Issues",
         description: `1 - The applicant is unable to find a way to appropriately handle scope creep. They either cave to the NPOs' demands, or immediately reject them outright without any consideration. They manage team morale in a very ineffective way, resulting in significant losses to team morale. 
+
 2 - The applicant is somewhat able to find a way to appropriately handle scope creep. They consider both sides, but struggle to make a decision. They manage team morale in a somewhat ineffective way, resulting in some losses to team morale. 
+
 3 - They find a single appropriate way to handle the scope creep. They consider both sides, identifying some elements of scale, engineer capabilities, and timeline. They manage team morale in a somewhat effective manner, resulting in some gains to team morale. 
+
 4 - The applicant finds multiple ways to deal with scope creep in a very appropriate manner, considering multiple scenarios that may be going on with their project to best account for it. They consider both sides, considering all elements of scale, engineer capabilities, and timeline. They manage team morale in a very effective manner, resulting in significant gains to team morale. 
 `,
         minValue: 1,
