@@ -289,7 +289,7 @@ const AppReviewPage: React.FC = () => {
 
   const visibleSections = useMemo(() => form?.sections.filter((s) => {
     if (s.hideFromReviewers) return false;
-    if (s.forRoles) {
+    if (s.forRoles && s.forRoles.length > 0) {
       return (
         s.forRoles.some((r) => response?.rolesApplied?.includes(r))
       );
