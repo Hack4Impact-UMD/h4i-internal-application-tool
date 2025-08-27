@@ -185,14 +185,16 @@ Thank you for your patience during the application and interview process. Based 
       "interview-problem-solving": 0.33,
     },
     [ApplicantRole.Designer]: {
-      "interview-design-thinking": 0.34,
-      "interview-communication": 0.33,
-      "interview-technical-skills": 0.33,
+      "interview-design-passion": 0.1,
+      "interview-communication": 0.25,
+      "interview-design-teamwork": 0.2,
+      "interview-technical-skills": 0.3,
+      "interview-designer-adapt": 0.15
     },
     [ApplicantRole.Product]: {
-      "interview-general": 0.34,
-      "interview-behavioral": 0.33,
-      "interview-pm-skills": 0.33,
+      "interview-product-statements": 0.34,
+      "interview-product-leadership": 0.33,
+      "interview-product-client": 0.33,
     },
     [ApplicantRole.TechLead]: {
       "interview-technical-competency": 0.25,

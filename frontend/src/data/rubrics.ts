@@ -87,9 +87,9 @@ export const APPLICATION_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.OutreachCoord, ApplicantRole.SocialMedia],
     rubricQuestions: [
       {
-        scoreKey: "comm-and-writing-skills",
-        prompt: "Communication & Writing Skills (PR & O)",
-        description: `1. Applicant does not demonstrate the necessary writing and/or communication skills required for a professional setting.\n2. Applicant possesses coherent but non-professional writing skills and/or struggles with communicating openly and effectively.\n3. Applicant makes clear and sound statements/arguments throughout their writing and within their communication. They lack charisma and personality within their communication.\n4. Applicant consistently sounds professional throughout their writing and communication. Maintains a professional level of charisma within their communication.`,
+        scoreKey: "interview-overall",
+        prompt: "General (PR & O)",
+        description: ``,
         minValue: 1,
         maxValue: 4,
       },
@@ -211,25 +211,64 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.Designer],
     rubricQuestions: [
       {
-        scoreKey: "interview-design-thinking",
-        prompt: "Design Process and Thinking",
-        description: ``,
+        scoreKey: "interview-design-passion",
+        prompt: "Passion for H4I & Social Impact",
+        description: `5 – Excellent: Applicant is extremely passionate and deeply committed to social good, provides strong examples of past involvement/passion in design work, and clearly articulates why Hack4Impact’s mission resonates with them.
+4 – Strong: Applicant demonstrates strong interest in Hack4Impact, providing one or more examples or a clear motivation for applying design to social good.
+3 – Satisfactory: Applicant expresses interest, but their answers are somewhat generic, surface-level, or lack genuine enthusiasm.
+2 – Weak: Applicant is vague or uncertain about why social good matters to them. They may mention wanting to join Hack4Impact but do not connect it to their skills or values; their answers lack genuine passion.
+1 – Poor: Applicant has little to no interest in H4I’s mission and/or doesn’t mention anything about H4I or why they are excited to be a part of the club.
+`,
         minValue: 1,
-        maxValue: 4,
+        maxValue: 5,
       },
       {
         scoreKey: "interview-communication",
         prompt: "Communication and Collaboration",
-        description: ``,
+        description: `5 – Excellent: Applicant explains work clearly, professionally, and confidently; and can tailor their explanations for NPO clients or team members.
+4 – Strong: Applicant is mostly clear and confident in their communication, with some minor gaps but overall is a strong communicator.
+3 – Satisfactory: Applicant can explain design ideas, but their delivery is unpolished, scattered, or overly technical.
+2 – Weak: Applicant has difficulty explaining ideas clearly; relies too much on jargon; and/or shows little awareness of how to adjust communication for their team and/or a nonprofit client.
+1 – Poor: Applicant cannot explain work or ideas and is a poor communicator.
+`,
         minValue: 1,
-        maxValue: 4,
+        maxValue: 5,
+      },
+      {
+        scoreKey: "interview-design-teamwork",
+        prompt: "Technical Skills and Tools Proficiency",
+        description: `5 – Excellent: Applicant is a strong collaborator, gives specific examples of effective teamwork (especially with devs/PMs/designers); and is self-aware and adaptable.
+4 – Strong: Applicant works well with others; provides good examples of experience working in teams; and understands group roles.
+3 – Satisfactory: Applicant has some teamwork experience, but their contributions in projects are unclear and/or they don’t provide specific examples of how they collaborated cross-functionally.
+2 – Weak: Applicant has limited teamwork skills and experience and prefers working alone. Applicant struggles to describe collaboration style.
+1 – Poor: Applicant has no teamwork experience and/or is dismissive of collaboration.
+`,
+        minValue: 1,
+        maxValue: 5,
       },
       {
         scoreKey: "interview-technical-skills",
-        prompt: "Technical Skills and Tools Proficiency",
-        description: ``,
+        prompt: "Design Thinking & Technical Skills",
+        description: `5 – Excellent: Applicant demonstrates a structured, thoughtful end-to-end process (e.g., research → ideation → iteration → testing); considers trade-offs and limitations such as technical, business, or team/stakeholder constraints; shows strong UX reasoning, fluent in using design tools, and produces polished work.
+4 – Strong: Applicant has a clear process; solid grasp of UX principles; and comfortable with tools like Figma. Applicant shows understanding of design workflow and reasoning; their design process may lack some depth but is clearly structured.
+3 – Satisfactory: Applicant has a basic understanding of workflows and some design tool proficiency; their process is described but shallow or incomplete; they demonstrate UX awareness.
+2 – Weak: Applicant has an unclear or shallow process; little applied design experience, little sense of structured design thinking.
+1 – Poor: Applicant cannot describe their design process or problem-solving approach. Applicant demonstrates no evident design thinking or technical skill, cannot describe their design process or problem-solving approach.
+`,
         minValue: 1,
-        maxValue: 4,
+        maxValue: 5,
+      },
+      {
+        scoreKey: "interview-designer-adapt",
+        prompt: "Adapdability & Open-Mindedness",
+        description: `5 – Excellent: Applicant is highly flexible; integrates feedback gracefully; balances usability with client needs; proactively seeks feedback.
+4 – Strong: Applicant is open to feedback and can adapt with some guidance or prompting.
+3 – Satisfactory: Applicant is receptive to feedback but may be hesitant or defensive; showing limited indication of valuing others’ perspectives or willingness to compromise.
+2 – Weak: Applicant struggles to adapt ideas or may resist differing perspectives.
+1 – Poor: Applicant is rigid in thinking and dismissive of feedback.
+`,
+        minValue: 1,
+        maxValue: 5,
       },
     ],
   },
@@ -239,16 +278,34 @@ export const APPLICATION_INTERVIEW_RUBRICS: RoleReviewRubric[] = [
     roles: [ApplicantRole.Product],
     rubricQuestions: [
       {
-        scoreKey: "interview-behavioral",
-        prompt: "General and Behavioral",
-        description: ``,
+        scoreKey: "interview-product-statements",
+        prompt: "Problem Statements and Product Vision",
+        description: `1 - The applicant struggles to ideate features and empathize with the client. They miss key points of the client’s needs and fail to understand the problem they are being approached with. Overall product vision struggles to come together when developing user flows. They have a hard time talking about feature development and the technical aspects of them.  
+2 - The applicant is able to ideate some features while empathizing with the client’s needs. Their features somewhat relate to the needs and kind of address them directly, demonstrating some understanding of the problem. Their overall product vision is a little weak, but holds up by connecting various features together in an okay way. They are able to talk to a few technical aspects of a feature they wish to implement. 
+3 - The applicant is able to ideate a majority of features when empathizing with the client’s needs. Their features mostly address the client needs and address them directly, demonstrating a good understanding of the problem. The applicant somewhat considers priorities in what features would have higher overall impact for the NPO. Their overall product vision is strong, connecting various features together in a logical way that would make sense to a user. They speak to a good amount of technical aspects of a feature they wish to implement. 
+4 - The applicant is able to ideate most if not all features necessary for the applicant when empathizing with the client’s needs. Their features completely address the client needs and address them directly, demonstrating an advanced understanding of the problem. The applicant strongly considers priorities in what features would have higher overall impact for the NPO. Their overall product vision is very robust, connecting all of their features together in a very logical way that a user would be able to use with ease. They speak to most if not all of the technical aspects of a feature they wish to implement.`,
         minValue: 1,
         maxValue: 4,
       },
       {
-        scoreKey: "interview-pm-skills",
-        prompt: "PM-Specific Skills",
-        description: ``,
+        scoreKey: "interview-product-leadership",
+        prompt: "Leadership",
+        description: `1 -  The applicant struggles to break down the suggested feature into smaller tasks, unable to see where things could become more singular tasks. They have difficulty handling delegation when they do not have an appropriate amount of engineers, unable to find potential alternatives. They do not handle situations well with their engineer, resulting from a poor leadership style. They are unable to identify an off track project and are unable to account for this when building a project roadmap. 
+2 - The applicant is somewhat able to break down the suggested feature into smaller tasks, potentially leaving things less broken down than they should be. They have some difficulty handling the delegation, not considering long term sprint planning or other alternatives. They handle the situation with their engineer in an okay way, giving some confidence in their leadership style. They can somewhat identify an off track project, but struggle to account for changes in their roadmap. 
+3 - The applicant is able to break down the suggested feature into smaller tasks, leaving few things as small tasks. They think about ways to delegate tasks, considering one possible solution. They are capable of handling an issue with an engineer falling behind, showing leadership skills. They identify an off track project, and can adapt their roadmap to handle mid-semester changes. 
+4 - The applicant is very capable of breaking down the suggested feature into smaller tasks, leaving no task or feature with too much content. They have multiple solutions to delegating tasks, considering multiple scenarios the project state is in. They strongly handle an engineer falling behind, leading with empathy but also thinking big picture about the project. They identify an off track project, adapting their roadmap to handle mid-semester changes. 
+`,
+        minValue: 1,
+        maxValue: 4,
+      },
+      {
+        scoreKey: "interview-product-client",
+        prompt: "Client Issues",
+        description: `1 - The applicant is unable to find a way to appropriately handle scope creep. They either cave to the NPOs' demands, or immediately reject them outright without any consideration. They manage team morale in a very ineffective way, resulting in significant losses to team morale. 
+2 - The applicant is somewhat able to find a way to appropriately handle scope creep. They consider both sides, but struggle to make a decision. They manage team morale in a somewhat ineffective way, resulting in some losses to team morale. 
+3 - They find a single appropriate way to handle the scope creep. They consider both sides, identifying some elements of scale, engineer capabilities, and timeline. They manage team morale in a somewhat effective manner, resulting in some gains to team morale. 
+4 - The applicant finds multiple ways to deal with scope creep in a very appropriate manner, considering multiple scenarios that may be going on with their project to best account for it. They consider both sides, considering all elements of scale, engineer capabilities, and timeline. They manage team morale in a very effective manner, resulting in significant gains to team morale. 
+`,
         minValue: 1,
         maxValue: 4,
       },
