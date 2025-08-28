@@ -75,10 +75,11 @@ export function calculateScore(
     return roundScore(averageScore(scores), 2);
   }
 
-  if (missingRequiredScoreKeys(weights, scores)) {
-    throwWarningToast("Score is missing required keys, returning -1 score!");
-    return -1;
-  }
+  //NOTE: this causes an annoying amount of warnings while the review is in progress, the first check is sufficient
+  // if (missingRequiredScoreKeys(weights, scores)) {
+  //   throwWarningToast("Score is missing required keys, returning -1 score!");
+  //   return -1;
+  // }
 
   const score = Object.keys(weights).reduce((acc, scoreCategory) => {
     const weight = weights[scoreCategory] ?? 0;
@@ -112,12 +113,12 @@ function hasScoreKeyMismatch(
   return !keysMatch && scoreKeys.length >= formWeightKeys.length;
 }
 
-function missingRequiredScoreKeys(
-  weights: Record<string, number>,
-  scores: Record<string, number>,
-): boolean {
-  return !Object.keys(weights).every((weight) => weight in scores);
-}
+// function missingRequiredScoreKeys(
+//   weights: Record<string, number>,
+//   scores: Record<string, number>,
+// ): boolean {
+//   return !Object.keys(weights).every((weight) => weight in scores);
+// }
 
 function roundScore(score: number, decimalPlaces: number) {
   const factor = Math.pow(10, decimalPlaces);

@@ -83,6 +83,7 @@ export default function ViewApplicationPage() {
         </div>
         {form.sections
           .filter((s) => {
+            if (s.hideFromReviewers) return false;
             if (s.forRoles) {
               return (
                 s.forRoles.filter((r) => response.rolesApplied.includes(r))
@@ -107,7 +108,7 @@ export default function ViewApplicationPage() {
                     (r) => r.sectionId == s.sectionId,
                   )?.questions ?? []
                 }
-                onChangeResponse={() => {}}
+                onChangeResponse={() => { }}
               />
             </div>
           ))}

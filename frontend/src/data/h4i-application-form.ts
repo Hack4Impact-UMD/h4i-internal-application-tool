@@ -274,6 +274,7 @@ CS classes are NOT a requirement for members, we take all majors!
     {
       sectionId: "demographics",
       sectionName: "Demographic Information",
+      hideFromReviewers: true,
       description:
         "Help us understand our community. Your responses will not affect the result of your application, they are purely for metric purposes.",
       questions: [
