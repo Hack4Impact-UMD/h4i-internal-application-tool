@@ -4,9 +4,11 @@ import {
   getInterviewDataForResponse,
   getInterviewDataForForm,
   updateInterviewData,
+  getInterviewDataForInterviewer,
 } from "@/services/interviewDataService";
 import { ApplicationInterviewData } from "@/types/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "./useAuth";
 
 export function useInterviewData(interviewDataId: string) {
   return useQuery<ApplicationInterviewData>({
@@ -78,5 +80,14 @@ export function useInterviewDataForForm(formId: string) {
     queryKey: ["interview-data", "form", formId],
     enabled: !!formId,
     queryFn: () => getInterviewDataForForm(formId),
+  });
+}
+
+export function useMyInterviews(formId: string) {
+  const { user } = useAuth();
+  return useQuery<ApplicationInterviewData[]>({
+    queryKey: ["interview-data", "me", formId, user?.id],
+    enabled: !!user,
+    queryFn: () => getInterviewDataForInterviewer(formId, user!.id),
   });
 }

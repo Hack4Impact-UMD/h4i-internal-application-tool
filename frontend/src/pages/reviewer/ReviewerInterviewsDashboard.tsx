@@ -2,7 +2,7 @@ import { ReviewerInterviewsTable } from "@/components/reviewer/ReviewerInterview
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { useMyInterviewAssignments } from "@/hooks/useInterviewAssignments";
-import { useMyReviews } from "@/hooks/useReviewData";
+import { useMyInterviews } from "@/hooks/useInterviewData";
 import useSearch from "@/hooks/useSearch";
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -15,10 +15,10 @@ export default function ReviewerInterviewsDashboard() {
     error: assignmentsError,
   } = useMyInterviewAssignments(formId ?? "");
   const {
-    data: reviews,
-    isPending: reviewsLoading,
-    error: reviewError,
-  } = useMyReviews(formId ?? "");
+    data: interviews,
+    isPending: interviewsLoading,
+    error: interviewsError,
+  } = useMyInterviews(formId ?? ""); 
   const { search } = useSearch();
   const [statusFilter, setStatusFilter] = useState<
     "all" | "completed" | "pending"
@@ -27,17 +27,17 @@ export default function ReviewerInterviewsDashboard() {
   const numReviewed = useMemo(
     () =>
       assignedInterviews?.filter((f) =>
-        reviews
+        interviews
           ?.filter((r) => r.submitted && r.forRole == f.forRole)
           ?.map((r) => r.applicationResponseId)
           .includes(f.applicationResponseId),
       ).length,
-    [reviews, assignedInterviews],
+    [interviews, assignedInterviews],
   );
 
   if (!formId) return <p>Form ID not provided!</p>;
 
-  if (assignmentsLoading || reviewsLoading)
+  if (assignmentsLoading || interviewsLoading)
     return (
       <div className="flex items-center justify-center p-4 w-full h-full">
         <Spinner />
@@ -45,10 +45,10 @@ export default function ReviewerInterviewsDashboard() {
     );
   if (assignmentsError)
     return (
-      <p>Failed to fetch assigned applications: {assignmentsError.message}</p>
+      <p>Failed to fetch assigned interviews: {assignmentsError.message}</p>
     );
-  if (reviewError)
-    return <p>Failed to fetch assigned applications: {reviewError.message}</p>;
+  if (interviewsError)
+    return <p>Failed to fetch interview data: {interviewsError.message}</p>;
 
   return (
     <div className="max-w-5xl w-full rounded bg-white flex flex-col gap-2">
