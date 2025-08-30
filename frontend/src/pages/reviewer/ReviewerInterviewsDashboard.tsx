@@ -18,7 +18,7 @@ export default function ReviewerInterviewsDashboard() {
     data: interviews,
     isPending: interviewsLoading,
     error: interviewsError,
-  } = useMyInterviews(formId ?? ""); 
+  } = useMyInterviews(formId ?? "");
   const { search } = useSearch();
   const [statusFilter, setStatusFilter] = useState<
     "all" | "completed" | "pending"

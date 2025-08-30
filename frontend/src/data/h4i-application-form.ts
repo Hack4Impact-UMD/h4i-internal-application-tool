@@ -189,7 +189,7 @@ Thank you for your patience during the application and interview process. Based 
       "interview-communication": 0.25,
       "interview-design-teamwork": 0.2,
       "interview-technical-skills": 0.3,
-      "interview-designer-adapt": 0.15
+      "interview-designer-adapt": 0.15,
     },
     [ApplicantRole.Product]: {
       "interview-product-statements": 0.34,

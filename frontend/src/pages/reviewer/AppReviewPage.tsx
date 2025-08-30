@@ -6,10 +6,7 @@ import { useApplicationResponse } from "@/hooks/useApplicationResponses";
 import { useReviewData, useUpdateReviewData } from "@/hooks/useReviewData";
 import Spinner from "@/components/Spinner";
 import { useApplicant } from "@/hooks/useApplicants";
-import {
-  ApplicantRole,
-  ApplicationForm,
-} from "@/types/formBuilderTypes";
+import { ApplicantRole, ApplicationForm } from "@/types/formBuilderTypes";
 import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { Button } from "@/components/ui/button";
 import { useRubricsForFormRole } from "@/hooks/useRubrics";
@@ -269,7 +266,6 @@ const AppReviewPage: React.FC = () => {
       },
       {
         onSuccess: () => {
-          ;
           throwSuccessToast("Review submitted successfully!");
           navigate(-1);
         },
@@ -281,22 +277,22 @@ const AppReviewPage: React.FC = () => {
   };
 
   const handleJumpToSection = (sectionId: string) => {
-    sectionRefs.current
-      .get(sectionId)
-      ?.scrollIntoView({ behavior: "smooth" });
+    sectionRefs.current.get(sectionId)?.scrollIntoView({ behavior: "smooth" });
     setCommandPaletteOpen(false);
   };
 
-  const visibleSections = useMemo(() => form?.sections.filter((s) => {
-    if (s.hideFromReviewers) return false;
-    if (s.forRoles && s.forRoles.length > 0) {
-      return (
-        s.forRoles.some((r) => response?.rolesApplied?.includes(r))
-      );
-    } else {
-      return true;
-    }
-  }) ?? [], [form?.sections, response?.rolesApplied]);
+  const visibleSections = useMemo(
+    () =>
+      form?.sections.filter((s) => {
+        if (s.hideFromReviewers) return false;
+        if (s.forRoles && s.forRoles.length > 0) {
+          return s.forRoles.some((r) => response?.rolesApplied?.includes(r));
+        } else {
+          return true;
+        }
+      }) ?? [],
+    [form?.sections, response?.rolesApplied],
+  );
 
   if (
     formLoading ||
@@ -314,7 +310,6 @@ const AppReviewPage: React.FC = () => {
   if (rubricsError)
     return <p>Failed to fetch rubrics: {rubricsError.message}</p>;
   if (!optimisticReviewData) return <p>Failed to fetch review data</p>;
-
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] px-8">
@@ -414,15 +409,16 @@ const AppReviewPage: React.FC = () => {
                 Press{" "}
                 <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
                   <span className="text-xs">⌘</span>K
-                </kbd>
-                {" "} to jump to a section
+                </kbd>{" "}
+                to jump to a section
               </p>
             </div>
             {visibleSections.map((s) => (
               <div
                 ref={(el) => {
-                  sectionRefs.current.set(s.sectionId, el)
-                }} className="shadow border border-gray-200 bg-white rounded-md p-4"
+                  sectionRefs.current.set(s.sectionId, el);
+                }}
+                className="shadow border border-gray-200 bg-white rounded-md p-4"
                 key={s.sectionId}
               >
                 <Section
@@ -435,7 +431,7 @@ const AppReviewPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )?.questions ?? []
                   }
-                  onChangeResponse={() => { }}
+                  onChangeResponse={() => {}}
                 />
               </div>
             ))}

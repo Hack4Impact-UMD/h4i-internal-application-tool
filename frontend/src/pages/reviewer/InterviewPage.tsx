@@ -43,7 +43,14 @@ import {
 import { ApplicationInterviewData, PermissionRole } from "@/types/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useUser } from "@/hooks/useUsers";
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -147,8 +154,8 @@ const InterviewPage: React.FC = () => {
     error: interviewError,
   } = useInterviewData(interviewDataId ?? "");
 
-  const sectionRefs = useRef<Map<string, HTMLDivElement | null>>(new Map())
-  const [isCommandPaletteOpen, setCommandPaletteOpen] = useState(false)
+  const sectionRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
+  const [isCommandPaletteOpen, setCommandPaletteOpen] = useState(false);
 
   const { mutate: updateInterviewData, submittedAt: lastSave } =
     useUpdateInterviewData(interviewDataId ?? "");
@@ -266,21 +273,21 @@ const InterviewPage: React.FC = () => {
     );
   };
 
-  const visibleSections = useMemo(() => form?.sections.filter((s) => {
-    if (s.hideFromReviewers) return false;
-    if (s.forRoles && s.forRoles.length > 0) {
-      return (
-        s.forRoles.some((r) => response?.rolesApplied?.includes(r))
-      );
-    } else {
-      return true;
-    }
-  }) ?? [], [form?.sections, response?.rolesApplied]);
+  const visibleSections = useMemo(
+    () =>
+      form?.sections.filter((s) => {
+        if (s.hideFromReviewers) return false;
+        if (s.forRoles && s.forRoles.length > 0) {
+          return s.forRoles.some((r) => response?.rolesApplied?.includes(r));
+        } else {
+          return true;
+        }
+      }) ?? [],
+    [form?.sections, response?.rolesApplied],
+  );
 
   const handleJumpToSection = (sectionId: string) => {
-    sectionRefs.current
-      .get(sectionId)
-      ?.scrollIntoView({ behavior: "smooth" });
+    sectionRefs.current.get(sectionId)?.scrollIntoView({ behavior: "smooth" });
     setCommandPaletteOpen(false);
   };
 
@@ -398,14 +405,14 @@ const InterviewPage: React.FC = () => {
                 Press{" "}
                 <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none">
                   <span className="text-xs">⌘</span>K
-                </kbd>
-                {" "} to jump to a section
+                </kbd>{" "}
+                to jump to a section
               </p>
             </div>
             {visibleSections.map((s) => (
               <div
-                ref={el => {
-                  sectionRefs.current.set(s.sectionId, el)
+                ref={(el) => {
+                  sectionRefs.current.set(s.sectionId, el);
                 }}
                 className="shadow border border-gray-200 bg-white rounded-md p-4"
                 key={s.sectionId}
@@ -420,7 +427,7 @@ const InterviewPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )?.questions ?? []
                   }
-                  onChangeResponse={() => { }}
+                  onChangeResponse={() => {}}
                 />
               </div>
             ))}
