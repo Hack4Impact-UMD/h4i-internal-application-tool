@@ -135,9 +135,17 @@ export default function ReviewerApplicationsTable({
               | ApplicationReviewData
               | undefined;
 
+            const isReviewData = (v: unknown): v is ApplicationReviewData =>
+              typeof v === "object" && v !== null && "submitted" in v;
+
             if (filterValue == "all") return true;
-            else if (filterValue == "pending") return !value;
-            else if (filterValue == "reviewed") return !!value;
+            else if (filterValue == "pending")
+              return (
+                !isReviewData(value) ||
+                (isReviewData(value) && value.submitted === false)
+              );
+            else if (filterValue == "completed")
+              return isReviewData(value) && value.submitted === true;
             else return true;
           },
         }),

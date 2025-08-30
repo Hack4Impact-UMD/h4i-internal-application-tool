@@ -133,9 +133,16 @@ export default function ReviewerInterviewsTable({
               | ApplicationInterviewData
               | undefined;
 
+            const isInterviewData = (
+              v: unknown,
+            ): v is ApplicationInterviewData =>
+              typeof v === "object" && v !== null && "submitted" in v;
+
             if (filterValue == "all") return true;
-            else if (filterValue == "pending") return !value;
-            else if (filterValue == "completed") return !!value;
+            else if (filterValue == "pending")
+              return isInterviewData(value) && value.submitted === false;
+            else if (filterValue == "completed")
+              return isInterviewData(value) && value.submitted === true;
             else return true;
           },
         }),
