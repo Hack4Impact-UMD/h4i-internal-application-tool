@@ -17,6 +17,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Link } from "react-router-dom";
 import { clearQueryCache } from "@/config/query";
+import { throwErrorToast } from "./toasts/ErrorToast";
+import { throwSuccessToast } from "./toasts/SuccessToast";
 
 type NavProfileProps = {
   user: UserProfile;
@@ -26,6 +28,12 @@ type NavProfileProps = {
 export default function NavProfile({ user, className = "" }: NavProfileProps) {
   const { logout } = useAuth();
   const [open, setOpen] = useState(false);
+
+  const commit = import.meta.env.DEV
+    ? "dev"
+    : import.meta.env.VITE_COMMIT
+      ? import.meta.env.VITE_COMMIT
+      : "unknown";
 
   return (
     <>
@@ -92,6 +100,23 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
               className="cursor-pointer"
             >
               Sign Out
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              variant="default"
+              className="cursor-pointer font-mono text-muted-foreground"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(commit);
+                  throwSuccessToast("Copied commit hash to clipboard!");
+                } catch {
+                  throwErrorToast("Failed to copy commit to clipboard!");
+                }
+              }}
+            >
+              Commit: {commit.slice(0, 7)}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
