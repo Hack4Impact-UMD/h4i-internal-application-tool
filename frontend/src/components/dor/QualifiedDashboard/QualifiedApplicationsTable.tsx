@@ -488,6 +488,8 @@ export default function QualifiedApplicationsTable({
                             `${row.original.email} added to clipboard!`,
                           );
                         } catch (err) {
+                          console.log("Failed to copy email:");
+                          console.log(err);
                           throwErrorToast(`Failed to add email to clipboard.`);
                         }
                       }}

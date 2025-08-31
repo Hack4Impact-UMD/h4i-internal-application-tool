@@ -21,6 +21,7 @@ export type ApplicationRow = {
   applicant: {
     name: string;
     id: string;
+    email: string;
   };
   responseId: string;
   role: ApplicantRole;
@@ -85,6 +86,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             applicant: {
               id: user.id,
               name: `${user.firstName} ${user.lastName}`,
+              email: user.email,
             },
             responseId: app.id,
             role: role, //These have already been expanded into their separate roles

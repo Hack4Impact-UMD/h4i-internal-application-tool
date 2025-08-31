@@ -19,7 +19,7 @@ import {
   assignReview,
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Clipboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { throwSuccessToast } from "../../toasts/SuccessToast";
 import { throwErrorToast } from "../../toasts/ErrorToast";
@@ -36,6 +36,11 @@ import SortableHeader from "../../tables/SortableHeader";
 import { ApplicationRow, useRows } from "./useRows";
 import { ReviewerSelect } from "./ReviewerSelect";
 import { displayTimestamp } from "@/utils/dates";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -206,6 +211,36 @@ export default function SuperReviewerApplicationsTable({
           id: "applicant-name",
           header: ({ column }) => {
             return <SortableHeader column={column}>APPLICANT</SortableHeader>;
+          },
+          cell: ({ getValue, row }) => {
+            return (
+              <span className="flex items-center">
+                <span>{getValue()}</span>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Clipboard
+                      className="hover:bg-lightgray p-1 rounded cursor-pointer text-blue"
+                      size={24}
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(
+                            row.original.applicant.email,
+                          );
+                          throwSuccessToast(
+                            `${row.original.applicant.email} added to clipboard!`,
+                          );
+                        } catch (err) {
+                          console.log("Failed to copy email:");
+                          console.log(err);
+                          throwErrorToast(`Failed to add email to clipboard.`);
+                        }
+                      }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Copy Applicant Email</TooltipContent>
+                </Tooltip>
+              </span>
+            );
           },
         }),
         columnHelper.accessor("role", {
