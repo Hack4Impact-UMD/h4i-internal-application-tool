@@ -13,6 +13,7 @@ import {
   query,
   updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { getAppCheckToken } from "./appCheckService";
 
@@ -35,6 +36,45 @@ export async function getApplicationStatus(
     role: ApplicantRole;
     released: boolean;
   };
+}
+
+export async function getAllApplicationStatusesForForm(formId: string) {
+  const statusCollection = collection(db, STATUS_COLLECTION);
+  const q = query(statusCollection, where("formId", "==", formId));
+  const docsSnap = await getDocs(q);
+  return docsSnap.docs.map((d) => d.data() as InternalApplicationStatus);
+}
+
+export async function rejectUndecidedApplicantsForForm(formId: string) {
+  const statuses = await getAllApplicationStatusesForForm(formId);
+  const undecided = statuses.filter((s) => !isDecided(s.status));
+  const statusCollection = collection(
+    db,
+    STATUS_COLLECTION,
+  ) as CollectionReference<InternalApplicationStatus>;
+
+  const chunkSize = 250;
+
+  for (let i = 0; i < undecided.length; i += chunkSize) {
+    const chunk = undecided.slice(i, i + chunkSize)
+    const batch = writeBatch(db);
+
+    chunk.forEach((s) => {
+      batch.update(doc(statusCollection, s.id), {
+        status: ReviewStatus.Denied,
+      } as Partial<InternalApplicationStatus>);
+    });
+
+    await batch.commit();
+  }
+}
+
+export function isDecided(status: ReviewStatus) {
+  return [
+    ReviewStatus.Accepted,
+    ReviewStatus.Denied,
+    ReviewStatus.Waitlisted,
+  ].includes(status);
 }
 
 export async function getApplicationStatusForResponseRole(
