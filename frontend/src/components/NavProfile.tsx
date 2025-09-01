@@ -17,8 +17,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Link } from "react-router-dom";
 import { clearQueryCache } from "@/config/query";
-import { throwErrorToast } from "./toasts/ErrorToast";
-import { throwSuccessToast } from "./toasts/SuccessToast";
+import AboutDialog from "./AboutDialog";
+import { Dialog, DialogTrigger } from "./ui/dialog";
 
 type NavProfileProps = {
   user: UserProfile;
@@ -29,14 +29,8 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
   const { logout } = useAuth();
   const [open, setOpen] = useState(false);
 
-  const commit = import.meta.env.DEV
-    ? "dev"
-    : import.meta.env.VITE_COMMIT
-      ? import.meta.env.VITE_COMMIT
-      : "unknown";
-
   return (
-    <>
+    <Dialog>
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button
@@ -91,6 +85,15 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
                 Report an Issue
               </DropdownMenuItem>
             </a>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                variant="default"
+                className="cursor-pointer"
+                onSelect={() => setOpen(false)}
+              >
+                About
+              </DropdownMenuItem>
+            </DialogTrigger>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
@@ -102,25 +105,9 @@ export default function NavProfile({ user, className = "" }: NavProfileProps) {
               Sign Out
             </DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              variant="default"
-              className="cursor-pointer font-mono text-muted-foreground"
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(commit);
-                  throwSuccessToast("Copied commit hash to clipboard!");
-                } catch {
-                  throwErrorToast("Failed to copy commit to clipboard!");
-                }
-              }}
-            >
-              Commit: {commit.slice(0, 7)}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-    </>
+      <AboutDialog />
+    </Dialog>
   );
 }
