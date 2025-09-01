@@ -34,7 +34,6 @@ import {
   isDecided,
   rejectUndecidedApplicantsForForm,
 } from "@/services/statusService";
-import { ReviewStatus } from "@/types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RadioIcon, ShieldIcon, StopCircleIcon } from "lucide-react";
 import { useState } from "react";
