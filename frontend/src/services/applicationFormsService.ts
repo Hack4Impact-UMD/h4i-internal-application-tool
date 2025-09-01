@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, where } from "firebase/firestore";
+import { collection, CollectionReference, doc, getDoc, getDocs, updateDoc, where } from "firebase/firestore";
 import { db, API_URL } from "../config/firebase";
 import { ApplicationForm } from "../types/types";
 import { query } from "firebase/firestore";
@@ -63,4 +63,13 @@ export async function createApplicationForm(
     },
   });
   return res.data;
+}
+
+export async function setFormDecisionRelease(formId: string, released: boolean) {
+  const forms = collection(db, APPLICATION_FORMS_COLLECTION) as CollectionReference<ApplicationForm>;
+  const docRef = doc(forms, formId);
+
+  await updateDoc(docRef, {
+    decisionsReleased: released
+  } as Partial<ApplicationForm>)
 }
