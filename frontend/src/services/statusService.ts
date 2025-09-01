@@ -53,15 +53,20 @@ export async function rejectUndecidedApplicantsForForm(formId: string) {
     STATUS_COLLECTION,
   ) as CollectionReference<InternalApplicationStatus>;
 
-  const batch = writeBatch(db);
+  const chunkSize = 250;
 
-  undecided.forEach((s) => {
-    batch.update(doc(statusCollection, s.id), {
-      status: ReviewStatus.Denied,
-    } as Partial<InternalApplicationStatus>);
-  });
+  for (let i = 0; i < undecided.length; i += chunkSize) {
+    const chunk = undecided.slice(i, i + chunkSize)
+    const batch = writeBatch(db);
 
-  await batch.commit();
+    chunk.forEach((s) => {
+      batch.update(doc(statusCollection, s.id), {
+        status: ReviewStatus.Denied,
+      } as Partial<InternalApplicationStatus>);
+    });
+
+    await batch.commit();
+  }
 }
 
 export function isDecided(status: ReviewStatus) {

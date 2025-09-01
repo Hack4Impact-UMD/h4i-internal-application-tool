@@ -59,7 +59,7 @@ export default function SuperReviewerDashboardShell() {
 
       if (statuses.some((s) => !isDecided(s.status))) {
         throw new Error(
-          "Some applicants have not been decided yet. Can't release decsions.",
+          "Some applicants have not been decided yet. Can't release decisions.",
         );
       }
 
