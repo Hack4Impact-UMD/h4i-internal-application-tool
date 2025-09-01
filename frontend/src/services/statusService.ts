@@ -40,32 +40,36 @@ export async function getApplicationStatus(
 
 export async function getAllApplicationStatusesForForm(formId: string) {
   const statusCollection = collection(db, STATUS_COLLECTION);
-  const q = query(
-    statusCollection,
-    where("formId", "==", formId),
-  );
+  const q = query(statusCollection, where("formId", "==", formId));
   const docsSnap = await getDocs(q);
   return docsSnap.docs.map((d) => d.data() as InternalApplicationStatus);
 }
 
 export async function rejectUndecidedApplicantsForForm(formId: string) {
-  const statuses = await getAllApplicationStatusesForForm(formId)
-  const undecided = statuses.filter(s => !isDecided(s.status))
-  const statusCollection = collection(db, STATUS_COLLECTION) as CollectionReference<InternalApplicationStatus>;
+  const statuses = await getAllApplicationStatusesForForm(formId);
+  const undecided = statuses.filter((s) => !isDecided(s.status));
+  const statusCollection = collection(
+    db,
+    STATUS_COLLECTION,
+  ) as CollectionReference<InternalApplicationStatus>;
 
-  const batch = writeBatch(db)
+  const batch = writeBatch(db);
 
-  undecided.forEach(s => {
+  undecided.forEach((s) => {
     batch.update(doc(statusCollection, s.id), {
-      status: ReviewStatus.Denied
-    } as Partial<InternalApplicationStatus>)
-  })
+      status: ReviewStatus.Denied,
+    } as Partial<InternalApplicationStatus>);
+  });
 
-  await batch.commit()
+  await batch.commit();
 }
 
 export function isDecided(status: ReviewStatus) {
-  return [ReviewStatus.Accepted, ReviewStatus.Denied, ReviewStatus.Waitlisted].includes(status)
+  return [
+    ReviewStatus.Accepted,
+    ReviewStatus.Denied,
+    ReviewStatus.Waitlisted,
+  ].includes(status);
 }
 
 export async function getApplicationStatusForResponseRole(

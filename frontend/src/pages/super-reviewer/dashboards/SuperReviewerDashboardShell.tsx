@@ -1,14 +1,39 @@
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
-import { AlertDialogCancel, AlertDialogContent, AlertDialogTitle, AlertDialog, AlertDialogHeader, AlertDialogTrigger, AlertDialogDescription, AlertDialogAction } from "@/components/ui/alert-dialog";
+import {
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialog,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+  AlertDialogDescription,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { DropdownMenuContent, DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenuContent,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import useSearch from "@/hooks/useSearch";
 import { setFormDecisionRelease } from "@/services/applicationFormsService";
-import { getAllApplicationStatusesForForm, isDecided, rejectUndecidedApplicantsForForm } from "@/services/statusService";
+import {
+  getAllApplicationStatusesForForm,
+  isDecided,
+  rejectUndecidedApplicantsForForm,
+} from "@/services/statusService";
 import { ReviewStatus } from "@/types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RadioIcon, ShieldIcon, StopCircleIcon } from "lucide-react";
@@ -18,54 +43,61 @@ import { NavLink, Outlet, useParams } from "react-router-dom";
 export default function SuperReviewerDashboardShell() {
   const { search, setSearch } = useSearch();
   const { formId } = useParams<{ formId: string }>();
-  const { data: form, isPending: formPending, error: formError } = useApplicationForm(formId)
-  const queryClient = useQueryClient()
+  const {
+    data: form,
+    isPending: formPending,
+    error: formError,
+  } = useApplicationForm(formId);
+  const queryClient = useQueryClient();
   const [releaseConfirm, setReleaseConfirm] = useState("");
-
 
   const releaseDecisionsMutation = useMutation({
     mutationFn: async ({ released }: { released: boolean }) => {
-      setReleaseConfirm("")
-      if (!formId) throw new Error("Invalid form ID")
+      setReleaseConfirm("");
+      if (!formId) throw new Error("Invalid form ID");
 
-      const statuses = await getAllApplicationStatusesForForm(formId)
+      const statuses = await getAllApplicationStatusesForForm(formId);
 
-      if (statuses.some(s => !isDecided(s.status))) {
-        throw new Error("Some applicants have not been decided yet. Can't release decsions.")
+      if (statuses.some((s) => !isDecided(s.status))) {
+        throw new Error(
+          "Some applicants have not been decided yet. Can't release decsions.",
+        );
       }
 
-      await setFormDecisionRelease(formId, released)
+      await setFormDecisionRelease(formId, released);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["form", formId] })
+      queryClient.invalidateQueries({ queryKey: ["form", formId] });
     },
     onError: (err) => {
-      console.log(err)
-      throwErrorToast(`Failed to release decisions: ${err.name} - ${err.message}`)
+      console.log(err);
+      throwErrorToast(
+        `Failed to release decisions: ${err.name} - ${err.message}`,
+      );
     },
     onSuccess: () => {
-      throwSuccessToast("Successfully released decisions!")
-    }
-  })
+      throwSuccessToast("Successfully released decisions!");
+    },
+  });
 
   const rejectUndecidedMutation = useMutation({
     mutationFn: async () => {
-      if (!formId) throw new Error("Invalid form ID")
-      await rejectUndecidedApplicantsForForm(formId)
+      if (!formId) throw new Error("Invalid form ID");
+      await rejectUndecidedApplicantsForForm(formId);
     },
     onError: (err) => {
-      console.log(err)
-      throwErrorToast(`Failed to reject undecided applicants: ${err.message}`)
+      console.log(err);
+      throwErrorToast(`Failed to reject undecided applicants: ${err.message}`);
     },
     onSuccess: () => {
-      throwSuccessToast("Successfully updated applicant statuses!")
+      throwSuccessToast("Successfully updated applicant statuses!");
     },
     onSettled: () => {
       queryClient.invalidateQueries({
         predicate: (q) => q.queryKey.includes("qualified-apps-rows"),
       });
-    }
-  })
+    },
+  });
 
   return (
     <div className="w-full grow bg-lightgray flex flex-col items-center p-2 py-4">
@@ -114,9 +146,7 @@ export default function SuperReviewerDashboardShell() {
           <Dialog open={rejectUndecidedMutation.isPending}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>
-                  Please wait
-                </DialogTitle>
+                <DialogTitle>Please wait</DialogTitle>
                 <DialogDescription>
                   Rejecting undecided applicants...
                 </DialogDescription>
@@ -126,50 +156,69 @@ export default function SuperReviewerDashboardShell() {
           <AlertDialog>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant={"outline"} size="icon"><ShieldIcon /></Button>
+                <Button variant={"outline"} size="icon">
+                  <ShieldIcon />
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuLabel>
-                  Admin Actions
-                </DropdownMenuLabel>
-                <DropdownMenuItem className="cursor-pointer" variant="destructive" onClick={() => rejectUndecidedMutation.mutate()}>
+                <DropdownMenuLabel>Admin Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  variant="destructive"
+                  onClick={() => rejectUndecidedMutation.mutate()}
+                >
                   <StopCircleIcon />
                   Deny all undecided applicants
                 </DropdownMenuItem>
                 <AlertDialogTrigger asChild>
-                  <DropdownMenuItem className="cursor-pointer" disabled={!form || form.decisionsReleased || releaseDecisionsMutation.isPending}>
-                    {
-                      formPending ? "Loading..."
-                        : formError ? "Failed to load form"
-                          : form.decisionsReleased ? "Decisions already released" : <>
-                            <RadioIcon />
-                            Release decisions for this form
-                          </>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    disabled={
+                      !form ||
+                      form.decisionsReleased ||
+                      releaseDecisionsMutation.isPending
                     }
+                  >
+                    {formPending ? (
+                      "Loading..."
+                    ) : formError ? (
+                      "Failed to load form"
+                    ) : form.decisionsReleased ? (
+                      "Decisions already released"
+                    ) : (
+                      <>
+                        <RadioIcon />
+                        Release decisions for this form
+                      </>
+                    )}
                   </DropdownMenuItem>
                 </AlertDialogTrigger>
               </DropdownMenuContent>
             </DropdownMenu>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Confirm decision release
-                </AlertDialogTitle>
+                <AlertDialogTitle>Confirm decision release</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Releasing decisions will immediately make them viewable on applicant decision pages.
+                  Releasing decisions will immediately make them viewable on
+                  applicant decision pages.
                   <strong> To confirm this action, type "I confirm"</strong>
                 </AlertDialogDescription>
-                <Input placeholder="I confirm" value={releaseConfirm} onChange={e => setReleaseConfirm(e.target.value)} />
-                <AlertDialogAction disabled={releaseConfirm !== "I confirm"}
-                  onClick={() => releaseDecisionsMutation.mutate({
-                    released: true
-                  })}
+                <Input
+                  placeholder="I confirm"
+                  value={releaseConfirm}
+                  onChange={(e) => setReleaseConfirm(e.target.value)}
+                />
+                <AlertDialogAction
+                  disabled={releaseConfirm !== "I confirm"}
+                  onClick={() =>
+                    releaseDecisionsMutation.mutate({
+                      released: true,
+                    })
+                  }
                 >
                   Confirm
                 </AlertDialogAction>
-                <AlertDialogCancel>
-                  Cancel
-                </AlertDialogCancel>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
               </AlertDialogHeader>
             </AlertDialogContent>
           </AlertDialog>
