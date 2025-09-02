@@ -71,21 +71,21 @@ All admission decisions will be communicated to applicants no later than Septemb
       [ApplicantRole.Bootcamp]: `
 Thank you for your patience during the application and interview process. *Based on your experience, comments, and our non-profit partners’ needs, we have placed you on the Bootcamp team.* Congratulations!
 
-Our first general body meeting is **[day, month date, year from time in location]**.
+Our first general body meeting is **Thursday, September 11 from 6-7PM**. Location will be shared soon.
       
 In terms of the next steps, please:
       
 1. Join our Slack workspace (you'll receive an invite soon) and join the #umd-general, #umd-random, #umd-opportunities, and #umd-socialimpact channels. **Slack will be our main form of communication.**
 2. Update your Slack profile to include your preferred name, a profile picture, pronouns, and your email address.
 3. Join our org on [Terplink](https://terplink.umd.edu/organization/hack4impact)!
-4. Let me know if you are interested in taking on roles related to sourcing nonprofit projects, which would involve contacting different nonprofit organizations and developing projects for us to work on, marketing, or community development.
+4. Let us know if you are interested in taking on roles related to sourcing nonprofit projects, which would involve contacting different nonprofit organizations and developing projects for us to work on, marketing, or community development.
       
 Once again, we’re looking forward to working with you. Let us know if you have any questions.
       `,
       ["team"]: `
 Congratulations! Welcome to our organization for Fall 2025! Thank you for your patience during the application and interview process. *Based on your experience, comments, and our non-profit partners’ needs, we have placed you on a project team for this role.* You'll hear more about your project at the first team meeting.
 
-Our first general body meeting is **[day, month date, year from time in location]**.
+Our first general body meeting is **Thursday, September 11 from 6-7PM**. Location will be shared soon.
 
 In terms of the next steps, please:
 
@@ -102,22 +102,22 @@ Thank you for your patience during the application and interview process. Based 
 
 We believe that you would be a great fit for our **bootcamp**. However, this semester, the **bootcamp** spots filled up quickly.
     
-If there are any **bootcamp** openings by **[XX/XX/XX]** before the waitlist closes, we will notify you and place you in **bootcamp**.
+If there are any **bootcamp** openings before the waitlist closes, we will notify you and place you in **bootcamp**.
     
 If there are no new openings, we will retain your email address and application status for **Spring 2026**, our next recruiting season. We would then send you a form asking for an updated resume and if you are still interested in the same position.
     
-**Please reply to this email to confirm your placement on the waitlist** and feel free to reach out if you have any questions or concerns.
+**Please indicate your interest in being placed on the waitlist using [this](https://forms.gle/JJ16tAq73mwM7K6s8) form** and feel free to reach out if you have any questions or concerns.
     `,
       ["team"]: `
 Thank you for your patience during the application and interview process. Based on your experience, our openings, and our client’s needs, we have decided to place you on the *waitlist for project teams* this semester.
 
 We believe that you would be a great fit for our **project teams**. However, this semester, the **project team** spots filled up quickly.
     
-If there are any **project team** openings by **[XX/XX/XX]** before the waitlist closes, we will notify you and place you in **a project team**.
+If there are any **project team** openings that align with your role preferences before the waitlist closes, we will notify you and place you in **a project team**.
     
 If there are no new openings, we will retain your email address and application status for **Spring 2026**, our next recruiting season. We would then send you a form asking for an updated resume and if you are still interested in the same position.
     
-**Please reply to this email to confirm your placement on the waitlist** and feel free to reach out if you have any questions or concerns.
+**Please indicate your interest in being placed on the waitlist using [this](https://forms.gle/JJ16tAq73mwM7K6s8) form** and feel free to reach out if you have any questions or concerns.
     `,
     },
     [ReviewStatus.Denied]: `
