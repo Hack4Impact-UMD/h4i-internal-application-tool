@@ -10,7 +10,7 @@ import {
   createColumnHelper,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "../../DataTable";
 import { Button } from "../../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ import {
   assignReview,
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
-import { EllipsisVertical, Clipboard } from "lucide-react";
+import { EllipsisVertical, Clipboard, ClipboardIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { throwSuccessToast } from "../../toasts/SuccessToast";
 import { throwErrorToast } from "../../toasts/ErrorToast";
@@ -323,8 +323,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />
@@ -392,11 +392,39 @@ export default function SuperReviewerApplicationsTable({
 
   const { data: rows, isPending, error } = useRows(applications, formId);
 
+  const handleCopy = useCallback(async () => {
+    if (!rows) {
+      throwErrorToast("No applicants found!");
+      return;
+    }
+
+    const emails = new Set(rows.map((r) => r.applicant.email));
+    const text = [...emails].join(",");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      throwSuccessToast(`Copied ${emails.size} email(s)!`);
+    } catch (err) {
+      console.log("Failed to copy emails: ", err);
+      throwErrorToast("Failed to copy emails");
+    }
+  }, [rows]);
+
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
 
   return (
     <div className="flex flex-col w-full gap-2">
+      <div className="mt-2 flex items-end">
+        <Button
+          className="ml-auto"
+          disabled={!rows || rows.length == 0}
+          variant={"outline"}
+          onClick={() => handleCopy()}
+        >
+          <ClipboardIcon /> Copy all applicant emails
+        </Button>
+      </div>
       <DataTable
         columns={cols}
         data={rows ?? []}

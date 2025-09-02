@@ -56,7 +56,7 @@ export async function rejectUndecidedApplicantsForForm(formId: string) {
   const chunkSize = 250;
 
   for (let i = 0; i < undecided.length; i += chunkSize) {
-    const chunk = undecided.slice(i, i + chunkSize)
+    const chunk = undecided.slice(i, i + chunkSize);
     const batch = writeBatch(db);
 
     chunk.forEach((s) => {
