@@ -79,6 +79,7 @@ In terms of the next steps, please:
 2. Update your Slack profile to include your preferred name, a profile picture, pronouns, and your email address.
 3. Join our org on [Terplink](https://terplink.umd.edu/organization/hack4impact)!
 4. Let us know if you are interested in taking on roles related to sourcing nonprofit projects, which would involve contacting different nonprofit organizations and developing projects for us to work on, marketing, or community development.
+5. Join us for our **New Member Social on Tuesday, September 7th from 6-7 at TerpZone!** Talk to some new faces and learn a little more about the org!
       
 Once again, we’re looking forward to working with you. Let us know if you have any questions.
       `,
@@ -92,6 +93,7 @@ In terms of the next steps, please:
 1. Join our Slack workspace (you'll receive an invite soon) and join the #umd-general, #umd-random, #umd-opportunities, and #umd-pixels channels. **Slack will be our main form of communication.**
 2. Update your Slack profile to include your preferred name, a profile picture, pronouns, and your email address.
 3. Join our org on [Terplink](https://terplink.umd.edu/organization/hack4impact)!
+4. Join us for our **New Member Social on Tuesday, September 7th from 6-7 at TerpZone!** Talk to some new faces and learn a little more about the org!
 
 Once again, we’re looking forward to working with you. Let us know if you have any questions.
     `,
