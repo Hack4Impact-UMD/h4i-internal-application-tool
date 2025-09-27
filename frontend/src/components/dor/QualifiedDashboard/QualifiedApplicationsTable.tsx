@@ -49,7 +49,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleAlertIcon, Clipboard, EllipsisVertical } from "lucide-react";
+import {
+  CircleAlertIcon,
+  Clipboard,
+  EllipsisVertical,
+  AlertTriangle,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -547,10 +552,35 @@ export default function QualifiedApplicationsTable({
           header: ({ column }) => (
             <SortableHeader column={column}>AVG. SCORE</SortableHeader>
           ),
-          cell: ({ getValue }) => {
+          cell: ({ getValue, row }) => {
             const value = getValue();
             if (!value) return "N/A";
-            return value.toFixed(2);
+            const hasLowScore = row.original.interviews.some(
+              (application) =>
+                application.submitted &&
+                Object.values(application.interviewScores).some(
+                  (score) => score < 2,
+                ),
+            );
+            return (
+              <div className="flex items-center">
+                {value.toFixed(2)}
+                {hasLowScore && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="bg-amber-100 rounded-full p-1 ml-1">
+                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        This candidate received a score below 2 from a reviewer
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            );
           },
         }),
         columnHelper.accessor("status.status", {
