@@ -249,10 +249,19 @@ function App() {
                 />
 
                 <Route
-                  path="dor/applications/:formId/:reviewerId"
+                  path="dor/reviewer/:formId/:reviewerId"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                       <AssignedApplicationsPage />
+                    </RequireAuth>
+                  }
+                />
+
+                <Route
+                  path="dor/interviewer/:formId/:interviewerId"
+                  element={
+                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                      <h1>TODO</h1>
                     </RequireAuth>
                   }
                 />

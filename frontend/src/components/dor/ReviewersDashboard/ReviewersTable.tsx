@@ -207,7 +207,7 @@ export default function ReviewersTable({
                     className="cursor-pointer"
                     onClick={() => {
                       navigate(
-                        "/admin/dor/applications/" +
+                        "/admin/dor/reviewer/" +
                           formId +
                           "/" +
                           row.original.reviewer.id,
