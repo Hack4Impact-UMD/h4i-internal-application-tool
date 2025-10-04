@@ -176,6 +176,18 @@ export default function AdminHome() {
               Form Validator
             </Button>
           </div>
+          <div className="max-w-5xl w-full p-4 bg-white rounded-md">
+            <h1 className="text-xl">Form Builder </h1>
+            <p className="text-muted-foreground">
+              Build and preview application forms with a live editor.
+            </p>
+            <Button
+              className="mt-4"
+              onClick={() => navigate("/admin/dor/form-builder")}
+            >
+              Open Form Builder
+            </Button>
+          </div>
           {/* TEMPORARY SECTION - Remove after form upload is complete */}
           <div className="max-w-5xl w-full p-4 bg-white rounded-md">
             <h1 className="text-xl">Upload H4I Application Form</h1>
