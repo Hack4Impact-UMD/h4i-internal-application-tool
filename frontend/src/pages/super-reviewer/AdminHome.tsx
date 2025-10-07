@@ -167,14 +167,17 @@ export default function AdminHome() {
           <div className="max-w-5xl w-full p-4 bg-white rounded-md">
             <h1 className="text-xl">Or Manage Forms </h1>
             <p className="text-muted-foreground">
-              Validate your form before uploading to Firestore.
+              Validate your form before uploading to Firestore or build
+              application forms with a live editor.
             </p>
-            <Button
-              className="mt-4"
-              onClick={() => navigate("/admin/dor/forms")}
-            >
-              Form Validator
-            </Button>
+            <div className="mt-4 flex gap-2">
+              <Button onClick={() => navigate("/admin/dor/forms")}>
+                Form Validator
+              </Button>
+              <Button onClick={() => navigate("/admin/dor/form-builder")}>
+                Open Form Builder
+              </Button>
+            </div>
           </div>
           {/* TEMPORARY SECTION - Remove after form upload is complete */}
           <div className="max-w-5xl w-full p-4 bg-white rounded-md">
