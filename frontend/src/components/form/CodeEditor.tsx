@@ -1,5 +1,5 @@
-import { useRef, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
+import Editor from "@monaco-editor/react";
 
 interface CodeEditorProps {
   value: string;
@@ -13,24 +13,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
   onChange,
   className = "",
-  placeholderText = "",
   language = "json",
 }) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const lineNumbersRef = useRef<HTMLDivElement>(null);
-
-  const lines = value.split("\n");
-  const lineCount = lines.length;
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    const lineNumbers = lineNumbersRef.current;
-    if (!textarea || !lineNumbers) return;
-
-    const handleScroll = () => (lineNumbers.scrollTop = textarea.scrollTop);
-    textarea.addEventListener("scroll", handleScroll);
-    return () => textarea.removeEventListener("scroll", handleScroll);
-  }, []);
+  const handleEditorChange = (value: string | undefined) => {
+    onChange(value || "");
+  };
 
   return (
     <div
@@ -39,6 +26,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         className,
       )}
     >
+      {/* Header */}
       <div className="bg-gray-800 px-4 py-2 border-b border-gray-300">
         <div className="flex items-center justify-between">
           <span className="text-md font-medium text-white">Code Editor</span>
@@ -48,45 +36,65 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        <div
-          ref={lineNumbersRef}
-          className="bg-gray-100 border-r border-gray-300 px-3 py-3 text-base text-gray-500 font-mono select-none flex-shrink-0 overflow-hidden"
-          style={{
+      {/* Monaco Editor */}
+      <div className="flex-1">
+        <Editor
+          height="100%"
+          language={language}
+          value={value}
+          onChange={handleEditorChange}
+          theme="vs-light"
+          options={{
+            fontSize: 16,
             fontFamily:
               'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-            lineHeight: "1.5rem",
+            lineHeight: 24,
+            wordWrap: "on",
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+            tabSize: 4,
+            insertSpaces: true,
+            renderWhitespace: "selection",
+            bracketPairColorization: { enabled: true },
+            guides: {
+              indentation: true,
+              bracketPairs: true,
+            },
+            suggest: {
+              showKeywords: true,
+              showSnippets: true,
+            },
+            quickSuggestions: true,
+            parameterHints: { enabled: true },
+            hover: { enabled: true },
+            formatOnPaste: true,
+            formatOnType: true,
+            folding: true,
+            lineNumbers: "on",
+            glyphMargin: false,
+            foldingStrategy: "indentation",
+            showFoldingControls: "always",
+            matchBrackets: "always",
+            renderLineHighlight: "line",
+            cursorBlinking: "blink",
+            cursorStyle: "line",
+            selectOnLineNumbers: true,
+            roundedSelection: false,
+            readOnly: false,
+            contextmenu: true,
+            mouseWheelZoom: true,
+            smoothScrolling: true,
+            cursorSmoothCaretAnimation: "on",
           }}
-        >
-          {lines.map((_, index) => (
-            <div key={index} className="leading-6 whitespace-nowrap">
-              {index + 1}
-            </div>
-          ))}
-        </div>
-
-        <div className="flex-1 relative overflow-hidden">
-          <textarea
-            ref={textareaRef}
-            className="w-full h-full p-3 font-mono text-base resize-none border-none outline-none bg-white"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholderText}
-            spellCheck={false}
-            style={{
-              fontFamily:
-                'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
-              lineHeight: "1.5rem",
-              whiteSpace: "pre",
-              overflow: "auto",
-            }}
-          />
-        </div>
+        />
       </div>
 
+      {/* Footer (Line Count) */}
       <div className="bg-gray-50 px-4 py-2 border-t border-gray-200 text-xs text-gray-500">
         <span>
-          {lineCount} line{lineCount !== 1 ? "s" : ""}
+          {value.split("\n").length} line
+          {value.split("\n").length !== 1 ? "s" : ""}
         </span>
       </div>
     </div>
