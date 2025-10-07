@@ -86,6 +86,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
             mouseWheelZoom: true,
             smoothScrolling: true,
             cursorSmoothCaretAnimation: "on",
+            occurrencesHighlight: "off",
+            selectionHighlight: false,
           }}
         />
       </div>
