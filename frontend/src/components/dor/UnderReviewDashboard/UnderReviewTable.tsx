@@ -314,9 +314,9 @@ export default function SuperReviewerApplicationsTable({
           cell: ({ getValue, row }) => {
             if (row.original.reviews.completed == 0) return "N/A";
             const hasLowScore = row.original.reviews.reviewData.some(
-              (application) =>
-                application.submitted &&
-                Object.values(application.applicantScores).some(
+              (reviewData) =>
+                reviewData.submitted &&
+                Object.values(reviewData.applicantScores).some(
                   (score) => score < 2,
                 ),
             );

@@ -556,9 +556,9 @@ export default function QualifiedApplicationsTable({
             const value = getValue();
             if (!value) return "N/A";
             const hasLowScore = row.original.interviews.some(
-              (application) =>
-                application.submitted &&
-                Object.values(application.interviewScores).some(
+              (interviewData) =>
+                interviewData.submitted &&
+                Object.values(interviewData.interviewScores).some(
                   (score) => score < 2,
                 ),
             );
@@ -574,7 +574,7 @@ export default function QualifiedApplicationsTable({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        This candidate received a score below 2 from a reviewer
+                        This candidate received a score below 2 from an interviewer
                       </p>
                     </TooltipContent>
                   </Tooltip>
