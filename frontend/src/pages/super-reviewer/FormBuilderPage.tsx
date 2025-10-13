@@ -7,18 +7,26 @@ import {
 import { Button } from "@/components/ui/button";
 import { h4iApplicationForm } from "@/data/h4i-application-form";
 import CodeEditor from "@/components/form/CodeEditor";
+import Section from "@/components/form/Section";
+import FormMarkdown from "@/components/form/FormMarkdown";
+import { ApplicationForm, ApplicationSection } from "@/types/formBuilderTypes";
 
 export default function FormBuilderPage() {
   const [jsonCode, setJsonCode] = useState(() =>
     JSON.stringify(h4iApplicationForm, null, 2),
   );
+  const [previewForm, setPreviewForm] = useState<ApplicationForm | null>(null);
+  const [compileError, setCompileError] = useState<string | null>(null);
 
   const handleCompile = () => {
     try {
-      JSON.parse(jsonCode);
-      // Add form preview functionality
+      const parsedForm = JSON.parse(jsonCode) as ApplicationForm;
+      setPreviewForm(parsedForm);
+      setCompileError(null);
     } catch (error) {
       console.error("Invalid JSON:", error);
+      setCompileError(error instanceof Error ? error.message : "Invalid JSON");
+      setPreviewForm(null);
     }
   };
 
@@ -49,9 +57,41 @@ export default function FormBuilderPage() {
                 <h3 className="text-md font-medium text-white">Form Preview</h3>
               </div>
               <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-                <div className="text-gray-500 text-center py-8 text-lg">
-                  Form preview will appear here after compilation
-                </div>
+                {compileError ? (
+                  <div className="text-red-600 text-center py-8">
+                    <h4 className="font-semibold mb-2">Compilation Error</h4>
+                    <p className="text-sm">{compileError}</p>
+                  </div>
+                ) : previewForm ? (
+                  <div className="space-y-6">
+                    <div className="bg-white p-4 rounded-md shadow-sm border">
+                      <h2 className="text-2xl font-bold mb-2">
+                        {previewForm.semester}
+                      </h2>
+                      <FormMarkdown className="text-gray-600 mb-4">
+                        {previewForm.description}
+                      </FormMarkdown>
+                    </div>
+                    {previewForm.sections.map((section: ApplicationSection) => (
+                      <div
+                        key={section.sectionId}
+                        className="bg-white p-4 rounded-md shadow-sm border"
+                      >
+                        <Section
+                          section={section}
+                          responses={[]}
+                          responseId="preview"
+                          disabled={true}
+                          onChangeResponse={() => {}}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-500 text-center py-8 text-lg">
+                    Click "Compile" to preview your form
+                  </div>
+                )}
               </div>
             </div>
           </ResizablePanel>
