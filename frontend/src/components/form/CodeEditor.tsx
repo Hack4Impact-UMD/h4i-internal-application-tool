@@ -45,22 +45,37 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
           onChange={handleEditorChange}
           theme="vs-light"
           options={{
+            // Typography
             fontSize: 16,
             fontFamily:
               'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
             lineHeight: 24,
             wordWrap: "on",
-            minimap: { enabled: false },
-            scrollBeyondLastLine: false,
             automaticLayout: true,
+
+            // UI Elements (Folding is for the fold arrows)
+            minimap: { enabled: false },
+            lineNumbers: "on",
+            glyphMargin: false,
+            folding: true,
+            showFoldingControls: "always",
+
+            // Code Formatting
             tabSize: 4,
             insertSpaces: true,
-            renderWhitespace: "selection",
+            formatOnPaste: true,
+            formatOnType: true,
+
+            // Visual Enhancements
             bracketPairColorization: { enabled: true },
+            renderWhitespace: "selection",
+            renderLineHighlight: "line",
             guides: {
               indentation: true,
               bracketPairs: true,
             },
+
+            // IntelliSense
             suggest: {
               showKeywords: true,
               showSnippets: true,
@@ -68,26 +83,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
             quickSuggestions: true,
             parameterHints: { enabled: true },
             hover: { enabled: true },
-            formatOnPaste: true,
-            formatOnType: true,
-            folding: true,
-            lineNumbers: "on",
-            glyphMargin: false,
-            foldingStrategy: "indentation",
-            showFoldingControls: "always",
-            matchBrackets: "always",
-            renderLineHighlight: "line",
-            cursorBlinking: "blink",
-            cursorStyle: "line",
-            selectOnLineNumbers: true,
-            roundedSelection: false,
+
+            // Interaction
             readOnly: false,
             contextmenu: true,
             mouseWheelZoom: true,
             smoothScrolling: true,
-            cursorSmoothCaretAnimation: "on",
-            occurrencesHighlight: "off",
-            selectionHighlight: false,
           }}
         />
       </div>
