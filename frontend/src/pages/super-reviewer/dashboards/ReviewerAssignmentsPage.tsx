@@ -1,4 +1,4 @@
-import { AssignedApplicationsTable } from "@/components/dor/AssignedApplicationsDashboard";
+import { ReviewerAssignmentsTable } from "@/components/dor/ReviewerAssignmentsDashboard";
 import Loading from "@/components/Loading";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ function useReviewerForId(reviewerId: string) {
   });
 }
 
-export function AssignedApplicationsPage() {
+export function ReviewerAssignmentsPage() {
   const [statusFilter, setStatusFilter] = useState<
     "reviewed" | "pending" | "all"
   >("all");
@@ -117,7 +117,7 @@ export function AssignedApplicationsPage() {
             <span className="mt-auto">Pending</span>
           </Button>
         </div>
-        <AssignedApplicationsTable
+        <ReviewerAssignmentsTable
           assignments={assignedApps}
           formId={formId!}
           search=""

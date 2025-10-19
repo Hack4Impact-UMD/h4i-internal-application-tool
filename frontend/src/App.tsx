@@ -56,10 +56,10 @@ const AssignedInterviewsPage = lazy(() =>
     }),
   ),
 );
-const AssignedApplicationsPage = lazy(() =>
-  import("./pages/super-reviewer/dashboards/AssignedApplicationsPage").then(
+const ReviewerAssignmentsPage = lazy(() =>
+  import("./pages/super-reviewer/dashboards/ReviewerAssignmentsPage").then(
     (module) => ({
-      default: module.AssignedApplicationsPage,
+      default: module.ReviewerAssignmentsPage,
     }),
   ),
 );
@@ -252,7 +252,7 @@ function App() {
                   path="dor/reviewer/:formId/:reviewerId"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                      <AssignedApplicationsPage />
+                      <ReviewerAssignmentsPage />
                     </RequireAuth>
                   }
                 />

@@ -14,7 +14,7 @@ import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { AssignedAppRow, useRows } from "./useRows";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 
-type AssignedApplicationsTableProps = {
+type ReviewerAssignmentsTableProps = {
   assignments: AppReviewAssignment[];
   search: string;
   rowCount?: number;
@@ -22,13 +22,13 @@ type AssignedApplicationsTableProps = {
   formId: string;
 };
 
-export default function AssignedApplicationsTable({
+export default function ReviewerAssignmentsTable({
   assignments,
   search,
   formId,
   rowCount = 20,
   statusFilter = "all",
-}: AssignedApplicationsTableProps) {
+}: ReviewerAssignmentsTableProps) {
   const navigate = useNavigate();
 
   const [pagination, setPagination] = useState({
