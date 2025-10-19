@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { createReviewData } from "@/services/reviewDataService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { getApplicationForm } from "@/services/applicationFormsService";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { AssignmentRow, useRows } from "./useRows";
@@ -96,7 +95,6 @@ export default function ReviewerApplicationsTable({
             if (review) {
               return (
                 <Button
-                  disabled={rowData.review?.submitted}
                   onClick={() =>
                     handleReview(
                       review,
@@ -108,7 +106,7 @@ export default function ReviewerApplicationsTable({
                   variant="outline"
                   className="border-2 rounded-full"
                 >
-                  Edit
+                  {rowData.review?.submitted ? "View" : "Edit"}
                 </Button>
               );
             } else {
@@ -162,13 +160,9 @@ export default function ReviewerApplicationsTable({
     const form = await getApplicationForm(formId);
     if (appReviewData) {
       // there's an existing review, edit it
-      if (appReviewData.submitted) {
-        throwErrorToast("This review has already been submitted!");
-      } else {
-        navigate(
-          `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
-        );
-      }
+      navigate(
+        `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
+      );
     } else {
       const review = {
         applicantScores: {},
