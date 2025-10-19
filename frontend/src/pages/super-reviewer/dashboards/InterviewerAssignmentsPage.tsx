@@ -1,3 +1,4 @@
+import InterviewerAssignmentsTable from "@/components/dor/InterviewerAssignmentsDashboard/InterviewerAssignmentsTable";
 import Loading from "@/components/Loading";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { Button } from "@/components/ui/button";
@@ -116,12 +117,12 @@ export function InterviewerAssignmentsPage() {
             <span className="mt-auto">Pending</span>
           </Button>
         </div>
-        {/* <ReviewerAssignmentsTable
+        <InterviewerAssignmentsTable
           assignments={assignedInterviews}
           formId={formId!}
           search=""
           statusFilter={statusFilter}
-        /> */}
+        />
       </div>
     </div>
   );
