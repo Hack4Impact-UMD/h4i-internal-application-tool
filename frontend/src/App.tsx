@@ -63,6 +63,13 @@ const ReviewerAssignmentsPage = lazy(() =>
     }),
   ),
 );
+const InterviewerAssignmentsPage = lazy(() =>
+  import("./pages/super-reviewer/dashboards/InterviewerAssignmentsPage").then(
+    (module) => ({
+      default: module.InterviewerAssignmentsPage,
+    }),
+  ),
+);
 const AppRevisitPage = lazy(() => import("./pages/applicant/AppRevisitPage"));
 const QualifiedApplicationsDashboard = lazy(
   () =>
@@ -261,7 +268,7 @@ function App() {
                   path="dor/interviewer/:formId/:interviewerId"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                      <h1>TODO</h1>
+                      <InterviewerAssignmentsPage />
                     </RequireAuth>
                   }
                 />
