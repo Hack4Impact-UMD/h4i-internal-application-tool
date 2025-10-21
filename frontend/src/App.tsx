@@ -94,6 +94,9 @@ const FormValidationPage = lazy(() =>
     default: module.FormValidationPage,
   })),
 );
+const FormBuilderPage = lazy(
+  () => import("./pages/super-reviewer/FormBuilderPage"),
+);
 const SuperReviewerInterviewersDashboard = lazy(
   () =>
     import(
@@ -287,6 +290,15 @@ function App() {
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                       <FormValidationPage />
+                    </RequireAuth>
+                  }
+                />
+
+                <Route
+                  path="dor/form-builder"
+                  element={
+                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                      <FormBuilderPage />
                     </RequireAuth>
                   }
                 />
