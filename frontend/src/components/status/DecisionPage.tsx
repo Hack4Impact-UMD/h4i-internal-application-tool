@@ -10,11 +10,13 @@ import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
 import ConfettiExplosion from "react-confetti-explosion";
 import Loading from "../Loading";
 
+
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
   ReviewStatus.Denied,
   ReviewStatus.Waitlisted,
 ]);
+
 
 function DecisionPage() {
   const { user } = useAuth();
@@ -45,10 +47,15 @@ function DecisionPage() {
     return <ErrorPage />;
   }
 
-  if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
+  if (!appStatus.released) {
+    console.log("appStatus.released")
     return <NotFoundPage />;
   }
-
+  
+   if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
+    return <NotFoundPage />;
+  }
+ 
   // compute a single key for Bootcamp vs. team
   const roleKey =
     appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
@@ -60,6 +67,7 @@ function DecisionPage() {
       : form?.decisionLetter?.[ReviewStatus.Denied];
   // guard against missing content
   if (!decisionLetterText) {
+    console.log("poo poo")
     return <NotFoundPage />;
   }
 
