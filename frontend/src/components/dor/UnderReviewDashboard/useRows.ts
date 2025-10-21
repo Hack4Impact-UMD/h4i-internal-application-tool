@@ -1,4 +1,5 @@
 import { getApplicantById } from "@/services/applicantService";
+import { getPreviouslyAppliedCount } from "@/services/previouslyAppliedService";
 import { getReviewAssignmentsForApplication } from "@/services/reviewAssignmentService";
 import { getReviewDataForResponseRole } from "@/services/reviewDataService";
 import { getApplicationStatusForResponseRole } from "@/services/statusService";
@@ -22,6 +23,7 @@ export type ApplicationRow = {
     name: string;
     id: string;
     email: string;
+    previouslyAppliedCount: number;
   };
   responseId: string;
   role: ApplicantRole;
@@ -80,6 +82,8 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             status = undefined;
           }
 
+          const numPreviouslyApplied = await getPreviouslyAppliedCount(app.userId);
+
           const row: ApplicationRow = {
             index: 1 + index,
             dateSubmitted: app.dateSubmitted,
@@ -87,6 +91,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
               id: user.id,
               name: `${user.firstName} ${user.lastName}`,
               email: user.email,
+              previouslyAppliedCount: numPreviouslyApplied,
             },
             responseId: app.id,
             role: role, //These have already been expanded into their separate roles
