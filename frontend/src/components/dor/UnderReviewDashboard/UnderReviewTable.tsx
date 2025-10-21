@@ -19,7 +19,7 @@ import {
   assignReview,
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
-import { EllipsisVertical, Clipboard, ClipboardIcon } from "lucide-react";
+import { EllipsisVertical, ClipboardIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { throwSuccessToast } from "../../toasts/SuccessToast";
 import { throwErrorToast } from "../../toasts/ErrorToast";
@@ -213,6 +213,30 @@ export default function SuperReviewerApplicationsTable({
             return <SortableHeader column={column}>APPLICANT</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
+            const previouslyApplied = row.original.applicant.previouslyAppliedCount ?? 0;
+
+            return (
+              <span className="flex items-center">
+                <span>{getValue()}</span>
+                
+                {previouslyApplied > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full cursor-default">
+                        {previouslyApplied}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {previouslyApplied === 0
+                        ? "No previous applications"
+                        : `Applied in ${previouslyApplied} previous semester${previouslyApplied > 1 ? "s" : ""}`}
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+            
+              </span>
+            )
+            /*
             return (
               <span className="flex items-center">
                 <span>{getValue()}</span>
@@ -240,7 +264,7 @@ export default function SuperReviewerApplicationsTable({
                   <TooltipContent>Copy Applicant Email</TooltipContent>
                 </Tooltip>
               </span>
-            );
+            ); */
           },
         }),
         columnHelper.accessor("role", {

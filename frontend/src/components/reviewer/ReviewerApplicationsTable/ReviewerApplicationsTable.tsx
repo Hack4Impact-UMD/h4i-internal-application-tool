@@ -20,6 +20,11 @@ import { getApplicationForm } from "@/services/applicationFormsService";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { AssignmentRow, useRows } from "./useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type ReviewerApplicationsTableProps = {
   assignments: AppReviewAssignment[];
@@ -59,6 +64,31 @@ export default function ReviewerApplicationsTable({
           id: "applicant-name",
           header: ({ column }) => {
             return <SortableHeader column={column}>APPLICANT</SortableHeader>;
+          },
+          cell: ({ getValue, row }) => {
+            const previouslyApplied = row.original.applicant.previouslyAppliedCount ?? 0;
+
+            return (
+              <span className="flex items-center">
+                <span>{getValue()}</span>
+                
+                {previouslyApplied > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full cursor-default">
+                        {previouslyApplied}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {previouslyApplied === 0
+                        ? "No previous applications"
+                        : `Applied in ${previouslyApplied} previous semester${previouslyApplied > 1 ? "s" : ""}`}
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+            
+              </span>
+            );
           },
         }),
         columnHelper.accessor("role", {

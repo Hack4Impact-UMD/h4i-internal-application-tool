@@ -7,12 +7,14 @@ import {
 } from "@/types/types";
 import { calculateReviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
+import { getPreviouslyAppliedCount } from "@/services/previouslyAppliedService";
 
 export type AssignmentRow = {
   index: number;
   applicant: {
     name: string;
     id: string;
+    previouslyAppliedCount: number;
   };
   responseId: string;
   role: ApplicantRole;
@@ -61,11 +63,14 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
 
           console.log("Successfully loaded row for assignemnt:", assignment);
 
+          const numPreviouslyApplied = await getPreviouslyAppliedCount(assignment.applicantId);
+
           const row: AssignmentRow = {
             index: 1 + index,
             applicant: {
               id: user?.id ?? "error",
               name: `${user?.firstName ?? "Error"} ${user?.lastName ?? "Error"}`,
+              previouslyAppliedCount: numPreviouslyApplied,
             },
             responseId: assignment.applicationResponseId,
             role: assignment.forRole,

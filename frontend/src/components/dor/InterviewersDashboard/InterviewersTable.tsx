@@ -196,14 +196,14 @@ export default function InterviewersTable({
                     className="cursor-pointer"
                     onClick={() => {
                       navigate(
-                        "/admin/dor/applications/" +
+                        "/admin/dor/interviewer/" +
                           formId +
                           "/" +
                           row.original.interviewer.id,
                       );
                     }}
                   >
-                    View Applications
+                    View Interviewer
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
