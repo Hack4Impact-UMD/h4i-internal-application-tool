@@ -56,10 +56,17 @@ const AssignedInterviewsPage = lazy(() =>
     }),
   ),
 );
-const AssignedApplicationsPage = lazy(() =>
-  import("./pages/super-reviewer/dashboards/AssignedApplicationsPage").then(
+const ReviewerAssignmentsPage = lazy(() =>
+  import("./pages/super-reviewer/dashboards/ReviewerAssignmentsPage").then(
     (module) => ({
-      default: module.AssignedApplicationsPage,
+      default: module.ReviewerAssignmentsPage,
+    }),
+  ),
+);
+const InterviewerAssignmentsPage = lazy(() =>
+  import("./pages/super-reviewer/dashboards/InterviewerAssignmentsPage").then(
+    (module) => ({
+      default: module.InterviewerAssignmentsPage,
     }),
   ),
 );
@@ -252,7 +259,7 @@ function App() {
                   path="dor/reviewer/:formId/:reviewerId"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                      <AssignedApplicationsPage />
+                      <ReviewerAssignmentsPage />
                     </RequireAuth>
                   }
                 />
@@ -261,7 +268,7 @@ function App() {
                   path="dor/interviewer/:formId/:interviewerId"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                      <h1>TODO</h1>
+                      <InterviewerAssignmentsPage />
                     </RequireAuth>
                   }
                 />

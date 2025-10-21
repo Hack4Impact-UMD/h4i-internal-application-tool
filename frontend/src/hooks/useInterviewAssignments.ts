@@ -7,6 +7,13 @@ import {
   getInterviewAssignmentsForForm,
 } from "@/services/interviewAssignmentService";
 
+export function useInterviewAssignments(formId: string, interviewerId: string) {
+  return useQuery<InterviewAssignment[]>({
+    queryKey: ["review-assignments", "id", formId, interviewerId],
+    queryFn: () => getInterviewAssignments(formId, interviewerId),
+  });
+}
+
 export function useInterviewAssignmentsForForm(formId: string) {
   return useQuery<InterviewAssignment[]>({
     queryKey: ["interview-assignments", "form", formId],

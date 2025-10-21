@@ -110,6 +110,15 @@ export type InternalApplicationStatus = {
   isQualified: boolean;
 };
 
+// status for after applicant gets acceptance letter
+export type DecisionLetterStatus = {
+  status: "accepted" | "denied";
+  userId: string;
+  formId: string;
+  responseId: string;
+  internalStatusId: string;
+}
+
 export interface ApplicationInterviewData {
   id: string;
   interviewerId: string; // user id for the interviewer

@@ -19,7 +19,12 @@ import {
   assignReview,
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
-import { EllipsisVertical, ClipboardIcon } from "lucide-react";
+import {
+  EllipsisVertical,
+  Clipboard,
+  ClipboardIcon,
+  AlertTriangle,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { throwSuccessToast } from "../../toasts/SuccessToast";
 import { throwErrorToast } from "../../toasts/ErrorToast";
@@ -332,7 +337,32 @@ export default function SuperReviewerApplicationsTable({
           },
           cell: ({ getValue, row }) => {
             if (row.original.reviews.completed == 0) return "N/A";
-            return getValue();
+            const hasLowScore = row.original.reviews.reviewData.some(
+              (reviewData) =>
+                reviewData.submitted &&
+                Object.values(reviewData.applicantScores).some(
+                  (score) => score < 2,
+                ),
+            );
+            return (
+              <div className="flex items-center">
+                {getValue()}
+                {hasLowScore && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="bg-amber-100 rounded-full w-6 h-6 ml-1 flex items-center justify-center -mt-0.5">
+                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        This candidate received a score below 2 from a reviewer
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            );
           },
         }),
         columnHelper.accessor("status.isQualified", {
