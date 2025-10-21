@@ -9,7 +9,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
 import ConfettiExplosion from "react-confetti-explosion";
 import Loading from "../Loading";
-
+import axios from "axios";
 
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
@@ -55,7 +55,9 @@ function DecisionPage() {
    if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
     return <NotFoundPage />;
   }
- 
+
+  
+
   // compute a single key for Bootcamp vs. team
   const roleKey =
     appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
@@ -67,9 +69,32 @@ function DecisionPage() {
       : form?.decisionLetter?.[ReviewStatus.Denied];
   // guard against missing content
   if (!decisionLetterText) {
-    console.log("poo poo")
     return <NotFoundPage />;
   }
+   // Function to handle confirmation
+  const handleConfirmDecision = async () => {
+    try {
+      const confirmationData = {
+        responseId,
+        role,
+        confirmed: true,
+        timestamp: new Date().toISOString(),
+        userId: user?.id,
+        decisionLetter: {
+          status: appStatus.status,
+          userId: user?.id,
+          formId: form?.id,
+          responseId,
+          internalStatusId: appStatus.id,
+        },
+      };
+
+      const res = await axios.post("/api/decision", confirmationData);
+      console.log("Confirmation successful:", res.data);
+    } catch (error) {
+      console.error("Error confirming decision:", error);
+    }
+  };
 
   return (
     <>
@@ -98,6 +123,15 @@ function DecisionPage() {
             />
           )}
           <FormMarkdown>{decisionLetterText}</FormMarkdown>
+        </div>
+        {/* Blue button to confirm decision */}
+        <div className="flex justify-end mt-10">
+          <button
+            onClick={handleConfirmDecision}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition"
+          >
+            Confirm Decision
+          </button>
         </div>
       </div>
     </>

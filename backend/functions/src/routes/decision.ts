@@ -19,13 +19,14 @@ router.post(
   [isAuthenticated, hasRoles(["applicant"]), validateSchema(ConfirmationStatusSchema)],
   async (req: Request, res: Response) => {
     try {
+        console.log("Request received:", req.body); // Log the incoming request bodyc
       const input = req.body as ConfirmationStatus;
       const { responseId, userId } = input;
       // Check if confirmation already exists for this responseId
       const existingConfirmation = await CONFIRMATION_COLLECTION
         .where("responseId", "==", responseId)
         .get();
-
+        console.log("Existing confirmation query result:", existingConfirmation.docs); // Log query result
       if (!existingConfirmation.empty) {
         logger.warn(`Confirmation already exists for responseId: ${responseId}`);
         return res.status(400).send("Confirmation already exists for this responseId.");
