@@ -21,7 +21,6 @@ import {
 } from "@/services/reviewAssignmentService";
 import {
   EllipsisVertical,
-  Clipboard,
   ClipboardIcon,
   AlertTriangle,
 } from "lucide-react";
