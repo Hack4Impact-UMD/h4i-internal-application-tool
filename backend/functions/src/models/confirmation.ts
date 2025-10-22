@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ApplicantRole } from "./appResponse";
 
 export const DecisionLetterStatusSchema = z.object({
   status: z.enum(["accepted", "denied"]),
@@ -9,13 +8,11 @@ export const DecisionLetterStatusSchema = z.object({
   internalStatusId: z.string()
 });
 
-export const ConfirmationStatusSchema = z.object({
-  responseId: z.string(),
-  role: z.nativeEnum(ApplicantRole),
-  confirmed: z.boolean(),
-  timestamp: z.string().datetime(),
-  userId: z.string(),
-  decisionLetter: DecisionLetterStatusSchema
-});
+export type DecisionLetterStatus = {
+  status: "accepted" | "denied";
+  userId: string;
+  formId: string;
+  responseId: string;
+  internalStatusId: string;
+}
 
-export type ConfirmationStatus = z.infer<typeof ConfirmationStatusSchema>;
