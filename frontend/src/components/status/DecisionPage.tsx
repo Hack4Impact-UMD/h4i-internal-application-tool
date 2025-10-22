@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { ApplicantRole, ReviewStatus } from "@/types/types";
+import { ApplicantRole, ReviewStatus, DecisionLetterStatus } from "@/types/types";
 import { useParams } from "react-router-dom";
 import { useMyApplicationStatus } from "@/hooks/useApplicationStatus";
 import { displayApplicantRoleName } from "@/utils/display";
@@ -10,6 +10,8 @@ import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
 import ConfettiExplosion from "react-confetti-explosion";
 import Loading from "../Loading";
 import axios from "axios";
+import { createDecisionConfirmation } from "@/services/confirmationService";
+import { getIdToken } from "firebase/auth";
 
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
@@ -19,7 +21,7 @@ const allowedStatuses: Set<string> = new Set([
 
 
 function DecisionPage() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const { responseId, role } = useParams<{
     responseId: string;
     role: ApplicantRole;
@@ -47,11 +49,6 @@ function DecisionPage() {
     return <ErrorPage />;
   }
 
-  if (!appStatus.released) {
-    console.log("appStatus.released")
-    return <NotFoundPage />;
-  }
-  
    if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
     return <NotFoundPage />;
   }
@@ -74,27 +71,19 @@ function DecisionPage() {
    // Function to handle confirmation
   const handleConfirmDecision = async () => {
     try {
-      const confirmationData = {
-        responseId,
-        role,
-        confirmed: true,
-        timestamp: new Date().toISOString(),
+      const decisionLetterStatus: DecisionLetterStatus = {
+        status: "accepted",
         userId: user?.id,
-        decisionLetter: {
-          status: appStatus.status,
-          userId: user?.id,
-          formId: form?.id,
-          responseId,
-          internalStatusId: appStatus.id,
-        },
-      };
+        formId: form?.id,
+        responseId,
+        internalStatusId: appStatus.id,
+      }
 
-      const res = await axios.post("/api/decision", confirmationData);
-      console.log("Confirmation successful:", res.data);
-    } catch (error) {
-      console.error("Error confirming decision:", error);
+      createDecisionConfirmation(decisionLetterStatus, (await token()) ?? "")
+    } catch {
+      return "error while submitting decision"
     }
-  };
+  }
 
   return (
     <>
