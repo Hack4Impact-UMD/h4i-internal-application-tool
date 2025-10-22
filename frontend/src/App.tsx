@@ -56,10 +56,17 @@ const AssignedInterviewsPage = lazy(() =>
     }),
   ),
 );
-const AssignedApplicationsPage = lazy(() =>
-  import("./pages/super-reviewer/dashboards/AssignedApplicationsPage").then(
+const ReviewerAssignmentsPage = lazy(() =>
+  import("./pages/super-reviewer/dashboards/ReviewerAssignmentsPage").then(
     (module) => ({
-      default: module.AssignedApplicationsPage,
+      default: module.ReviewerAssignmentsPage,
+    }),
+  ),
+);
+const InterviewerAssignmentsPage = lazy(() =>
+  import("./pages/super-reviewer/dashboards/InterviewerAssignmentsPage").then(
+    (module) => ({
+      default: module.InterviewerAssignmentsPage,
     }),
   ),
 );
@@ -86,6 +93,9 @@ const FormValidationPage = lazy(() =>
   import("./pages/super-reviewer/FormValidationPage").then((module) => ({
     default: module.FormValidationPage,
   })),
+);
+const FormBuilderPage = lazy(
+  () => import("./pages/super-reviewer/FormBuilderPage"),
 );
 const SuperReviewerInterviewersDashboard = lazy(
   () =>
@@ -249,10 +259,19 @@ function App() {
                 />
 
                 <Route
-                  path="dor/applications/:formId/:reviewerId"
+                  path="dor/reviewer/:formId/:reviewerId"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                      <AssignedApplicationsPage />
+                      <ReviewerAssignmentsPage />
+                    </RequireAuth>
+                  }
+                />
+
+                <Route
+                  path="dor/interviewer/:formId/:interviewerId"
+                  element={
+                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                      <InterviewerAssignmentsPage />
                     </RequireAuth>
                   }
                 />
@@ -271,6 +290,15 @@ function App() {
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                       <FormValidationPage />
+                    </RequireAuth>
+                  }
+                />
+
+                <Route
+                  path="dor/form-builder"
+                  element={
+                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                      <FormBuilderPage />
                     </RequireAuth>
                   }
                 />

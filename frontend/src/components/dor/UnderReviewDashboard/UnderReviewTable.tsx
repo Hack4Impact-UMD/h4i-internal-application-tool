@@ -19,7 +19,11 @@ import {
   assignReview,
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
-import { EllipsisVertical, Clipboard, ClipboardIcon } from "lucide-react";
+import {
+  EllipsisVertical,
+  ClipboardIcon,
+  AlertTriangle,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { throwSuccessToast } from "../../toasts/SuccessToast";
 import { throwErrorToast } from "../../toasts/ErrorToast";
@@ -213,6 +217,30 @@ export default function SuperReviewerApplicationsTable({
             return <SortableHeader column={column}>APPLICANT</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
+            const previouslyApplied = row.original.applicant.previouslyAppliedCount ?? 0;
+
+            return (
+              <span className="flex items-center">
+                <span>{getValue()}</span>
+                
+                {previouslyApplied > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full cursor-default">
+                        {previouslyApplied}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {previouslyApplied === 0
+                        ? "No previous applications"
+                        : `Applied in ${previouslyApplied} previous semester${previouslyApplied > 1 ? "s" : ""}`}
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+            
+              </span>
+            )
+            /*
             return (
               <span className="flex items-center">
                 <span>{getValue()}</span>
@@ -240,7 +268,7 @@ export default function SuperReviewerApplicationsTable({
                   <TooltipContent>Copy Applicant Email</TooltipContent>
                 </Tooltip>
               </span>
-            );
+            ); */
           },
         }),
         columnHelper.accessor("role", {
@@ -308,7 +336,32 @@ export default function SuperReviewerApplicationsTable({
           },
           cell: ({ getValue, row }) => {
             if (row.original.reviews.completed == 0) return "N/A";
-            return getValue();
+            const hasLowScore = row.original.reviews.reviewData.some(
+              (reviewData) =>
+                reviewData.submitted &&
+                Object.values(reviewData.applicantScores).some(
+                  (score) => score < 2,
+                ),
+            );
+            return (
+              <div className="flex items-center">
+                {getValue()}
+                {hasLowScore && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="bg-amber-100 rounded-full w-6 h-6 ml-1 flex items-center justify-center -mt-0.5">
+                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        This candidate received a score below 2 from a reviewer
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+            );
           },
         }),
         columnHelper.accessor("status.isQualified", {

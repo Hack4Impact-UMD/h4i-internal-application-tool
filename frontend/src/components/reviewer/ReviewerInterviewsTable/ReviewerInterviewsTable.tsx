@@ -12,7 +12,6 @@ import { useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { InterviewAssignmentRow, useRows } from "./useRows";
 import { createInterviewData } from "@/services/interviewDataService";
@@ -94,7 +93,6 @@ export default function ReviewerInterviewsTable({
             if (review) {
               return (
                 <Button
-                  disabled={review?.submitted}
                   onClick={() =>
                     handleInterview(
                       review,
@@ -106,7 +104,7 @@ export default function ReviewerInterviewsTable({
                   variant="outline"
                   className="border-2 rounded-full"
                 >
-                  Edit
+                  {review?.submitted ? "View" : "Edit"}
                 </Button>
               );
             } else {
@@ -158,13 +156,9 @@ export default function ReviewerInterviewsTable({
   ) {
     if (appInterviewData) {
       // there's an existing interview, edit it
-      if (appInterviewData.submitted) {
-        throwErrorToast("This interview has already been submitted!");
-      } else {
-        navigate(
-          `/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
-        );
-      }
+      navigate(
+        `/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
+      );
     } else {
       const interview: Omit<ApplicationInterviewData, "id"> = {
         interviewScores: {},
