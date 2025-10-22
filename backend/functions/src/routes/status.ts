@@ -1,15 +1,19 @@
 import { Request, Response, Router } from "express";
-import { isAuthenticated } from "../middleware/authentication";
+import { hasRoles, isAuthenticated } from "../middleware/authentication";
 import { db } from "..";
 import { CollectionReference } from "firebase-admin/firestore";
 import { InternalApplicationStatus, ReviewStatus } from "../models/appStatus";
 import { ApplicationForm } from "../models/appForm";
 import { ApplicationResponse } from "../models/appResponse";
+import { logger } from "firebase-functions";
+import { DecisionLetterStatusSchema, DecisionLetterStatus } from "../models/confirmation";
+import { validateSchema } from "../middleware/validation";
 
 const router = Router();
 const APPLICATION_STATUS_COLLECTION = "app-status"
 const APPLICATION_FORMS_COLLECTION = "application-forms"
 const APPLICATION_RESPONSE_COLLECTION = "application-responses"
+const DECISION_STATUS_COLLECTION = "decision-status"
 
 async function decisionsReleased(formId: string) {
 	const form = (await db.collection(APPLICATION_FORMS_COLLECTION).doc(formId).get()).data() as ApplicationForm
@@ -66,5 +70,58 @@ router.get("/:responseId/:role", [isAuthenticated], async (req: Request, res: Re
 		})
 	}
 })
+
+router.post(
+  "/decision",
+  [isAuthenticated, hasRoles(["applicant"]), validateSchema(DecisionLetterStatusSchema)],
+  async (req: Request, res: Response) => {
+	try {
+		console.log("Request received:", req.body); // Log the incoming request body
+
+      const decisionStatusCollection = db.collection(DECISION_STATUS_COLLECTION) as CollectionReference<DecisionLetterStatus>
+
+	  const input = req.body as DecisionLetterStatus;
+	  const { responseId, userId } = input;
+	  // Check if confirmation already exists for this responseId
+	  const existingConfirmation = await decisionStatusCollection
+		.where("responseId", "==", responseId)
+		.get();
+		console.log("Existing confirmation query result:", existingConfirmation.docs); // Log query result
+	  if (!existingConfirmation.empty) {
+		logger.warn(`Confirmation already exists for responseId: ${responseId}`);
+		return res.status(400).send("Confirmation already exists for this responseId.");
+	  }
+
+	  // Look up applicant’s internal decision in app-status
+	  const statusCollection = db.collection(APPLICATION_STATUS_COLLECTION) as CollectionReference<InternalApplicationStatus>
+	  const decisionDocs = await statusCollection.where("responseId", "==", responseId).get();
+
+	  if (decisionDocs.empty) {
+		logger.warn(`No app-status record found for responseId: ${responseId}`);
+		return res.status(403).send("No decision found for this response.");
+	  }
+
+	  const decision = decisionDocs.docs[0].data();
+
+	  if (decision.status !== "accepted") {
+		logger.warn(`User ${userId} attempted to confirm but status was not accepted.`);
+		return res.status(403).send("You cannot confirm because you were not accepted.");
+	  }
+
+	  //  Create ConfirmationStatus document
+	  const confirmationId = `${responseId}_${userId}`;
+	  const docRef = decisionStatusCollection.doc(confirmationId);
+
+	  await docRef.set(input);
+
+	  logger.info(`Created confirmation for responseId: ${responseId}`);
+	  return res.status(200).send({ message: "Confirmation recorded successfully." });
+
+	} catch (error) {
+	  logger.error("Error creating confirmation:", error);
+	  return res.status(500).send(error instanceof Error ? error.message : "Unknown error");
+	}
+  }
+);
 
 export default router 
