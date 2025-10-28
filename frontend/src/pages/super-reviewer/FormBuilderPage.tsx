@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -10,10 +10,14 @@ import CodeEditor from "@/components/form/CodeEditor";
 import Section from "@/components/form/Section";
 import FormMarkdown from "@/components/form/FormMarkdown";
 import { ApplicationForm, ApplicationSection } from "@/types/formBuilderTypes";
-import { useUploadApplicationForm } from "@/hooks/useApplicationForm";
+import {
+  useUploadApplicationForm,
+  useActiveForm,
+} from "@/hooks/useApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
 import { Timestamp } from "firebase/firestore";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import Loading from "@/components/Loading";
 
 export default function FormBuilderPage() {
   const [jsonCode, setJsonCode] = useState(() =>
@@ -30,6 +34,31 @@ export default function FormBuilderPage() {
     data: formUploadData,
   } = useUploadApplicationForm();
 
+  const {
+    data: activeForm,
+    isPending: isLoadingForm,
+    error: loadFormError,
+  } = useActiveForm();
+
+  // Load active form into the editor
+  useEffect(() => {
+    if (activeForm) {
+      try {
+        // Convert Timestamp to ISO string for better readability
+        const formWithDateString = {
+          ...activeForm,
+          dueDate: activeForm.dueDate.toDate().toISOString(),
+        };
+
+        const formJson = JSON.stringify(formWithDateString, null, 2);
+        setJsonCode(formJson);
+      } catch (error) {
+        console.error("Failed to load form:", error);
+        throwErrorToast("Failed to load active form into editor");
+      }
+    }
+  }, [activeForm]);
+
   const handleCompile = () => {
     try {
       const parsedForm = JSON.parse(jsonCode) as ApplicationForm;
@@ -44,7 +73,6 @@ export default function FormBuilderPage() {
 
   const handleUploadForm = async () => {
     try {
-      // Parse the JSON first
       const parsedForm = JSON.parse(jsonCode) as ApplicationForm;
 
       const confirmed = window.confirm(
@@ -81,15 +109,9 @@ export default function FormBuilderPage() {
 
       if (duplicates) return;
 
-      // Convert dueDate object to Timestamp
-      const dueDateValue = parsedForm.dueDate as {
-        seconds: number;
-        nanoseconds: number;
-      };
-      const dueDate = new Timestamp(
-        dueDateValue.seconds,
-        dueDateValue.nanoseconds,
-      );
+      // Convert the dueDate ISO string back to a Timestamp
+      const dueDateString = parsedForm.dueDate as unknown as string;
+      const dueDate = Timestamp.fromDate(new Date(dueDateString));
 
       const formWithTimestamp = {
         ...parsedForm,
@@ -104,6 +126,23 @@ export default function FormBuilderPage() {
       );
     }
   };
+
+  if (isLoadingForm) {
+    return <Loading />;
+  }
+
+  if (loadFormError) {
+    return (
+      <div className="p-4 w-full flex flex-col items-center justify-center h-[calc(100vh-4rem)]">
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-red-600 mb-2">
+            Failed to Load Active Form
+          </h2>
+          <p className="text-gray-600">{loadFormError.message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 w-full flex flex-col items-center h-[calc(100vh-4rem)] overflow-hidden">
