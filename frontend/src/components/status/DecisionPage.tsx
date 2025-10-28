@@ -9,9 +9,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
 import ConfettiExplosion from "react-confetti-explosion";
 import Loading from "../Loading";
-import axios from "axios";
 import { createDecisionConfirmation } from "@/services/confirmationService";
-import { getIdToken } from "firebase/auth";
 
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
@@ -78,9 +76,15 @@ function DecisionPage() {
         responseId,
         internalStatusId: appStatus.id,
       }
+      console.log("Decision data:", decisionLetterStatus);
 
-      createDecisionConfirmation(decisionLetterStatus, (await token()) ?? "")
-    } catch {
+
+
+      console.log("Sending decision confirmation:", decisionLetterStatus);
+      await createDecisionConfirmation(decisionLetterStatus, (await token()) ?? "")
+      console.log("Decision confirmation successful!");
+    } catch (error) {
+      console.error("Error submitting decision:", error);
       return "error while submitting decision"
     }
   }
