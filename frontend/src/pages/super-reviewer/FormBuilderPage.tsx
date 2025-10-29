@@ -138,7 +138,11 @@ export default function FormBuilderPage() {
           <h2 className="text-xl font-bold text-red-600 mb-2">
             Failed to Load Active Form
           </h2>
-          <p className="text-gray-600">{loadFormError.message}</p>
+          <p className="text-gray-600">
+            {loadFormError instanceof Error
+              ? loadFormError.message
+              : String(loadFormError)}
+          </p>
         </div>
       </div>
     );
