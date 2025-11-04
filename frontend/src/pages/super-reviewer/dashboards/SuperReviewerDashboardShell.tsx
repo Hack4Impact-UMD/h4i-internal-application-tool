@@ -142,6 +142,17 @@ export default function SuperReviewerDashboardShell() {
           >
             Interviewers
           </NavLink>
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? "p-2 bg-blue text-white rounded text-sm"
+                : "p-2 text-fg rounded text-sm transition hover:bg-blue/80 hover:text-white"
+            }
+            to={`/admin/dor/dashboard/${formId}/acceptance-confirmation`}
+          >
+            Acceptance Confirmation
+          </NavLink>
+
           <Dialog open={rejectUndecidedMutation.isPending}>
             <DialogContent>
               <DialogHeader>

@@ -56,6 +56,9 @@ const AssignedInterviewsPage = lazy(() =>
     }),
   ),
 );
+const AcceptanceConfirmationDashboard = lazy(() =>
+  import("./pages/super-reviewer/dashboards/AcceptanceConfirmationDashboard"),
+);
 const AssignedApplicationsPage = lazy(() =>
   import("./pages/super-reviewer/dashboards/AssignedApplicationsPage").then(
     (module) => ({
@@ -218,6 +221,10 @@ function App() {
                   <Route
                     path="dashboard/:formId/interviewers"
                     element={<SuperReviewerInterviewersDashboard />}
+                  />
+                  <Route
+                    path="dashboard/:formId/acceptance-confirmation"
+                    element={<AcceptanceConfirmationDashboard />}
                   />
                 </Route>
 
