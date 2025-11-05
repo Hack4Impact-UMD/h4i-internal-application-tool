@@ -62,6 +62,6 @@ export const storage = getStorage(app);
 if (import.meta.env.MODE == "development") {
   console.log(`CONNECTING TO LOCAL FIREBASE EMULATORS!`);
   connectAuthEmulator(auth, "http://127.0.0.1:9099");
-  connectFirestoreEmulator(db, "127.0.0.1", 8080);
+  connectFirestoreEmulator(db, "127.0.0.1", 8188);
   connectStorageEmulator(storage, "127.0.0.1", 9199);
 }
