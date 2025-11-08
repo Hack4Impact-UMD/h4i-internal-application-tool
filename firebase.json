@@ -31,13 +31,13 @@
       "port": 5001
     },
     "firestore": {
-      "port": 8188
+      "port": 8080
     },
     "database": {
-      "port": 7050
+      "port": 9000
     },
     "hosting": {
-      "port": 5050
+      "port": 5000
     },
     "storage": {
       "port": 9199
