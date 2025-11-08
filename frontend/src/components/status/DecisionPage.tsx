@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { ApplicantRole, ReviewStatus } from "@/types/types";
+import { ApplicantRole, ReviewStatus, DecisionLetterStatus } from "@/types/types";
 import { useParams } from "react-router-dom";
 import { useMyApplicationStatus } from "@/hooks/useApplicationStatus";
 import { displayApplicantRoleName } from "@/utils/display";
@@ -9,6 +9,10 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
 import ConfettiExplosion from "react-confetti-explosion";
 import Loading from "../Loading";
+import { createDecisionConfirmation } from "@/services/confirmationService";
+import { throwSuccessToast } from "../toasts/SuccessToast";
+import { throwErrorToast } from "../toasts/ErrorToast";
+import { Button } from "../ui/button";
 
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
@@ -17,7 +21,7 @@ const allowedStatuses: Set<string> = new Set([
 ]);
 
 function DecisionPage() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const { responseId, role } = useParams<{
     responseId: string;
     role: ApplicantRole;
@@ -63,6 +67,24 @@ function DecisionPage() {
     return <NotFoundPage />;
   }
 
+  const handleConfirmDecision = async (status: "accepted" | "denied") => {
+    try {
+      const decisionLetterStatus: DecisionLetterStatus = {
+        status: status,
+        userId: user?.id,
+        formId: form?.id,
+        responseId,
+        internalStatusId: appStatus.id,
+      }
+
+      await createDecisionConfirmation(decisionLetterStatus, (await token()) ?? "")
+      throwSuccessToast(status === "accepted" ? "Decision to join confirmed!" : "Decision to not join confirmed.")
+    } catch (error) {
+      console.log(error)
+      throwErrorToast("Error while registering decision.")
+    }
+  }
+
   return (
     <>
       <div className="mt-5 mx-auto max-w-5xl w-full px-5 py-5 font-sans leading-relaxed">
@@ -90,6 +112,18 @@ function DecisionPage() {
             />
           )}
           <FormMarkdown>{decisionLetterText}</FormMarkdown>
+        </div>
+        <div className="flex justify-end mt-10 gap-3">
+          <Button
+            onClick={() => handleConfirmDecision("denied")}
+          >
+            Deny
+          </Button>
+          <Button
+            onClick={() => handleConfirmDecision("accepted")}
+          >
+            Accept
+          </Button>
         </div>
       </div>
     </>
