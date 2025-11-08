@@ -10,13 +10,15 @@ import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
 import ConfettiExplosion from "react-confetti-explosion";
 import Loading from "../Loading";
 import { createDecisionConfirmation } from "@/services/confirmationService";
+import { throwSuccessToast } from "../toasts/SuccessToast";
+import { throwErrorToast } from "../toasts/ErrorToast";
+import { Button } from "../ui/button";
 
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
   ReviewStatus.Denied,
   ReviewStatus.Waitlisted,
 ]);
-
 
 function DecisionPage() {
   const { user, token } = useAuth();
@@ -47,11 +49,9 @@ function DecisionPage() {
     return <ErrorPage />;
   }
 
-   if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
+  if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
     return <NotFoundPage />;
   }
-
-  
 
   // compute a single key for Bootcamp vs. team
   const roleKey =
@@ -66,26 +66,22 @@ function DecisionPage() {
   if (!decisionLetterText) {
     return <NotFoundPage />;
   }
-   // Function to handle confirmation
-  const handleConfirmDecision = async () => {
+
+  const handleConfirmDecision = async (status: "accepted" | "denied") => {
     try {
       const decisionLetterStatus: DecisionLetterStatus = {
-        status: "accepted",
+        status: status,
         userId: user?.id,
         formId: form?.id,
         responseId,
         internalStatusId: appStatus.id,
       }
-      console.log("Decision data:", decisionLetterStatus);
 
-
-
-      console.log("Sending decision confirmation:", decisionLetterStatus);
       await createDecisionConfirmation(decisionLetterStatus, (await token()) ?? "")
-      console.log("Decision confirmation successful!");
+      throwSuccessToast(status === "accepted" ? "Decision to join confirmed!" : "Decision to not join confirmed.")
     } catch (error) {
-      console.error("Error submitting decision:", error);
-      return "error while submitting decision"
+      console.log(error)
+      throwErrorToast("Error while registering decision.")
     }
   }
 
@@ -117,14 +113,17 @@ function DecisionPage() {
           )}
           <FormMarkdown>{decisionLetterText}</FormMarkdown>
         </div>
-        {/* Blue button to confirm decision */}
-        <div className="flex justify-end mt-10">
-          <button
-            onClick={handleConfirmDecision}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition"
+        <div className="flex justify-end mt-10 gap-3">
+          <Button
+            onClick={() => handleConfirmDecision("denied")}
           >
-            Confirm Decision
-          </button>
+            Deny
+          </Button>
+          <Button
+            onClick={() => handleConfirmDecision("accepted")}
+          >
+            Accept
+          </Button>
         </div>
       </div>
     </>

@@ -6,7 +6,7 @@ import { getAppCheckToken } from "./appCheckService";
 export async function createDecisionConfirmation(
   decisionLetterStatus: DecisionLetterStatus,
   token: string,
-): Promise<{ status: string }> {
+) {
   const res = await axios.post(API_URL + "/decision", decisionLetterStatus, {
     headers: {
       Authorization: `Bearer ${token}`,
