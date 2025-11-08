@@ -1,6 +1,5 @@
 import useSearch from "@/hooks/useSearch";
 import { NavLink, Outlet, useParams } from "react-router-dom";
-import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
 
 export default function ReviewerDashboardShell() {
   const { search, setSearch } = useSearch();
@@ -35,12 +34,6 @@ export default function ReviewerDashboardShell() {
             onChange={(e) => setSearch(e.target.value)}
             className="border border-gray-300 rounded-full px-2 py-1 text-sm w-full max-w-md ml-auto"
             placeholder="Search"
-          />
-          <CreateInternalApplicantDialog
-            onSubmit={(data) => {
-              console.log("Internal applicant data:", data);
-              // Don't know what to do here yet (Backend?)
-            }}
           />
         </div>
         <Outlet />
