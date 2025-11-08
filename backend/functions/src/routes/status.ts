@@ -49,6 +49,7 @@ router.get("/:responseId/:role", [isAuthenticated], async (req: Request, res: Re
 
 	if (await decisionsReleased(responseDoc.applicationFormId)) {
 		res.json({
+			id: status.docs[0].id,
 			status: data.status,
 			role: data.role,
 			released: true
@@ -64,6 +65,7 @@ router.get("/:responseId/:role", [isAuthenticated], async (req: Request, res: Re
 		}
 
 		res.json({
+			id: status.docs[0].id,
 			status: publicStatus,
 			role: data.role,
 			released: false

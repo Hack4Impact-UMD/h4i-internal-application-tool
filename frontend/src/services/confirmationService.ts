@@ -7,7 +7,7 @@ export async function createDecisionConfirmation(
   decisionLetterStatus: DecisionLetterStatus,
   token: string,
 ) {
-  const res = await axios.post(API_URL + "/decision", decisionLetterStatus, {
+  const res = await axios.post(API_URL + "/status/decision", decisionLetterStatus, {
     headers: {
       Authorization: `Bearer ${token}`,
       "X-APPCHECK": await getAppCheckToken(),
