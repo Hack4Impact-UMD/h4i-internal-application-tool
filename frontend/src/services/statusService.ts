@@ -32,7 +32,6 @@ export async function getApplicationStatus(
   });
 
   return res.data as {
-    id: any;
     status: ReviewStatus | "decided";
     role: ApplicantRole;
     released: boolean;
