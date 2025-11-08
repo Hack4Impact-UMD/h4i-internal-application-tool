@@ -84,11 +84,18 @@ router.post(
 
 	  const input = req.body as DecisionLetterStatus;
 	  const { responseId, userId } = input;
+	  const uid = req.token!.uid;
+	  
+	  // Check if user is editing their own decision
+	  if (userId != uid) {
+		logger.warn("User is not editing their own decision");
+		return res.status(401).send("You cannot edit another person's decision")
+	  }
+
 	  // Check if confirmation already exists for this responseId
 	  const existingConfirmation = await decisionStatusCollection
 		.where("responseId", "==", responseId)
 		.get();
-		console.log("Existing confirmation query result:", existingConfirmation.docs); // Log query result
 	  if (!existingConfirmation.empty) {
 		logger.warn(`Confirmation already exists for responseId: ${responseId}`);
 		return res.status(400).send("Confirmation already exists for this responseId.");
