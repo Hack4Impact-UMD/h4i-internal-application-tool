@@ -83,6 +83,15 @@ export function useInterviewDataForForm(formId: string) {
   });
 }
 
+export function useInterviewDataForInterviewer(formId: string, interviewerId: string) {
+  return useQuery<ApplicationInterviewData[]>({
+    queryKey: ["interview-data", "interviewer", formId, interviewerId],
+    queryFn: () => {
+      return getInterviewDataForInterviewer(formId, interviewerId);
+    },
+  });
+}
+
 export function useMyInterviews(formId: string) {
   const { user } = useAuth();
   return useQuery<ApplicationInterviewData[]>({
