@@ -38,7 +38,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RadioIcon, ShieldIcon, StopCircleIcon } from "lucide-react";
 import { useState } from "react";
-import { NavLink, Outlet, useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 
 export default function SuperReviewerDashboardShell() {
   const { search, setSearch } = useSearch();
