@@ -1,3 +1,4 @@
+import DashboardShellLink from "@/components/reviewer/DashboardShellLink";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import {
@@ -102,46 +103,22 @@ export default function SuperReviewerDashboardShell() {
     <div className="w-full grow bg-lightgray flex flex-col items-center p-2 py-4">
       <div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
         <div className="flex gap-2 flex-row items-center">
-          <NavLink
-            className={({ isActive }) =>
-              isActive
-                ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue/80 hover:text-white"
-            }
+          <DashboardShellLink 
             to={`/admin/dor/dashboard/${formId}/all`}
-          >
-            All Applications
-          </NavLink>
-          <NavLink
-            className={({ isActive }) =>
-              isActive
-                ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue/80 hover:text-white"
-            }
+            name="All Applications"
+          />
+          <DashboardShellLink 
             to={`/admin/dor/dashboard/${formId}/qualified`}
-          >
-            Qualified
-          </NavLink>
-          <NavLink
-            className={({ isActive }) =>
-              isActive
-                ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue/80 hover:text-white"
-            }
+            name="Qualified"
+          />
+          <DashboardShellLink 
             to={`/admin/dor/dashboard/${formId}/reviewers`}
-          >
-            Reviewers
-          </NavLink>
-          <NavLink
-            className={({ isActive }) =>
-              isActive
-                ? "p-2 bg-blue text-white rounded text-sm"
-                : "p-2 text-fg rounded text-sm transition hover:bg-blue/80 hover:text-white"
-            }
+            name="Reviewers"
+          />
+          <DashboardShellLink 
             to={`/admin/dor/dashboard/${formId}/interviewers`}
-          >
-            Interviewers
-          </NavLink>
+            name="Interviewers"
+          />
           <Dialog open={rejectUndecidedMutation.isPending}>
             <DialogContent>
               <DialogHeader>
