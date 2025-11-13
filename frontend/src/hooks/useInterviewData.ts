@@ -83,7 +83,10 @@ export function useInterviewDataForForm(formId: string) {
   });
 }
 
-export function useInterviewDataForInterviewer(formId: string, interviewerId: string) {
+export function useInterviewDataForInterviewer(
+  formId: string,
+  interviewerId: string,
+) {
   return useQuery<ApplicationInterviewData[]>({
     queryKey: ["interview-data", "interviewer", formId, interviewerId],
     queryFn: () => {

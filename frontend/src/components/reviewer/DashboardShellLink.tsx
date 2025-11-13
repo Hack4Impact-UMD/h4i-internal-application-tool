@@ -6,14 +6,17 @@ interface DashboardShellLinkProps {
   name: string;
 }
 
-export default function DashboardShellLink({ to, name }: DashboardShellLinkProps) {
+export default function DashboardShellLink({
+  to,
+  name,
+}: DashboardShellLinkProps) {
   return (
     <NavLink
       to={to}
       className={({ isActive }) =>
-        twMerge("p-2 rounded text-sm whitespace-nowrap transition hover:bg-blue/80 hover:text-white", isActive 
-          ? "bg-blue text-white" 
-          : "text-fg"
+        twMerge(
+          "p-2 rounded text-sm whitespace-nowrap transition hover:bg-blue/80 hover:text-white",
+          isActive ? "bg-blue text-white" : "text-fg",
         )
       }
     >

@@ -19,11 +19,7 @@ import {
   assignReview,
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
-import {
-  EllipsisVertical,
-  ClipboardIcon,
-  AlertTriangle,
-} from "lucide-react";
+import { EllipsisVertical, ClipboardIcon, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { throwSuccessToast } from "../../toasts/SuccessToast";
 import { throwErrorToast } from "../../toasts/ErrorToast";
@@ -217,12 +213,13 @@ export default function SuperReviewerApplicationsTable({
             return <SortableHeader column={column}>APPLICANT</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
-            const previouslyApplied = row.original.applicant.previouslyAppliedCount ?? 0;
+            const previouslyApplied =
+              row.original.applicant.previouslyAppliedCount ?? 0;
 
             return (
               <span className="flex items-center">
                 <span>{getValue()}</span>
-                
+
                 {previouslyApplied > 0 && (
                   <Tooltip>
                     <TooltipTrigger>
@@ -237,9 +234,8 @@ export default function SuperReviewerApplicationsTable({
                     </TooltipContent>
                   </Tooltip>
                 )}
-            
               </span>
-            )
+            );
             /*
             return (
               <span className="flex items-center">

@@ -1,5 +1,9 @@
 import { useAuth } from "@/hooks/useAuth";
-import { ApplicantRole, ReviewStatus, DecisionLetterStatus } from "@/types/types";
+import {
+  ApplicantRole,
+  ReviewStatus,
+  DecisionLetterStatus,
+} from "@/types/types";
 import { useParams } from "react-router-dom";
 import { useMyApplicationStatus } from "@/hooks/useApplicationStatus";
 import { displayApplicantRoleName } from "@/utils/display";
@@ -75,15 +79,22 @@ function DecisionPage() {
         formId: form?.id,
         responseId,
         internalStatusId: appStatus.id,
-      }
+      };
 
-      await createDecisionConfirmation(decisionLetterStatus, (await token()) ?? "")
-      throwSuccessToast(status === "accepted" ? "Decision to join confirmed!" : "Decision to not join confirmed.")
+      await createDecisionConfirmation(
+        decisionLetterStatus,
+        (await token()) ?? "",
+      );
+      throwSuccessToast(
+        status === "accepted"
+          ? "Decision to join confirmed!"
+          : "Decision to not join confirmed.",
+      );
     } catch (error) {
-      console.log(error)
-      throwErrorToast("Error while registering decision.")
+      console.log(error);
+      throwErrorToast("Error while registering decision.");
     }
-  }
+  };
 
   return (
     <>
@@ -114,14 +125,8 @@ function DecisionPage() {
           <FormMarkdown>{decisionLetterText}</FormMarkdown>
         </div>
         <div className="flex justify-end mt-10 gap-3">
-          <Button
-            onClick={() => handleConfirmDecision("denied")}
-          >
-            Deny
-          </Button>
-          <Button
-            onClick={() => handleConfirmDecision("accepted")}
-          >
+          <Button onClick={() => handleConfirmDecision("denied")}>Deny</Button>
+          <Button onClick={() => handleConfirmDecision("accepted")}>
             Accept
           </Button>
         </div>

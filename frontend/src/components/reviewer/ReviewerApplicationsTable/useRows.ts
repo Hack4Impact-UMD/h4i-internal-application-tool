@@ -63,7 +63,9 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
 
           console.log("Successfully loaded row for assignemnt:", assignment);
 
-          const numPreviouslyApplied = await getPreviouslyAppliedCount(assignment.applicantId);
+          const numPreviouslyApplied = await getPreviouslyAppliedCount(
+            assignment.applicantId,
+          );
 
           const row: AssignmentRow = {
             index: 1 + index,
