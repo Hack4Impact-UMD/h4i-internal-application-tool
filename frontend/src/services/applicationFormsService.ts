@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -86,4 +87,21 @@ export async function setFormDecisionRelease(
   await updateDoc(docRef, {
     decisionsReleased: released,
   } as Partial<ApplicationForm>);
+}
+
+export async function updateApplicationFormDueDate(
+  formId: string,
+  dueDate: Timestamp,
+  token: string,
+): Promise<void> {
+  await axios.put(
+    `${API_URL}/application/forms/${formId}`,
+    { dueDate },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-APPCHECK": await getAppCheckToken(),
+      },
+    },
+  );
 }
