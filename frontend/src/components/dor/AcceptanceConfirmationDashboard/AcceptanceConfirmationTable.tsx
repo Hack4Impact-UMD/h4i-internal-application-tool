@@ -1,0 +1,256 @@
+import { useState, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { ColumnDef, createColumnHelper, getPaginationRowModel } from "@tanstack/react-table";
+import { ClipboardIcon, EllipsisVertical } from "lucide-react";
+
+import { ApplicationResponse, ApplicantRole } from "@/types/types";
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/DataTable";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import SortableHeader from "@/components/tables/SortableHeader";
+import ApplicantRolePill from "@/components/role-pill/RolePill";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRows, DecisionRow } from "./useRows";
+
+type AcceptanceConfirmationTableProps = {
+  applications: ApplicationResponse[];
+  search: string;
+  rowCount?: number;
+  roleFilter: "all" | ApplicantRole;
+  formId: string;
+};
+
+export default function AcceptanceConfirmationTable({
+  applications,
+  search,
+  rowCount = 20,
+  roleFilter = "all",
+  formId,
+}: AcceptanceConfirmationTableProps) {
+  const navigate = useNavigate();
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: rowCount,
+  });
+
+  const columnHelper = createColumnHelper<DecisionRow>();
+  const cols = useMemo(
+    () =>
+      [
+        columnHelper.accessor("index", {
+          id: "number",
+          header: ({ column }) => (
+            <SortableHeader column={column}>No.</SortableHeader>
+          ),
+          cell: ({ getValue }) => getValue(),
+        }),
+        columnHelper.accessor("applicant.name", {
+          id: "applicant",
+          header: ({ column }) => (
+            <SortableHeader column={column}>Applicant</SortableHeader>
+          ),
+          cell: ({ getValue, row }) => {
+            const email = row.original.applicant.email;
+            return (
+              <span className="flex items-center gap-2">
+                <span>{getValue()}</span>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <ClipboardIcon
+                      className="hover:bg-gray-100 rounded p-1 cursor-pointer"
+                      size={18}
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(email);
+                          throwSuccessToast(`${email} copied to clipboard!`);
+                        } catch (err) {
+                          console.error(err);
+                          throwErrorToast("Failed to copy email");
+                        }
+                      }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Copy Applicant Email</TooltipContent>
+                </Tooltip>
+              </span>
+            );
+          },
+        }),
+        columnHelper.accessor("role", {
+          id: "role",
+          header: ({ column }) => (
+            <SortableHeader column={column}>Role</SortableHeader>
+          ),
+          cell: ({ getValue }) => <ApplicantRolePill role={getValue()} />,
+          filterFn: (row, columnId, filterValue) => {
+            const value = row.getValue(columnId);
+            if (filterValue === "all") return true;
+            return filterValue === value;
+          },
+        }),
+        columnHelper.accessor("decision", {
+          id: "decision",
+          header: ({ column }) => (
+            <SortableHeader column={column}>Decision</SortableHeader>
+          ),
+          cell: ({ getValue }) => {
+            const decision = getValue();
+            const colorMap: Record<string, string> = {
+              accepted: "bg-green-100 text-green-800",
+              denied: "bg-red-100 text-red-800",
+              waitlisted: "bg-yellow-100 text-yellow-800",
+            };
+
+            const display = decision
+              ? decision.status?.toUpperCase() ?? decision
+              : "N/A";
+
+            const style =
+              decision && colorMap[decision.status]
+                ? colorMap[decision.status]
+                : "bg-gray-100 text-gray-800";
+
+            return (
+              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${style}`}>
+                {display}
+              </span>
+            );
+          },
+        }),
+        columnHelper.display({
+          id: "actions",
+          header: () => (
+            <div className="flex justify-center">
+              <span className="text-center mx-auto">Actions</span>
+            </div>
+          ),
+          cell: ({ row }) => (
+            <div className="flex justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost">
+                    <EllipsisVertical />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                      navigate(
+                        `/admin/dor/application/${formId}/${row.original.responseId}`,
+                      )
+                    }
+                  >
+                    View Application
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ),
+        }),
+      ] as ColumnDef<DecisionRow>[],
+    [columnHelper, formId, navigate],
+  );
+
+  const { data: rows, isPending, error } = useRows(applications, formId);
+
+  const handleCopy = useCallback(async () => {
+    if (!rows) {
+      throwErrorToast("No applicants found!");
+      return;
+    }
+
+    const emails = new Set(rows.map((r) => r.applicant.email));
+    const text = [...emails].join(",");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      throwSuccessToast(`Copied ${emails.size} email(s)!`);
+    } catch (err) {
+      console.error("Failed to copy emails: ", err);
+      throwErrorToast("Failed to copy emails");
+    }
+  }, [rows]);
+
+  if (isPending) return <p>Loading...</p>;
+  if (error) return <p>Something went wrong: {error.message}</p>;
+
+  return (
+    <div className="flex flex-col w-full gap-2">
+      <div className="mt-2 flex items-end">
+        <Button
+          className="ml-auto"
+          disabled={!rows || rows.length === 0}
+          variant="outline"
+          onClick={() => handleCopy()}
+        >
+          <ClipboardIcon /> Copy all applicant emails
+        </Button>
+      </div>
+
+      <DataTable
+        columns={cols}
+        data={rows ?? []}
+        className="border-none rounded-none"
+        options={{
+          getPaginationRowModel: getPaginationRowModel(),
+          rowCount: rowCount,
+          enableGlobalFilter: true,
+          state: {
+            globalFilter: search,
+            pagination,
+            columnFilters: [
+              {
+                id: "role",
+                value: roleFilter,
+              },
+            ],
+          },
+        }}
+      />
+
+      <div className="flex flex-row gap-2">
+        <span>
+          Page {pagination.pageIndex + 1} of{" "}
+          {Math.max(Math.ceil(applications.length / rowCount), 1)}
+        </span>
+        <div className="ml-auto">
+          <Button
+            variant="outline"
+            disabled={pagination.pageIndex <= 0}
+            onClick={() =>
+              setPagination({
+                ...pagination,
+                pageIndex: pagination.pageIndex - 1,
+              })
+            }
+          >
+            Previous Page
+          </Button>
+          <Button
+            variant="outline"
+            disabled={
+              (pagination.pageIndex + 1) * rowCount >= applications.length
+            }
+            onClick={() =>
+              setPagination({
+                ...pagination,
+                pageIndex: pagination.pageIndex + 1,
+              })
+            }
+          >
+            Next Page
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
