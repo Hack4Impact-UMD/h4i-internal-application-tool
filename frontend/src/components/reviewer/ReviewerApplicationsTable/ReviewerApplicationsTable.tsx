@@ -65,12 +65,13 @@ export default function ReviewerApplicationsTable({
             return <SortableHeader column={column}>APPLICANT</SortableHeader>;
           },
           cell: ({ getValue, row }) => {
-            const previouslyApplied = row.original.applicant.previouslyAppliedCount ?? 0;
+            const previouslyApplied =
+              row.original.applicant.previouslyAppliedCount ?? 0;
 
             return (
               <span className="flex items-center">
                 <span>{getValue()}</span>
-                
+
                 {previouslyApplied > 0 && (
                   <Tooltip>
                     <TooltipTrigger>
@@ -85,7 +86,6 @@ export default function ReviewerApplicationsTable({
                     </TooltipContent>
                   </Tooltip>
                 )}
-            
               </span>
             );
           },

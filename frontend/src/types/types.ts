@@ -117,7 +117,7 @@ export type DecisionLetterStatus = {
   formId: string;
   responseId: string;
   internalStatusId: string;
-}
+};
 
 export interface ApplicationInterviewData {
   id: string;

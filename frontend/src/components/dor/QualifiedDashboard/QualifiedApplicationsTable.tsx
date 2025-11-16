@@ -574,7 +574,8 @@ export default function QualifiedApplicationsTable({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        This candidate received a score below 2 from an interviewer
+                        This candidate received a score below 2 from an
+                        interviewer
                       </p>
                     </TooltipContent>
                   </Tooltip>

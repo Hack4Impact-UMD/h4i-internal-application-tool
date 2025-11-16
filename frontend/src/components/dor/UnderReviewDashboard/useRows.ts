@@ -82,7 +82,9 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             status = undefined;
           }
 
-          const numPreviouslyApplied = await getPreviouslyAppliedCount(app.userId);
+          const numPreviouslyApplied = await getPreviouslyAppliedCount(
+            app.userId,
+          );
 
           const row: ApplicationRow = {
             index: 1 + index,

@@ -4,16 +4,18 @@ import { getApplicationResponseAndSemester } from "./applicationResponseAndSemes
  * Determines how many applications a given user has previously applied for.
  */
 
-export async function getPreviouslyAppliedCount(userId: string) : Promise<number> {
-    const responses = await getApplicationResponseAndSemester(userId);
+export async function getPreviouslyAppliedCount(
+  userId: string,
+): Promise<number> {
+  const responses = await getApplicationResponseAndSemester(userId);
 
-    const inactiveFormIds = new Set<string>();
+  const inactiveFormIds = new Set<string>();
 
-    for (const response of responses) {
-        if (!response.active) {
-            inactiveFormIds.add(response.applicationFormId);
+  for (const response of responses) {
+    if (!response.active) {
+      inactiveFormIds.add(response.applicationFormId);
     }
-}
+  }
 
-    return inactiveFormIds.size;
+  return inactiveFormIds.size;
 }

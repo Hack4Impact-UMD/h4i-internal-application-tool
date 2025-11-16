@@ -47,8 +47,10 @@ export function InterviewerAssignmentsPage() {
 
   const numInterviewed = useMemo(
     () =>
-      interviews?.reduce((acc, interview) => (interview.submitted ? acc + 1 : acc), 0) ??
-      0,
+      interviews?.reduce(
+        (acc, interview) => (interview.submitted ? acc + 1 : acc),
+        0,
+      ) ?? 0,
     [interviews],
   );
 
@@ -68,7 +70,7 @@ export function InterviewerAssignmentsPage() {
       <div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
         <div className="flex flex-row items-start pb-4 border-b">
           <span className="text-center w-full font-bold text-muted-foreground">
-            You are viewing all assigned applications for interviewer {" "}
+            You are viewing all assigned applications for interviewer{" "}
             {interviewer.firstName}
             {interviewer.lastName}
           </span>
