@@ -1,9 +1,13 @@
 import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ColumnDef, createColumnHelper, getPaginationRowModel } from "@tanstack/react-table";
+import {
+  ColumnDef,
+  createColumnHelper,
+  getPaginationRowModel,
+} from "@tanstack/react-table";
 import { ClipboardIcon, EllipsisVertical } from "lucide-react";
 
-import { ApplicationResponse, ApplicantRole } from "@/types/types";
+import { DecisionLetterStatus } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/DataTable";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
@@ -16,22 +20,26 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useRows, DecisionRow } from "./useRows";
 
 type AcceptanceConfirmationTableProps = {
-  applications: ApplicationResponse[];
+  confirmations: DecisionLetterStatus[];
   search: string;
   rowCount?: number;
-  roleFilter: "all" | ApplicantRole;
+  decisionFilter: "all" | "accepted" | "denied";
   formId: string;
 };
 
 export default function AcceptanceConfirmationTable({
-  applications,
+  confirmations,
   search,
   rowCount = 20,
-  roleFilter = "all",
+  decisionFilter = "all",
   formId,
 }: AcceptanceConfirmationTableProps) {
   const navigate = useNavigate();
@@ -90,11 +98,6 @@ export default function AcceptanceConfirmationTable({
             <SortableHeader column={column}>Role</SortableHeader>
           ),
           cell: ({ getValue }) => <ApplicantRolePill role={getValue()} />,
-          filterFn: (row, columnId, filterValue) => {
-            const value = row.getValue(columnId);
-            if (filterValue === "all") return true;
-            return filterValue === value;
-          },
         }),
         columnHelper.accessor("decision", {
           id: "decision",
@@ -109,20 +112,28 @@ export default function AcceptanceConfirmationTable({
               waitlisted: "bg-yellow-100 text-yellow-800",
             };
 
-            const display = decision
-              ? decision.status?.toUpperCase() ?? decision
-              : "N/A";
+            const display = decision ? decision.toUpperCase() : "N/A";
 
             const style =
-              decision && colorMap[decision.status]
-                ? colorMap[decision.status]
+              decision && colorMap[decision]
+                ? colorMap[decision]
                 : "bg-gray-100 text-gray-800";
 
             return (
-              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${style}`}>
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-semibold ${style}`}
+              >
                 {display}
               </span>
             );
+          },
+          filterFn: (row, columnId, filterValue) => {
+            const value = row.getValue(columnId) as "accepted" | "denied";
+
+            if (filterValue == "all") return true;
+            else if (filterValue == "accepted") return value === "accepted";
+            else if (filterValue == "denied") return value === "denied";
+            else return true;
           },
         }),
         columnHelper.display({
@@ -160,7 +171,7 @@ export default function AcceptanceConfirmationTable({
     [columnHelper, formId, navigate],
   );
 
-  const { data: rows, isPending, error } = useRows(applications, formId);
+  const { data: rows, isPending, error } = useRows(confirmations, formId);
 
   const handleCopy = useCallback(async () => {
     if (!rows) {
@@ -209,8 +220,8 @@ export default function AcceptanceConfirmationTable({
             pagination,
             columnFilters: [
               {
-                id: "role",
-                value: roleFilter,
+                id: "decision",
+                value: decisionFilter,
               },
             ],
           },
@@ -220,7 +231,7 @@ export default function AcceptanceConfirmationTable({
       <div className="flex flex-row gap-2">
         <span>
           Page {pagination.pageIndex + 1} of{" "}
-          {Math.max(Math.ceil(applications.length / rowCount), 1)}
+          {Math.max(Math.ceil(confirmations.length / rowCount), 1)}
         </span>
         <div className="ml-auto">
           <Button
@@ -238,7 +249,7 @@ export default function AcceptanceConfirmationTable({
           <Button
             variant="outline"
             disabled={
-              (pagination.pageIndex + 1) * rowCount >= applications.length
+              (pagination.pageIndex + 1) * rowCount >= confirmations.length
             }
             onClick={() =>
               setPagination({

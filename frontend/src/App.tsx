@@ -56,8 +56,9 @@ const AssignedInterviewsPage = lazy(() =>
     }),
   ),
 );
-const AcceptanceConfirmationDashboard = lazy(() =>
-  import("./pages/super-reviewer/dashboards/AcceptanceConfirmationDashboard"),
+const AcceptanceConfirmationDashboard = lazy(
+  () =>
+    import("./pages/super-reviewer/dashboards/AcceptanceConfirmationDashboard"),
 );
 const ReviewerAssignmentsPage = lazy(() =>
   import("./pages/super-reviewer/dashboards/ReviewerAssignmentsPage").then(
