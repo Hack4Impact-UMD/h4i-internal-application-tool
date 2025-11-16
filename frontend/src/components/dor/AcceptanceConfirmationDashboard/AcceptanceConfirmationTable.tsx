@@ -109,7 +109,6 @@ export default function AcceptanceConfirmationTable({
             const colorMap: Record<string, string> = {
               accepted: "bg-green-100 text-green-800",
               denied: "bg-red-100 text-red-800",
-              waitlisted: "bg-yellow-100 text-yellow-800",
             };
 
             const display = decision ? decision.toUpperCase() : "N/A";
@@ -130,9 +129,9 @@ export default function AcceptanceConfirmationTable({
           filterFn: (row, columnId, filterValue) => {
             const value = row.getValue(columnId) as "accepted" | "denied";
 
-            if (filterValue == "all") return true;
-            else if (filterValue == "accepted") return value === "accepted";
-            else if (filterValue == "denied") return value === "denied";
+            if (filterValue === "all") return true;
+            else if (filterValue === "accepted") return value === "accepted";
+            else if (filterValue === "denied") return value === "denied";
             else return true;
           },
         }),
