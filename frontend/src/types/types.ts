@@ -111,6 +111,7 @@ export type InternalApplicationStatus = {
 };
 
 // status for after applicant gets acceptance letter
+// TODO this should be renamed to either "acceptance confirmation" or "decision confirmation"
 export type DecisionLetterStatus = {
   status: "accepted" | "denied";
   userId: string;

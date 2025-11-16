@@ -119,6 +119,10 @@ export default function SuperReviewerDashboardShell() {
             to={`/admin/dor/dashboard/${formId}/interviewers`}
             name="Interviewers"
           />
+          <DashboardShellLink
+            to={`/admin/dor/dashboard/${formId}/acceptance-confirmation`}
+            name="Confirmations"
+          />
           <Dialog open={rejectUndecidedMutation.isPending}>
             <DialogContent>
               <DialogHeader>
