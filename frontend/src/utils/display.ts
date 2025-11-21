@@ -2,6 +2,7 @@ import { ApplicantRole, PermissionRole } from "@/types/types";
 
 export function displayUserRoleName(role: PermissionRole) {
   if (role == PermissionRole.SuperReviewer) return "Super Reviewer";
+  else if (role == PermissionRole.Board) return "Board Member";
   else if (role == PermissionRole.Applicant) return "Applicant";
   else return "Reviewer";
 }

@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { PermissionRole } from "@/types/types";
 import NavProfile from "./NavProfile";
 import { HomeIcon } from "lucide-react";
+import { displayUserRoleName } from "@/utils/display";
 
 function Navbar({ className }: { className?: string }) {
   const { isLoading, isAuthed, user } = useAuth();
@@ -31,11 +32,7 @@ function Navbar({ className }: { className?: string }) {
             <>
               <span className="font-light sm:mb-1">
                 |{" "}
-                {user.role == PermissionRole.Reviewer
-                  ? "Reviewer"
-                  : user.role == PermissionRole.SuperReviewer
-                    ? "Super Reviewer"
-                    : "Applicant"}
+                {displayUserRoleName(user.role)}
               </span>
             </>
           )}

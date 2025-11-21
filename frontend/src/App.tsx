@@ -71,6 +71,10 @@ const InterviewerAssignmentsPage = lazy(() =>
   ),
 );
 const AppRevisitPage = lazy(() => import("./pages/applicant/AppRevisitPage"));
+const BoardInterviewsDashboard = lazy(
+  () =>
+    import("./pages/board/BoardInterviewsDashboard"),
+);
 const QualifiedApplicationsDashboard = lazy(
   () =>
     import("./pages/super-reviewer/dashboards/QualifiedApplicationsDashboard"),
@@ -81,6 +85,9 @@ const ViewApplicationPage = lazy(
 );
 const ReviewerDashboardShell = lazy(
   () => import("./pages/reviewer/ReviewerDashboardShell"),
+);
+const BoardDashboardShell = lazy(
+  () => import("./pages/board/BoardDashboardShell"),
 );
 const SuperReviewerReviewersDashboard = lazy(
   () =>
@@ -231,6 +238,7 @@ function App() {
                   />
                 </Route>
 
+                {/* TODO: change this to be for both board and DOR */}
                 <Route
                   path="dor/application/:formId/:responseId"
                   element={
@@ -332,11 +340,29 @@ function App() {
                     element={<ReviewerInterviewsDashboard />}
                   />
                 </Route>
+
+                <Route
+                  path="board/dashboard/:formId/"
+                  element={
+                    <RequireAuth requireRoles={[PermissionRole.Board]}>
+                      <SearchProvider>
+                        <BoardDashboardShell />
+                      </SearchProvider>
+                    </RequireAuth>
+                  }
+                >
+                  <Route
+                    path="interviews"
+                    element={<BoardInterviewsDashboard />}
+                  />
+                </Route>
+
                 <Route
                   element={
                     <RequireAuth
                       requireRoles={[
                         PermissionRole.Reviewer,
+                        PermissionRole.Board,
                         PermissionRole.SuperReviewer,
                       ]}
                     >
@@ -362,6 +388,7 @@ function App() {
                   redirect={{
                     applicant: "/apply",
                     reviewer: "/admin",
+                    board: "/admin",
                     "super-reviewer": "/admin",
                   }}
                 >
@@ -376,6 +403,7 @@ function App() {
                   redirect={{
                     applicant: "/apply",
                     reviewer: "/admin",
+                    board: "/admin",
                     "super-reviewer": "/admin",
                   }}
                 >
