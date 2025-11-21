@@ -238,47 +238,46 @@ function App() {
                   />
                 </Route>
 
-                {/* TODO: change this to be for both board and DOR */}
                 <Route
-                  path="dor/application/:formId/:responseId"
+                  path="board/application/:formId/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
                       <ViewApplicationPage />
                     </RequireAuth>
                   }
                 />
 
                 <Route
-                  path="dor/reviews/:responseId"
+                  path="board/reviews/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
                       <AssignedReviewsPage />
                     </RequireAuth>
                   }
                 />
 
                 <Route
-                  path="dor/interviews/:responseId"
+                  path="board/interviews/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
                       <AssignedInterviewsPage />
                     </RequireAuth>
                   }
                 />
 
                 <Route
-                  path="dor/reviewer/:formId/:reviewerId"
+                  path="board/reviewer/:formId/:reviewerId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
                       <ReviewerAssignmentsPage />
                     </RequireAuth>
                   }
                 />
 
                 <Route
-                  path="dor/interviewer/:formId/:interviewerId"
+                  path="board/interviewer/:formId/:interviewerId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
                       <InterviewerAssignmentsPage />
                     </RequireAuth>
                   }
@@ -307,15 +306,6 @@ function App() {
                   element={
                     <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                       <FormBuilderPage />
-                    </RequireAuth>
-                  }
-                />
-
-                <Route
-                  path="dor/response/:responseId"
-                  element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                      <AppRevisitPage />
                     </RequireAuth>
                   }
                 />

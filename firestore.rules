@@ -19,11 +19,11 @@ service cloud.firestore {
     }
     
     function isReviewer() {
-    	return isAuthed() && (getCurrentUser().data.role == "reviewer" || isBoard() || isSuperReviewer());
+    	return isAuthed() && (getCurrentUser().data.role == "reviewer" || isBoard());
     }
 
     function isBoard() {
-    	return isAuthed() && (getCurrentUser().data.role == "board" || isSuperReviewer);
+    	return isAuthed() && (getCurrentUser().data.role == "board" || isSuperReviewer());
     }
     
     function isSuperReviewer() {
