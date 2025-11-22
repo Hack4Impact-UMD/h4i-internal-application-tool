@@ -98,6 +98,19 @@ export async function getApplicationStatusForResponseRole(
   else return undefined;
 }
 
+export async function getApplicationStatusById(statusId: string) {
+  const statusCollection = collection(
+    db,
+    STATUS_COLLECTION,
+  ) as CollectionReference<InternalApplicationStatus>;
+  const q = query(statusCollection, where("id", "==", statusId));
+
+  const resp = (await getDocs(q)).docs.map((d) => d.data());
+
+  if (resp.length > 0) return resp[0];
+  else return undefined;
+}
+
 export async function updateApplicationStatus(
   statusId: string,
   update: Partial<Omit<InternalApplicationStatus, "id">>,

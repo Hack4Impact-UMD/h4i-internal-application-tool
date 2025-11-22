@@ -13,7 +13,7 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import { useApplicationFormForResponseId } from "@/hooks/useApplicationForm";
 import ConfettiExplosion from "react-confetti-explosion";
 import Loading from "../Loading";
-import { createDecisionConfirmation } from "@/services/confirmationService";
+import { createDecisionConfirmation } from "@/services/decisionConfirmationService";
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../toasts/ErrorToast";
 import { Button } from "../ui/button";
