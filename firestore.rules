@@ -68,8 +68,9 @@ service cloud.firestore {
 
     match /interview-assignments/{assignment_id} {
       allow read: if isBoard() || (isReviewer() && hasID(resource.data.interviewerId));
-      // TODO: this should allow board but NOT super-reviewer in the end; keeping this for testing
-      allow write: if isSuperReviewer() || isBoard(); 
+      allow create: if isBoard() && !isSuperReviewer();
+      allow update: if isBoard() && !isSuperReviewer() && getCurrentUser().data.applicantRoles.hasAny([resource.data.forRole]); 
+      allow delete: if isBoard() && !isSuperReviewer() && getCurrentUser().data.applicantRoles.hasAny([resource.data.forRole]); 
     }
 
     match /review-data/{review_id} {

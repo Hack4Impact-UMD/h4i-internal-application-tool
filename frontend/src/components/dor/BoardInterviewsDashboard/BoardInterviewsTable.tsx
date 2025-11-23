@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,18 +23,10 @@ import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import type { InterviewAssignment } from "@/types/types";
 import { ApplicationInterviewData } from "@/types/types";
-import { QualifiedAppRow, useRows } from "./useRows";
+import { QualifiedAppRow, useRows } from "../QualifiedDashboard/useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
 import { updateApplicationStatus } from "@/services/statusService";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  CircleAlertIcon,
   Clipboard,
   EllipsisVertical,
   AlertTriangle,
@@ -52,59 +44,9 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
+import { InterviewerSelect } from "./InterviewerSelect";
 
-function StatusSelect({
-  currentStatus,
-  onStatusChange,
-  disabled = false,
-  assignedInterviewers,
-}: {
-  currentStatus: ReviewStatus;
-  onStatusChange: (newStatus: ReviewStatus) => void;
-  disabled?: boolean;
-  assignedInterviewers: boolean;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <Select
-        value={currentStatus}
-        onValueChange={onStatusChange}
-        disabled={disabled}
-      >
-        <SelectTrigger className="w-40">
-          <SelectValue placeholder="Select status" />
-        </SelectTrigger>
-        <SelectContent>
-          {[
-            ReviewStatus.UnderReview,
-            ReviewStatus.Interview,
-            ReviewStatus.Accepted,
-            ReviewStatus.Waitlisted,
-            ReviewStatus.Denied,
-          ].map((status) => (
-            <SelectItem key={status} value={status}>
-              {status.charAt(0).toUpperCase() +
-                status.slice(1).replace(/-/g, " ")}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {currentStatus === ReviewStatus.UnderReview && assignedInterviewers && (
-        <Tooltip>
-          <TooltipTrigger>
-            <CircleAlertIcon className="text-orange-500" />
-          </TooltipTrigger>
-          <TooltipContent>
-            Make sure to change status to interview if you plan to interview
-            this applicant!
-          </TooltipContent>
-        </Tooltip>
-      )}
-    </div>
-  );
-}
-
-export default function QualifiedApplicationsTable({
+export default function BoardInterviewsTable({
   applications,
   search,
   formId,
@@ -325,38 +267,29 @@ export default function QualifiedApplicationsTable({
           id: "interviewers",
           header: "INTERVIEWERS",
           cell: ({ getValue, row }) => {
-            const interviewers = getValue();
-            const interviews = row.original.interviews;
-            const role = row.original.role;
-            
-            const complete = useCallback(
-            (interviewer: ReviewerUserProfile) => {
-              return interviews.find(
-                (interview) =>
-                  interview.submitted &&
-                  interview.interviewerId === interviewer.id &&
-                  interview.forRole === role,
-              );
-            },
-            [interviews, role]);
-
-            if (interviewers.length === 0) {
-              return "N/A";
-            }
-            
-            return (<div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
-              {interviewers.map((interviewer) => (
-                <div
-                  key={interviewer.id}
-                  className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(interviewer) ? "bg-green-200 text-green-800 border-green-100" : "bg-muted"}`}
-                >
-                  <span className="text-sm">
-                    {interviewer.firstName} {interviewer.lastName}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )
+            const rowData = row.original;
+            return (
+              <InterviewerSelect
+                interviewers={getValue()}
+                interviews={rowData.interviews}
+                onAdd={(interviewer) =>
+                  addInterviewerMutation.mutate({
+                    interviewer: interviewer,
+                    responseId: rowData.responseId,
+                    role: rowData.role,
+                  })
+                }
+                assignments={rowData.assignments}
+                onDelete={(_interviewer, assignment) =>
+                  removeInterviewerMutation.mutate({
+                    assignment: assignment,
+                    interviews: rowData.interviews,
+                  })
+                }
+                responseId={rowData.responseId}
+                role={rowData.role}
+              />
+            );
           },
         }),
         columnHelper.accessor("averageScore", {
@@ -408,19 +341,7 @@ export default function QualifiedApplicationsTable({
               return "N/A";
             }
 
-            return (
-              <StatusSelect
-                assignedInterviewers={row.original.assignments.length > 0}
-                currentStatus={status.status}
-                onStatusChange={(newStatus) => {
-                  updateStatusMutation.mutate({
-                    statusId: status.id,
-                    newStatus,
-                  });
-                }}
-                disabled={updateStatusMutation.isPending}
-              />
-            );
+            return status.status.charAt(0).toUpperCase() + status.status.slice(1).replace(/-/g, " ");
           },
         }),
         columnHelper.display({

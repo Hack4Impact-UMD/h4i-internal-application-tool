@@ -16,9 +16,9 @@ import { useParams } from "react-router-dom";
 import Loading from "@/components/Loading";
 import useSearch from "@/hooks/useSearch";
 import { useQuery } from "@tanstack/react-query";
-import { QualifiedApplicationsTable } from "@/components/dor/QualifiedDashboard";
 import { getQualifiedStatusesForForm } from "@/services/statusService";
 import { useAuth } from "@/hooks/useAuth";
+import { BoardInterviewsTable } from "@/components/dor/BoardInterviewsDashboard";
 
 export default function BoardInterviewsDashboard() {
   const { user } = useAuth();
@@ -130,8 +130,7 @@ export default function BoardInterviewsDashboard() {
           );
         })}
       </div>
-      {/* TODO make a new table for this, without status editing and matching board pages */}
-      <QualifiedApplicationsTable
+      <BoardInterviewsTable
         applications={qualifiedApps}
         formId={formId}
         search={search}
