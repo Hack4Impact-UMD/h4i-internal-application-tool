@@ -140,7 +140,7 @@ export async function getQualifiedStatusesForForm(formId: string) {
   }
 }
 
-export async function getQualifiedStatusesForFormRole(
+export async function getQualifiedStatusesForFormRoles(
   formId: string,
   roles: ApplicantRole[],
 ) {
