@@ -16,7 +16,7 @@ import { useParams } from "react-router-dom";
 import Loading from "@/components/Loading";
 import useSearch from "@/hooks/useSearch";
 import { useQuery } from "@tanstack/react-query";
-import { getQualifiedStatusesForForm, getQualifiedStatusesForFormRole } from "@/services/statusService";
+import { getQualifiedStatusesForFormRole } from "@/services/statusService";
 import { useAuth } from "@/hooks/useAuth";
 import { BoardInterviewsTable } from "@/components/dor/BoardInterviewsDashboard";
 
@@ -25,6 +25,9 @@ export default function BoardInterviewsDashboard() {
   const { formId } = useParams<{ formId: string }>();
   const [roleFilter, setRoleFilter] = useState<"all" | ApplicantRole>("all");
   const { search } = useSearch();
+
+  const boardUser = user as BoardUserProfile;
+  const allowedRoles = boardUser?.applicantRoles ?? [];
 
   // Get all qualified statuses for this form
   const {
@@ -36,7 +39,7 @@ export default function BoardInterviewsDashboard() {
     enabled: !!formId,
     queryFn: () => {
       if (!formId) throw new Error("formId is required");
-      return getQualifiedStatusesForFormRole(formId, (user as BoardUserProfile).applicantRoles ?? []);
+      return getQualifiedStatusesForFormRole(formId, allowedRoles);
     },
     refetchOnWindowFocus: true, // Refetch when user switches back to this tab
   });
@@ -87,7 +90,7 @@ export default function BoardInterviewsDashboard() {
   }, [qualifiedApps]);
 
   // Use the same order as SuperReviewerApplicationsDashboard
-  const roleOrder = Object.values(ApplicantRole).filter((role) => (user as BoardUserProfile).applicantRoles.includes(role));
+  const roleOrder = Object.values(ApplicantRole).filter((role) => allowedRoles.includes(role));
 
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
   if (statusesError)

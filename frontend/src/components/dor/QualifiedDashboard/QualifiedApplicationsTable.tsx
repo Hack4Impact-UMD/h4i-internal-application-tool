@@ -327,18 +327,16 @@ export default function QualifiedApplicationsTable({
           cell: ({ getValue, row }) => {
             const interviewers = getValue();
             const interviews = row.original.interviews;
-            const role = row.original.role;
-            
-            const complete = useCallback(
-            (interviewer: ReviewerUserProfile) => {
-              return interviews.find(
+            const role = row.original.role; 
+
+            const complete = (interviewer: ReviewerUserProfile) => {
+              return !!interviews.find(
                 (interview) =>
                   interview.submitted &&
                   interview.interviewerId === interviewer.id &&
                   interview.forRole === role,
               );
-            },
-            [interviews, role]);
+            };
 
             if (interviewers.length === 0) {
               return "N/A";

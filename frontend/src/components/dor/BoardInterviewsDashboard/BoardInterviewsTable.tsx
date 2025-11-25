@@ -5,8 +5,6 @@ import {
   ApplicantRole,
   ApplicationResponse,
   ReviewerUserProfile,
-  ReviewStatus,
-  InternalApplicationStatus,
 } from "@/types/types";
 import {
   createColumnHelper,
@@ -25,7 +23,6 @@ import type { InterviewAssignment } from "@/types/types";
 import { ApplicationInterviewData } from "@/types/types";
 import { QualifiedAppRow, useRows } from "../QualifiedDashboard/useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
-import { updateApplicationStatus } from "@/services/statusService";
 import {
   Clipboard,
   EllipsisVertical,
@@ -65,64 +62,6 @@ export default function BoardInterviewsTable({
   });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
-  const updateStatusMutation = useMutation({
-    mutationFn: ({
-      statusId,
-      newStatus,
-    }: {
-      statusId: string;
-      newStatus: ReviewStatus;
-    }) => updateApplicationStatus(statusId, { status: newStatus }),
-    onMutate: async ({ statusId, newStatus }) => {
-      const queryKey = [
-        "qualified-apps-rows",
-        formId,
-        applications.map((a) => a.id).sort(),
-      ];
-      await queryClient.cancelQueries({ queryKey });
-
-      const previousRows =
-        queryClient.getQueryData<QualifiedAppRow[]>(queryKey);
-
-      queryClient.setQueryData<QualifiedAppRow[]>(queryKey, (old) => {
-        if (!old) return [];
-        return old.map((row: QualifiedAppRow) => {
-          if (row.status?.id === statusId) {
-            return {
-              ...row,
-              status: {
-                ...row.status,
-                status: newStatus,
-              } as InternalApplicationStatus,
-            };
-          }
-          return row;
-        });
-      });
-
-      return { previousRows, queryKey };
-    },
-    onError: (error, _vars, context) => {
-      if (context?.previousRows) {
-        queryClient.setQueryData(context.queryKey, context.previousRows);
-      }
-      throwErrorToast("Failed to update status!");
-      console.error(error);
-    },
-    onSuccess: () => {
-      throwSuccessToast("Successfully updated status!");
-    },
-    onSettled: (_data, _error, _variables, context) => {
-      if (context?.queryKey) {
-        queryClient.invalidateQueries({ queryKey: context.queryKey });
-      } else {
-        queryClient.invalidateQueries({
-          predicate: (q) => q.queryKey.includes("qualified-apps-rows"),
-        });
-      }
-    },
-  });
 
   const addInterviewerMutation = useMutation({
     mutationFn: async ({
@@ -390,7 +329,6 @@ export default function BoardInterviewsTable({
       columnHelper,
       addInterviewerMutation,
       removeInterviewerMutation,
-      updateStatusMutation,
     ],
   );
 
