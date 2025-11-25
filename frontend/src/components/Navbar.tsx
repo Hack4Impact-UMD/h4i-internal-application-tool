@@ -31,8 +31,7 @@ function Navbar({ className }: { className?: string }) {
           {user?.role && user.role != PermissionRole.Applicant && (
             <>
               <span className="font-light sm:mb-1">
-                |{" "}
-                {displayUserRoleName(user.role)}
+                | {displayUserRoleName(user.role)}
               </span>
             </>
           )}

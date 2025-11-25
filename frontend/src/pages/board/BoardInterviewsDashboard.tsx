@@ -90,7 +90,9 @@ export default function BoardInterviewsDashboard() {
   }, [qualifiedApps]);
 
   // Use the same order as SuperReviewerApplicationsDashboard
-  const roleOrder = Object.values(ApplicantRole).filter((role) => allowedRoles.includes(role));
+  const roleOrder = Object.values(ApplicantRole).filter((role) =>
+    allowedRoles.includes(role),
+  );
 
   if (!formId) return <p>No formId found! The url is probably malformed.</p>;
   if (statusesError)

@@ -16,7 +16,12 @@ import {
 } from "@/components/ui/command";
 import { useReviewersForRole } from "@/hooks/useReviewers";
 import { getInterviewAssignmentsForApplication } from "@/services/interviewAssignmentService";
-import { ApplicantRole, ApplicationInterviewData, InterviewAssignment, ReviewerUserProfile } from "@/types/types";
+import {
+  ApplicantRole,
+  ApplicationInterviewData,
+  InterviewAssignment,
+  ReviewerUserProfile,
+} from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 
@@ -85,7 +90,11 @@ function InterviewerSearchPopover({
               </p>
               <div className="flex flex-wrap gap-1">
                 {interviewer.applicantRolePreferences?.map((role) => (
-                  <ApplicantRolePill key={role} role={role} className="text-xs" />
+                  <ApplicantRolePill
+                    key={role}
+                    role={role}
+                    className="text-xs"
+                  />
                 ))}
               </div>
             </CommandItem>

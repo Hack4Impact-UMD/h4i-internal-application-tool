@@ -407,7 +407,9 @@ export default function SuperReviewerApplicationsTable({
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => {
-                      navigate("/admin/board/reviews/" + row.original.responseId);
+                      navigate(
+                        "/admin/board/reviews/" + row.original.responseId,
+                      );
                     }}
                   >
                     View Reviews

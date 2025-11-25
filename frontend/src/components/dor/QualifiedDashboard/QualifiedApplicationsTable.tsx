@@ -327,7 +327,7 @@ export default function QualifiedApplicationsTable({
           cell: ({ getValue, row }) => {
             const interviewers = getValue();
             const interviews = row.original.interviews;
-            const role = row.original.role; 
+            const role = row.original.role;
 
             const complete = (interviewer: ReviewerUserProfile) => {
               return !!interviews.find(
@@ -341,20 +341,21 @@ export default function QualifiedApplicationsTable({
             if (interviewers.length === 0) {
               return "N/A";
             }
-            
-            return (<div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
-              {interviewers.map((interviewer) => (
-                <div
-                  key={interviewer.id}
-                  className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(interviewer) ? "bg-green-200 text-green-800 border-green-100" : "bg-muted"}`}
-                >
-                  <span className="text-sm">
-                    {interviewer.firstName} {interviewer.lastName}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )
+
+            return (
+              <div className="flex flex-wrap items-center gap-1 max-h-20 max-w-64 overflow-y-scroll no-scrollbar">
+                {interviewers.map((interviewer) => (
+                  <div
+                    key={interviewer.id}
+                    className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(interviewer) ? "bg-green-200 text-green-800 border-green-100" : "bg-muted"}`}
+                  >
+                    <span className="text-sm">
+                      {interviewer.firstName} {interviewer.lastName}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            );
           },
         }),
         columnHelper.accessor("averageScore", {

@@ -76,8 +76,7 @@ const InterviewerAssignmentsPage = lazy(() =>
 );
 const AppRevisitPage = lazy(() => import("./pages/applicant/AppRevisitPage"));
 const BoardInterviewsDashboard = lazy(
-  () =>
-    import("./pages/board/BoardInterviewsDashboard"),
+  () => import("./pages/board/BoardInterviewsDashboard"),
 );
 const QualifiedApplicationsDashboard = lazy(
   () =>
@@ -249,7 +248,12 @@ function App() {
                 <Route
                   path="board/application/:formId/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <ViewApplicationPage />
                     </RequireAuth>
                   }
@@ -258,7 +262,12 @@ function App() {
                 <Route
                   path="board/reviews/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <AssignedReviewsPage />
                     </RequireAuth>
                   }
@@ -267,7 +276,12 @@ function App() {
                 <Route
                   path="board/interviews/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <AssignedInterviewsPage />
                     </RequireAuth>
                   }
@@ -276,7 +290,12 @@ function App() {
                 <Route
                   path="board/reviewer/:formId/:reviewerId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <ReviewerAssignmentsPage />
                     </RequireAuth>
                   }
@@ -285,7 +304,12 @@ function App() {
                 <Route
                   path="board/interviewer/:formId/:interviewerId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.Board, PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <InterviewerAssignmentsPage />
                     </RequireAuth>
                   }

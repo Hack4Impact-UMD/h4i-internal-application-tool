@@ -23,11 +23,7 @@ import type { InterviewAssignment } from "@/types/types";
 import { ApplicationInterviewData } from "@/types/types";
 import { QualifiedAppRow, useRows } from "../QualifiedDashboard/useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
-import {
-  Clipboard,
-  EllipsisVertical,
-  AlertTriangle,
-} from "lucide-react";
+import { Clipboard, EllipsisVertical, AlertTriangle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -280,7 +276,10 @@ export default function BoardInterviewsTable({
               return "N/A";
             }
 
-            return status.status.charAt(0).toUpperCase() + status.status.slice(1).replace(/-/g, " ");
+            return (
+              status.status.charAt(0).toUpperCase() +
+              status.status.slice(1).replace(/-/g, " ")
+            );
           },
         }),
         columnHelper.display({
@@ -325,11 +324,7 @@ export default function BoardInterviewsTable({
           ),
         }),
       ] as ColumnDef<QualifiedAppRow>[],
-    [
-      columnHelper,
-      addInterviewerMutation,
-      removeInterviewerMutation,
-    ],
+    [columnHelper, addInterviewerMutation, removeInterviewerMutation],
   );
 
   if (isPending) return <p>Loading...</p>;

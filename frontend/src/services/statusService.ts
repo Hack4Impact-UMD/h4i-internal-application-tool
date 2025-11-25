@@ -140,14 +140,17 @@ export async function getQualifiedStatusesForForm(formId: string) {
   }
 }
 
-export async function getQualifiedStatusesForFormRole(formId: string, roles: ApplicantRole[]) {
+export async function getQualifiedStatusesForFormRole(
+  formId: string,
+  roles: ApplicantRole[],
+) {
   try {
     const statusCollection = collection(db, STATUS_COLLECTION);
     const q = query(
       statusCollection,
       where("formId", "==", formId),
       where("isQualified", "==", true),
-      where("role", "in", roles)
+      where("role", "in", roles),
     );
     const docsSnap = await getDocs(q);
     return docsSnap.docs.map((d) => d.data() as InternalApplicationStatus);

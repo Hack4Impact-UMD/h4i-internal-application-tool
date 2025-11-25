@@ -106,19 +106,19 @@ export default function AdminHome() {
 
   if (!user) return <Loading />;
 
-const route =
-  user.role === PermissionRole.Reviewer
-    ? "reviewer"
-    : user.role === PermissionRole.Board
-      ? "board"
-      : "dor";
+  const route =
+    user.role === PermissionRole.Reviewer
+      ? "reviewer"
+      : user.role === PermissionRole.Board
+        ? "board"
+        : "dor";
 
-const table =
-  user.role === PermissionRole.Reviewer
-    ? "apps"
-    : user.role === PermissionRole.Board
-      ? "interviews"
-      : "all";
+  const table =
+    user.role === PermissionRole.Reviewer
+      ? "apps"
+      : user.role === PermissionRole.Board
+        ? "interviews"
+        : "all";
 
   if (isPending) return <Loading />;
   if (error) return <p>Failed to fetch forms: {error.message}</p>;
