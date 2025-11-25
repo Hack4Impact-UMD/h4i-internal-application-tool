@@ -14,15 +14,9 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 import RolePill from "@/components/role-pill/RolePill";
-import {
-  assignInterview,
-  removeInterviewAssignment,
-} from "@/services/interviewAssignmentService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import type { InterviewAssignment } from "@/types/types";
-import { ApplicationInterviewData } from "@/types/types";
 import { QualifiedAppRow, useRows } from "./useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
 import { updateApplicationStatus } from "@/services/statusService";
