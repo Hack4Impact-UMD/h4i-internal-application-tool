@@ -1,0 +1,22 @@
+{
+  "name": "resume/b01c1e35-5079-473e-89df-d0d736301d8b",
+  "bucket": "h4i-applications.firebasestorage.app",
+  "metageneration": 1,
+  "generation": 1763792093634,
+  "contentType": "application/pdf",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "downloadTokens": [
+    "81d0a642-13e8-4c31-8e9f-a4b0192c9275"
+  ],
+  "etag": "yBHBL/APQIO9IbBYMLWl2MMRqWE",
+  "customMetadata": {
+    "name": "Testudo - Unofficial Transcript.pdf",
+    "ownerId": "mNzgVHXF12lacehdfvJy83JjaiVf"
+  },
+  "timeCreated": "2025-11-22T06:14:53.634Z",
+  "updated": "2025-11-22T06:14:53.634Z",
+  "size": 101990,
+  "md5Hash": "/kmYh2LsjSxOUZI0dnQlIA==",
+  "crc32c": "314059477"
+}

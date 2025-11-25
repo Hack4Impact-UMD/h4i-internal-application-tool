@@ -196,7 +196,7 @@ export default function InterviewersTable({
                     className="cursor-pointer"
                     onClick={() => {
                       navigate(
-                        "/admin/dor/interviewer/" +
+                        "/admin/board/interviewer/" +
                           formId +
                           "/" +
                           row.original.interviewer.id,

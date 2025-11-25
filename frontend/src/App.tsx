@@ -75,6 +75,9 @@ const InterviewerAssignmentsPage = lazy(() =>
   ),
 );
 const AppRevisitPage = lazy(() => import("./pages/applicant/AppRevisitPage"));
+const BoardInterviewsDashboard = lazy(
+  () => import("./pages/board/BoardInterviewsDashboard"),
+);
 const QualifiedApplicationsDashboard = lazy(
   () =>
     import("./pages/super-reviewer/dashboards/QualifiedApplicationsDashboard"),
@@ -85,6 +88,9 @@ const ViewApplicationPage = lazy(
 );
 const ReviewerDashboardShell = lazy(
   () => import("./pages/reviewer/ReviewerDashboardShell"),
+);
+const BoardDashboardShell = lazy(
+  () => import("./pages/board/BoardDashboardShell"),
 );
 const SuperReviewerReviewersDashboard = lazy(
   () =>
@@ -210,7 +216,9 @@ function App() {
                 <Route
                   path="dor/"
                   element={
-                    <RequireAuth>
+                    <RequireAuth
+                      requireRoles={[PermissionRole.SuperReviewer]}
+                    >
                       <SearchProvider>
                         <SuperReviewerDashboardShell />
                       </SearchProvider>
@@ -240,45 +248,70 @@ function App() {
                 </Route>
 
                 <Route
-                  path="dor/application/:formId/:responseId"
+                  path="board/application/:formId/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <ViewApplicationPage />
                     </RequireAuth>
                   }
                 />
 
                 <Route
-                  path="dor/reviews/:responseId"
+                  path="board/reviews/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <AssignedReviewsPage />
                     </RequireAuth>
                   }
                 />
 
                 <Route
-                  path="dor/interviews/:responseId"
+                  path="board/interviews/:responseId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <AssignedInterviewsPage />
                     </RequireAuth>
                   }
                 />
 
                 <Route
-                  path="dor/reviewer/:formId/:reviewerId"
+                  path="board/reviewer/:formId/:reviewerId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <ReviewerAssignmentsPage />
                     </RequireAuth>
                   }
                 />
 
                 <Route
-                  path="dor/interviewer/:formId/:interviewerId"
+                  path="board/interviewer/:formId/:interviewerId"
                   element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
+                    <RequireAuth
+                      requireRoles={[
+                        PermissionRole.Board,
+                        PermissionRole.SuperReviewer,
+                      ]}
+                    >
                       <InterviewerAssignmentsPage />
                     </RequireAuth>
                   }
@@ -312,15 +345,6 @@ function App() {
                 />
 
                 <Route
-                  path="dor/response/:responseId"
-                  element={
-                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
-                      <AppRevisitPage />
-                    </RequireAuth>
-                  }
-                />
-
-                <Route
                   path="reviewer/dashboard/:formId/"
                   element={
                     <RequireAuth requireRoles={[PermissionRole.Reviewer]}>
@@ -340,11 +364,29 @@ function App() {
                     element={<ReviewerInterviewsDashboard />}
                   />
                 </Route>
+
+                <Route
+                  path="board/dashboard/:formId/"
+                  element={
+                    <RequireAuth requireRoles={[PermissionRole.Board]}>
+                      <SearchProvider>
+                        <BoardDashboardShell />
+                      </SearchProvider>
+                    </RequireAuth>
+                  }
+                >
+                  <Route
+                    path="interviews"
+                    element={<BoardInterviewsDashboard />}
+                  />
+                </Route>
+
                 <Route
                   element={
                     <RequireAuth
                       requireRoles={[
                         PermissionRole.Reviewer,
+                        PermissionRole.Board,
                         PermissionRole.SuperReviewer,
                       ]}
                     >
@@ -370,6 +412,7 @@ function App() {
                   redirect={{
                     applicant: "/apply",
                     reviewer: "/admin",
+                    board: "/admin",
                     "super-reviewer": "/admin",
                   }}
                 >
@@ -384,6 +427,7 @@ function App() {
                   redirect={{
                     applicant: "/apply",
                     reviewer: "/admin",
+                    board: "/admin",
                     "super-reviewer": "/admin",
                   }}
                 >

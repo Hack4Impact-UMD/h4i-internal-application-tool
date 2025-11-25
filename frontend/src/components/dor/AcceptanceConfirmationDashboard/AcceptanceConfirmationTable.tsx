@@ -155,7 +155,7 @@ export default function AcceptanceConfirmationTable({
                     className="cursor-pointer"
                     onClick={() =>
                       navigate(
-                        `/admin/dor/application/${formId}/${row.original.responseId}`,
+                        `/admin/board/application/${formId}/${row.original.responseId}`,
                       )
                     }
                   >

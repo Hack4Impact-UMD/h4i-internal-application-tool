@@ -19,7 +19,11 @@ service cloud.firestore {
     }
     
     function isReviewer() {
-    	return isAuthed() && (getCurrentUser().data.role == "reviewer" || isSuperReviewer());
+    	return isAuthed() && (getCurrentUser().data.role == "reviewer" || isBoard());
+    }
+
+    function isBoard() {
+    	return isAuthed() && (getCurrentUser().data.role == "board" || isSuperReviewer());
     }
     
     function isSuperReviewer() {
@@ -63,8 +67,10 @@ service cloud.firestore {
     }
 
     match /interview-assignments/{assignment_id} {
-      allow read: if isSuperReviewer() || (isReviewer() && hasID(resource.data.interviewerId));
-      allow write: if isSuperReviewer();
+      allow read: if isBoard() || (isReviewer() && hasID(resource.data.interviewerId));
+      allow create: if isBoard() && !isSuperReviewer();
+      allow update: if isBoard() && !isSuperReviewer() && getCurrentUser().data.applicantRoles.hasAny([resource.data.forRole]); 
+      allow delete: if isBoard() && !isSuperReviewer() && getCurrentUser().data.applicantRoles.hasAny([resource.data.forRole]); 
     }
 
     match /review-data/{review_id} {
@@ -75,14 +81,14 @@ service cloud.firestore {
     }
 
     match /interview-data/{review_id} {
-      allow read: if (isReviewer() && hasID(resource.data.interviewerId)) || isSuperReviewer();
+      allow read: if (isReviewer() && hasID(resource.data.interviewerId)) || isBoard();
       allow create: if isReviewer() && hasID(request.resource.data.interviewerId);
       allow update: if isReviewer() && hasID(request.resource.data.interviewerId);
       allow delete: if isSuperReviewer() || hasID(resource.data.interviewerId);
     }
 
     match /app-status/{status_id} {
-      allow read: if isSuperReviewer();
+      allow read: if isBoard();
       allow write: if isSuperReviewer();
     }
 
