@@ -16,7 +16,7 @@ import { useParams } from "react-router-dom";
 import Loading from "@/components/Loading";
 import useSearch from "@/hooks/useSearch";
 import { useQuery } from "@tanstack/react-query";
-import { getQualifiedStatusesForFormRole } from "@/services/statusService";
+import { getQualifiedStatusesForFormRoles } from "@/services/statusService";
 import { useAuth } from "@/hooks/useAuth";
 import { BoardInterviewsTable } from "@/components/dor/BoardInterviewsDashboard";
 
@@ -39,7 +39,7 @@ export default function BoardInterviewsDashboard() {
     enabled: !!formId,
     queryFn: () => {
       if (!formId) throw new Error("formId is required");
-      return getQualifiedStatusesForFormRole(formId, allowedRoles);
+      return getQualifiedStatusesForFormRoles(formId, allowedRoles);
     },
     refetchOnWindowFocus: true, // Refetch when user switches back to this tab
   });
