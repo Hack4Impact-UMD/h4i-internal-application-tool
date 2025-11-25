@@ -182,78 +182,6 @@ export default function QualifiedApplicationsTable({
     },
   });
 
-  const addInterviewerMutation = useMutation({
-    mutationFn: async ({
-      interviewer,
-      responseId,
-      role,
-    }: {
-      interviewer: ReviewerUserProfile;
-      responseId: string;
-      role: ApplicantRole;
-    }) => {
-      return await assignInterview(responseId, interviewer.id, role);
-    },
-    onSuccess: () => {
-      throwSuccessToast("Successfully assigned interviewer!");
-    },
-    onError: (error) => {
-      throwErrorToast("Failed to assign interviewer!");
-      console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["qualified-apps-rows"],
-      });
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          q.queryKey.includes("interview-assignments") ||
-          q.queryKey.includes("interview") ||
-          q.queryKey.includes("assignment"),
-      });
-    },
-  });
-  const removeInterviewerMutation = useMutation({
-    mutationFn: async ({
-      assignment,
-      interviews,
-    }: {
-      assignment: InterviewAssignment;
-      interviews: ApplicationInterviewData[];
-    }) => {
-      // Prevent removal if interview has started
-      if (
-        interviews.find(
-          (i) => i.interviewerId === assignment.interviewerId && i.submitted,
-        )
-      ) {
-        throw new Error(
-          "The interviewer has already started their interview for this assignment. It is not possible to delete it.",
-        );
-      }
-      return await removeInterviewAssignment(assignment.id);
-    },
-    onSuccess: () => {
-      throwSuccessToast("Successfully removed interviewer assignment!");
-    },
-    onError: (error) => {
-      throwErrorToast(
-        `Failed to remove interviewer assignment! (${error.message})`,
-      );
-      console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["qualified-apps-rows"],
-      });
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          q.queryKey.includes("assignments") ||
-          q.queryKey.includes("assignment"),
-      });
-    },
-  });
-
   const { data: rows, isPending, error } = useRows(applications, formId);
 
   const columnHelper = createColumnHelper<QualifiedAppRow>();
@@ -466,8 +394,6 @@ export default function QualifiedApplicationsTable({
       ] as ColumnDef<QualifiedAppRow>[],
     [
       columnHelper,
-      addInterviewerMutation,
-      removeInterviewerMutation,
       updateStatusMutation,
     ],
   );
