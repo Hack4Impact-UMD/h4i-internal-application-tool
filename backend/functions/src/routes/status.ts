@@ -83,7 +83,7 @@ router.post(
       const decisionStatusCollection = db.collection(DECISION_STATUS_COLLECTION) as CollectionReference<DecisionLetterStatus>
 
 	  const input = req.body as DecisionLetterStatus;
-	  const { responseId, userId } = input;
+	  const { responseId, userId, internalStatusId } = input;
 	  const uid = req.token!.uid;
 	  
 	  // Check if user is editing their own decision
@@ -103,17 +103,17 @@ router.post(
 
 	  // Look up applicant’s internal decision in app-status
 	  const statusCollection = db.collection(APPLICATION_STATUS_COLLECTION) as CollectionReference<InternalApplicationStatus>
-	  const decisionDocs = await statusCollection.where("responseId", "==", responseId).get();
+	  const statusDocs = await statusCollection.where("id", "==", internalStatusId).get();
 
-	  if (decisionDocs.empty) {
-		logger.warn(`No app-status record found for responseId: ${responseId}`);
+	  if (statusDocs.empty) {
+		logger.warn(`No app-status record found for internalStatusId: ${internalStatusId}`);
 		return res.status(403).send("No decision found for this response.");
 	  }
 
-	  const decision = decisionDocs.docs[0].data();
+	  const internalStatus = statusDocs.docs[0].data();
 
-	  if (decision.status !== "accepted") {
-		logger.warn(`User ${userId} attempted to confirm but status was not accepted.`);
+	  if (internalStatus.status !== "accepted") {
+		logger.warn(`User ${userId} attempted to confirm but was not accepted under: ${internalStatusId}.`);
 		return res.status(403).send("You cannot confirm because you were not accepted.");
 	  }
 
