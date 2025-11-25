@@ -216,7 +216,9 @@ function App() {
                 <Route
                   path="dor/"
                   element={
-                    <RequireAuth>
+                    <RequireAuth
+                      requireRoles={[PermissionRole.SuperReviewer]}
+                    >
                       <SearchProvider>
                         <SuperReviewerDashboardShell />
                       </SearchProvider>
