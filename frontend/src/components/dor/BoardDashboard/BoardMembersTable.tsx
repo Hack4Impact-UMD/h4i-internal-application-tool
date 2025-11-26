@@ -138,6 +138,10 @@ export function BoardMembersTable({
                   })
                 }
                 boardId={row.original.boardMember.id}
+                disabled={
+                  addRoleMutation.isPending ||
+                  removeRoleMutation.isPending
+                }
               />
             );
           },
