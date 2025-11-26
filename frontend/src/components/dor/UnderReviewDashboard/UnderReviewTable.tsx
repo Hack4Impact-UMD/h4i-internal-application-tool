@@ -307,6 +307,10 @@ export default function SuperReviewerApplicationsTable({
                 }
                 responseId={row.original.responseId}
                 role={role}
+                disabled={
+                  addReviewerMutation.isPending ||
+                  removeReviewerMutation.isPending
+                }
               />
             );
           },

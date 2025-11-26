@@ -223,6 +223,10 @@ export default function BoardInterviewsTable({
                 }
                 responseId={rowData.responseId}
                 role={rowData.role}
+                disabled={
+                  addInterviewerMutation.isPending ||
+                  removeInterviewerMutation.isPending
+                }
               />
             );
           },
