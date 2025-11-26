@@ -386,10 +386,7 @@ export default function QualifiedApplicationsTable({
           ),
         }),
       ] as ColumnDef<QualifiedAppRow>[],
-    [
-      columnHelper,
-      updateStatusMutation,
-    ],
+    [columnHelper, updateStatusMutation],
   );
 
   if (isPending) return <p>Loading...</p>;
