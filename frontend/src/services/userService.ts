@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import {
   ApplicantRole,
+  BoardUserProfile,
   PermissionRole,
   ReviewerUserProfile,
   UserProfile,
@@ -211,6 +212,22 @@ export async function setReviewerRolePreferences(
   await updateDoc(userDoc, {
     applicantRolePreferences: prefs,
   } as Partial<ReviewerUserProfile>);
+}
+
+export async function setBoardApplicantRoles(
+  boardId: string,
+  roles: ApplicantRole[],
+) {
+  const user = await getUserById(boardId);
+  if (user.role != PermissionRole.Board)
+    throw new Error("User is not a board member!");
+
+  const users = collection(db, USER_COLLECTION);
+  const userDoc = doc(users, boardId);
+
+  await updateDoc(userDoc, {
+    applicantRoles: roles,
+  } as Partial<BoardUserProfile>);
 }
 
 export function onAuthStateChange(

@@ -157,6 +157,10 @@ export default function ReviewersTable({
                   })
                 }
                 reviewerId={row.original.reviewer.id}
+                disabled={
+                  addRolePreferenceMutation.isPending ||
+                  removeRolePreferenceMutation.isPending
+                }
               />
             );
           },

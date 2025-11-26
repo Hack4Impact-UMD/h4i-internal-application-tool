@@ -96,6 +96,9 @@ const SuperReviewerReviewersDashboard = lazy(
   () =>
     import("./pages/super-reviewer/dashboards/SuperReviewerReviewersDashboard"),
 );
+const SuperReviewerBoardDashboard = lazy(
+  () => import("./pages/super-reviewer/dashboards/SuperReviewerBoardDashboard"),
+);
 const ReviewerInterviewsDashboard = lazy(
   () => import("./pages/reviewer/ReviewerInterviewsDashboard"),
 );
@@ -216,9 +219,7 @@ function App() {
                 <Route
                   path="dor/"
                   element={
-                    <RequireAuth
-                      requireRoles={[PermissionRole.SuperReviewer]}
-                    >
+                    <RequireAuth requireRoles={[PermissionRole.SuperReviewer]}>
                       <SearchProvider>
                         <SuperReviewerDashboardShell />
                       </SearchProvider>
@@ -236,6 +237,10 @@ function App() {
                   <Route
                     path="dashboard/:formId/reviewers"
                     element={<SuperReviewerReviewersDashboard />}
+                  />
+                  <Route
+                    path="dashboard/:formId/board"
+                    element={<SuperReviewerBoardDashboard />}
                   />
                   <Route
                     path="dashboard/:formId/interviewers"
