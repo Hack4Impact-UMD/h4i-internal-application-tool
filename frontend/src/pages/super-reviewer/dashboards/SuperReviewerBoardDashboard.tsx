@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import Loading from "../../../components/Loading";
 import { Button } from "@/components/ui/button";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import useSearch from "@/hooks/useSearch";
 import { useAllBoardMembers } from "@/hooks/useBoardMembers";
 import { BoardMembersTable } from "@/components/dor/BoardDashboard/BoardMembersTable";
