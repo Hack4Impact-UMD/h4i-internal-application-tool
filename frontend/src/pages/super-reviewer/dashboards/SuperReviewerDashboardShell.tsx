@@ -116,6 +116,10 @@ export default function SuperReviewerDashboardShell() {
             name="Reviewers"
           />
           <DashboardShellLink
+            to={`/admin/dor/dashboard/${formId}/board`}
+            name="Board"
+          />
+          <DashboardShellLink
             to={`/admin/dor/dashboard/${formId}/interviewers`}
             name="Interviewers"
           />

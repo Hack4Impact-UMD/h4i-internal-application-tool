@@ -307,6 +307,10 @@ export default function SuperReviewerApplicationsTable({
                 }
                 responseId={row.original.responseId}
                 role={role}
+                disabled={
+                  addReviewerMutation.isPending ||
+                  removeReviewerMutation.isPending
+                }
               />
             );
           },
@@ -407,7 +411,9 @@ export default function SuperReviewerApplicationsTable({
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => {
-                      navigate("/admin/dor/reviews/" + row.original.responseId);
+                      navigate(
+                        "/admin/board/reviews/" + row.original.responseId,
+                      );
                     }}
                   >
                     View Reviews
@@ -416,7 +422,7 @@ export default function SuperReviewerApplicationsTable({
                     className="cursor-pointer"
                     onClick={() => {
                       navigate(
-                        `/admin/dor/application/${formId}/${row.original.responseId}`,
+                        `/admin/board/application/${formId}/${row.original.responseId}`,
                       );
                     }}
                   >

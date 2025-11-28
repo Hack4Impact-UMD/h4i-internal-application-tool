@@ -6,6 +6,7 @@ export * from "./formBuilderTypes";
 export enum PermissionRole {
   SuperReviewer = "super-reviewer",
   Reviewer = "reviewer",
+  Board = "board",
   Applicant = "applicant",
 }
 
@@ -31,6 +32,7 @@ export enum ReviewStatus {
 export type UserProfile =
   | ApplicantUserProfile
   | ReviewerUserProfile
+  | BoardUserProfile
   | SuperReviewerUserProfile;
 export interface IUserProfile {
   id: string;
@@ -50,6 +52,11 @@ export interface ApplicantUserProfile extends IUserProfile {
 export interface ReviewerUserProfile extends IUserProfile {
   role: PermissionRole.Reviewer;
   applicantRolePreferences: ApplicantRole[]; // the roles that this reviewer prefers to review for
+}
+
+export interface BoardUserProfile extends IUserProfile {
+  role: PermissionRole.Board;
+  applicantRoles: ApplicantRole[]; // the roles that this board member adminstrates
 }
 
 export interface SuperReviewerUserProfile extends IUserProfile {

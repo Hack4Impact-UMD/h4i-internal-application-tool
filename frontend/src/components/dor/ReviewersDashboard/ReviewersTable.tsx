@@ -157,6 +157,10 @@ export default function ReviewersTable({
                   })
                 }
                 reviewerId={row.original.reviewer.id}
+                disabled={
+                  addRolePreferenceMutation.isPending ||
+                  removeRolePreferenceMutation.isPending
+                }
               />
             );
           },
@@ -207,7 +211,7 @@ export default function ReviewersTable({
                     className="cursor-pointer"
                     onClick={() => {
                       navigate(
-                        "/admin/dor/reviewer/" +
+                        "/admin/board/reviewer/" +
                           formId +
                           "/" +
                           row.original.reviewer.id,
