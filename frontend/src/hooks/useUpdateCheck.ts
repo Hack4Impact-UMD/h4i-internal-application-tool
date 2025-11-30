@@ -27,3 +27,10 @@ export function useUpdateCheck() {
     refetchOnWindowFocus: true,
   });
 }
+
+export function useRemoteCommit() {
+  return useQuery<string | null>({
+    queryKey: ["commit", "remote"],
+    queryFn: getLatestDeployedCommit
+  })
+}

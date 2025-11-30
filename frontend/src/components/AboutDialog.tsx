@@ -13,7 +13,9 @@ import {
   MailIcon,
 } from "lucide-react";
 import { throwErrorToast } from "./toasts/ErrorToast";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useRemoteCommit } from "@/hooks/useUpdateCheck";
+import ConfettiExplosion from "react-confetti-explosion";
 
 export default function AboutDialog() {
   const commit = import.meta.env.DEV
@@ -22,18 +24,44 @@ export default function AboutDialog() {
       ? import.meta.env.VITE_COMMIT
       : "unknown";
 
-  const [copied, setCopied] = useState(false);
+  const {
+    data: remoteCommit,
+    isPending: remoteCommitPending,
+    error: remoteCommitError
+  } = useRemoteCommit()
 
-  const handleCopy = async () => {
+  const [localCommitCopied, setLocalCommitCopied] = useState(false);
+  const [remoteCommitCopied, setRemoteCommitCopied] = useState(false);
+  const [confetti, setConfetti] = useState(false);
+  const confettiTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const handleLocalCopy = async () => {
     try {
       await navigator.clipboard.writeText(commit);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      setLocalCommitCopied(true);
+      setTimeout(() => setLocalCommitCopied(false), 1500);
     } catch {
       throwErrorToast("Failed to copy");
-      setCopied(false);
+      setLocalCommitCopied(false);
     }
   };
+
+  const handleRemoteCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(remoteCommit ?? "N/A");
+      setRemoteCommitCopied(true);
+      setTimeout(() => setRemoteCommitCopied(false), 1500);
+    } catch {
+      throwErrorToast("Failed to copy");
+      setRemoteCommitCopied(false);
+    }
+  };
+
+  const handleEasterEgg = () => {
+    setConfetti(true);
+    if (confettiTimeout.current) clearTimeout(confettiTimeout.current);
+    confettiTimeout.current = setTimeout(() => setConfetti(false), 3500);
+  }
 
   return (
     <DialogContent className="sm:max-w-md">
@@ -51,7 +79,7 @@ export default function AboutDialog() {
               {commit.slice(0, 7)}
             </p>
 
-            {copied ? (
+            {localCommitCopied ? (
               <Button
                 variant="outline"
                 size="sm"
@@ -64,9 +92,37 @@ export default function AboutDialog() {
                 variant="outline"
                 size="sm"
                 className="h-7"
-                onClick={handleCopy}
+                onClick={handleLocalCopy}
               >
-                <ClipboardIcon /> Copy commit hash
+                <ClipboardIcon /> Copy hash
+              </Button>
+            )}
+          </div>
+          <p className="font-medium">Latest deployed commit:</p>
+          <div className="flex items-center gap-2">
+            <p className="font-mono grow text-muted-foreground" title={commit}>
+              {remoteCommitPending ? "Loading..." :
+                remoteCommitError ? "Error" :
+                  remoteCommit === null ? "N/A" :
+                    remoteCommit.slice(0, 7)
+              }
+            </p>
+            {remoteCommitCopied ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 bg-green-200 hover:bg-green-200 border-green-500 text-green-800 hover:text-green-800"
+              >
+                <CheckIcon /> Copied!
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7"
+                onClick={handleRemoteCopy}
+              >
+                <ClipboardIcon /> Copy hash
               </Button>
             )}
           </div>
@@ -103,8 +159,9 @@ export default function AboutDialog() {
             </a>
           </div>
           <div className="flex items-center justify-center">
-            <p className="text-sm text-muted-foreground">
-              Made with ❤️ by the Hack4Impact-UMD team
+            {confetti && <ConfettiExplosion zIndex={1000} duration={3000} />}
+            <p className="text-sm text-muted-foreground cursor-pointer" onClick={handleEasterEgg}>
+              {confetti ? <span className="font-bold text-lg">Ramy says hi! 👋</span> : "Made with ❤️ by the Hack4Impact-UMD team"}
             </p>
           </div>
         </div>
