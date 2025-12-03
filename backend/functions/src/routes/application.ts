@@ -304,6 +304,36 @@ router.post("/forms", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])
   }
 });
 
+router.put(
+    "/forms/:formId",
+    [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])],
+    async (req: Request, res: Response) => {
+      try {
+        const formId = req.params.formId;
+        const updates = req.body;
+
+        const formsCollection = db.collection(APPLICATION_FORMS_COLLECTION);
+        const formDoc = await formsCollection.doc(formId).get();
+
+        if (!formDoc.exists) {
+          return res.status(404).json({ error: "Form not found" });
+        }
+
+        // Convert dueDate if provided
+        if (updates.dueDate) {
+          const dueDate = updates.dueDate as { seconds: number; nanoseconds: number };
+          updates.dueDate = new Timestamp(dueDate.seconds, dueDate.nanoseconds);
+        }
+
+        await formsCollection.doc(formId).update(updates);
+        return res.status(200).json({ status: "success", formId });
+      } catch (error) {
+        logger.error("Failed to update form:", error);
+        return res.status(500).json({ error: "Failed to update form" });
+      }
+    }
+  );
+
 router.post("/rubrics", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer]), validateSchema(z.array(roleReviewRubricSchema))], async (req: Request, res: Response) => {
   try {
     const rubrics = req.body as RoleReviewRubric[];

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,11 +17,17 @@ import {
 import { useUploadRubrics } from "@/hooks/useRubrics";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { useUploadInterviewRubrics } from "@/hooks/useInterviewRubrics";
+import { DueDateDialog } from "@/components/dor/DueDateDialog";
+import { Timestamp } from "firebase/firestore";
 
 export default function AdminHome() {
   const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
   const { user, token } = useAuth();
+  const [selectedForm, setSelectedForm] = useState<{
+    id: string;
+    dueDate: Timestamp;
+  } | null>(null);
 
   const {
     mutate: uploadForm,
@@ -142,20 +149,36 @@ export default function AdminHome() {
         <ul className="flex flex-col gap-2 mt-4">
           {forms.map((form) => {
             return (
-              <Link
-                className="border border-gray-300 p-2 rounded-md flex flex-row gap-2 items-center"
-                to={`/admin/${route}/dashboard/${form.id}/${table}`}
+              <div
                 key={form.id}
+                className="border border-gray-300 p-2 rounded-md flex flex-row gap-2 items-center justify-between"
               >
-                <span
-                  className={`${!form.isActive ? "bg-muted" : "bg-lightblue"} px-2 py-1 text-sm rounded-full`}
+                <Link
+                  className="flex flex-row gap-2 items-center flex-1"
+                  to={`/admin/${route}/dashboard/${form.id}/${table}`}
                 >
-                  {form.isActive ? "Active" : "Inactive"}
-                </span>
-                <span>
-                  Semester: {form.semester} (ID: {form.id})
-                </span>
-              </Link>
+                  <span
+                    className={`${!form.isActive ? "bg-muted" : "bg-lightblue"} px-2 py-1 text-sm rounded-full`}
+                  >
+                    {form.isActive ? "Active" : "Inactive"}
+                  </span>
+                  <span>
+                    Semester: {form.semester} (ID: {form.id})
+                  </span>
+                </Link>
+                {form.isActive && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedForm({ id: form.id, dueDate: form.dueDate });
+                    }}
+                  >
+                    Due: {form.dueDate.toDate().toLocaleDateString()}
+                  </Button>
+                )}
+              </div>
             );
           })}
         </ul>
@@ -260,6 +283,14 @@ export default function AdminHome() {
             )}
           </div>
         </>
+      )}
+      {selectedForm && (
+        <DueDateDialog
+          formId={selectedForm.id}
+          currentDueDate={selectedForm.dueDate}
+          open={!!selectedForm}
+          onOpenChange={(open) => !open && setSelectedForm(null)}
+        />
       )}
     </div>
   );
