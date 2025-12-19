@@ -46,6 +46,7 @@ export default function UserRolePage() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["users", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["reviewers"] });
     },
   })
 
