@@ -5,7 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
-import { Eye, EyeOff, InfoIcon } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LogInCard() {
   const { login } = useAuth();
