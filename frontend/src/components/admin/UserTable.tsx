@@ -351,7 +351,7 @@ export default function UserTable({
                 }
               >
                 <span className="items-center flex flex-row gap-1">
-                  RETIRED
+                  DEPRECATED
                   {column.getIsSorted() === false ? (
                     <ArrowUpDown />
                   ) : column.getIsSorted() === "desc" ? (
