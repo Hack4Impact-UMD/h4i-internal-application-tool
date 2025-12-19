@@ -24,7 +24,7 @@ export const firebaseConfig = {
 export const API_URL =
   import.meta.env.MODE == "development"
     ? "http://127.0.0.1:5001/h4i-applications/us-central1/api"
-    : "https://api-4orgfxckcq-uc.a.run.app";
+    : "https://api-4orgfxckcq-uk.a.run.app";
 
 console.log(`CURRENTLY RUNNING IN ${import.meta.env.MODE} MODE!`);
 console.log(`Using base API URL at: ${API_URL}`);
@@ -33,7 +33,7 @@ console.log(`Using base API URL at: ${API_URL}`);
 const app = initializeApp(firebaseConfig);
 
 declare global {
-  // eslint-disable-next-line no-var
+
   var FIREBASE_APPCHECK_DEBUG_TOKEN: boolean | string | undefined;
 }
 
