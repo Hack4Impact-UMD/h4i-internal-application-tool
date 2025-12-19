@@ -1,7 +1,7 @@
 import {
   ApplicationInterviewData,
   InterviewAssignment,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 
@@ -26,7 +26,7 @@ export type FlatInterviewerRow = {
 };
 
 export function useRows(
-  interviewers: ReviewerUserProfile[],
+  interviewers: ReviewCapableUser[],
   interviewData: ApplicationInterviewData[],
   assignments: InterviewAssignment[],
 ) {

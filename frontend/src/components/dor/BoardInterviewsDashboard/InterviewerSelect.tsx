@@ -20,10 +20,12 @@ import {
   ApplicantRole,
   ApplicationInterviewData,
   InterviewAssignment,
+  ReviewCapableUser,
   ReviewerUserProfile,
 } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
+import { reviewingFor } from "@/services/reviewersService";
 
 function InterviewerSearchPopover({
   role,
@@ -32,7 +34,7 @@ function InterviewerSearchPopover({
 }: {
   role: ApplicantRole;
   responseId: string;
-  onSelect: (interviewer: ReviewerUserProfile) => void;
+  onSelect: (interviewer: ReviewCapableUser) => void;
 }) {
   const {
     data: interviewers,
@@ -89,7 +91,7 @@ function InterviewerSearchPopover({
                 {interviewer.firstName} {interviewer.lastName}
               </p>
               <div className="flex flex-wrap gap-1">
-                {interviewer.applicantRolePreferences?.map((role) => (
+                {reviewingFor(interviewer).map((role) => (
                   <ApplicantRolePill
                     key={role}
                     role={role}
@@ -115,7 +117,7 @@ export function InterviewerSelect({
   disabled = false,
   interviews,
 }: {
-  onAdd: (interviewer: ReviewerUserProfile) => void;
+  onAdd: (interviewer: ReviewCapableUser) => void;
   onDelete: (
     interviewer: ReviewerUserProfile,
     assignment: InterviewAssignment,

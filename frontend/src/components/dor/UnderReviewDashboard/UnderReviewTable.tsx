@@ -3,7 +3,7 @@ import {
   ApplicationResponse,
   AppReviewAssignment,
   InternalApplicationStatus,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import {
   ColumnDef,
@@ -69,7 +69,7 @@ export default function SuperReviewerApplicationsTable({
       role,
     }: {
       pageIndex: number;
-      reviewer: ReviewerUserProfile;
+      reviewer: ReviewCapableUser;
       responseId: string;
       role: ApplicantRole;
     }) => {
@@ -376,8 +376,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />

@@ -2,7 +2,7 @@ import {
   AppReviewAssignment,
   ApplicantRole,
   ApplicationReviewData,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import {
   ColumnDef,
@@ -23,7 +23,7 @@ import {
 } from "../../ui/dropdown-menu";
 import { ReviewerRow, flattenRows, useRows } from "./useRows";
 import { RoleSelect } from "./RoleSelect";
-import { getReviewerById } from "@/services/reviewersService";
+import { getReviewerById, reviewingFor } from "@/services/reviewersService";
 import { setReviewerRolePreferences } from "@/services/userService";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
@@ -31,7 +31,7 @@ import { ExportButton } from "@/components/ExportButton";
 import SortableHeader from "@/components/tables/SortableHeader";
 
 type ReviewersTableProps = {
-  reviewers: ReviewerUserProfile[];
+  reviewers: ReviewCapableUser[];
   assignments: AppReviewAssignment[];
   reviewData: ApplicationReviewData[];
   search: string;
@@ -61,8 +61,7 @@ export default function ReviewersTable({
       reviewerId: string;
       pageIndex: number;
     }) => {
-      const prevRolePreferences = (await getReviewerById(reviewerId))
-        .applicantRolePreferences;
+      const prevRolePreferences = reviewingFor(await getReviewerById(reviewerId));
       const newRolePreferences = [...prevRolePreferences, roleToAdd];
       return await setReviewerRolePreferences(reviewerId, newRolePreferences);
     },
@@ -89,8 +88,7 @@ export default function ReviewersTable({
       reviewerId: string;
       pageIndex: number;
     }) => {
-      const prevRolePreferences = (await getReviewerById(reviewerId))
-        .applicantRolePreferences;
+      const prevRolePreferences = reviewingFor(await getReviewerById(reviewerId));
       const newRolePreferences = prevRolePreferences.filter(
         (role) => role != roleToRemove,
       );
@@ -212,9 +210,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/board/reviewer/" +
-                          formId +
-                          "/" +
-                          row.original.reviewer.id,
+                        formId +
+                        "/" +
+                        row.original.reviewer.id,
                       );
                     }}
                   >

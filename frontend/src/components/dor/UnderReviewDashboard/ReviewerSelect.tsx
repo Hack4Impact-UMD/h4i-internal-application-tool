@@ -16,10 +16,12 @@ import {
 } from "@/components/ui/popover";
 import { useReviewersForRole } from "@/hooks/useReviewers";
 import { getReviewAssignments } from "@/services/reviewAssignmentService";
+import { reviewingFor } from "@/services/reviewersService";
 import {
   AppReviewAssignment,
   ApplicantRole,
   ApplicationReviewData,
+  ReviewCapableUser,
   ReviewerUserProfile,
 } from "@/types/types";
 import { useQueries } from "@tanstack/react-query";
@@ -27,7 +29,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 type ReviewerSelectProps = {
-  onAdd: (reviewer: ReviewerUserProfile) => void;
+  onAdd: (reviewer: ReviewCapableUser) => void;
   onDelete: (
     reviewer: ReviewerUserProfile,
     assignment: AppReviewAssignment,
@@ -42,7 +44,7 @@ type ReviewerSelectProps = {
 
 type ReviewerSearchPopoverProps = {
   role: ApplicantRole;
-  onSelect: (reviewer: ReviewerUserProfile) => void;
+  onSelect: (reviewer: ReviewCapableUser) => void;
   responseId: string;
 };
 
@@ -119,7 +121,7 @@ export function ReviewerSearchPopover({
                     )}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {reviewer.applicantRolePreferences.map((role) => (
+                    {reviewingFor(reviewer).map((role) => (
                       <ApplicantRolePill
                         key={role}
                         role={role}

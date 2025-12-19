@@ -1,7 +1,7 @@
 import {
   ApplicationInterviewData,
   InterviewAssignment,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import {
   ColumnDef,
@@ -25,7 +25,7 @@ import { ExportButton } from "@/components/ExportButton";
 import SortableHeader from "@/components/tables/SortableHeader";
 
 type InterviewersTableProps = {
-  interviewers: ReviewerUserProfile[];
+  interviewers: ReviewCapableUser[];
   interviewData: ApplicationInterviewData[];
   assignments: InterviewAssignment[];
   search: string;
@@ -197,9 +197,9 @@ export default function InterviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/board/interviewer/" +
-                          formId +
-                          "/" +
-                          row.original.interviewer.id,
+                        formId +
+                        "/" +
+                        row.original.interviewer.id,
                       );
                     }}
                   >

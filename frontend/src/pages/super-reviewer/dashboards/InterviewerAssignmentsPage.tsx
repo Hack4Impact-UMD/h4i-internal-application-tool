@@ -4,7 +4,7 @@ import ApplicantRolePill from "@/components/role-pill/RolePill";
 import { Button } from "@/components/ui/button";
 import { useInterviewAssignments } from "@/hooks/useInterviewAssignments";
 import { useInterviewDataForInterviewer } from "@/hooks/useInterviewData";
-import { getReviewerById } from "@/services/reviewersService";
+import { getReviewerById, reviewingFor } from "@/services/reviewersService";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -85,7 +85,7 @@ export function InterviewerAssignmentsPage() {
           <div>
             <p className="text-muted-foreground mb-3">ROLES ASSIGNED</p>
             <div className="flex flex-wrap gap-1">
-              {interviewer.applicantRolePreferences.map((role, i) => (
+              {reviewingFor(interviewer).map((role, i) => (
                 <ApplicantRolePill key={i} role={role} />
               ))}
             </div>
