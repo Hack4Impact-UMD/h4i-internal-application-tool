@@ -189,6 +189,14 @@ export async function updateUserRoles(userIds: string[], role: PermissionRole) {
   await batch.commit();
 }
 
+export async function updateUserActiveStatus(userId: string, inactive: boolean) {
+  const users = collection(db, USER_COLLECTION);
+  const userDoc = doc(users, userId);
+  await updateDoc(userDoc, {
+    inactive: inactive,
+  });
+}
+
 export async function deleteUsers(userIds: string[]) {
   const batch = writeBatch(db);
   const users = collection(db, USER_COLLECTION);

@@ -40,7 +40,8 @@ router.post("/register", [validateSchema(userRegisterFormSchema)], async (req: R
       role: "applicant", // by default, everyone is set to applicant. higher privelages can only be assigned by super-reviewers
       dateCreated: Timestamp.now(),
       activeApplications: [],
-      inactiveApplications: []
+      inactiveApplications: [],
+      inactive: false // active by default
     }
 
     await collection.doc(userRecord.uid).create(user)

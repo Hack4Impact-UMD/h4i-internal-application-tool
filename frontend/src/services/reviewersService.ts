@@ -33,7 +33,10 @@ export async function getRolePreferencesForReviewer(
 
 export async function getAllReviewers(): Promise<ReviewerUserProfile[]> {
   const users = collection(db, USERS_COLLECTION);
-  const q = query(users, where("role", "==", PermissionRole.Reviewer));
+  const q = query(users,
+    where("role", "==", PermissionRole.Reviewer),
+    where("inactive", "!=", true)
+  );
 
   return (await getDocs(q)).docs.map((d) => d.data() as ReviewerUserProfile);
 }
@@ -45,6 +48,7 @@ export async function getReviewersForRole(
   const q = query(
     users,
     where("role", "==", PermissionRole.Reviewer),
+    where("inactive", "!=", true),
     where("applicantRolePreferences", "array-contains", role),
   );
   return (await getDocs(q)).docs.map((d) => d.data() as ReviewerUserProfile);

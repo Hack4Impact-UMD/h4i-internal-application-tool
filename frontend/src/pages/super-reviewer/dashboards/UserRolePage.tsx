@@ -2,7 +2,7 @@ import UserTable from "@/components/admin/UserTable";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import Loading from "@/components/Loading";
 import { useUsers } from "@/hooks/useUsers";
-import { deleteUsers, updateUserRoles } from "@/services/userService";
+import { deleteUsers, updateUserActiveStatus, updateUserRoles } from "@/services/userService";
 import { PermissionRole, UserProfile } from "@/types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -10,7 +10,47 @@ export default function UserRolePage() {
   const { data: users, isPending, error } = useUsers();
   const queryClient = useQueryClient();
 
-  const roleMutation = useMutation({
+  const { mutate: setUserActiveStatus } = useMutation({
+    mutationFn: ({
+      user,
+      inactive
+    }: {
+      user: UserProfile,
+      inactive: boolean
+    }) => updateUserActiveStatus(user.id, inactive),
+    onMutate: async ({ user, inactive }) => {
+      await queryClient.cancelQueries({ queryKey: ["users", "all"] });
+      const prevUsers = queryClient.getQueryData<UserProfile[]>(["users", "all"]);
+
+      queryClient.setQueryData<UserProfile[]>(["users", "all"], old =>
+        old?.map((prevUser) => {
+          if (prevUser.id === user.id) {
+            return {
+              ...prevUser,
+              inactive: inactive ?? false,
+            };
+          } else {
+            return prevUser;
+          }
+        }),
+      );
+
+      return { prevUsers };
+    },
+    onError: (err, update, ctx) => {
+      throwErrorToast("Failed to update user active status!");
+      console.error("Active status update failed");
+      console.error(err);
+      console.error("Update:", update);
+      queryClient.setQueryData(["users", "all"], ctx?.prevUsers);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["users", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["reviewers"] });
+    },
+  })
+
+  const { mutate: setUsersRoles } = useMutation({
     mutationFn: ({
       users,
       role,
@@ -26,11 +66,11 @@ export default function UserRolePage() {
     onMutate: async ({ users, role }) => {
       await queryClient.cancelQueries({ queryKey: ["users", "all"] });
       const prevUsers = queryClient.getQueryData(["users", "all"]);
-      const uids = users.map((u) => u.id);
+      const uids = new Set(users.map((u) => u.id));
 
       queryClient.setQueryData(["users", "all"], (old: UserProfile[]) =>
         old.map((user) => {
-          if (uids.includes(user.id)) {
+          if (uids.has(user.id)) {
             return {
               ...user,
               role: role,
@@ -55,7 +95,7 @@ export default function UserRolePage() {
     },
   });
 
-  const deleteMutation = useMutation({
+  const { mutate: bulkDeleteUsers } = useMutation({
     mutationFn: (users: UserProfile[]) => {
       return deleteUsers(users.map((u) => u.id));
     },
@@ -90,26 +130,20 @@ export default function UserRolePage() {
 
   if (isPending) return <Loading />;
 
-  function handleDelete(users: UserProfile[]) {
-    deleteMutation.mutate(users);
-  }
-
-  function handleRoleChange(users: UserProfile[], role: PermissionRole) {
-    roleMutation.mutate({ users: users, role: role });
-  }
 
   return (
-    <div className="p-4 w-full flex flex-col items-center">
-      <div className="w-full max-w-5xl">
+    <div className="p-4 w-full flex flex-col items-center bg-lightgray">
+      <div className="w-full max-w-5xl bg-white p-4 rounded">
         <h1 className="font-bold text-xl mb-5 pt-5">Manage Users</h1>
         {error ? (
           <p>An error occurred while loading user data: {error.message}</p>
         ) : (
           <UserTable
             users={users ?? []}
-            setUserRoles={handleRoleChange}
-            deleteUsers={handleDelete}
-          ></UserTable>
+            setUserRoles={(users, role) => setUsersRoles({ users, role })}
+            deleteUsers={(users) => bulkDeleteUsers(users)}
+            setActiveStatus={(user, inactive) => setUserActiveStatus({ user, inactive })}
+          />
         )}
       </div>
     </div>

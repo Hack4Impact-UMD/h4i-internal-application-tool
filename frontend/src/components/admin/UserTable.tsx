@@ -1,5 +1,5 @@
-import { ApplicantRole, PermissionRole, UserProfile } from "@/types/types";
-import { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { PermissionRole, UserProfile } from "@/types/types";
+import { ColumnDef, createColumnHelper, RowSelectionState } from "@tanstack/react-table";
 import { DataTable } from "../DataTable";
 import { Checkbox } from "../ui/checkbox";
 import { useMemo, useState } from "react";
@@ -22,21 +22,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { displayApplicantRoleName, displayUserRoleName } from "@/utils/display";
+import { displayUserRoleName } from "@/utils/display";
 import { throwErrorToast } from "../toasts/ErrorToast";
 import { Timestamp } from "firebase/firestore";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, TrashIcon } from "lucide-react";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type UserTableProps = {
   users: UserProfile[];
   setUserRoles: (users: UserProfile[], role: PermissionRole) => void;
   deleteUsers: (users: UserProfile[]) => void;
+  setActiveStatus: (user: UserProfile, inactive: boolean) => void;
 };
 
 export default function UserTable({
   users,
   setUserRoles,
   deleteUsers,
+  setActiveStatus
 }: UserTableProps) {
   const [searchFilter, setSearchFilter] = useState("");
   const [toUpdate, setToUpdate] = useState<UserProfile[]>([]);
@@ -176,11 +181,11 @@ export default function UserTable({
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2 max-h-32 overflow-y-scroll">
-          <textarea
+          <Textarea
             className="w-full min-h-32 border rounded-sm p-1 text-sm bg-lightgray"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-          ></textarea>
+          />
         </div>
         <DialogFooter className="sm:justify-start flex">
           <DialogClose asChild className="grow">
@@ -198,15 +203,16 @@ export default function UserTable({
     );
   }
 
-  const columns: ColumnDef<UserProfile>[] = useMemo(
+  const columnHelper = createColumnHelper<UserProfile>()
+  const columns = useMemo(
     () => [
-      {
+      columnHelper.display({
         id: "select",
         cell: ({ row }) => {
           return (
             <div>
               <Checkbox
-                className="size-4"
+                className="size-5"
                 checked={row.getIsSelected()}
                 onClick={() => row.toggleSelected()}
               />
@@ -217,16 +223,16 @@ export default function UserTable({
           return (
             <div>
               <Checkbox
+                className="size-5"
                 checked={table.getIsAllRowsSelected()}
                 onClick={() => table.toggleAllRowsSelected()}
               />
             </div>
           );
         },
-      },
-      {
-        id: "Name",
-        accessorFn: (profile) => `${profile.firstName} ${profile.lastName}`,
+      }),
+      columnHelper.accessor((profile) => `${profile.firstName} ${profile.lastName}`, {
+        id: "name",
         header: ({ column }) => {
           return (
             <Button
@@ -249,9 +255,8 @@ export default function UserTable({
             </Button>
           );
         },
-      },
-      {
-        accessorKey: "id",
+      }),
+      columnHelper.accessor("id", {
         header: ({ column }) => {
           return (
             <Button
@@ -274,9 +279,8 @@ export default function UserTable({
             </Button>
           );
         },
-      },
-      {
-        accessorKey: "email",
+      }),
+      columnHelper.accessor("email", {
         header: ({ column }) => {
           return (
             <Button
@@ -299,9 +303,8 @@ export default function UserTable({
             </Button>
           );
         },
-      },
-      {
-        accessorKey: "dateCreated",
+      }),
+      columnHelper.accessor("dateCreated", {
         header: ({ column }) => {
           return (
             <Button
@@ -334,25 +337,44 @@ export default function UserTable({
             </span>
           );
         },
-      },
-      {
-        id: "revRole",
-        header: () => <span>Rev. Role</span>,
-        cell: ({ row }) => {
-          const roles = (row.getValue("revRole") as ApplicantRole[]) ?? [];
-          return (
-            <div className="flex flex-row gap-1">
-              {roles.map((r) => (
-                <span className="rounded-full p-2 bg-amber-200">
-                  {displayApplicantRoleName(r)}
+      }),
+      columnHelper.accessor((user) => (user.inactive ?? false),
+        {
+          id: "inactive",
+          header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                className="p-0"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                <span className="items-center flex flex-row gap-1">
+                  DEPRECATED
+                  {column.getIsSorted() === false ? (
+                    <ArrowUpDown />
+                  ) : column.getIsSorted() === "desc" ? (
+                    <ArrowUp />
+                  ) : (
+                    <ArrowDown />
+                  )}
                 </span>
-              ))}
+              </Button>
+            );
+          },
+          cell: ({ getValue, row }) => {
+            const user = row.original;
+            return <div className="w-full flex items-center justify-center">
+              <Checkbox
+                className="size-5"
+                checked={getValue() ?? false}
+                onCheckedChange={(inactive) => setActiveStatus(user, inactive as boolean)}
+              />
             </div>
-          );
-        },
-      },
-      {
-        accessorKey: "role",
+          }
+        }),
+      columnHelper.accessor("role", {
         header: ({ column }) => {
           return (
             <Button
@@ -375,25 +397,29 @@ export default function UserTable({
             </Button>
           );
         },
-        cell: ({ row }) => {
-          const role = row.getValue("role") as string;
+        cell: ({ getValue, row }) => {
+          const role = getValue();
           return (
-            <select
-              value={role}
-              onChange={(e) =>
-                setUserRoles([row.original], e.target.value as PermissionRole)
-              }
-            >
-              {Object.entries(PermissionRole).map((e) => (
-                <option value={e[1]} key={e[1]}>
-                  {displayUserRoleName(e[1] as PermissionRole)}
-                </option>
-              ))}
-            </select>
+            <Select value={role} onValueChange={e =>
+              setUserRoles([row.original], e as PermissionRole)
+            }>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {Object.entries(PermissionRole).map((e) => (
+                    <SelectItem value={e[1]} key={e[1]}>
+                      {displayUserRoleName(e[1] as PermissionRole)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           );
         },
-      },
-      {
+      }),
+      columnHelper.display({
         id: "delete",
         cell: ({ row }) => {
           return (
@@ -401,26 +427,13 @@ export default function UserTable({
               className="cursor-pointer border rounded-sm p-2"
               onClick={() => setToUpdate([row.original])}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-4 stroke-red-400"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                />
-              </svg>
+              <TrashIcon className="size-4 text-red-600" />
             </DialogTrigger>
           );
         },
-      },
-    ],
-    [setUserRoles],
+      }),
+    ] as ColumnDef<UserProfile>[],
+    [columnHelper, setActiveStatus, setUserRoles],
   );
 
   const selectedUsers = useMemo(
@@ -435,11 +448,11 @@ export default function UserTable({
     <div>
       <div className="flex flex-row gap-2 mb-2">
         <div className="grow">
-          <input
+          <Input
             type="text"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            className="min-h-5 px-2 py-1 border-gray-400 border rounded-sm"
+            className="min-h-5 max-w-sm px-2 py-1 border-gray-400 border rounded-sm"
             placeholder="Search"
           />
         </div>

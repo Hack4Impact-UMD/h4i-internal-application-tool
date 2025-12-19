@@ -41,6 +41,7 @@ export interface IUserProfile {
   lastName: string;
   role: PermissionRole;
   dateCreated: Timestamp;
+  inactive?: boolean; // optional, true for inactive user. otherwise assumed to be active
 }
 
 export interface ApplicantUserProfile extends IUserProfile {

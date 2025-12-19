@@ -5,7 +5,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { throwErrorToast } from "../../components/toasts/ErrorToast";
-import { Eye, EyeOff, InfoIcon } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LogInCard() {
   const { login } = useAuth();
@@ -100,7 +100,7 @@ export default function LogInCard() {
         e.stopPropagation();
         handleSubmit();
       }}
-      className="flex flex-col items-center justify-around w-full p-4 max-w-[430px] min-h-screen"
+      className="flex flex-col items-center justify-center w-full p-4 max-w-[430px] min-h-screen gap-2"
     >
       <img src="h4i-logo.png" alt="h4i logo" className="h-[105px] w-[105px]" />
       <div className="flex flex-col items-center text-center w-[305px] h-[105px]">
@@ -108,20 +108,6 @@ export default function LogInCard() {
         <h3 className="text-lg text-darkgray">
           Let's get started by filling out your information below
         </h3>
-      </div>
-      <div className="flex gap-1 items-center bg-lightblue p-2 text-blue rounded text-sm border-blue border mb-2">
-        <InfoIcon className="size-32 inline pr-1" />
-        <div>
-          <span>
-            We are aware of an issue where some users may experience an
-            "insufficient permissions" error upon logging in.
-            <strong>
-              {" "}
-              If you experience this issue, we recommend signing out and then
-              signing back in to access the application.
-            </strong>
-          </span>
-        </div>
       </div>
       <TextBox
         inputType="text"
