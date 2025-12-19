@@ -26,4 +26,4 @@ export const db = admin.firestore()
 
 // uploadMockData()
 
-exports.api = onRequest(app);
+exports.api = onRequest({ region: "us-east4" }, app);
