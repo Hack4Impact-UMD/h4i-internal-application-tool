@@ -23,7 +23,7 @@ export const firebaseConfig = {
 
 export const API_URL =
   import.meta.env.MODE == "development"
-    ? "http://127.0.0.1:5001/h4i-applications/us-central1/api"
+    ? "http://127.0.0.1:5001/h4i-applications/us-east4/api"
     : "https://api-4orgfxckcq-uk.a.run.app";
 
 console.log(`CURRENTLY RUNNING IN ${import.meta.env.MODE} MODE!`);
