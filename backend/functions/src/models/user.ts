@@ -11,8 +11,9 @@ export type UserProfile = {
   role: UserRole;
   dateCreated: Timestamp;
   activeApplications?: string[];
-  inactiveApplications?: string[]
-  inactive?: boolean
+  inactiveApplications?: string[];
+  isInternal?: boolean;
+  inactive?: boolean;
 }
 
 export const userRegisterFormSchema = z.object({
