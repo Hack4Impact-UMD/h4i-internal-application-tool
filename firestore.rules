@@ -34,6 +34,10 @@ service cloud.firestore {
       let formDocPath = /databases/$(database)/documents/application-forms/$(response.applicationFormId);
       return exists(formDocPath) && request.time < get(formDocPath).data.dueDate;
     }
+
+    function isActive() {
+      return !getCurrentUser().data.get('inactive', false);
+    }
     
     match /users/{user_id} {
       // user documents can be read only by the user they represent or reviewers
@@ -75,15 +79,15 @@ service cloud.firestore {
 
     match /review-data/{review_id} {
       allow read: if (isReviewer() && hasID(resource.data.reviewerId)) || isSuperReviewer();
-      allow create: if isReviewer() && hasID(request.resource.data.reviewerId);
-      allow update: if isReviewer() && hasID(request.resource.data.reviewerId);
+      allow create: if isReviewer() && hasID(request.resource.data.reviewerId) && isActive();
+      allow update: if isReviewer() && hasID(request.resource.data.reviewerId) && isActive();
       allow delete: if isSuperReviewer() || hasID(resource.data.reviewerId);
     }
 
     match /interview-data/{review_id} {
       allow read: if (isReviewer() && hasID(resource.data.interviewerId)) || isBoard();
-      allow create: if isReviewer() && hasID(request.resource.data.interviewerId);
-      allow update: if isReviewer() && hasID(request.resource.data.interviewerId);
+      allow create: if isReviewer() && hasID(request.resource.data.interviewerId) && isActive();
+      allow update: if isReviewer() && hasID(request.resource.data.interviewerId) && isActive();
       allow delete: if isSuperReviewer() || hasID(resource.data.interviewerId);
     }
 
