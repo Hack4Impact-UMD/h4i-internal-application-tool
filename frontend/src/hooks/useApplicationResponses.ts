@@ -10,7 +10,6 @@ import {
 import {
   ApplicationForm,
   ApplicationResponse,
-  PermissionRole,
 } from "../types/types";
 import { getApplicationForm } from "../services/applicationFormsService";
 import { reviewCapable } from "@/services/reviewersService";

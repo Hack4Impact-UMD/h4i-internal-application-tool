@@ -10,8 +10,6 @@ import {
   ApplicationResponse,
   InterviewAssignment,
   InternalApplicationStatus,
-  PermissionRole,
-  ReviewerUserProfile,
   ReviewCapableUser,
 } from "@/types/types";
 import { calculateInterviewScore } from "@/utils/scores";

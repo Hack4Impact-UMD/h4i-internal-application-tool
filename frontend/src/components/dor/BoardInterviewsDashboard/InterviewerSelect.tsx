@@ -22,7 +22,6 @@ import {
   InterviewAssignment,
   PermissionRole,
   ReviewCapableUser,
-  ReviewerUserProfile,
 } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
@@ -131,11 +130,11 @@ export function InterviewerSelect({
 }: {
   onAdd: (interviewer: ReviewCapableUser) => void;
   onDelete: (
-    interviewer: ReviewerUserProfile,
+    interviewer: ReviewCapableUser,
     assignment: InterviewAssignment,
   ) => void;
   role: ApplicantRole;
-  interviewers: ReviewerUserProfile[];
+  interviewers: ReviewCapableUser[];
   assignments: InterviewAssignment[];
   responseId: string;
   disabled?: boolean;
@@ -144,7 +143,7 @@ export function InterviewerSelect({
   const [showPopover, setShowPopover] = useState(false);
   // Check if interview is complete for a given interviewer
   const complete = useCallback(
-    (interviewer: ReviewerUserProfile) => {
+    (interviewer: ReviewCapableUser) => {
       return interviews.find(
         (interview) =>
           interview.submitted &&
