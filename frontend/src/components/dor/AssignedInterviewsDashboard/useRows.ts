@@ -45,7 +45,7 @@ export function useRows(assignments: InterviewAssignment[], formId: string) {
             throw new Error("Invalid interviewer!");
 
           const row: AssignedAppRow = {
-            interviewer: interviewer as ReviewCapableUser,
+            interviewer: interviewer,
             applicantId: assignment.applicantId,
             interviewerName: `${interviewer.firstName} ${interviewer.lastName}`,
             index: 1 + index,

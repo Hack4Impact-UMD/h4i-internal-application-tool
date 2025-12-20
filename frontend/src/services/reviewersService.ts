@@ -74,6 +74,6 @@ export function reviewingFor(user: ReviewCapableUser) {
   }
 }
 
-export function reviewCapable(user: UserProfile) {
+export function reviewCapable(user: UserProfile): user is ReviewCapableUser {
   return REVIEW_CAPABLE_ROLES.includes(user.role);
 }

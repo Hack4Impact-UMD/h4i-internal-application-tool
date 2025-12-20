@@ -45,7 +45,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             throw new Error("Invalid reviewer!");
 
           const row: AssignedAppRow = {
-            reviewer: reviewer as ReviewCapableUser,
+            reviewer: reviewer,
             applicantId: assignment.applicantId,
             reviewerName: `${reviewer.firstName} ${reviewer.lastName}`,
             index: 1 + index,
