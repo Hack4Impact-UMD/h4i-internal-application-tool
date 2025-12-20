@@ -24,7 +24,7 @@ import {
 import { ReviewerRow, flattenRows, useRows } from "./useRows";
 import { RoleSelect } from "./RoleSelect";
 import { getReviewerById, reviewingFor } from "@/services/reviewersService";
-import { setReviewerRolePreferences } from "@/services/userService";
+import { setReviewCapableUserRolePreferences } from "@/services/userService";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { ExportButton } from "@/components/ExportButton";
@@ -63,7 +63,7 @@ export default function ReviewersTable({
     }) => {
       const prevRolePreferences = reviewingFor(await getReviewerById(reviewerId));
       const newRolePreferences = [...prevRolePreferences, roleToAdd];
-      return await setReviewerRolePreferences(reviewerId, newRolePreferences);
+      return await setReviewCapableUserRolePreferences(reviewerId, newRolePreferences);
     },
     onSuccess: () => {
       throwSuccessToast("Successfully added role preference!");
@@ -92,7 +92,7 @@ export default function ReviewersTable({
       const newRolePreferences = prevRolePreferences.filter(
         (role) => role != roleToRemove,
       );
-      return await setReviewerRolePreferences(reviewerId, newRolePreferences);
+      return await setReviewCapableUserRolePreferences(reviewerId, newRolePreferences);
     },
     onSuccess: () => {
       throwSuccessToast("Successfully removed role preference!");

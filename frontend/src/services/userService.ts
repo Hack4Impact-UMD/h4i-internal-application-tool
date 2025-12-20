@@ -206,6 +206,17 @@ export async function deleteUsers(userIds: string[]) {
   await batch.commit();
 }
 
+export async function setReviewCapableUserRolePreferences(reviewerId: string, prefs: ApplicantRole[]) {
+  const user = await getUserById(reviewerId);
+  if (user.role === PermissionRole.Reviewer) {
+    return await setReviewerRolePreferences(reviewerId, prefs);
+  } else if (user.role === PermissionRole.SuperReviewer) {
+    return await setBoardApplicantRoles(reviewerId, prefs);
+  } else {
+    throw new Error("Role preferences cannot be changed for this user.")
+  }
+}
+
 export async function setReviewerRolePreferences(
   reviewerId: string,
   prefs: ApplicantRole[],

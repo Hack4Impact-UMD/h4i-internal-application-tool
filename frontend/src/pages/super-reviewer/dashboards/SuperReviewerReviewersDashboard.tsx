@@ -16,6 +16,8 @@ export default function SuperReviewerReviewersDashboard() {
     isPending: reviewersPending,
     error: reviewersError,
   } = useAllReviewers();
+
+  console.log(reviewers)
   const {
     data: reviewData,
     isPending: dataPending,

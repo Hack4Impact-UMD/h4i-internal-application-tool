@@ -4,7 +4,7 @@ import {
   PermissionRole,
   ReviewCapableUser,
 } from "@/types/types";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { and, collection, getDocs, or, query, where } from "firebase/firestore";
 import { getUserById } from "./userService";
 
 const USERS_COLLECTION = "users";
@@ -36,10 +36,10 @@ export async function getAllReviewers(): Promise<ReviewCapableUser[]> {
   const users = collection(db, USERS_COLLECTION);
   const q = query(users,
     where("role", "in", REVIEW_CAPABLE_ROLES),
-    where("inactive", "!=", true)
   );
 
-  return (await getDocs(q)).docs.map((d) => d.data() as ReviewCapableUser);
+  // NOTE: for some reason, if the inactive field does not exist, querying on it never matches. we need to filter here instead. 
+  return (await getDocs(q)).docs.map((d) => d.data() as ReviewCapableUser).filter(r => !r.inactive);
 }
 
 export async function getReviewersForRole(
@@ -48,11 +48,17 @@ export async function getReviewersForRole(
   const users = collection(db, USERS_COLLECTION);
   const q = query(
     users,
-    where("role", "in", REVIEW_CAPABLE_ROLES),
-    where("inactive", "!=", true),
-    where("applicantRolePreferences", "array-contains", role),
+    and(
+      where("role", "in", REVIEW_CAPABLE_ROLES),
+      or(
+        where("applicantRolePreferences", "array-contains", role),
+        where("applicantRoles", "array-contains", role),
+        where("role", "==", PermissionRole.SuperReviewer)
+      )
+    ),
   );
-  return (await getDocs(q)).docs.map((d) => d.data() as ReviewCapableUser);
+  // NOTE: for some reason, if the inactive field does not exist, querying on it never matches. we need to filter here instead. 
+  return (await getDocs(q)).docs.map((d) => d.data() as ReviewCapableUser).filter(r => !r.inactive);
 }
 
 export function reviewingFor(user: ReviewCapableUser) {
