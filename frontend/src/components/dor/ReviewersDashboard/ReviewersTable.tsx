@@ -221,8 +221,6 @@ export default function ReviewersTable({
     error,
   } = useRows(reviewers, assignments, reviewData);
 
-  console.log("rows: ", rows)
-
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
 
