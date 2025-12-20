@@ -77,7 +77,7 @@ export function ReviewerSearchPopover({
         return true;
       }
     });
-  }, [reviewers, assignments, responseId]);
+  }, [reviewers, assignments, responseId, role]);
 
   if (isPending)
     return (
@@ -96,7 +96,7 @@ export function ReviewerSearchPopover({
   return (
     <Command>
       <CommandInput placeholder="Search Reviewers..." />
-      <CommandList>
+      <CommandList className="max-h-42 overflow-y-auto">
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
           {validReviewers

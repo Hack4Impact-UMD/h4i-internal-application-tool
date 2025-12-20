@@ -77,7 +77,7 @@ function InterviewerSearchPopover({
   return (
     <Command>
       <CommandInput placeholder="Search Interviewers..." />
-      <CommandList>
+      <CommandList className="max-h-42 overflow-y-auto">
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
           {validInterviewers?.map((interviewer) => (
