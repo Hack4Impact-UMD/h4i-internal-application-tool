@@ -222,7 +222,7 @@ export async function setReviewerRolePreferences(
   prefs: ApplicantRole[],
 ) {
   const user = await getUserById(reviewerId);
-  if (user.role != PermissionRole.Reviewer)
+  if (user.role !== PermissionRole.Reviewer)
     throw new Error("User is not a reviewer!");
 
   const users = collection(db, USER_COLLECTION);

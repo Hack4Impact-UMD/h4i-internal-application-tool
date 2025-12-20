@@ -1,18 +1,18 @@
 import { getReviewDataForAssignment } from "@/services/reviewDataService";
+import { reviewCapable } from "@/services/reviewersService";
 import { getUserById } from "@/services/userService";
 import {
   ApplicantRole,
   ApplicationReviewData,
   AppReviewAssignment,
-  PermissionRole,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import { calculateReviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
 
 export type AssignedAppRow = {
   index: number;
-  reviewer: ReviewerUserProfile;
+  reviewer: ReviewCapableUser;
   reviewerName: string;
   role: ApplicantRole;
   applicantId: string;
@@ -41,11 +41,11 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             getReviewDataForAssignment(assignment),
           ]);
 
-          if (!reviewer || reviewer.role !== PermissionRole.Reviewer)
+          if (!reviewer || !reviewCapable(reviewer))
             throw new Error("Invalid reviewer!");
 
           const row: AssignedAppRow = {
-            reviewer: reviewer,
+            reviewer: reviewer as ReviewCapableUser,
             applicantId: assignment.applicantId,
             reviewerName: `${reviewer.firstName} ${reviewer.lastName}`,
             index: 1 + index,
@@ -56,14 +56,14 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             score:
               review && review.submitted
                 ? {
-                    value: await calculateReviewScore(review).catch((err) => {
-                      console.warn(
-                        `Failed to calculate score for review ${assignment.id}: ${err}`,
-                      );
-                      return NaN;
-                    }),
-                    outOf: 4, // NOTE: All scores are assumed to be out of 4
-                  }
+                  value: await calculateReviewScore(review).catch((err) => {
+                    console.warn(
+                      `Failed to calculate score for review ${assignment.id}: ${err}`,
+                    );
+                    return NaN;
+                  }),
+                  outOf: 4, // NOTE: All scores are assumed to be out of 4
+                }
                 : undefined,
           };
 
