@@ -65,17 +65,13 @@ export default function ReviewersTable({
       const newRolePreferences = [...prevRolePreferences, roleToAdd];
       return await setReviewCapableUserRolePreferences(reviewerId, newRolePreferences);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["reviewers"] });
       throwSuccessToast("Successfully added role preference!");
     },
     onError: (error) => {
       throwErrorToast(`Failed to add role preference! (${error.message})`);
       console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("all-reviewers-rows"),
-      });
     },
   });
 
@@ -94,21 +90,13 @@ export default function ReviewersTable({
       );
       return await setReviewCapableUserRolePreferences(reviewerId, newRolePreferences);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["reviewers"] });
       throwSuccessToast("Successfully removed role preference!");
     },
     onError: (error) => {
       throwErrorToast(`Failed to remove role preference! (${error.message})`);
       console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("all-reviewers-rows"),
-      });
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          q.queryKey.includes("reviewers") || q.queryKey.includes("reviewer"),
-      });
     },
   });
 
@@ -224,7 +212,7 @@ export default function ReviewersTable({
           ),
         }),
       ] as ColumnDef<ReviewerRow>[],
-    [columnHelper],
+    [addRolePreferenceMutation, columnHelper, formId, navigate, pagination.pageIndex, removeRolePreferenceMutation],
   );
 
   const {
@@ -232,6 +220,8 @@ export default function ReviewersTable({
     isPending,
     error,
   } = useRows(reviewers, assignments, reviewData);
+
+  console.log("rows: ", rows)
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;

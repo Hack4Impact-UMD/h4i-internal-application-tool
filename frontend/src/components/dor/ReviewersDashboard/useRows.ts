@@ -35,7 +35,9 @@ export function useRows(
   return useQuery({
     queryKey: [
       "all-reviewers-rows",
-      reviewers.map((x) => x.id).sort(),
+      reviewers
+        .map((r) => `${r.id}-${reviewingFor(r).sort().join(",")}`)
+        .sort(),
       assignments.map((x) => x.id).sort(),
       reviewData.map((x) => x.id).sort(),
     ],

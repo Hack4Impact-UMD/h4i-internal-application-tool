@@ -210,7 +210,7 @@ export async function setReviewCapableUserRolePreferences(reviewerId: string, pr
   const user = await getUserById(reviewerId);
   if (user.role === PermissionRole.Reviewer) {
     return await setReviewerRolePreferences(reviewerId, prefs);
-  } else if (user.role === PermissionRole.SuperReviewer) {
+  } else if (user.role === PermissionRole.Board) {
     return await setBoardApplicantRoles(reviewerId, prefs);
   } else {
     throw new Error("Role preferences cannot be changed for this user.")

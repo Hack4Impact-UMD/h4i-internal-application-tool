@@ -13,7 +13,12 @@ export type BoardRow = {
 
 export function useRows(boardMembers: BoardUserProfile[]) {
   return useQuery({
-    queryKey: ["all-board-rows", boardMembers.map((x) => x.id).sort()],
+    queryKey: [
+      "all-board-rows",
+      boardMembers
+        .map((b) => `${b.id}-${(b.applicantRoles ?? []).sort().join(",")}`)
+        .sort(),
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () =>
       Promise.all(
