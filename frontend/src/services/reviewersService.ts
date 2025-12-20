@@ -3,6 +3,7 @@ import {
   ApplicantRole,
   PermissionRole,
   ReviewCapableUser,
+  UserProfile,
 } from "@/types/types";
 import { and, collection, getDocs, or, query, where } from "firebase/firestore";
 import { getUserById } from "./userService";
@@ -71,4 +72,8 @@ export function reviewingFor(user: ReviewCapableUser) {
   } else {
     return []
   }
+}
+
+export function reviewCapable(user: UserProfile) {
+  return REVIEW_CAPABLE_ROLES.includes(user.role);
 }

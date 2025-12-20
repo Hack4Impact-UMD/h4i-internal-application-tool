@@ -254,6 +254,14 @@ function App() {
                       path="dashboard/:formId/acceptance-confirmation"
                       element={<AcceptanceConfirmationDashboard />}
                     />
+                    <Route
+                      path="dashboard/:formId/assigned-review"
+                      element={<ReviewerApplicationsDashboard />}
+                    />
+                    <Route
+                      path="dashboard/:formId/assigned-interview"
+                      element={<ReviewerInterviewsDashboard />}
+                    />
                   </Route>
 
                   <Route
@@ -393,6 +401,14 @@ function App() {
                     <Route
                       path="interviews"
                       element={<BoardInterviewsDashboard />}
+                    />
+                    <Route
+                      path="assigned-review"
+                      element={<ReviewerApplicationsDashboard />}
+                    />
+                    <Route
+                      path="assigned-interview"
+                      element={<ReviewerInterviewsDashboard />}
                     />
                   </Route>
 
