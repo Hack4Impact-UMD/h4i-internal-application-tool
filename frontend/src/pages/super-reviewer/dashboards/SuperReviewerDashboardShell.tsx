@@ -136,89 +136,89 @@ export default function SuperReviewerDashboardShell() {
     <div className="w-full grow bg-lightgray flex flex-col items-center p-2 py-4">
       <div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
         <div className="flex gap-2 flex-row items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant={applicationsRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
-                  className="gap-1"
-                >
-                  Applications
-                  <ChevronDownIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Applications</DropdownMenuLabel>
-                {applicationsRoutes.map((route) => (
-                  <DropdownMenuItem key={route.path} asChild>
-                    <NavLink
-                      to={route.path}
-                      className={({ isActive }) =>
-                        `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
-                      }
-                    >
-                      <span>{route.label}</span>
-                      {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
-                    </NavLink>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={applicationsRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                className="gap-1"
+              >
+                Applications
+                <ChevronDownIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Applications</DropdownMenuLabel>
+              {applicationsRoutes.map((route) => (
+                <DropdownMenuItem key={route.path} asChild>
+                  <NavLink
+                    to={route.path}
+                    className={({ isActive }) =>
+                      `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
+                    }
+                  >
+                    <span>{route.label}</span>
+                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                  </NavLink>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant={assignmentsRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
-                  className="gap-1"
-                >
-                  My Assignments
-                  <ChevronDownIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Assignments</DropdownMenuLabel>
-                {assignmentsRoutes.map((route) => (
-                  <DropdownMenuItem key={route.path} asChild>
-                    <NavLink
-                      to={route.path}
-                      className={({ isActive }) =>
-                        `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
-                      }
-                    >
-                      <span>{route.label}</span>
-                      {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
-                    </NavLink>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={assignmentsRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                className="gap-1"
+              >
+                My Assignments
+                <ChevronDownIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>My Assignments</DropdownMenuLabel>
+              {assignmentsRoutes.map((route) => (
+                <DropdownMenuItem key={route.path} asChild>
+                  <NavLink
+                    to={route.path}
+                    className={({ isActive }) =>
+                      `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
+                    }
+                  >
+                    <span>{route.label}</span>
+                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                  </NavLink>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant={usersRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
-                  className="gap-1"
-                >
-                  Users
-                  <ChevronDownIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Users</DropdownMenuLabel>
-                {usersRoutes.map((route) => (
-                  <DropdownMenuItem key={route.path} asChild>
-                    <NavLink
-                      to={route.path}
-                      className={({ isActive }) =>
-                        `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
-                      }
-                    >
-                      <span>{route.label}</span>
-                      {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
-                    </NavLink>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={usersRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                className="gap-1"
+              >
+                Users
+                <ChevronDownIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Users</DropdownMenuLabel>
+              {usersRoutes.map((route) => (
+                <DropdownMenuItem key={route.path} asChild>
+                  <NavLink
+                    to={route.path}
+                    className={({ isActive }) =>
+                      `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
+                    }
+                  >
+                    <span>{route.label}</span>
+                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                  </NavLink>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Dialog open={rejectUndecidedMutation.isPending}>
             <DialogContent>
               <DialogHeader>
