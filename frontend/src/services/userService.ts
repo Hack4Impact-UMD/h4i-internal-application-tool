@@ -271,6 +271,7 @@ export async function createInternalApplicant(
   email: string,
   firstName: string,
   lastName: string,
+  formId: string,
   rolesApplied: ApplicantRole[],
   sectionResponses: SectionResponse[],
   token: string,
@@ -283,6 +284,7 @@ export async function createInternalApplicant(
       email,
       firstName,
       lastName,
+      formId,
       rolesApplied,
       sectionResponses,
     },
@@ -295,5 +297,5 @@ export async function createInternalApplicant(
   );
 
   // both user profile and response; should show name and response ID in confirmation
-  return res.data; 
+  return res.data;
 }
