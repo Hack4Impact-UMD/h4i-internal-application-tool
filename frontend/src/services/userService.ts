@@ -242,7 +242,7 @@ export async function setBoardApplicantRoles(
   roles: ApplicantRole[],
 ) {
   const user = await getUserById(boardId);
-  if (user.role != PermissionRole.Board)
+  if (user.role !== PermissionRole.Board)
     throw new Error("User is not a board member!");
 
   const users = collection(db, USER_COLLECTION);
