@@ -4,6 +4,7 @@ import {
   AppReviewAssignment,
   InternalApplicationStatus,
   ReviewerUserProfile,
+  ReviewStatus,
 } from "@/types/types";
 import {
   ColumnDef,
@@ -41,6 +42,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { displayReviewStatus } from "@/utils/display";
+import { throwWarningToast } from "@/components/toasts/WarningToast";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -57,10 +61,10 @@ export default function SuperReviewerApplicationsTable({
   rowCount = 20,
   roleFilter = "all",
 }: SuperReviewerApplicationsTableProps) {
-  // const navigate = useNavigate();
-  // const { user } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  const [statusFilter, setStatusFilter] = useState<"all" | ReviewStatus>("all");
 
   const addReviewerMutation = useMutation({
     mutationFn: async ({
@@ -236,35 +240,6 @@ export default function SuperReviewerApplicationsTable({
                 )}
               </span>
             );
-            /*
-            return (
-              <span className="flex items-center">
-                <span>{getValue()}</span>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Clipboard
-                      className="hover:bg-lightgray p-1 rounded cursor-pointer text-blue"
-                      size={24}
-                      onClick={async () => {
-                        try {
-                          await navigator.clipboard.writeText(
-                            row.original.applicant.email,
-                          );
-                          throwSuccessToast(
-                            `${row.original.applicant.email} added to clipboard!`,
-                          );
-                        } catch (err) {
-                          console.log("Failed to copy email:");
-                          console.log(err);
-                          throwErrorToast(`Failed to add email to clipboard.`);
-                        }
-                      }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>Copy Applicant Email</TooltipContent>
-                </Tooltip>
-              </span>
-            ); */
           },
         }),
         columnHelper.accessor("role", {
@@ -392,6 +367,18 @@ export default function SuperReviewerApplicationsTable({
             );
           },
         }),
+        columnHelper.accessor("status.status", {
+          id: "status",
+          header: ({ column }) => (
+            <SortableHeader column={column}>STATUS</SortableHeader>
+          ),
+          cell: ({ getValue }) => displayReviewStatus(getValue()),
+          filterFn: (row, columnId, filterValue) => {
+            const value = row.getValue(columnId);
+            if (filterValue === "all") return true;
+            else return filterValue === value;
+          },
+        }),
         columnHelper.display({
           id: "actions",
           header: () => (
@@ -447,37 +434,52 @@ export default function SuperReviewerApplicationsTable({
 
   const { data: rows, isPending, error } = useRows(applications, formId);
 
-  const handleCopy = useCallback(async () => {
+  const handleCopyEmails = useCallback(async () => {
     if (!rows || rows.length === 0) {
-      throwErrorToast("No applicants found!");
+      throwWarningToast("No data to copy");
       return;
     }
 
-    const emails = new Set(rows.map((r) => r.applicant.email));
-    const text = [...emails].join(",");
+    const filteredEmails = new Set(rows.filter(r => statusFilter === "all" || r.status?.status === statusFilter).map(r => r.applicant.email));
+    const text = [...filteredEmails].join(",");
 
     try {
       await navigator.clipboard.writeText(text);
-      throwSuccessToast(`Copied ${emails.size} email(s)!`);
+      throwSuccessToast(`Copied ${filteredEmails.size} email(s)!`);
     } catch (err) {
       console.log("Failed to copy emails: ", err);
       throwErrorToast("Failed to copy emails");
     }
-  }, [rows]);
+  }, [rows, statusFilter]);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
 
   return (
     <div className="flex flex-col w-full gap-2">
-      <div className="mt-2 flex items-end">
+      <div className="mt-2 flex items-center flex-row gap-2">
+        <span className="">Status: </span>
+        <Select value={statusFilter} onValueChange={v => setStatusFilter(v as "all" | ReviewStatus)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            {
+              Object.values(ReviewStatus).map(s => (
+                <SelectItem value={s} key={s}>
+                  {displayReviewStatus(s)}
+                </SelectItem>
+              )
+              )}
+          </SelectContent>
+        </Select>
         <Button
           className="ml-auto"
-          disabled={!rows || rows.length == 0}
-          variant={"outline"}
-          onClick={() => handleCopy()}
+          variant="outline"
+          onClick={handleCopyEmails}
         >
-          <ClipboardIcon /> Copy all applicant emails
+          <ClipboardIcon /> Copy {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant emails
         </Button>
       </div>
       <DataTable
@@ -496,6 +498,10 @@ export default function SuperReviewerApplicationsTable({
                 id: "role",
                 value: roleFilter,
               },
+              {
+                id: "status",
+                value: statusFilter
+              }
             ],
           },
         }}

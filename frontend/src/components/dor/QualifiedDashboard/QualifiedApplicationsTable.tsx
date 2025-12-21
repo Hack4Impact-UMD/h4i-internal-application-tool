@@ -443,7 +443,7 @@ export default function QualifiedApplicationsTable({
           variant="outline"
           onClick={handleCopyEmails}
         >
-          <ClipboardIcon /> Copy {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant emails
+          <ClipboardIcon /> Copy <span className="italic">qualified</span> {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant emails
         </Button>
       </div>
       <DataTable
