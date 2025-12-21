@@ -208,12 +208,27 @@ export async function deleteUsers(userIds: string[]) {
   await batch.commit();
 }
 
+export async function setReviewCapableUserRolePreferences(reviewerId: string, prefs: ApplicantRole[]) {
+  const user = await getUserById(reviewerId);
+  if (user.role === PermissionRole.Reviewer) {
+    return await setReviewerRolePreferences(reviewerId, prefs);
+  } else if (user.role === PermissionRole.Board) {
+    return await setBoardApplicantRoles(reviewerId, prefs);
+  } else if (user.role === PermissionRole.Applicant) {
+    throw new Error("Role preferences cannot be changed for applicants.")
+  } else if (user.role === PermissionRole.SuperReviewer) {
+    throw new Error("Role preferences cannot be changed for super-reviewers.")
+  } else {
+    throw new Error("Role preferences cannot be changed for this user.")
+  }
+}
+
 export async function setReviewerRolePreferences(
   reviewerId: string,
   prefs: ApplicantRole[],
 ) {
   const user = await getUserById(reviewerId);
-  if (user.role != PermissionRole.Reviewer)
+  if (user.role !== PermissionRole.Reviewer)
     throw new Error("User is not a reviewer!");
 
   const users = collection(db, USER_COLLECTION);
@@ -229,7 +244,7 @@ export async function setBoardApplicantRoles(
   roles: ApplicantRole[],
 ) {
   const user = await getUserById(boardId);
-  if (user.role != PermissionRole.Board)
+  if (user.role !== PermissionRole.Board)
     throw new Error("User is not a board member!");
 
   const users = collection(db, USER_COLLECTION);

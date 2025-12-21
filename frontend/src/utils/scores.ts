@@ -70,7 +70,7 @@ export function calculateScore(
 ): number {
   if (hasScoreKeyMismatch(weights, scores)) {
     throwWarningToast(
-      "Form and scores don't have matching keys, falling back to average scoring!",
+      `Form and scores don't have matching keys, falling back to average scoring! If you're seeing this, there is something wrong with the rubric and form configuration.`,
     );
     return roundScore(averageScore(scores), 2);
   }

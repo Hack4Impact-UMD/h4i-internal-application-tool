@@ -27,7 +27,6 @@ export function BoardMembersTable({
   boardMembers,
   search,
   rowCount = 20,
-  statusFilter,
 }: BoardMembersTableProps) {
   const queryClient = useQueryClient();
 
@@ -45,20 +44,13 @@ export function BoardMembersTable({
       const newRoles = [...prevRoles, roleToAdd];
       return await setBoardApplicantRoles(boardId, newRoles);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["board-members"] });
       throwSuccessToast("Successfully added role!");
     },
     onError: (error) => {
       throwErrorToast(`Failed to add role! (${error.message})`);
       console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("all-board-rows"),
-      });
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("board-members"),
-      });
     },
   });
 
@@ -76,20 +68,13 @@ export function BoardMembersTable({
       const newRoles = prevRoles.filter((role) => role != roleToRemove);
       return await setBoardApplicantRoles(boardId, newRoles);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["board-members"] });
       throwSuccessToast("Successfully removed role!");
     },
     onError: (error) => {
       throwErrorToast(`Failed to remove role! (${error.message})`);
       console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("all-board-rows"),
-      });
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("board-members"),
-      });
     },
   });
 
@@ -146,7 +131,7 @@ export function BoardMembersTable({
           },
         }),
       ] as ColumnDef<BoardRow>[],
-    [columnHelper, addRoleMutation.isPending, removeRoleMutation.isPending],
+    [columnHelper, addRoleMutation, removeRoleMutation, pagination.pageIndex],
   );
 
   const { data: rows, isPending, error } = useRows(boardMembers);
@@ -168,12 +153,6 @@ export function BoardMembersTable({
           state: {
             globalFilter: search,
             pagination,
-            columnFilters: [
-              {
-                id: "pending-assignments",
-                value: statusFilter,
-              },
-            ],
           },
         }}
       />

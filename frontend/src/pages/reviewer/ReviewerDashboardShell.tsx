@@ -1,4 +1,5 @@
 import DashboardShellLink from "@/components/reviewer/DashboardShellLink";
+import { Input } from "@/components/ui/input";
 import useSearch from "@/hooks/useSearch";
 import { Outlet, useParams } from "react-router-dom";
 
@@ -18,7 +19,7 @@ export default function ReviewerDashboardShell() {
             to={`/admin/reviewer/dashboard/${formId}/interviews`}
             name={"Assigned Interviews"}
           />
-          <input
+          <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="border border-gray-300 rounded-full px-2 py-1 text-sm w-full max-w-md ml-auto"

@@ -1,6 +1,7 @@
 import { getApplicantById } from "@/services/applicantService";
 import { getInterviewAssignmentsForApplication } from "@/services/interviewAssignmentService";
 import { getInterviewDataForResponseRole } from "@/services/interviewDataService";
+import { reviewCapable } from "@/services/reviewersService";
 import { getApplicationStatusForResponseRole } from "@/services/statusService";
 import { getUserById } from "@/services/userService";
 import {
@@ -9,8 +10,7 @@ import {
   ApplicationResponse,
   InterviewAssignment,
   InternalApplicationStatus,
-  PermissionRole,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import { calculateInterviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
@@ -23,7 +23,7 @@ export type QualifiedAppRow = {
   email: string;
   role: ApplicantRole;
   interviewers: {
-    assigned: ReviewerUserProfile[];
+    assigned: ReviewCapableUser[];
   };
   assignments: InterviewAssignment[];
   averageScore: number | null;
@@ -49,12 +49,12 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             await getInterviewAssignmentsForApplication(app.id)
           ).filter((a) => a.forRole === app.rolesApplied[0]);
           // Get all assigned interviewer profiles
-          const assignedInterviewers: ReviewerUserProfile[] = (
+          const assignedInterviewers: ReviewCapableUser[] = (
             await Promise.all(
               assignments.map((a) => getUserById(a.interviewerId)),
             )
           ).filter(
-            (u): u is ReviewerUserProfile => u.role === PermissionRole.Reviewer,
+            (u) => reviewCapable(u),
           );
           // Get interview data for this application/role
           const interviews = await getInterviewDataForResponseRole(

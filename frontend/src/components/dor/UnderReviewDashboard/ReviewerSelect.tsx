@@ -16,10 +16,13 @@ import {
 } from "@/components/ui/popover";
 import { useReviewersForRole } from "@/hooks/useReviewers";
 import { getReviewAssignments } from "@/services/reviewAssignmentService";
+import { reviewingFor } from "@/services/reviewersService";
 import {
   AppReviewAssignment,
   ApplicantRole,
   ApplicationReviewData,
+  PermissionRole,
+  ReviewCapableUser,
   ReviewerUserProfile,
 } from "@/types/types";
 import { useQueries } from "@tanstack/react-query";
@@ -27,7 +30,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 type ReviewerSelectProps = {
-  onAdd: (reviewer: ReviewerUserProfile) => void;
+  onAdd: (reviewer: ReviewCapableUser) => void;
   onDelete: (
     reviewer: ReviewerUserProfile,
     assignment: AppReviewAssignment,
@@ -42,7 +45,7 @@ type ReviewerSelectProps = {
 
 type ReviewerSearchPopoverProps = {
   role: ApplicantRole;
-  onSelect: (reviewer: ReviewerUserProfile) => void;
+  onSelect: (reviewer: ReviewCapableUser) => void;
   responseId: string;
 };
 
@@ -75,7 +78,7 @@ export function ReviewerSearchPopover({
         return true;
       }
     });
-  }, [reviewers, assignments, responseId]);
+  }, [reviewers, assignments, responseId, role]);
 
   if (isPending)
     return (
@@ -94,7 +97,7 @@ export function ReviewerSearchPopover({
   return (
     <Command>
       <CommandInput placeholder="Search Reviewers..." />
-      <CommandList>
+      <CommandList className="max-h-42 overflow-y-auto">
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
           {validReviewers
@@ -119,13 +122,24 @@ export function ReviewerSearchPopover({
                     )}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {reviewer.applicantRolePreferences.map((role) => (
-                      <ApplicantRolePill
-                        key={role}
-                        role={role}
-                        className="text-xs"
-                      />
-                    ))}
+                    {
+                      reviewer.role === PermissionRole.SuperReviewer ? (
+                        <span
+                          className={
+                            `text-xs bg-lightblue text-blue rounded-full px-2 py-1 text-center flex items-center max-w-fit justify-center`
+                          }
+                        >
+                          All Roles
+                        </span>
+                      ) : (
+                        reviewingFor(reviewer).map((role) => (
+                          <ApplicantRolePill
+                            key={role}
+                            role={role}
+                            className="text-xs"
+                          />)
+                        ))
+                    }
                   </div>
                 </CommandItem>
               );

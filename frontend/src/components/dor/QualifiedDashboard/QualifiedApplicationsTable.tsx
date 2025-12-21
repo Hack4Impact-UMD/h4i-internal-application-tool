@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import {
   ApplicantRole,
   ApplicationResponse,
-  ReviewerUserProfile,
   ReviewStatus,
   InternalApplicationStatus,
+  ReviewCapableUser,
 } from "@/types/types";
 import {
   createColumnHelper,
@@ -251,7 +251,7 @@ export default function QualifiedApplicationsTable({
             const interviews = row.original.interviews;
             const role = row.original.role;
 
-            const complete = (interviewer: ReviewerUserProfile) => {
+            const complete = (interviewer: ReviewCapableUser) => {
               return !!interviews.find(
                 (interview) =>
                   interview.submitted &&

@@ -3,8 +3,7 @@ import Section from "../../components/form/Section";
 import Timeline from "../../components/status/Timeline"; // Import Timeline component
 import useForm from "../../hooks/useForm";
 import { Button } from "../../components/ui/button";
-import { useEffect, useMemo, useState } from "react";
-import DataWarningDialog from "@/components/form/DataWarningDialog";
+import { useMemo } from "react";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 
 const ApplicationPage: React.FC = () => {
@@ -13,15 +12,6 @@ const ApplicationPage: React.FC = () => {
   // const location = useLocation();
   const navigate = useNavigate();
   const { sectionId } = useParams<{ sectionId: string }>();
-
-  const [dialogOpen, setDialogOpen] = useState(() => {
-    return sessionStorage.getItem("hasSeenDataWarning") !== "true";
-  });
-  useEffect(() => {
-    if (dialogOpen === false) {
-      sessionStorage.setItem("hasSeenDataWarning", "true");
-    }
-  }, [dialogOpen]);
 
   const {
     form,
@@ -105,10 +95,6 @@ const ApplicationPage: React.FC = () => {
 
   return (
     <>
-      <DataWarningDialog
-        open={dialogOpen}
-        onSubmit={() => setDialogOpen(false)}
-      />
       <div className="flex flex-col items-center justify-center p-3">
         <div className="w-full max-w-3xl overflow-x-auto p-2">
           <Timeline

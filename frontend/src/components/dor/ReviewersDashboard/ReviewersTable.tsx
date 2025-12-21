@@ -2,7 +2,7 @@ import {
   AppReviewAssignment,
   ApplicantRole,
   ApplicationReviewData,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import {
   ColumnDef,
@@ -23,15 +23,15 @@ import {
 } from "../../ui/dropdown-menu";
 import { ReviewerRow, flattenRows, useRows } from "./useRows";
 import { RoleSelect } from "./RoleSelect";
-import { getReviewerById } from "@/services/reviewersService";
-import { setReviewerRolePreferences } from "@/services/userService";
+import { getReviewerById, reviewingFor } from "@/services/reviewersService";
+import { setReviewCapableUserRolePreferences } from "@/services/userService";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { ExportButton } from "@/components/ExportButton";
 import SortableHeader from "@/components/tables/SortableHeader";
 
 type ReviewersTableProps = {
-  reviewers: ReviewerUserProfile[];
+  reviewers: ReviewCapableUser[];
   assignments: AppReviewAssignment[];
   reviewData: ApplicationReviewData[];
   search: string;
@@ -61,22 +61,17 @@ export default function ReviewersTable({
       reviewerId: string;
       pageIndex: number;
     }) => {
-      const prevRolePreferences = (await getReviewerById(reviewerId))
-        .applicantRolePreferences;
+      const prevRolePreferences = reviewingFor(await getReviewerById(reviewerId));
       const newRolePreferences = [...prevRolePreferences, roleToAdd];
-      return await setReviewerRolePreferences(reviewerId, newRolePreferences);
+      return await setReviewCapableUserRolePreferences(reviewerId, newRolePreferences);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["reviewers"] });
       throwSuccessToast("Successfully added role preference!");
     },
     onError: (error) => {
       throwErrorToast(`Failed to add role preference! (${error.message})`);
       console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("all-reviewers-rows"),
-      });
     },
   });
 
@@ -89,28 +84,19 @@ export default function ReviewersTable({
       reviewerId: string;
       pageIndex: number;
     }) => {
-      const prevRolePreferences = (await getReviewerById(reviewerId))
-        .applicantRolePreferences;
+      const prevRolePreferences = reviewingFor(await getReviewerById(reviewerId));
       const newRolePreferences = prevRolePreferences.filter(
         (role) => role != roleToRemove,
       );
-      return await setReviewerRolePreferences(reviewerId, newRolePreferences);
+      return await setReviewCapableUserRolePreferences(reviewerId, newRolePreferences);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["reviewers"] });
       throwSuccessToast("Successfully removed role preference!");
     },
     onError: (error) => {
       throwErrorToast(`Failed to remove role preference! (${error.message})`);
       console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.includes("all-reviewers-rows"),
-      });
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          q.queryKey.includes("reviewers") || q.queryKey.includes("reviewer"),
-      });
     },
   });
 
@@ -212,9 +198,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/board/reviewer/" +
-                          formId +
-                          "/" +
-                          row.original.reviewer.id,
+                        formId +
+                        "/" +
+                        row.original.reviewer.id,
                       );
                     }}
                   >
@@ -226,7 +212,7 @@ export default function ReviewersTable({
           ),
         }),
       ] as ColumnDef<ReviewerRow>[],
-    [columnHelper],
+    [addRolePreferenceMutation, columnHelper, formId, navigate, pagination.pageIndex, removeRolePreferenceMutation],
   );
 
   const {

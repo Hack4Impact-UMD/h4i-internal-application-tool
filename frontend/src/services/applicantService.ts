@@ -15,13 +15,7 @@ export async function getApplicantById(
   id: string,
 ): Promise<ApplicantUserProfile> {
   const user = await getUserById(id);
-  //NOTE: temporarily removing this check to facilitate testing
-
-  // if (user.role == PermissionRole.Applicant) {
   return user as ApplicantUserProfile;
-  // } else {
-  //   throw new Error("user is not an applicant");
-  // }
 }
 
 export async function getApplicantByEmail(
