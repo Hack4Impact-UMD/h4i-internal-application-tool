@@ -372,7 +372,10 @@ export default function SuperReviewerApplicationsTable({
           header: ({ column }) => (
             <SortableHeader column={column}>STATUS</SortableHeader>
           ),
-          cell: ({ getValue }) => displayReviewStatus(getValue()),
+          cell: ({ getValue }) => {
+            const status = getValue()
+            return status ? displayReviewStatus(status) : "N/A";
+          },
           filterFn: (row, columnId, filterValue) => {
             const value = row.getValue(columnId);
             if (filterValue === "all") return true;
