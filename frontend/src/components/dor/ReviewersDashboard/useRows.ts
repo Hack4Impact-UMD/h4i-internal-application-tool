@@ -1,8 +1,9 @@
+import { reviewingFor } from "@/services/reviewersService";
 import {
   AppReviewAssignment,
   ApplicantRole,
   ApplicationReviewData,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 
@@ -27,14 +28,16 @@ export type FlatReviewerRow = {
 };
 
 export function useRows(
-  reviewers: ReviewerUserProfile[],
+  reviewers: ReviewCapableUser[],
   assignments: AppReviewAssignment[],
   reviewData: ApplicationReviewData[],
 ) {
   return useQuery({
     queryKey: [
       "all-reviewers-rows",
-      reviewers.map((x) => x.id).sort(),
+      reviewers
+        .map((r) => `${r.id}-${reviewingFor(r).sort().join(",")}`)
+        .sort(),
       assignments.map((x) => x.id).sort(),
       reviewData.map((x) => x.id).sort(),
     ],
@@ -69,7 +72,7 @@ export function useRows(
               id: reviewer.id,
               name: `${reviewer.firstName} ${reviewer.lastName}`,
             },
-            rolePreferences: reviewer.applicantRolePreferences,
+            rolePreferences: reviewingFor(reviewer),
             assignments: assigned,
             pendingAssignments: assigned - submitted,
           };

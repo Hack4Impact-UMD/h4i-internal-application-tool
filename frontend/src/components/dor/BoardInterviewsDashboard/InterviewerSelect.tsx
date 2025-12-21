@@ -20,10 +20,12 @@ import {
   ApplicantRole,
   ApplicationInterviewData,
   InterviewAssignment,
-  ReviewerUserProfile,
+  PermissionRole,
+  ReviewCapableUser,
 } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
+import { reviewingFor } from "@/services/reviewersService";
 
 function InterviewerSearchPopover({
   role,
@@ -32,7 +34,7 @@ function InterviewerSearchPopover({
 }: {
   role: ApplicantRole;
   responseId: string;
-  onSelect: (interviewer: ReviewerUserProfile) => void;
+  onSelect: (interviewer: ReviewCapableUser) => void;
 }) {
   const {
     data: interviewers,
@@ -75,7 +77,7 @@ function InterviewerSearchPopover({
   return (
     <Command>
       <CommandInput placeholder="Search Interviewers..." />
-      <CommandList>
+      <CommandList className="max-h-42 overflow-y-auto">
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
           {validInterviewers?.map((interviewer) => (
@@ -89,13 +91,24 @@ function InterviewerSearchPopover({
                 {interviewer.firstName} {interviewer.lastName}
               </p>
               <div className="flex flex-wrap gap-1">
-                {interviewer.applicantRolePreferences?.map((role) => (
-                  <ApplicantRolePill
-                    key={role}
-                    role={role}
-                    className="text-xs"
-                  />
-                ))}
+                {
+                  interviewer.role === PermissionRole.SuperReviewer ? (
+                    <span
+                      className={
+                        `text-xs bg-lightblue text-blue rounded-full px-2 py-1 text-center flex items-center max-w-fit justify-center`
+                      }
+                    >
+                      All Roles
+                    </span>
+                  ) : (
+                    reviewingFor(interviewer).map((role) => (
+                      <ApplicantRolePill
+                        key={role}
+                        role={role}
+                        className="text-xs"
+                      />)
+                    ))
+                }
               </div>
             </CommandItem>
           ))}
@@ -115,13 +128,13 @@ export function InterviewerSelect({
   disabled = false,
   interviews,
 }: {
-  onAdd: (interviewer: ReviewerUserProfile) => void;
+  onAdd: (interviewer: ReviewCapableUser) => void;
   onDelete: (
-    interviewer: ReviewerUserProfile,
+    interviewer: ReviewCapableUser,
     assignment: InterviewAssignment,
   ) => void;
   role: ApplicantRole;
-  interviewers: ReviewerUserProfile[];
+  interviewers: ReviewCapableUser[];
   assignments: InterviewAssignment[];
   responseId: string;
   disabled?: boolean;
@@ -130,7 +143,7 @@ export function InterviewerSelect({
   const [showPopover, setShowPopover] = useState(false);
   // Check if interview is complete for a given interviewer
   const complete = useCallback(
-    (interviewer: ReviewerUserProfile) => {
+    (interviewer: ReviewCapableUser) => {
       return interviews.find(
         (interview) =>
           interview.submitted &&

@@ -10,9 +10,9 @@ import {
 import {
   ApplicationForm,
   ApplicationResponse,
-  PermissionRole,
 } from "../types/types";
 import { getApplicationForm } from "../services/applicationFormsService";
+import { reviewCapable } from "@/services/reviewersService";
 
 //gets the current user's application responses
 export function useMyApplicationResponses() {
@@ -68,11 +68,11 @@ export function useAssignedApplicationResponsesForForm(formId: string) {
     queryKey: ["responses", "assigned", user?.id, formId],
     enabled: !isLoading && isAuthed && formId != undefined,
     queryFn: async () => {
-      if (user?.role != PermissionRole.Reviewer)
+      if (!user || !reviewCapable(user))
         throw new Error(
           "Assigned application data is only available to reviewers!",
         );
-      return getAssignedApplicationResponsesByFormId(formId, user!.id);
+      return getAssignedApplicationResponsesByFormId(formId, user.id);
     },
   });
 }

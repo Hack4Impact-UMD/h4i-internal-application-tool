@@ -103,30 +103,40 @@ export default function SuperReviewerDashboardShell() {
     <div className="w-full grow bg-lightgray flex flex-col items-center p-2 py-4">
       <div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
         <div className="flex gap-2 flex-row items-center">
-          <DashboardShellLink
-            to={`/admin/dor/dashboard/${formId}/all`}
-            name="All Applications"
-          />
-          <DashboardShellLink
-            to={`/admin/dor/dashboard/${formId}/qualified`}
-            name="Qualified"
-          />
-          <DashboardShellLink
-            to={`/admin/dor/dashboard/${formId}/reviewers`}
-            name="Reviewers"
-          />
-          <DashboardShellLink
-            to={`/admin/dor/dashboard/${formId}/board`}
-            name="Board"
-          />
-          <DashboardShellLink
-            to={`/admin/dor/dashboard/${formId}/interviewers`}
-            name="Interviewers"
-          />
-          <DashboardShellLink
-            to={`/admin/dor/dashboard/${formId}/acceptance-confirmation`}
-            name="Confirmations"
-          />
+          <div className="flex gap-2 flex-row items-center overflow-x-scroll">
+            <DashboardShellLink
+              to={`/admin/dor/dashboard/${formId}/all`}
+              name="All Applications"
+            />
+            <DashboardShellLink
+              to={`/admin/dor/dashboard/${formId}/qualified`}
+              name="Qualified"
+            />
+            <DashboardShellLink
+              to={`/admin/dor/dashboard/${formId}/assigned-reviews`}
+              name="Assigned Reviews"
+            />
+            <DashboardShellLink
+              to={`/admin/dor/dashboard/${formId}/assigned-interviews`}
+              name="Assigned Interviews"
+            />
+            <DashboardShellLink
+              to={`/admin/dor/dashboard/${formId}/reviewers`}
+              name="Reviewers"
+            />
+            <DashboardShellLink
+              to={`/admin/dor/dashboard/${formId}/board`}
+              name="Board"
+            />
+            <DashboardShellLink
+              to={`/admin/dor/dashboard/${formId}/interviewers`}
+              name="Interviewers"
+            />
+            <DashboardShellLink
+              to={`/admin/dor/dashboard/${formId}/acceptance-confirmation`}
+              name="Confirmations"
+            />
+          </div>
           <Dialog open={rejectUndecidedMutation.isPending}>
             <DialogContent>
               <DialogHeader>
@@ -206,7 +216,7 @@ export default function SuperReviewerDashboardShell() {
               </AlertDialogHeader>
             </AlertDialogContent>
           </AlertDialog>
-          <input
+          <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="border border-gray-300 rounded-full px-2 py-1 text-sm w-full max-w-md ml-auto"
