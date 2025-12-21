@@ -4,11 +4,13 @@ import {
   ApplicantRole,
   ApplicationResponse,
   ApplicationStatus,
+  ReviewStatus,
 } from "@/types/types";
 import {
   applicantRoleColor,
   applicantRoleDarkColor,
   displayApplicantRoleName,
+  displayReviewStatus,
 } from "@/utils/display";
 import { useAllApplicationResponsesForForm } from "@/hooks/useApplicationResponses";
 import { useParams } from "react-router-dom";
@@ -17,10 +19,13 @@ import useSearch from "@/hooks/useSearch";
 import { useQuery } from "@tanstack/react-query";
 import { QualifiedApplicationsTable } from "@/components/dor/QualifiedDashboard";
 import { getQualifiedStatusesForForm } from "@/services/statusService";
+import { ClipboardIcon } from "lucide-react";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function QualifiedApplicationsDashboard() {
   const { formId } = useParams<{ formId: string }>();
   const [roleFilter, setRoleFilter] = useState<"all" | ApplicantRole>("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | ReviewStatus>("all");
   const { search } = useSearch();
 
   // Get all qualified statuses for this form
@@ -127,6 +132,7 @@ export default function QualifiedApplicationsDashboard() {
         })}
       </div>
       <QualifiedApplicationsTable
+        statusFilter={statusFilter}
         applications={qualifiedApps}
         formId={formId}
         search={search}

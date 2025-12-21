@@ -376,8 +376,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />
@@ -448,7 +448,7 @@ export default function SuperReviewerApplicationsTable({
   const { data: rows, isPending, error } = useRows(applications, formId);
 
   const handleCopy = useCallback(async () => {
-    if (!rows) {
+    if (!rows || rows.length === 0) {
       throwErrorToast("No applicants found!");
       return;
     }
