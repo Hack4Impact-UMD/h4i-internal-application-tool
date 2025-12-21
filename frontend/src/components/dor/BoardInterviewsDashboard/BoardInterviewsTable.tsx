@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   ApplicantRole,
   ApplicationResponse,
-  ReviewerUserProfile,
 } from "@/types/types";
 import {
   createColumnHelper,
@@ -19,7 +18,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import type { InterviewAssignment } from "@/types/types";
+import type { InterviewAssignment, ReviewCapableUser } from "@/types/types";
 import { ApplicationInterviewData } from "@/types/types";
 import { QualifiedAppRow, useRows } from "../QualifiedDashboard/useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
@@ -65,7 +64,7 @@ export default function BoardInterviewsTable({
       responseId,
       role,
     }: {
-      interviewer: ReviewerUserProfile;
+      interviewer: ReviewCapableUser;
       responseId: string;
       role: ApplicantRole;
     }) => {

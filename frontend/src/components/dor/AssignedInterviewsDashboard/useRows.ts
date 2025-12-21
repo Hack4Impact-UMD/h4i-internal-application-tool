@@ -1,18 +1,18 @@
 import { getInterviewDataForAssignment } from "@/services/interviewDataService";
+import { reviewCapable } from "@/services/reviewersService";
 import { getUserById } from "@/services/userService";
 import {
   ApplicantRole,
   ApplicationInterviewData,
   InterviewAssignment,
-  PermissionRole,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import { calculateInterviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
 
 export type AssignedAppRow = {
   index: number;
-  interviewer: ReviewerUserProfile;
+  interviewer: ReviewCapableUser;
   interviewerName: string;
   role: ApplicantRole;
   applicantId: string;
@@ -41,7 +41,7 @@ export function useRows(assignments: InterviewAssignment[], formId: string) {
             getInterviewDataForAssignment(assignment),
           ]);
 
-          if (!interviewer || interviewer.role !== PermissionRole.Reviewer)
+          if (!interviewer || !reviewCapable(interviewer))
             throw new Error("Invalid interviewer!");
 
           const row: AssignedAppRow = {
@@ -56,16 +56,16 @@ export function useRows(assignments: InterviewAssignment[], formId: string) {
             score:
               interview && interview.submitted
                 ? {
-                    value: await calculateInterviewScore(interview).catch(
-                      (err) => {
-                        console.warn(
-                          `Failed to calculate score for interview ${assignment.id}: ${err}`,
-                        );
-                        return NaN;
-                      },
-                    ),
-                    outOf: 4, // NOTE: All scores are assumed to be out of 4
-                  }
+                  value: await calculateInterviewScore(interview).catch(
+                    (err) => {
+                      console.warn(
+                        `Failed to calculate score for interview ${assignment.id}: ${err}`,
+                      );
+                      return NaN;
+                    },
+                  ),
+                  outOf: 4, // NOTE: All scores are assumed to be out of 4
+                }
                 : undefined,
           };
 

@@ -3,7 +3,7 @@ import {
   ApplicationResponse,
   AppReviewAssignment,
   InternalApplicationStatus,
-  ReviewerUserProfile,
+  ReviewCapableUser,
   ReviewStatus,
 } from "@/types/types";
 import {
@@ -73,7 +73,7 @@ export default function SuperReviewerApplicationsTable({
       role,
     }: {
       pageIndex: number;
-      reviewer: ReviewerUserProfile;
+      reviewer: ReviewCapableUser;
       responseId: string;
       role: ApplicantRole;
     }) => {
