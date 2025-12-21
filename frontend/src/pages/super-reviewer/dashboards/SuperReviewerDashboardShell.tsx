@@ -113,11 +113,11 @@ export default function SuperReviewerDashboardShell() {
               name="Qualified"
             />
             <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/assigned-review`}
+              to={`/admin/dor/dashboard/${formId}/assigned-reviews`}
               name="Assigned Reviews"
             />
             <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/assigned-interview`}
+              to={`/admin/dor/dashboard/${formId}/assigned-interviews`}
               name="Assigned Interviews"
             />
             <DashboardShellLink

@@ -212,6 +212,10 @@ export async function setReviewCapableUserRolePreferences(reviewerId: string, pr
     return await setReviewerRolePreferences(reviewerId, prefs);
   } else if (user.role === PermissionRole.Board) {
     return await setBoardApplicantRoles(reviewerId, prefs);
+  } else if (user.role === PermissionRole.Applicant) {
+    throw new Error("Role preferences cannot be changed for applicants.")
+  } else if (user.role === PermissionRole.SuperReviewer) {
+    throw new Error("Role preferences cannot be changed for super-reviewers.")
   } else {
     throw new Error("Role preferences cannot be changed for this user.")
   }

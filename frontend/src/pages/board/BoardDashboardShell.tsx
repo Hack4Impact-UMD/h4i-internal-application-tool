@@ -16,11 +16,11 @@ export default function BoardDashboardShell() {
             name={"Interviews"}
           />
           <DashboardShellLink
-            to={`/admin/board/dashboard/${formId}/assigned-review`}
+            to={`/admin/board/dashboard/${formId}/assigned-reviews`}
             name={"Assigned Reviews"}
           />
           <DashboardShellLink
-            to={`/admin/board/dashboard/${formId}/assigned-interview`}
+            to={`/admin/board/dashboard/${formId}/assigned-interviews`}
             name={"Assigned Interviews"}
           />
           <Input
