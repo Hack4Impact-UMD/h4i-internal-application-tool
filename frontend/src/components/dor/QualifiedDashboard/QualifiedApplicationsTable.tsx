@@ -176,6 +176,9 @@ export default function QualifiedApplicationsTable({
           predicate: (q) => q.queryKey.includes("qualified-apps-rows"),
         });
       }
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey.includes("all-apps-rows"),
+      });
     },
   });
 
@@ -443,7 +446,7 @@ export default function QualifiedApplicationsTable({
           variant="outline"
           onClick={handleCopyEmails}
         >
-          <ClipboardIcon /> Copy <span className="italic">qualified</span> {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant emails
+          <ClipboardIcon /> Copy {displayReviewStatus(statusFilter).toLocaleLowerCase()} <span className="italic">qualified</span> applicant emails
         </Button>
       </div>
       <DataTable
