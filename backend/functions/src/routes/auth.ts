@@ -162,7 +162,7 @@ router.post("/create-internal-applicant", [isAuthenticated, validateSchema(creat
 
     await applicationResponsesCollection.doc(applicationResponseId).set(newApplicationResponse);
 
-    const statusCollection = db.collection("internal-application-status") as CollectionReference<InternalApplicationStatus>;
+    const statusCollection = db.collection("app-status") as CollectionReference<InternalApplicationStatus>;
 
     for (const role of requestData.rolesApplied) {
       const statusId = uuidv4();

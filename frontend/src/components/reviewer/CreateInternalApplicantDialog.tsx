@@ -10,24 +10,37 @@ import {
   DialogClose,
 } from "../ui/dialog";
 import { Input } from "../ui/input";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApplicantRole } from "@/types/types";
 import { displayApplicantRoleName } from "@/utils/display";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-
-// TODO mutate service function next; form validation and management could be better
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createInternalApplicant } from "@/services/userService";
+import { useActiveForm } from "@/hooks/useApplicationForm";
+import { generateSectionResponses } from "@/utils/dummy-response";
+import { useAuth } from "@/hooks/useAuth";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
 
 export default function CreateInternalApplicantDialog() {
   const [open, setOpen] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
   const [rolesApplied, setRolesApplied] = useState<ApplicantRole[]>([]);
+
+  const queryClient = useQueryClient();
+
+  const {
+    data: appForm,
+    isPending: isLoadingForm,
+    error: formError
+  } = useActiveForm();
+
+  const { token } = useAuth();
 
   const reset = useCallback(() => {
     setFirstName("");
     setLastName("");
-    setEmail("");
     setRolesApplied([]);
   }, []);
 
@@ -35,16 +48,64 @@ export default function CreateInternalApplicantDialog() {
     if (!open) reset();
   }, [open, reset]);
 
-  const isValid =
+  const isValid = useMemo(() =>
     firstName.trim() !== "" &&
     lastName.trim() !== "" &&
-    email.trim() !== "" && // backend only validation
-    rolesApplied.length > 0;
+    rolesApplied.length > 0 &&
+    !!appForm
+  , [firstName, lastName, rolesApplied, appForm]);
+
+  const submitMutation = useMutation({
+    mutationFn: async () => {
+      if (!isValid || !appForm) {
+        throw new Error("Invalid input or form!");
+      }
+
+      if (!token) {
+        throw new Error("User must be authenticated!");
+      }
+
+      const tok = await token();
+      if (!tok) {
+        throw new Error("Failed to get authentication token!");
+      }
+
+      const sectionResponses = generateSectionResponses(
+        appForm.sections,
+        rolesApplied,
+        appForm.id
+      );
+
+      return createInternalApplicant(
+        firstName,
+        lastName,
+        appForm.id,
+        rolesApplied,
+        sectionResponses,
+        tok
+      );
+    },
+    onSuccess: (data) => {
+      throwSuccessToast(
+        `Created user ${data.user.firstName} ${data.user.lastName} with Qualified status!`
+      );
+
+      // backend route creates new user, response, and status objects
+      queryClient.invalidateQueries({ queryKey: ["users", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["responses", "form", appForm!.id] });
+      queryClient.invalidateQueries({ queryKey: ["status", data.applicationResponse.id] });
+
+      setOpen(false);
+    },
+    onError: (error) => {
+      throwErrorToast(`Failed to create internal applicant: ${error}`);
+    }
+  })
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!isValid) return;
-    setOpen(false);
+    submitMutation.mutate();
   };
 
   return (
@@ -89,16 +150,20 @@ export default function CreateInternalApplicantDialog() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
+              <label className="text-sm font-medium">
+                Application Form
               </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email"
-              />
+              <div className="px-3 py-2 border rounded-md bg-muted/50 text-sm">
+                {isLoadingForm ? (
+                  <p>Loading...</p>
+                ) : formError ? (
+                    <p className="text-destructive">Error loading form</p>
+                ) : appForm ? (
+                    <p>{appForm.id}</p>
+                ) : (
+                  <p className="text-destructive">No active form available</p>
+                )}
+              </div>
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium"> 
@@ -112,18 +177,20 @@ export default function CreateInternalApplicantDialog() {
                   value={rolesApplied}
                   onValueChange={(v) => setRolesApplied(v as ApplicantRole[])}
                 >
-                  {Object.entries(ApplicantRole).map((e) => (
-                    <ToggleGroupItem
-                    key={e[1]}
-                    value={e[1]}
-                    size={"lg"}
-                    className="data-[state=on]:bg-blue data-[state=on]:text-white cursor-pointer w-48"
-                    >
-                      <p className="overflow-x-hidden w-full">
-                        {displayApplicantRoleName(e[1])}
-                      </p>
-                    </ToggleGroupItem>
-                  ))}
+                  {Object.entries(ApplicantRole)
+                    .filter(([_, value]) => value !== ApplicantRole.Bootcamp)
+                    .map((e) => (
+                      <ToggleGroupItem
+                      key={e[1]}
+                      value={e[1]}
+                      size={"lg"}
+                      className="data-[state=on]:bg-blue data-[state=on]:text-white cursor-pointer w-48"
+                      >
+                        <p className="overflow-x-hidden w-full">
+                          {displayApplicantRoleName(e[1])}
+                        </p>
+                      </ToggleGroupItem>
+                    ))}
                 </ToggleGroup>
               </div>
             </div>
@@ -131,12 +198,12 @@ export default function CreateInternalApplicantDialog() {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={submitMutation.isPending}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={!isValid}>
-              Submit
+            <Button type="submit" disabled={!isValid || submitMutation.isPending}>
+              {submitMutation.isPending ? "Creating..." : "Submit"}
             </Button>
           </DialogFooter>
         </form>
