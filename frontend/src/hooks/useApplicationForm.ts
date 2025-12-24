@@ -64,6 +64,7 @@ export const useDuplicateForm = () => {
         id: newFormId,
         semester: newFormSemester,
         isActive: false,
+        decisionsReleased: false
       };
 
       return await createApplicationForm(newForm, token);
