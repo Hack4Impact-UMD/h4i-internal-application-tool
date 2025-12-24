@@ -128,6 +128,8 @@ router.post("/create-internal-applicant", [isAuthenticated, validateSchema(creat
     const usersCollection = db.collection("users") as CollectionReference<UserProfile>;
     const userId = uuidv4();
 
+    const batch = db.batch();
+
     const newUser: UserProfile = {
       id: userId,
       email: `dummy${uuidv4()}@uva.edu`,
@@ -141,7 +143,7 @@ router.post("/create-internal-applicant", [isAuthenticated, validateSchema(creat
       inactive: false
     };
 
-    await usersCollection.doc(userId).set(newUser);
+    batch.set(usersCollection.doc(userId), newUser);
 
     logger.info(`created internal applicant ${newUser.firstName} ${newUser.lastName} with ID: ${newUser.id}`);
 
@@ -160,7 +162,7 @@ router.post("/create-internal-applicant", [isAuthenticated, validateSchema(creat
       dateSubmitted: Timestamp.now()
     };
 
-    await applicationResponsesCollection.doc(applicationResponseId).set(newApplicationResponse);
+    batch.set(applicationResponsesCollection.doc(applicationResponseId), newApplicationResponse);
 
     const statusCollection = db.collection("app-status") as CollectionReference<InternalApplicationStatus>;
 
@@ -175,9 +177,12 @@ router.post("/create-internal-applicant", [isAuthenticated, validateSchema(creat
         isQualified: true
       };
 
-      await statusCollection.doc(statusId).set(newStatus);
+      batch.set(statusCollection.doc(statusId), newStatus);
     }
+
+    await batch.commit();
     logger.info(`submitted response and qualified status documents for internal applicant ${userId}`);
+
 
     return res.status(200).json({
       user: newUser,
