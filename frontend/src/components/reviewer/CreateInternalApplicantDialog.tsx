@@ -53,7 +53,7 @@ export default function CreateInternalApplicantDialog() {
     lastName.trim() !== "" &&
     rolesApplied.length > 0 &&
     !!appForm
-  , [firstName, lastName, rolesApplied, appForm]);
+    , [firstName, lastName, rolesApplied, appForm]);
 
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -91,9 +91,11 @@ export default function CreateInternalApplicantDialog() {
       );
 
       // backend route creates new user, response, and status objects
-      queryClient.invalidateQueries({ queryKey: ["users", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["responses", "form", appForm!.id] });
       queryClient.invalidateQueries({ queryKey: ["status", data.applicationResponse.id] });
+      queryClient.invalidateQueries({ queryKey: ["qualified-apps-rows"] });
+      queryClient.invalidateQueries({ queryKey: ["all-apps-rows"] });
 
       setOpen(false);
     },
@@ -123,7 +125,7 @@ export default function CreateInternalApplicantDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-full overflow-x-auto">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-full overflow-x-hidden">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <label htmlFor="firstName" className="text-sm font-medium">
@@ -157,17 +159,17 @@ export default function CreateInternalApplicantDialog() {
                 {isLoadingForm ? (
                   <p>Loading...</p>
                 ) : formError ? (
-                    <p className="text-destructive">Error loading form</p>
+                  <p className="text-destructive">Error loading form</p>
                 ) : appForm ? (
-                    <p>{appForm.id}</p>
+                  <p>{appForm.id}</p>
                 ) : (
                   <p className="text-destructive">No active form available</p>
                 )}
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium"> 
-                Roles Applied (select at least one!) 
+              <label className="text-sm font-medium">
+                Roles Applied (select at least one!)
               </label>
               <div className="overflow-x-scroll">
                 <ToggleGroup
@@ -177,17 +179,17 @@ export default function CreateInternalApplicantDialog() {
                   value={rolesApplied}
                   onValueChange={(v) => setRolesApplied(v as ApplicantRole[])}
                 >
-                  {Object.entries(ApplicantRole)
-                    .filter(([_, value]) => value !== ApplicantRole.Bootcamp)
-                    .map((e) => (
+                  {Object.values(ApplicantRole)
+                    .filter(value => value !== ApplicantRole.Bootcamp)
+                    .map((role) => (
                       <ToggleGroupItem
-                      key={e[1]}
-                      value={e[1]}
-                      size={"lg"}
-                      className="data-[state=on]:bg-blue data-[state=on]:text-white cursor-pointer w-48"
+                        key={role}
+                        value={role}
+                        size={"lg"}
+                        className="data-[state=on]:bg-blue data-[state=on]:text-white cursor-pointer w-48"
                       >
                         <p className="overflow-x-hidden w-full">
-                          {displayApplicantRoleName(e[1])}
+                          {displayApplicantRoleName(role)}
                         </p>
                       </ToggleGroupItem>
                     ))}
