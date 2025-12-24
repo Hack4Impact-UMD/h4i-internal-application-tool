@@ -268,7 +268,6 @@ export function authStateSnapshot() {
 }
 
 export async function createInternalApplicant(
-  email: string,
   firstName: string,
   lastName: string,
   formId: string,
@@ -281,7 +280,6 @@ export async function createInternalApplicant(
   const res = await axios.post(
     API_URL + "/auth/create-internal-applicant",
     {
-      email,
       firstName,
       lastName,
       formId,

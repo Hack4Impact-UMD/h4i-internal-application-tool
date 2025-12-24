@@ -37,7 +37,6 @@ export const updateUserSchema = z.object({
 })
 
 export const createInternalApplicantSchema = z.object({
-  email: z.string().email("Must provide a valid email"),
   firstName: z.string().nonempty("First name can't be empty"),
   lastName: z.string().nonempty("Last name can't be empty"),
   formId: z.string().nonempty("Form ID can't be empty"),

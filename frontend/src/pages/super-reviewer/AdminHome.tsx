@@ -17,7 +17,6 @@ import { useUploadRubrics } from "@/hooks/useRubrics";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { useUploadInterviewRubrics } from "@/hooks/useInterviewRubrics";
 import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
-import ReviewerRoleSelectDialog from "@/components/reviewer/ReviewerRoleSelectDialog";
 
 export default function AdminHome() {
   const navigate = useNavigate();
