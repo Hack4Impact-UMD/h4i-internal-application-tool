@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,6 +32,7 @@ import {
   Clipboard,
   EllipsisVertical,
   AlertTriangle,
+  ClipboardIcon,
 } from "lucide-react";
 import {
   Tooltip,
@@ -46,6 +47,8 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
+import { displayReviewStatus } from "@/utils/display";
+import { throwWarningToast } from "@/components/toasts/WarningToast";
 
 function StatusSelect({
   currentStatus,
@@ -77,8 +80,7 @@ function StatusSelect({
             ReviewStatus.Denied,
           ].map((status) => (
             <SelectItem key={status} value={status}>
-              {status.charAt(0).toUpperCase() +
-                status.slice(1).replace(/-/g, " ")}
+              {displayReviewStatus(status)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -115,6 +117,7 @@ export default function QualifiedApplicationsTable({
     pageIndex: 0,
     pageSize: rowCount,
   });
+  const [statusFilter, setStatusFilter] = useState<"all" | ReviewStatus>("all");
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -173,6 +176,9 @@ export default function QualifiedApplicationsTable({
           predicate: (q) => q.queryKey.includes("qualified-apps-rows"),
         });
       }
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey.includes("all-apps-rows"),
+      });
     },
   });
 
@@ -343,6 +349,11 @@ export default function QualifiedApplicationsTable({
               />
             );
           },
+          filterFn: (row, columnId, filterValue) => {
+            const value = row.getValue(columnId);
+            if (filterValue === "all") return true;
+            else return filterValue === value;
+          },
         }),
         columnHelper.display({
           id: "actions",
@@ -386,14 +397,58 @@ export default function QualifiedApplicationsTable({
           ),
         }),
       ] as ColumnDef<QualifiedAppRow>[],
-    [columnHelper, updateStatusMutation],
+    [columnHelper, formId, navigate, updateStatusMutation],
   );
+
+  const handleCopyEmails = useCallback(async () => {
+    if (!rows || rows.length === 0) {
+      throwWarningToast("No data to copy");
+      return;
+    }
+
+    const filteredEmails = new Set(rows.filter(r => statusFilter === "all" || r.status?.status === statusFilter).map(r => r.email));
+    const text = [...filteredEmails].join(",");
+
+    try {
+      await navigator.clipboard.writeText(text);
+      throwSuccessToast(`Copied ${filteredEmails.size} email(s)!`);
+    } catch (err) {
+      console.log("Failed to copy emails: ", err);
+      throwErrorToast("Failed to copy emails");
+    }
+
+  }, [rows, statusFilter])
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
 
   return (
     <div className="flex flex-col w-full gap-2">
+      <div className="mt-2 flex items-center flex-row gap-2">
+        <span className="">Status: </span>
+        <Select value={statusFilter} onValueChange={v => setStatusFilter(v as "all" | ReviewStatus)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            {
+              Object.values(ReviewStatus).map(s => (
+                <SelectItem value={s} key={s}>
+                  {displayReviewStatus(s)}
+                </SelectItem>
+              )
+              )}
+          </SelectContent>
+        </Select>
+        <Button
+          className="ml-auto"
+          variant="outline"
+          onClick={handleCopyEmails}
+        >
+          <ClipboardIcon /> Copy {displayReviewStatus(statusFilter).toLocaleLowerCase()} <span className="italic">qualified</span> applicant emails
+        </Button>
+      </div>
       <DataTable
         columns={cols}
         data={rows ?? []}
@@ -409,6 +464,10 @@ export default function QualifiedApplicationsTable({
               {
                 id: "role",
                 value: roleFilter,
+              },
+              {
+                id: "status",
+                value: statusFilter,
               },
             ],
           },

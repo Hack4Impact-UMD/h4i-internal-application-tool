@@ -1,3 +1,4 @@
+import { CheckIcon, XIcon } from "lucide-react";
 import { toast } from "react-toastify";
 
 type SuccessToastProps = {
@@ -10,12 +11,10 @@ export default function SuccessToast({
   closeToast,
 }: SuccessToastProps) {
   return (
-    <div className="bg-green-100 text-black border border-green-300 rounded-xl shadow-lg p-4 flex items-start justify-center gap-2 max-w-md z-50">
-      <span>✅</span>
-      <div className="flex-1 text-sm">{message}</div>
-      <span onClick={closeToast} className="cursor-pointer">
-        X
-      </span>
+    <div className="bg-green-100 text-black border border-green-300 rounded-xl shadow-lg p-4 flex items-center justify-center gap-2 max-w-md z-50">
+      <CheckIcon className="size-6 text-green-500" />
+      <span className="flex-1 text-sm text-green-500">{message}</span>
+      <XIcon onClick={closeToast} className="size-4 text-green-500 cursor-pointer" />
     </div>
   );
 }

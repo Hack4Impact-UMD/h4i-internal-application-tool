@@ -1,4 +1,3 @@
-import DashboardShellLink from "@/components/reviewer/DashboardShellLink";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import {
@@ -36,13 +35,14 @@ import {
   rejectUndecidedApplicantsForForm,
 } from "@/services/statusService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { RadioIcon, ShieldIcon, StopCircleIcon } from "lucide-react";
-import { useState } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { RadioIcon, ShieldIcon, StopCircleIcon, ChevronDownIcon, CheckIcon } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Outlet, useParams, useLocation, NavLink } from "react-router-dom";
 
 export default function SuperReviewerDashboardShell() {
   const { search, setSearch } = useSearch();
   const { formId } = useParams<{ formId: string }>();
+  const location = useLocation();
   const {
     data: form,
     isPending: formPending,
@@ -99,44 +99,126 @@ export default function SuperReviewerDashboardShell() {
     },
   });
 
+  const isActiveRoute = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const base = `/admin/dor/dashboard/${formId}`;
+
+  const applicationsRoutes = useMemo(() => ([
+    { path: `${base}/all`, label: "All Applications", category: "Applications" },
+    { path: `${base}/qualified`, label: "Qualified", category: "Applications" },
+    { path: `${base}/acceptance-confirmation`, label: "Confirmations", category: "Applications" },
+  ]), [base]);
+
+  const assignmentsRoutes = useMemo(() => ([
+    { path: `${base}/assigned-reviews`, label: "Assigned Reviews", category: "My Assignments" },
+    { path: `${base}/assigned-interviews`, label: "Assigned Interviews", category: "My Assignments" },
+  ]), [base]);
+
+  const usersRoutes = useMemo(() => ([
+    { path: `${base}/reviewers`, label: "Reviewers", category: "Users" },
+    { path: `${base}/interviewers`, label: "Interviewers", category: "Users" },
+    { path: `${base}/board`, label: "Board", category: "Users" },
+  ]), [base]);
+
+  const allRoutes = useMemo(
+    () => [...applicationsRoutes, ...assignmentsRoutes, ...usersRoutes],
+    [applicationsRoutes, assignmentsRoutes, usersRoutes]
+  );
+
+  const currentPage = useMemo(
+    () => allRoutes.find(r => r.path === location.pathname),
+    [allRoutes, location.pathname]
+  );
+
   return (
     <div className="w-full grow bg-lightgray flex flex-col items-center p-2 py-4">
       <div className="max-w-5xl w-full rounded bg-white p-4 flex flex-col gap-2">
         <div className="flex gap-2 flex-row items-center">
-          <div className="flex gap-2 flex-row items-center overflow-x-scroll">
-            <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/all`}
-              name="All Applications"
-            />
-            <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/qualified`}
-              name="Qualified"
-            />
-            <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/assigned-reviews`}
-              name="Assigned Reviews"
-            />
-            <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/assigned-interviews`}
-              name="Assigned Interviews"
-            />
-            <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/reviewers`}
-              name="Reviewers"
-            />
-            <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/board`}
-              name="Board"
-            />
-            <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/interviewers`}
-              name="Interviewers"
-            />
-            <DashboardShellLink
-              to={`/admin/dor/dashboard/${formId}/acceptance-confirmation`}
-              name="Confirmations"
-            />
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={applicationsRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                className="gap-1"
+              >
+                Applications
+                <ChevronDownIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Applications</DropdownMenuLabel>
+              {applicationsRoutes.map((route) => (
+                <DropdownMenuItem key={route.path} asChild>
+                  <NavLink
+                    to={route.path}
+                    className={({ isActive }) =>
+                      `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
+                    }
+                  >
+                    <span>{route.label}</span>
+                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                  </NavLink>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={assignmentsRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                className="gap-1"
+              >
+                My Assignments
+                <ChevronDownIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>My Assignments</DropdownMenuLabel>
+              {assignmentsRoutes.map((route) => (
+                <DropdownMenuItem key={route.path} asChild>
+                  <NavLink
+                    to={route.path}
+                    className={({ isActive }) =>
+                      `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
+                    }
+                  >
+                    <span>{route.label}</span>
+                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                  </NavLink>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={usersRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                className="gap-1"
+              >
+                Users
+                <ChevronDownIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Users</DropdownMenuLabel>
+              {usersRoutes.map((route) => (
+                <DropdownMenuItem key={route.path} asChild>
+                  <NavLink
+                    to={route.path}
+                    className={({ isActive }) =>
+                      `cursor-pointer flex items-center justify-between ${isActive ? "bg-accent" : ""}`
+                    }
+                  >
+                    <span>{route.label}</span>
+                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                  </NavLink>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Dialog open={rejectUndecidedMutation.isPending}>
             <DialogContent>
               <DialogHeader>
@@ -223,6 +305,14 @@ export default function SuperReviewerDashboardShell() {
             placeholder="Search"
           />
         </div>
+        
+        {currentPage && (
+          <div className="text-sm text-muted-foreground px-1">
+            <span className="font-medium">{currentPage.category}</span>
+            <span className="mx-1">›</span>
+            <span>{currentPage.label}</span>
+          </div>
+        )}
         <Outlet />
       </div>
     </div>

@@ -1,10 +1,14 @@
-import { ApplicantRole, PermissionRole } from "@/types/types";
+import { ApplicantRole, PermissionRole, ReviewStatus } from "@/types/types";
 
 export function displayUserRoleName(role: PermissionRole) {
   if (role == PermissionRole.SuperReviewer) return "Super Reviewer";
   else if (role == PermissionRole.Board) return "Board Member";
   else if (role == PermissionRole.Applicant) return "Applicant";
   else return "Reviewer";
+}
+
+export function displayReviewStatus(status: ReviewStatus | "all") {
+  return status.charAt(0).toUpperCase() + status.slice(1).replace(/-/g, " ");
 }
 
 export function displayApplicantRoleName(
