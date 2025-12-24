@@ -77,7 +77,7 @@ export default function FormBuilderPage() {
 
       const confirmed = window.confirm(
         `Are you sure you want to upload this application form?\n\n` +
-          `This will create/update the form with ID '${parsedForm.id}' in Firestore.`,
+        `This will create/update the form with ID '${parsedForm.id}' in Firestore.`,
       );
 
       if (!confirmed || !token) return;
@@ -220,7 +220,8 @@ export default function FormBuilderPage() {
                           responses={[]}
                           responseId="preview"
                           disabled={true}
-                          onChangeResponse={() => {}}
+                          onChangeResponse={() => { }}
+                          disabledRoles={previewForm.disabledRoles ?? []}
                         />
                       </div>
                     ))}

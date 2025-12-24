@@ -67,6 +67,29 @@ function validateResponses(applicationResponse: ApplicationResponse, application
     ]
   }
 
+  if (applicationForm.disabledRoles !== undefined) {
+    const disabledRoles = applicationForm.disabledRoles;
+    const appliedDisabled = applicationResponse.rolesApplied.some(r => disabledRoles.includes(r))
+
+    let roleSelectQuestion: QuestionResponse | undefined;
+    let sectionId: string | undefined;
+    for (const section of applicationResponse.sectionResponses) {
+      roleSelectQuestion = section.questions.find(q => q.questionType == QuestionType.RoleSelect);
+      sectionId = section.sectionId
+      if (roleSelectQuestion) break;
+    }
+
+    if (appliedDisabled) {
+      return [
+        {
+          questionId: roleSelectQuestion!.questionId,
+          sectionId: sectionId!,
+          message: "You cannot apply for disabled roles"
+        }
+      ]
+    }
+  }
+
   // validate each response
   for (const section of applicationResponse.sectionResponses) {
     const formSection = applicationForm.sections.find(s => s.sectionId == section.sectionId);

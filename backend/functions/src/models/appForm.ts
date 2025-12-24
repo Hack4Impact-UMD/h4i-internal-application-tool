@@ -27,7 +27,8 @@ export const ApplicationFormSchema = z.object({
   semester: z.string(),
   description: z.string(),
   sections: z.array(ApplicationSectionSchema),
-  decisionsReleased: z.boolean().default(false)
+  decisionsReleased: z.boolean().default(false),
+  disabledRoles: z.array(z.nativeEnum(ApplicantRole)).optional()
 })
 
 export type ApplicationSection = z.infer<typeof ApplicationSectionSchema>;

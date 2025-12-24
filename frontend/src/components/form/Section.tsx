@@ -26,15 +26,17 @@ interface SectionProps {
   validationErrors?: ValidationError[];
   onChangeResponse?: (questionId: string, value: string | string[]) => void;
   responseId: string;
+  disabledRoles?: ApplicantRole[]
 }
 
 const Section: React.FC<SectionProps> = ({
   section,
   responses,
-  onChangeResponse = () => {},
+  onChangeResponse = () => { },
   validationErrors,
   disabled = false,
   responseId,
+  disabledRoles = []
 }) => {
   const { setSelectedRoles } = useForm();
   return (
@@ -130,10 +132,12 @@ const Section: React.FC<SectionProps> = ({
                 errorMessage={validationError?.message}
                 isRequired={true}
                 label={
-                  "You are encouraged to apply to multiple roles at the same time if you believe they are a good fit."
+                  `You are encouraged to apply to multiple roles at the same time if you believe they are a good fit.
+
+${(disabledRoles && disabledRoles.length > 0) ? `**Note: Applications for ${disabledRoles.map(role => displayApplicantRoleName(role)).join(", ")} are closed.**` : ""}`
                 }
                 value={Array.isArray(response) ? response : []}
-                options={Object.values(ApplicantRole)}
+                options={Object.values(ApplicantRole).filter(role => !disabledRoles.includes(role))}
                 onOptionSelect={(value) => {
                   console.log("setting selected roles to: ", value);
                   onChangeResponse(question.questionId, value ?? []);

@@ -101,7 +101,8 @@ export default function AppSubmitPage() {
                     (r) => r.sectionId == s.sectionId,
                   )!.questions
                 }
-                onChangeResponse={() => {}}
+                onChangeResponse={() => { }}
+                disabledRoles={form.disabledRoles ?? []}
               />
             </div>
           ))}

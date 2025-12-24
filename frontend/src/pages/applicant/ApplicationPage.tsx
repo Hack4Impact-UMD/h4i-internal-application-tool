@@ -114,6 +114,7 @@ const ApplicationPage: React.FC = () => {
             section={currentSection}
             responses={responses}
             onChangeResponse={handleResponseChange}
+            disabledRoles={form.disabledRoles ?? []}
           />
 
           <div className="flex gap-1 mt-4">
