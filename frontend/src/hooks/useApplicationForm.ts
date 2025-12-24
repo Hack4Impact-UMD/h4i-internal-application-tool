@@ -15,11 +15,12 @@ export function useAllApplicationForms() {
   });
 }
 
-export function useApplicationForm(formId?: string) {
+export function useApplicationForm(formId?: string, refetch: boolean = true) {
   return useQuery<ApplicationForm>({
     queryKey: ["form", formId],
     queryFn: () => getApplicationForm(formId!),
     enabled: formId != undefined,
+    refetchOnWindowFocus: refetch
   });
 }
 
@@ -37,6 +38,38 @@ export const useUploadApplicationForm = () => {
       createApplicationForm(form, token),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["form", "all"] });
+    },
+  });
+};
+
+export const useDuplicateForm = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      originalForm,
+      newFormId,
+      newFormSemester,
+      token,
+    }: {
+      originalForm: ApplicationForm;
+      newFormId: string;
+      newFormSemester: string;
+      token: string;
+    }) => {
+      const existingForms = await getAllForms();
+      if (existingForms.some(form => form.id === newFormId)) throw new Error("Form ID already exists");
+
+      const newForm: ApplicationForm = {
+        ...originalForm,
+        id: newFormId,
+        semester: newFormSemester,
+        isActive: false,
+      };
+
+      return await createApplicationForm(newForm, token);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["form"] });
     },
   });
 };

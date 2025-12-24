@@ -357,7 +357,7 @@ function App() {
                   />
 
                   <Route
-                    path="dor/form-builder"
+                    path="dor/form-builder/:formId"
                     element={
                       <RequireAuth
                         requireRoles={[PermissionRole.SuperReviewer]}

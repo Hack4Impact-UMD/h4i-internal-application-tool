@@ -16,6 +16,7 @@ import {
   applicantRoleColor,
   applicantRoleDarkColor,
   displayApplicantRoleName,
+  displayApplicantRoleNameNoEmoji,
 } from "@/utils/display";
 import FormMarkdown from "./FormMarkdown";
 
@@ -134,7 +135,7 @@ const Section: React.FC<SectionProps> = ({
                 label={
                   `You are encouraged to apply to multiple roles at the same time if you believe they are a good fit.
 
-${(disabledRoles && disabledRoles.length > 0) ? `**Note: Applications for ${disabledRoles.map(role => displayApplicantRoleName(role)).join(", ")} are closed.**` : ""}`
+${(disabledRoles && disabledRoles.length > 0) ? `**Note: Applications for ${disabledRoles.map(role => displayApplicantRoleNameNoEmoji(role)).join(", ")} are closed.**` : ""}`
                 }
                 value={Array.isArray(response) ? response : []}
                 options={Object.values(ApplicantRole).filter(role => !disabledRoles.includes(role))}

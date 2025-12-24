@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -12,12 +12,14 @@ import FormMarkdown from "@/components/form/FormMarkdown";
 import { ApplicationForm, ApplicationSection } from "@/types/formBuilderTypes";
 import {
   useUploadApplicationForm,
-  useActiveForm,
+  useApplicationForm,
 } from "@/hooks/useApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
 import { Timestamp } from "firebase/firestore";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import Loading from "@/components/Loading";
+import { useParams } from "react-router-dom";
+import { Switch } from "@/components/ui/switch";
 
 export default function FormBuilderPage() {
   const [jsonCode, setJsonCode] = useState(() =>
@@ -25,7 +27,9 @@ export default function FormBuilderPage() {
   );
   const [previewForm, setPreviewForm] = useState<ApplicationForm | null>(null);
   const [compileError, setCompileError] = useState<string | null>(null);
+  const [autoCompile, setAutoCompile] = useState(false);
 
+  const { formId } = useParams()
   const { token } = useAuth();
   const {
     mutate: uploadForm,
@@ -38,15 +42,16 @@ export default function FormBuilderPage() {
     data: activeForm,
     isPending: isLoadingForm,
     error: loadFormError,
-  } = useActiveForm();
+  } = useApplicationForm(formId, false);
 
   // Load active form into the editor
   useEffect(() => {
-    if (activeForm) {
+    if (activeForm && formId !== previewForm?.id) {
       try {
         // Convert Timestamp to ISO string for better readability
         const formWithDateString = {
           ...activeForm,
+          id: formId,
           dueDate: activeForm.dueDate.toDate().toISOString(),
         };
 
@@ -57,27 +62,35 @@ export default function FormBuilderPage() {
         throwErrorToast("Failed to load active form into editor");
       }
     }
-  }, [activeForm]);
+  }, [activeForm, formId, previewForm?.id]);
 
-  const handleCompile = () => {
+  const handleCompile = useCallback(() => {
     try {
       const parsedForm = JSON.parse(jsonCode) as ApplicationForm;
-      setPreviewForm(parsedForm);
+      setPreviewForm({ ...parsedForm, id: formId ?? "" });
       setCompileError(null);
     } catch (error) {
       console.error("Invalid JSON:", error);
       setCompileError(error instanceof Error ? error.message : "Invalid JSON");
-      setPreviewForm(null);
+      // setPreviewForm(null);
     }
-  };
+  }, [formId, jsonCode]);
+
+  useEffect(() => {
+    if (autoCompile)
+      handleCompile()
+  }, [autoCompile, handleCompile, jsonCode])
 
   const handleUploadForm = async () => {
     try {
-      const parsedForm = JSON.parse(jsonCode) as ApplicationForm;
+      const parsedForm = {
+        ...JSON.parse(jsonCode),
+        id: formId ?? ""
+      } as ApplicationForm;
 
       const confirmed = window.confirm(
         `Are you sure you want to upload this application form?\n\n` +
-        `This will create/update the form with ID '${parsedForm.id}' in Firestore.`,
+        `This will update the form with ID '${parsedForm.id}' in Firestore.`,
       );
 
       if (!confirmed || !token) return;
@@ -127,6 +140,10 @@ export default function FormBuilderPage() {
     }
   };
 
+  if (!formId) {
+    return <p>Form ID not specified!</p>
+  }
+
   if (isLoadingForm) {
     return <Loading />;
   }
@@ -150,10 +167,10 @@ export default function FormBuilderPage() {
 
   return (
     <div className="p-4 w-full flex flex-col items-center h-[calc(100vh-4rem)] overflow-hidden">
-      <div className="w-full max-w-[95vw] h-full flex flex-col">
-        <div className="flex justify-between items-center mb-3 pt-5 flex-shrink-0">
+      <div className="w-full max-w-8xl h-full flex flex-col">
+        <div className="flex justify-between items-center flex-shrink-0">
           <h1 className="font-bold text-2xl">Form Builder</h1>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Button
               onClick={handleCompile}
               className="bg-blue hover:bg-blue/80"
@@ -167,6 +184,10 @@ export default function FormBuilderPage() {
             >
               {isUploadingForm ? "Uploading..." : "Upload Form"}
             </Button>
+            <div className="flex items-center gap-2">
+              <span>Auto-compile</span>
+              <Switch checked={autoCompile} onCheckedChange={setAutoCompile} id="airplane-mode h-5" />
+            </div>
           </div>
         </div>
 
@@ -178,7 +199,7 @@ export default function FormBuilderPage() {
         {formUploadError && (
           <p className="mt-2 text-sm text-red-600">{formUploadError.message}</p>
         )}
-        <ResizablePanelGroup direction="horizontal" className="flex-1 min-h-0">
+        <ResizablePanelGroup direction="horizontal" className="flex-1 mt-2 min-h-0">
           <ResizablePanel defaultSize={50} minSize={30}>
             <CodeEditor
               value={jsonCode}
@@ -194,43 +215,46 @@ export default function FormBuilderPage() {
               <div className="bg-gray-800 px-4 py-2 border-b border-gray-300">
                 <h3 className="text-md font-medium text-white">Form Preview</h3>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-                {compileError ? (
-                  <div className="text-red-600 text-center py-8">
+              <div className="flex flex-col h-full relative">
+                {compileError && (
+                  <div className="text-red-600 bg-white/90 text-center py-8 flex flex-col items-center justify-center absolute top-0 left-0 right-0 bottom-0">
                     <h4 className="font-semibold mb-2">Compilation Error</h4>
-                    <p className="text-sm">{compileError}</p>
-                  </div>
-                ) : previewForm ? (
-                  <div className="space-y-6">
-                    <div className="bg-white p-4 rounded-md shadow-sm border">
-                      <h2 className="text-2xl font-bold mb-2">
-                        {previewForm.semester}
-                      </h2>
-                      <FormMarkdown className="text-gray-600 mb-4">
-                        {previewForm.description}
-                      </FormMarkdown>
-                    </div>
-                    {previewForm.sections.map((section: ApplicationSection) => (
-                      <div
-                        key={section.sectionId}
-                        className="bg-white p-4 rounded-md shadow-sm border"
-                      >
-                        <Section
-                          section={section}
-                          responses={[]}
-                          responseId="preview"
-                          disabled={true}
-                          onChangeResponse={() => { }}
-                          disabledRoles={previewForm.disabledRoles ?? []}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-gray-500 text-center py-8 text-lg">
-                    Click "Compile" to preview your form
+                    <p className="text-sm font-bold">{compileError}</p>
                   </div>
                 )}
+                <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
+                  {previewForm ? (
+                    <div className="space-y-6">
+                      <div className="bg-white p-4 rounded-md shadow-sm border">
+                        <h2 className="text-2xl font-bold mb-2">
+                          {previewForm.semester}
+                        </h2>
+                        <FormMarkdown className="text-gray-600 mb-4">
+                          {previewForm.description}
+                        </FormMarkdown>
+                      </div>
+                      {previewForm.sections.map((section: ApplicationSection) => (
+                        <div
+                          key={section.sectionId}
+                          className="bg-white p-4 rounded-md shadow-sm border"
+                        >
+                          <Section
+                            section={section}
+                            responses={[]}
+                            responseId="preview"
+                            disabled={true}
+                            onChangeResponse={() => { }}
+                            disabledRoles={previewForm.disabledRoles ?? []}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-gray-500 text-center py-8 text-lg">
+                      Click "Compile" to preview your form
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </ResizablePanel>
