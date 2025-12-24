@@ -130,7 +130,7 @@ router.post("/create-internal-applicant", [isAuthenticated, validateSchema(creat
 
     const newUser: UserProfile = {
       id: userId,
-      email: "dummy@uva.edu",
+      email: `dummy${uuidv4()}@uva.edu`,
       firstName: requestData.firstName,
       lastName: requestData.lastName,
       role: "applicant",
