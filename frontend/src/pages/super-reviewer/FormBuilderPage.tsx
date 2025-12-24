@@ -171,6 +171,10 @@ export default function FormBuilderPage() {
         <div className="flex justify-between items-center flex-shrink-0">
           <h1 className="font-bold text-2xl">Form Builder</h1>
           <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <span>Auto-compile</span>
+              <Switch checked={autoCompile} onCheckedChange={setAutoCompile} className="h-5" />
+            </div>
             <Button
               onClick={handleCompile}
               className="bg-blue hover:bg-blue/80"
@@ -184,10 +188,6 @@ export default function FormBuilderPage() {
             >
               {isUploadingForm ? "Uploading..." : "Upload Form"}
             </Button>
-            <div className="flex items-center gap-2">
-              <span>Auto-compile</span>
-              <Switch checked={autoCompile} onCheckedChange={setAutoCompile} id="airplane-mode h-5" />
-            </div>
           </div>
         </div>
 

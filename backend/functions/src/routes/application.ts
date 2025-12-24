@@ -49,7 +49,7 @@ function validateResponses(applicationResponse: ApplicationResponse, application
     )
   );
 
-  if (applicationResponse.rolesApplied.length == 0) {
+  const findRoleSelect = () => {
     let roleSelectQuestion: QuestionResponse | undefined;
     let sectionId: string | undefined;
     for (const section of applicationResponse.sectionResponses) {
@@ -58,6 +58,11 @@ function validateResponses(applicationResponse: ApplicationResponse, application
       if (roleSelectQuestion) break;
     }
 
+    return { roleSelectQuestion, sectionId };
+  }
+
+  if (applicationResponse.rolesApplied.length == 0) {
+    const { roleSelectQuestion, sectionId } = findRoleSelect();
     return [
       {
         questionId: roleSelectQuestion!.questionId,
@@ -70,14 +75,7 @@ function validateResponses(applicationResponse: ApplicationResponse, application
   if (applicationForm.disabledRoles !== undefined) {
     const disabledRoles = applicationForm.disabledRoles;
     const appliedDisabled = applicationResponse.rolesApplied.some(r => disabledRoles.includes(r))
-
-    let roleSelectQuestion: QuestionResponse | undefined;
-    let sectionId: string | undefined;
-    for (const section of applicationResponse.sectionResponses) {
-      roleSelectQuestion = section.questions.find(q => q.questionType == QuestionType.RoleSelect);
-      sectionId = section.sectionId
-      if (roleSelectQuestion) break;
-    }
+    const { roleSelectQuestion, sectionId } = findRoleSelect();
 
     if (appliedDisabled) {
       return [
