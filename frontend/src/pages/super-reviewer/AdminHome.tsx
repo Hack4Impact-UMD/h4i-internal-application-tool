@@ -16,6 +16,7 @@ import {
 import { useUploadRubrics } from "@/hooks/useRubrics";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { useUploadInterviewRubrics } from "@/hooks/useInterviewRubrics";
+import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
 
 export default function AdminHome() {
   const navigate = useNavigate();
@@ -168,12 +169,12 @@ export default function AdminHome() {
               View all registered users, grant reviewer access, edit roles, and
               delete user accounts.
             </p>
-            <Button
-              className="mt-4"
-              onClick={() => navigate("/admin/dor/users")}
-            >
-              Manage Users
-            </Button>
+            <div className="mt-4 flex gap-2">
+              <Button onClick={() => navigate("/admin/dor/users")}>
+                Manage Users
+              </Button>
+              <CreateInternalApplicantDialog />
+            </div>
           </div>
           <div className="max-w-5xl w-full p-4 bg-white rounded-md">
             <h1 className="text-xl">Or Manage Forms </h1>

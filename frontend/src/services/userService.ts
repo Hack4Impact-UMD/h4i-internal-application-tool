@@ -19,9 +19,11 @@ import {
 } from "firebase/firestore";
 import {
   ApplicantRole,
+  ApplicationResponse,
   BoardUserProfile,
   PermissionRole,
   ReviewerUserProfile,
+  SectionResponse,
   UserProfile,
 } from "../types/types";
 import { throwErrorToast } from "../components/toasts/ErrorToast";
@@ -263,4 +265,35 @@ export function onAuthStateChange(
 
 export function authStateSnapshot() {
   return auth.currentUser;
+}
+
+export async function createInternalApplicant(
+  firstName: string,
+  lastName: string,
+  formId: string,
+  rolesApplied: ApplicantRole[],
+  sectionResponses: SectionResponse[],
+  token: string,
+): Promise<{ user: UserProfile; applicationResponse: ApplicationResponse }> {
+  const appCheckToken = await getAppCheckToken();
+
+  const res = await axios.post(
+    API_URL + "/auth/create-internal-applicant",
+    {
+      firstName,
+      lastName,
+      formId,
+      rolesApplied,
+      sectionResponses,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-APPCHECK": appCheckToken,
+      },
+    },
+  );
+
+  // both user profile and response; should show name and response ID in confirmation
+  return res.data;
 }
