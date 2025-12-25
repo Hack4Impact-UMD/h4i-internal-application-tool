@@ -20,6 +20,7 @@ import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import Loading from "@/components/Loading";
 import { useParams } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
+import { AlertTriangleIcon } from "lucide-react";
 
 export default function FormBuilderPage() {
   const [jsonCode, setJsonCode] = useState(() =>
@@ -222,6 +223,18 @@ export default function FormBuilderPage() {
                     <p className="text-sm font-bold">{compileError}</p>
                   </div>
                 )}
+                <div className="flex flex-col gap-2 p-2">
+                  {previewForm?.decisionsReleased && (
+                    <div className="bg-amber-100 border border-amber-600 text-amber-600 flex flex-row gap-2 p-2 rounded">
+                      <AlertTriangleIcon /> <span><strong>WARNING: </strong>This form has decisions released set to true!</span>
+                    </div>
+                  )}
+                  {previewForm?.isActive && (
+                    <div className="bg-amber-100 border border-amber-600 text-amber-600 flex flex-row gap-2 p-2 rounded">
+                      <AlertTriangleIcon /> <span><strong>WARNING: </strong>This form is active!</span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
                   {previewForm ? (
                     <div className="space-y-6">
