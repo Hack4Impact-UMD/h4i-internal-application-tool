@@ -78,9 +78,10 @@ export default function FormBuilderPage() {
   }, [formId, jsonCode]);
 
   useEffect(() => {
-    if (autoCompile)
+    if (autoCompile) {
       handleCompile()
-  }, [autoCompile, handleCompile, jsonCode])
+    }
+  }, [autoCompile, handleCompile])
 
   const handleUploadForm = async () => {
     try {
