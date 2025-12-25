@@ -49,7 +49,7 @@ function validateResponses(applicationResponse: ApplicationResponse, application
     )
   );
 
-  if (applicationResponse.rolesApplied.length == 0) {
+  const findRoleSelect = () => {
     let roleSelectQuestion: QuestionResponse | undefined;
     let sectionId: string | undefined;
     for (const section of applicationResponse.sectionResponses) {
@@ -58,6 +58,11 @@ function validateResponses(applicationResponse: ApplicationResponse, application
       if (roleSelectQuestion) break;
     }
 
+    return { roleSelectQuestion, sectionId };
+  }
+
+  if (applicationResponse.rolesApplied.length == 0) {
+    const { roleSelectQuestion, sectionId } = findRoleSelect();
     return [
       {
         questionId: roleSelectQuestion!.questionId,
@@ -65,6 +70,22 @@ function validateResponses(applicationResponse: ApplicationResponse, application
         message: "You must apply for at least one role"
       }
     ]
+  }
+
+  if (applicationForm.disabledRoles !== undefined) {
+    const disabledRoles = applicationForm.disabledRoles;
+    const appliedDisabled = applicationResponse.rolesApplied.some(r => disabledRoles.includes(r))
+    const { roleSelectQuestion, sectionId } = findRoleSelect();
+
+    if (appliedDisabled) {
+      return [
+        {
+          questionId: roleSelectQuestion!.questionId,
+          sectionId: sectionId!,
+          message: "You cannot apply for disabled roles"
+        }
+      ]
+    }
   }
 
   // validate each response

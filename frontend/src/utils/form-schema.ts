@@ -62,6 +62,7 @@ export const ApplicationFormSchema = z.object({
   dueDate: z.date(),
   semester: z.string(),
   description: z.string(),
+  disabledRoles: z.array(ApplicantRoleSchema).optional(),
   sections: z.array(ApplicationSectionSchema),
   decisionsReleased: z.boolean().default(false),
   scoreWeights: scoreWeightsSchema,

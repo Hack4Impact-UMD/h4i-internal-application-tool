@@ -16,12 +16,26 @@ import {
 import { useUploadRubrics } from "@/hooks/useRubrics";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { useUploadInterviewRubrics } from "@/hooks/useInterviewRubrics";
+import { Switch } from "@/components/ui/switch";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { EllipsisVertical, LockIcon, UnlockIcon } from "lucide-react";
+import { useUpdateApplicationFormActive } from "@/hooks/useUpdateApplicationFormActive";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import DuplicateFormDialog from "@/components/dor/DuplicateFormDialog/DuplicateFormDialog";
+import { useState } from "react";
 import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
 
 export default function AdminHome() {
   const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
   const { user, token } = useAuth();
+  const [duplicateDialogOpenState, setDuplicateDialogOpenState] = useState<Record<string, boolean>>({});
+  const [formsLocked, setFormsLocked] = useState(true);
+
+  const {
+    mutate: setFormActiveStatus,
+    isPending: activePending,
+  } = useUpdateApplicationFormActive();
 
   const {
     mutate: uploadForm,
@@ -45,7 +59,7 @@ export default function AdminHome() {
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-        `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
+      `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
     );
 
     if (!confirmed || !token) return;
@@ -134,29 +148,87 @@ export default function AdminHome() {
       </div>
 
       <div className="max-w-5xl w-full p-4 bg-white rounded-md">
-        <h1 className="text-xl">Go to Review Dashboards</h1>
-        <p className="text-muted-foreground">
-          To access dashboards, you need to select which form you want to view
-          application and review data for.
-        </p>
+        <div className="flex flex-row items-center">
+          <div className="grow">
+            <h1 className="text-xl">Go to Review Dashboards</h1>
+            <p className="text-muted-foreground">
+              To access dashboards, you need to select which form you want to view
+              application and review data for.
+            </p>
+          </div>
+          {
+            user.role === PermissionRole.SuperReviewer && (
+              <div className="flex flex-row items-center gap-2">
+                <UnlockIcon className="size-4" />
+                <Switch checked={formsLocked} onCheckedChange={setFormsLocked} />
+                <LockIcon className="size-4" />
+              </div>
+            )
+          }
+        </div>
 
         <ul className="flex flex-col gap-2 mt-4">
           {forms.map((form) => {
             return (
-              <Link
+              <span
                 className="border border-gray-300 p-2 rounded-md flex flex-row gap-2 items-center"
-                to={`/admin/${route}/dashboard/${form.id}/${table}`}
                 key={form.id}
               >
-                <span
-                  className={`${!form.isActive ? "bg-muted" : "bg-lightblue"} px-2 py-1 text-sm rounded-full`}
+                <Link
+                  to={`/admin/${route}/dashboard/${form.id}/${table}`}
+                  className="grow flex gap-2 items-center"
                 >
-                  {form.isActive ? "Active" : "Inactive"}
-                </span>
-                <span>
-                  Semester: {form.semester} (ID: {form.id})
-                </span>
-              </Link>
+                  <span
+                    className={`${!form.isActive ? "bg-muted" : "bg-lightblue"} px-2 py-1 text-sm rounded-full`}
+                  >
+                    {form.isActive ? "Active" : "Inactive"}
+                  </span>
+                  <span>
+                    Semester: {form.semester} (ID: <span className="font-mono text-sm">{form.id}</span>)
+                  </span>
+                </Link>
+
+                {user.role === PermissionRole.SuperReviewer && (
+                  <>
+                    <Switch checked={form.isActive} disabled={activePending || formsLocked} onCheckedChange={active => setFormActiveStatus({ formId: form.id, active })} />
+
+                    <Dialog
+                      open={duplicateDialogOpenState[form.id] || false}
+                      onOpenChange={(isOpen) =>
+                        setDuplicateDialogOpenState((prev) => ({ ...prev, [form.id]: isOpen }))
+                      }
+                    >
+                      <DropdownMenu>
+                        <DropdownMenuTrigger disabled={formsLocked} asChild>
+                          <Button variant="outline">
+                            <EllipsisVertical className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem>
+                            <Link to={`/admin/dor/form-builder/${form.id}`}>Edit form</Link>
+                          </DropdownMenuItem>
+                          <DialogTrigger asChild>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onSelect={(e) => e.preventDefault()}
+                            >
+                              Duplicate form
+                            </DropdownMenuItem>
+                          </DialogTrigger>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      <DuplicateFormDialog
+                        form={form}
+                        onClose={() =>
+                          setDuplicateDialogOpenState((prev) => ({ ...prev, [form.id]: false }))
+                        }
+                      />
+                    </Dialog>
+                  </>
+                )
+                }
+              </span>
             );
           })}
         </ul>
@@ -185,9 +257,6 @@ export default function AdminHome() {
             <div className="mt-4 flex gap-2">
               <Button onClick={() => navigate("/admin/dor/forms")}>
                 Form Validator
-              </Button>
-              <Button onClick={() => navigate("/admin/dor/form-builder")}>
-                Open Form Builder
               </Button>
             </div>
           </div>

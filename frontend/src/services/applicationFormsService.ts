@@ -87,3 +87,15 @@ export async function setFormDecisionRelease(
     decisionsReleased: released,
   } as Partial<ApplicationForm>);
 }
+
+export async function setApplicationFormActiveStatus(formId: string, active: boolean) {
+  const forms = collection(
+    db,
+    APPLICATION_FORMS_COLLECTION,
+  ) as CollectionReference<ApplicationForm>;
+  const docRef = doc(forms, formId);
+
+  await updateDoc(docRef, {
+    isActive: active,
+  } as Partial<ApplicationForm>);
+}
