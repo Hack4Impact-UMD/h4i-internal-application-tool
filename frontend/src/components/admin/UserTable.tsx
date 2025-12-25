@@ -1,4 +1,4 @@
-import { PermissionRole, UserProfile } from "@/types/types";
+import { ApplicantUserProfile, PermissionRole, UserProfile } from "@/types/types";
 import { ColumnDef, createColumnHelper, RowSelectionState } from "@tanstack/react-table";
 import { DataTable } from "../DataTable";
 import { Checkbox } from "../ui/checkbox";
@@ -255,6 +255,18 @@ export default function UserTable({
             </Button>
           );
         },
+        cell: ({ getValue, row }) => {
+          return (
+            <span className="flex items-center gap-2">
+              <span>{getValue()}</span>
+              {(row.original as ApplicantUserProfile)?.isInternal && (
+                <span className="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full">
+                  Internal
+                </span>
+              )}
+            </span>
+          );
+        },
       }),
       columnHelper.accessor("id", {
         header: ({ column }) => {
@@ -399,10 +411,13 @@ export default function UserTable({
         },
         cell: ({ getValue, row }) => {
           const role = getValue();
+          const isInternal = (row.original as ApplicantUserProfile)?.isInternal;
           return (
-            <Select value={role} onValueChange={e =>
-              setUserRoles([row.original], e as PermissionRole)
-            }>
+            <Select
+              value={role}
+              onValueChange={e => setUserRoles([row.original], e as PermissionRole)}
+              disabled={isInternal}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>

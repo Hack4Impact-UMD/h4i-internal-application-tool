@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { z } from "zod";
+import { ApplicantRole, SectionResponseSchema } from "./appResponse";
 
 export type UserRole = "applicant" | "reviewer" | "super-reviewer"
 
@@ -11,8 +12,9 @@ export type UserProfile = {
   role: UserRole;
   dateCreated: Timestamp;
   activeApplications?: string[];
-  inactiveApplications?: string[]
-  inactive?: boolean
+  inactiveApplications?: string[];
+  isInternal?: boolean;
+  inactive?: boolean;
 }
 
 export const userRegisterFormSchema = z.object({
@@ -34,5 +36,14 @@ export const updateUserSchema = z.object({
   lastName: z.string().nonempty("Last name can't be empty")
 })
 
+export const createInternalApplicantSchema = z.object({
+  firstName: z.string().nonempty("First name can't be empty"),
+  lastName: z.string().nonempty("Last name can't be empty"),
+  formId: z.string().nonempty("Form ID can't be empty"),
+  rolesApplied: z.array(z.nativeEnum(ApplicantRole)).nonempty("Must select at least one role"),
+  sectionResponses: z.array(SectionResponseSchema).nonempty("Must provide section responses")
+})
+
 export type UserRegisterForm = z.infer<typeof userRegisterFormSchema>
 export type UpdateUser = z.infer<typeof updateUserSchema>
+export type CreateInternalApplicant = z.infer<typeof createInternalApplicantSchema>
