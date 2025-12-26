@@ -9,33 +9,34 @@ import { PermissionRole } from "@/types/types";
 import { displayUserRoleName } from "@/utils/display";
 import { Link, useNavigate } from "react-router-dom";
 import { h4iApplicationForm } from "@/data/h4i-application-form";
-import {
-  APPLICATION_INTERVIEW_RUBRICS,
-  APPLICATION_RUBRICS,
-} from "@/data/rubrics";
-import { useUploadRubrics } from "@/hooks/useRubrics";
-import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import { useUploadInterviewRubrics } from "@/hooks/useInterviewRubrics";
+import UploadReviewRubricDialog from "@/components/admin/UploadReviewRubricDialog";
+import UploadInterviewRubricDialog from "@/components/admin/UploadInterviewRubricDialog";
 import { Switch } from "@/components/ui/switch";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { EllipsisVertical, LockIcon, UnlockIcon } from "lucide-react";
 import { useUpdateApplicationFormActive } from "@/hooks/useUpdateApplicationFormActive";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import DuplicateFormDialog from "@/components/dor/DuplicateFormDialog/DuplicateFormDialog";
 import { useState } from "react";
 import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
 
 export default function AdminHome() {
   const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
   const { user, token } = useAuth();
-  const [duplicateDialogOpenState, setDuplicateDialogOpenState] = useState<Record<string, boolean>>({});
+  const [duplicateDialogOpenState, setDuplicateDialogOpenState] = useState<
+    Record<string, boolean>
+  >({});
   const [formsLocked, setFormsLocked] = useState(true);
 
-  const {
-    mutate: setFormActiveStatus,
-    isPending: activePending,
-  } = useUpdateApplicationFormActive();
+  const { mutate: setFormActiveStatus, isPending: activePending } =
+    useUpdateApplicationFormActive();
 
   const {
     mutate: uploadForm,
@@ -43,18 +44,6 @@ export default function AdminHome() {
     error: formUploadError,
     data: formUploadData,
   } = useUploadApplicationForm();
-  const {
-    mutate: uploadRubrics,
-    isPending: isUploadingRubrics,
-    error: rubricUploadError,
-    data: rubricUploadData,
-  } = useUploadRubrics();
-  const {
-    mutate: uploadInterviewRubrics,
-    isPending: isUploadingInterviewRubrics,
-    error: interviewRubricUploadError,
-    data: interviewRubricUploadData,
-  } = useUploadInterviewRubrics();
 
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
@@ -93,32 +82,6 @@ export default function AdminHome() {
     uploadForm({ form: h4iApplicationForm, token: (await token()) ?? "" });
   };
 
-  const handleUploadRubrics = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to upload the application rubrics?",
-    );
-
-    if (!confirmed || !token) return;
-
-    uploadRubrics({
-      rubrics: APPLICATION_RUBRICS,
-      token: (await token()) ?? "",
-    });
-  };
-
-  const handleUploadInterviewRubrics = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to upload the application interview rubrics?",
-    );
-
-    if (!confirmed || !token) return;
-
-    uploadInterviewRubrics({
-      interviewRubrics: APPLICATION_INTERVIEW_RUBRICS,
-      token: (await token()) ?? "",
-    });
-  };
-
   if (!user) return <Loading />;
 
   const route =
@@ -152,19 +115,17 @@ export default function AdminHome() {
           <div className="grow">
             <h1 className="text-xl">Go to Review Dashboards</h1>
             <p className="text-muted-foreground">
-              To access dashboards, you need to select which form you want to view
-              application and review data for.
+              To access dashboards, you need to select which form you want to
+              view application and review data for.
             </p>
           </div>
-          {
-            user.role === PermissionRole.SuperReviewer && (
-              <div className="flex flex-row items-center gap-2">
-                <UnlockIcon className="size-4" />
-                <Switch checked={formsLocked} onCheckedChange={setFormsLocked} />
-                <LockIcon className="size-4" />
-              </div>
-            )
-          }
+          {user.role === PermissionRole.SuperReviewer && (
+            <div className="flex flex-row items-center gap-2">
+              <UnlockIcon className="size-4" />
+              <Switch checked={formsLocked} onCheckedChange={setFormsLocked} />
+              <LockIcon className="size-4" />
+            </div>
+          )}
         </div>
 
         <ul className="flex flex-col gap-2 mt-4">
@@ -184,18 +145,28 @@ export default function AdminHome() {
                     {form.isActive ? "Active" : "Inactive"}
                   </span>
                   <span>
-                    Semester: {form.semester} (ID: <span className="font-mono text-sm">{form.id}</span>)
+                    Semester: {form.semester} (ID:{" "}
+                    <span className="font-mono text-sm">{form.id}</span>)
                   </span>
                 </Link>
 
                 {user.role === PermissionRole.SuperReviewer && (
                   <>
-                    <Switch checked={form.isActive} disabled={activePending || formsLocked} onCheckedChange={active => setFormActiveStatus({ formId: form.id, active })} />
+                    <Switch
+                      checked={form.isActive}
+                      disabled={activePending || formsLocked}
+                      onCheckedChange={(active) =>
+                        setFormActiveStatus({ formId: form.id, active })
+                      }
+                    />
 
                     <Dialog
                       open={duplicateDialogOpenState[form.id] || false}
                       onOpenChange={(isOpen) =>
-                        setDuplicateDialogOpenState((prev) => ({ ...prev, [form.id]: isOpen }))
+                        setDuplicateDialogOpenState((prev) => ({
+                          ...prev,
+                          [form.id]: isOpen,
+                        }))
                       }
                     >
                       <DropdownMenu>
@@ -206,7 +177,9 @@ export default function AdminHome() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                           <DropdownMenuItem>
-                            <Link to={`/admin/dor/form-builder/${form.id}`}>Edit form</Link>
+                            <Link to={`/admin/dor/form-builder/${form.id}`}>
+                              Edit form
+                            </Link>
                           </DropdownMenuItem>
                           <DialogTrigger asChild>
                             <DropdownMenuItem
@@ -221,13 +194,15 @@ export default function AdminHome() {
                       <DuplicateFormDialog
                         form={form}
                         onClose={() =>
-                          setDuplicateDialogOpenState((prev) => ({ ...prev, [form.id]: false }))
+                          setDuplicateDialogOpenState((prev) => ({
+                            ...prev,
+                            [form.id]: false,
+                          }))
                         }
                       />
                     </Dialog>
                   </>
-                )
-                }
+                )}
               </span>
             );
           })}
@@ -266,10 +241,13 @@ export default function AdminHome() {
             <p className="text-muted-foreground">
               Upload the new Hack4Impact application form to Firestore.
             </p>
+            <p className="font-bold">
+              DISABLED: Use the form controls at the top of the page instead.
+            </p>
             <Button
               className="mt-4"
               onClick={handleUploadForm}
-              disabled={isUploadingForm}
+              disabled={true}
             >
               {isUploadingForm ? "Uploading..." : "Upload Form"}
             </Button>
@@ -289,45 +267,10 @@ export default function AdminHome() {
             <p className="text-muted-foreground">
               Upload the application rubrics to Firestore.
             </p>
-            <div className="flex gap-2">
-              <Button
-                className="mt-4"
-                onClick={handleUploadRubrics}
-                disabled={isUploadingRubrics}
-              >
-                {isUploadingRubrics ? "Uploading..." : "Upload Review Rubrics"}
-              </Button>
-              <Button
-                className="mt-4"
-                onClick={handleUploadInterviewRubrics}
-                disabled={isUploadingInterviewRubrics}
-              >
-                {isUploadingInterviewRubrics
-                  ? "Uploading..."
-                  : "Upload Interview Rubrics"}
-              </Button>
+            <div className="flex gap-2 mt-4">
+              <UploadReviewRubricDialog />
+              <UploadInterviewRubricDialog />
             </div>
-            {rubricUploadData && (
-              <p className="mt-2 text-sm text-green-600">
-                Success! Uploaded {rubricUploadData.data.count} rubrics.
-              </p>
-            )}
-            {rubricUploadError && (
-              <p className="mt-2 text-sm text-red-600">
-                {rubricUploadError.message}
-              </p>
-            )}
-            {interviewRubricUploadData && (
-              <p className="mt-2 text-sm text-green-600">
-                Success! Uploaded {interviewRubricUploadData.data.count}{" "}
-                rubrics.
-              </p>
-            )}
-            {interviewRubricUploadError && (
-              <p className="mt-2 text-sm text-red-600">
-                {interviewRubricUploadError.message}
-              </p>
-            )}
           </div>
         </>
       )}
