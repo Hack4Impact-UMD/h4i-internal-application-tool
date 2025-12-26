@@ -2,12 +2,35 @@ import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { displayUserRoleName } from "@/utils/display";
+import {
+  loggedInMessages,
+  loggedOutMessages,
+  pickWeightedMessage,
+} from "@/utils/welcomeMessages";
 import { Github, Instagram, Linkedin } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user, logout, isLoading } = useAuth();
+  const [displayMessage, setDisplayMessage] = useState<string>("");
+
+  useEffect(() => {
+    const sessionKey = user ? "landingMessageLoggedIn" : "landingMessageLoggedOut";
+
+    const savedMessage = sessionStorage.getItem(sessionKey);
+
+    if (savedMessage) {
+      setDisplayMessage(savedMessage);
+    } else {
+      const messages = user ? loggedInMessages : loggedOutMessages;
+      const newMessage = pickWeightedMessage(messages);
+      
+      setDisplayMessage(newMessage);
+      sessionStorage.setItem(sessionKey, newMessage);
+    }
+  }, [user]);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -22,7 +45,7 @@ export default function LandingPage() {
             Hack4Impact-UMD Application Portal
           </h1>
           <h3 className="text-lg text-darkgray">
-            {user ? "Welcome back!" : "Apply to be a Hack4Impact-UMD member!"}
+            {displayMessage}
           </h3>
         </div>
         <div>
