@@ -45,7 +45,7 @@ export default function LandingPage() {
             Hack4Impact-UMD Application Portal
           </h1>
           <h3 className="text-lg text-darkgray">
-            {displayMessage}
+            {isLoading ? "Hacking and impacting..." : displayMessage}
           </h3>
         </div>
         <div>
