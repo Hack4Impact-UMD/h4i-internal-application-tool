@@ -27,16 +27,22 @@ export default function UploadInterviewRubricDialog() {
   const handleUpload = async () => {
     if (!selectedFormId || !token) return;
 
-    try {
-      uploadInterviewRubrics({
+    uploadInterviewRubrics(
+      {
         interviewRubrics: APPLICATION_INTERVIEW_RUBRICS(selectedFormId),
         token: (await token()) ?? "",
-      });
-      throwSuccessToast("Interview rubrics uploaded successfully!");
-      setOpen(false);
-    } catch {
-      throwErrorToast("Failed to upload interview rubrics");
-    }
+      },
+      {
+        onSuccess: () => {
+          throwSuccessToast("Interview rubrics uploaded successfully!");
+          setOpen(false);
+        },
+        onError: (err) => {
+          throwErrorToast("Failed to upload interview rubrics");
+          console.error(err);
+        },
+      }
+    );
   };
 
   const handleOpenChange = (isOpen: boolean) => {
