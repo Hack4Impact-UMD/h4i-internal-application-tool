@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { APPLICATION_INTERVIEW_RUBRICS } from "@/data/rubrics";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { Label } from "../ui/label";
 
 export default function UploadInterviewRubricDialog() {
   const [open, setOpen] = useState(false);
@@ -69,9 +70,9 @@ export default function UploadInterviewRubricDialog() {
 
         <div className="flex flex-col gap-4 py-4">
           <div className="flex flex-col gap-2">
-            <label htmlFor="form-select" className="text-sm font-medium">
+            <Label htmlFor="form-select" className="text-sm font-medium">
               Select Form
-            </label>
+            </Label>
             <FormSelect
               className="w-full"
               selectedId={selectedFormId}
