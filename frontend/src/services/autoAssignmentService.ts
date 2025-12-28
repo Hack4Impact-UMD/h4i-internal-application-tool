@@ -166,8 +166,7 @@ export async function calculateBootcampAssignmentPlan(
     app.rolesApplied.includes(ApplicantRole.Bootcamp)
   );
   
-  const activeReviewers = reviewers.filter(reviewer => !reviewer.inactive)
-  const workloadMap = buildReviewerWorkloadMap(activeReviewers, assignments);
+  const workloadMap = buildReviewerWorkloadMap(reviewers, assignments);
   
   const responseToAssignments = matchResponseToAssignments(
     assignments, 
@@ -178,7 +177,12 @@ export async function calculateBootcampAssignmentPlan(
   const applicationsWithAssignments = await Promise.all(
     bootcampApplications.map(async (app) => {
       const appAssignments = responseToAssignments.get(app.id) ?? [];
+      
       const applicantUser = await getUserById(app.userId);
+      if (!applicantUser) {
+        throw new Error(`User with id ${app.userId} not found`);
+      }
+
       return {
         app,
         assignments: appAssignments,
