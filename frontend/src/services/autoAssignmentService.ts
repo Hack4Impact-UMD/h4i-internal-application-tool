@@ -3,8 +3,9 @@ import { getReviewAssignmentsForForm } from "./reviewAssignmentService";
 import { getAllReviewers } from "./reviewersService";
 import { getAllApplicationResponsesByFormId } from "./applicationResponsesService";
 import { getUserById } from "./userService";
+import { v4 as uuidv4 } from "uuid";
 
-type AutoAssignmentPlanItem = {
+export type AutoAssignmentPlanItem = {
   applicantName: string;
   applicantId: string;
   applicationResponseId: string;
@@ -12,10 +13,12 @@ type AutoAssignmentPlanItem = {
   reviewer1?: {
     name: string;
     id: string;
+    isExisting: boolean;
   }
   reviewer2?: {
     name: string;
     id: string;
+    isExisting: boolean;
   }
   skipped: boolean;
   skipReason?: string;
@@ -121,7 +124,7 @@ function assignUpToTwoReviewers(
 
     return {
       ...baseItem,
-      reviewer1: existing ? { name: existing.name, id: existing.reviewerId } : undefined,
+      reviewer1: existing ? { name: existing.name, id: existing.reviewerId, isExisting: true } : undefined,
       skipped: true,
       skipReason: "Not enough reviewers available",
     }
@@ -136,8 +139,8 @@ function assignUpToTwoReviewers(
     const existing = workloadMap.get(existingReviewerId)!;
     return {
       ...baseItem,
-      reviewer1: { name: existing.name, id: existing.reviewerId },
-      reviewer2: { name: picked[0].name, id: picked[0].reviewerId },
+      reviewer1: { name: existing.name, id: existing.reviewerId, isExisting: true },
+      reviewer2: { name: picked[0].name, id: picked[0].reviewerId, isExisting: false },
       skipped: false,
     };
   }
@@ -145,8 +148,8 @@ function assignUpToTwoReviewers(
   // build output otherwise
   return {
     ...baseItem,
-    reviewer1: { name: picked[0].name, id: picked[0].reviewerId },
-    reviewer2: { name: picked[1].name, id: picked[1].reviewerId },
+    reviewer1: { name: picked[0].name, id: picked[0].reviewerId, isExisting: false },
+    reviewer2: { name: picked[1].name, id: picked[1].reviewerId, isExisting: false },
     skipped: false,
   };
 }
@@ -210,4 +213,36 @@ export async function calculateBootcampAssignmentPlan(
   }
 
   return plan;
+}
+
+export function planItemToAssignments(
+  item: AutoAssignmentPlanItem
+): AppReviewAssignment[] {
+  const assignments: AppReviewAssignment[] = [];
+
+  if (item.reviewer1 && !item.reviewer1.isExisting) {
+    assignments.push({
+      id: uuidv4(),
+      assignmentType: "review",
+      applicantId: item.applicantId,
+      applicationResponseId: item.applicationResponseId,
+      forRole: ApplicantRole.Bootcamp,
+      formId: item.formId,
+      reviewerId: item.reviewer1.id,
+    });
+  }
+
+  if (item.reviewer2 && !item.reviewer2.isExisting) {
+    assignments.push({
+      id: uuidv4(),
+      assignmentType: "review",
+      applicantId: item.applicantId,
+      applicationResponseId: item.applicationResponseId,
+      forRole: ApplicantRole.Bootcamp,
+      formId: item.formId,
+      reviewerId: item.reviewer2.id,
+    });
+  }
+
+  return assignments;
 }

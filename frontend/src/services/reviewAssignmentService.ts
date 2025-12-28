@@ -10,6 +10,7 @@ import {
   query,
   setDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { v4 as uuidv4 } from "uuid";
@@ -95,4 +96,23 @@ export async function getReviewAssignmentsForForm(formId: string) {
   const q = query(assignments, where("formId", "==", formId));
 
   return (await getDocs(q)).docs.map((d) => d.data() as AppReviewAssignment);
+}
+
+export async function batchAssignReviews(
+  assignments: AppReviewAssignment[]
+): Promise<void> {
+  const assignmentsCollection = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
+
+  const chunkSize = 250;
+
+  for (let i = 0; i < assignments.length; i += chunkSize) {
+    const chunk = assignments.slice(i, i + chunkSize);
+    const batch = writeBatch(db);
+
+    chunk.forEach((assignment) => {
+      batch.set(doc(assignmentsCollection, assignment.id), assignment);
+    });
+
+    await batch.commit();
+  }
 }
