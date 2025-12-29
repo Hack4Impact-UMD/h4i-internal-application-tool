@@ -28,7 +28,7 @@ type ExemptReviewersDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (exemptReviewers: ReviewCapableUser[]) => void;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 export default function ExemptReviewersDialog({
