@@ -113,12 +113,6 @@ export default function ViewApplicationPage() {
               />
             </div>
           ))}
-        <Button
-          className="rounded-full"
-          onClick={() => navigate("/apply/status")}
-        >
-          Back to Application Status
-        </Button>
       </div>
     </div>
   );
