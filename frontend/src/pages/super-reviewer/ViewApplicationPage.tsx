@@ -62,7 +62,6 @@ export default function ViewApplicationPage() {
     isPending: formPending,
     error: formError,
   } = useApplicationForm(formId);
-  const navigate = useNavigate();
 
   if (responsePending || formPending) return <Loading />;
   if (responseError)
