@@ -1,9 +1,10 @@
-import { ApplicantRole, AppReviewAssignment, ReviewCapableUser } from "@/types/types";
+import { ApplicantRole, ApplicationReviewData, AppReviewAssignment, ReviewCapableUser } from "@/types/types";
 import { getReviewAssignmentsForForm } from "./reviewAssignmentService";
 import { getAllReviewers } from "./reviewersService";
 import { getAllApplicationResponsesByFormId } from "./applicationResponsesService";
 import { getUserById } from "./userService";
 import { v4 as uuidv4 } from "uuid";
+import { getReviewDataForForm } from "./reviewDataService";
 
 export type AutoAssignmentPlanItem = {
   applicantName: string;
@@ -28,11 +29,13 @@ type ReviewerWorkload = {
   reviewerId: string;
   name: string;
   currentAssignments: number;
+  completedAssignments: number;
 };
 
 function buildReviewerWorkloadMap(
   reviewers: ReviewCapableUser[],
   assignments: AppReviewAssignment[],
+  allReviewData: ApplicationReviewData[],
 ): Map<string, ReviewerWorkload> {
   const workloadMap = new Map<string, ReviewerWorkload>();
   for (const r of reviewers) {
@@ -40,6 +43,7 @@ function buildReviewerWorkloadMap(
       reviewerId: r.id,
       name: `${r.firstName} ${r.lastName}`,
       currentAssignments: 0,
+      completedAssignments: 0,
     });
   }
 
@@ -49,11 +53,18 @@ function buildReviewerWorkloadMap(
     w.currentAssignments += 1;
   }
 
+  for (const reviewData of allReviewData) {
+    if (reviewData.submitted) {
+      const w = workloadMap.get(reviewData.reviewerId);
+      if (w) {
+        w.completedAssignments += 1;
+      }
+    }
+  }
+
   return workloadMap;
 }
 
-// priority === who has less current assignments
-// could factor in other variables later
 function sortReviewersByPriority(
   workloadMap: Map<string, ReviewerWorkload>
 ): ReviewerWorkload[] {
@@ -62,6 +73,10 @@ function sortReviewersByPriority(
   return reviewers.sort((a, b) => {
     if (a.currentAssignments !== b.currentAssignments) {
       return a.currentAssignments - b.currentAssignments;
+    }
+
+    if (a.completedAssignments !== b.completedAssignments) {
+      return b.completedAssignments - a.completedAssignments;
     }
 
     return a.reviewerId.localeCompare(b.reviewerId);
@@ -159,18 +174,19 @@ function assignUpToTwoReviewers(
 export async function calculateBootcampAssignmentPlan(
   formId: string
 ): Promise<AutoAssignmentPlanItem[]> {
-  const [allApplications, reviewers, assignments] = await Promise.all([
+  const [allApplications, reviewers, assignments, reviewData] = await Promise.all([
     getAllApplicationResponsesByFormId(formId),
     getAllReviewers(),
     getReviewAssignmentsForForm(formId),
+    getReviewDataForForm(formId)
   ]);
 
   const bootcampApplications = allApplications.filter((app) =>
     app.rolesApplied.includes(ApplicantRole.Bootcamp)
   );
-  
-  const workloadMap = buildReviewerWorkloadMap(reviewers, assignments);
-  
+
+  const workloadMap = buildReviewerWorkloadMap(reviewers, assignments, reviewData);
+
   const responseToAssignments = matchResponseToAssignments(
     assignments, 
     ApplicantRole.Bootcamp
