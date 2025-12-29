@@ -6,7 +6,7 @@ import { useApplicant } from "@/hooks/useApplicants";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";
 import { ApplicationForm, ApplicationResponse } from "@/types/types";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 type UserHeaderProps = {
   applicantId: string;
