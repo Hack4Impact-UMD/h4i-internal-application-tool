@@ -10,6 +10,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
+import ExemptReviewersDialog from "./ExemptReviewersDialog";
+import { ReviewCapableUser } from "@/types/types";
+import { CheckIcon, TriangleAlertIcon } from "lucide-react";
 
 interface AutoAssignButtonProps {
   formId: string;
@@ -18,15 +21,17 @@ interface AutoAssignButtonProps {
 
 export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
+  const [showExemptDialog, setShowExemptDialog] = useState(false);
   const [assignmentPlan, setAssignmentPlan] = useState<AutoAssignmentPlanItem[] | null>(null);
 
   const calculatePlanMutation = useMutation({
-    mutationFn: async () => {
-      return await calculateBootcampAssignmentPlan(formId);
+    mutationFn: async ({ exempt }: { exempt: ReviewCapableUser[] }) => {
+      return await calculateBootcampAssignmentPlan(formId, exempt);
     },
     onSuccess: (plan) => {
       setAssignmentPlan(plan);
       setShowPreviewDialog(true);
+      setShowExemptDialog(false);
     },
     onError: (error) => {
       console.error("Failed to create auto-assignment plan:", error);
@@ -38,11 +43,18 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
     <>
       <Button
         variant="outline"
-        onClick={() => calculatePlanMutation.mutate()}
+        onClick={() => setShowExemptDialog(true)}
         disabled={disabled || calculatePlanMutation.isPending}
       >
         {calculatePlanMutation.isPending ? "Matching..." : "Auto-Assign Bootcamp Applicants"}
       </Button>
+
+      <ExemptReviewersDialog
+        open={showExemptDialog}
+        onOpenChange={setShowExemptDialog}
+        onSubmit={(exempt) => calculatePlanMutation.mutate({ exempt })}
+        disabled={calculatePlanMutation.isPending}
+      />
 
       <Dialog open={showPreviewDialog} onOpenChange={setShowPreviewDialog}>
         <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
@@ -78,15 +90,15 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
                           key={idx}
                           className={item.skipped ? "bg-yellow-50" : ""}
                         >
-                          <td className="px-4 py-2 align-top">
-                            {item.skipped ? "⚠️" : "✅"}
+                          <td className="px-4 py-2 align-top flex tems-center justify-center">
+                            {item.skipped ? <TriangleAlertIcon className="text-amber-500 size-5" /> : <CheckIcon className="text-green-400 size-5" />}
                           </td>
                           <td className="px-4 py-2 align-top">{item.applicantName}</td>
                           <td className={`px-4 py-2 align-top ${item.reviewer1 && !item.reviewer1.isExisting ? "bg-green-50" : ""}`}>
                             {item.reviewer1 ? item.reviewer1.name : "-"}
                           </td>
                           <td className={`px-4 py-2 align-top ${item.reviewer2 && !item.reviewer2.isExisting ? "bg-green-50" : ""}`}>
-                            {item.reviewer1 ? item.reviewer1.name : "-"}
+                            {item.reviewer2 ? item.reviewer2.name : "-"}
                           </td>
                         </tr>
                       ))}

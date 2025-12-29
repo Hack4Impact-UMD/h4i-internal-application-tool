@@ -172,14 +172,18 @@ function assignUpToTwoReviewers(
 // auto-assignment algo for bootcamp
 // not performance oriented right now! should use a heap instead of O(n) sorts 
 export async function calculateBootcampAssignmentPlan(
-  formId: string
+  formId: string,
+  exemptReviewers: ReviewCapableUser[]
 ): Promise<AutoAssignmentPlanItem[]> {
-  const [allApplications, reviewers, assignments, reviewData] = await Promise.all([
+  const [allApplications, allReviewers, assignments, reviewData] = await Promise.all([
     getAllApplicationResponsesByFormId(formId),
     getAllReviewers(),
     getReviewAssignmentsForForm(formId),
     getReviewDataForForm(formId)
   ]);
+
+  const exemptSet = new Set(exemptReviewers.map(r => r.id))
+  const reviewers = allReviewers.filter(r => !exemptSet.has(r.id))
 
   const bootcampApplications = allApplications.filter((app) =>
     app.rolesApplied.includes(ApplicantRole.Bootcamp)
@@ -188,7 +192,7 @@ export async function calculateBootcampAssignmentPlan(
   const workloadMap = buildReviewerWorkloadMap(reviewers, assignments, reviewData);
 
   const responseToAssignments = matchResponseToAssignments(
-    assignments, 
+    assignments,
     ApplicantRole.Bootcamp
   );
 
@@ -196,7 +200,7 @@ export async function calculateBootcampAssignmentPlan(
   const applicationsWithAssignments = await Promise.all(
     bootcampApplications.map(async (app) => {
       const appAssignments = responseToAssignments.get(app.id) ?? [];
-      
+
       const applicantUser = await getUserById(app.userId);
       if (!applicantUser) {
         throw new Error(`User with id ${app.userId} not found`);
