@@ -1,10 +1,12 @@
 import { ApplicantRole, ApplicationReviewData, AppReviewAssignment, ReviewCapableUser } from "@/types/types";
-import { getReviewAssignmentsForForm } from "./reviewAssignmentService";
+import { getReviewAssignmentsForForm, REVIEW_ASSIGNMENT_COLLECTION } from "./reviewAssignmentService";
 import { getAllReviewers } from "./reviewersService";
 import { getAllApplicationResponsesByFormId } from "./applicationResponsesService";
 import { getUserById } from "./userService";
 import { v4 as uuidv4 } from "uuid";
 import { getReviewDataForForm } from "./reviewDataService";
+import { collection, doc, writeBatch } from "firebase/firestore";
+import { db } from "@/config/firebase";
 
 export type AutoAssignmentPlanItem = {
   applicantName: string;
@@ -266,3 +268,19 @@ export function planItemToAssignments(
 
   return assignments;
 }
+
+export async function makeAssignmentsFromPlan(plan: AutoAssignmentPlanItem[]) {
+  const assignments = []
+  for (const item of plan) {
+    assignments.push(...planItemToAssignments(item));
+  }
+
+  const CHUNK_SIZE = 250;
+  for (let i = 0; i < assignments.length; i += CHUNK_SIZE) {
+    const chunk = assignments.slice(i, i + CHUNK_SIZE);
+
+    const batch = writeBatch(db);
+    chunk.forEach(assignment => batch.set(doc(collection(db, REVIEW_ASSIGNMENT_COLLECTION), assignment.id), assignment));
+    await batch.commit();
+  }
+} 

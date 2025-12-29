@@ -93,6 +93,9 @@ export default function SuperReviewerApplicationsTable({
         queryKey: ["all-apps-rows"],
       });
       queryClient.invalidateQueries({
+        queryKey: ["all-reviewers-rows"],
+      });
+      queryClient.invalidateQueries({
         predicate: (q) =>
           q.queryKey.includes("assignments") ||
           q.queryKey.includes("assignment"),
@@ -125,6 +128,9 @@ export default function SuperReviewerApplicationsTable({
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["all-apps-rows"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["all-reviewers-rows"],
       });
       queryClient.invalidateQueries({
         predicate: (q) =>

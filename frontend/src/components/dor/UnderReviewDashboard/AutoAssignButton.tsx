@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { calculateBootcampAssignmentPlan, AutoAssignmentPlanItem } from "@/services/autoAssignmentService";
+import { calculateBootcampAssignmentPlan, AutoAssignmentPlanItem, makeAssignmentsFromPlan } from "@/services/autoAssignmentService";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import {
   Dialog,
@@ -9,10 +9,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ExemptReviewersDialog from "./ExemptReviewersDialog";
 import { ReviewCapableUser } from "@/types/types";
 import { CheckIcon, TriangleAlertIcon } from "lucide-react";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 
 interface AutoAssignButtonProps {
   formId: string;
@@ -23,6 +24,32 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [showExemptDialog, setShowExemptDialog] = useState(false);
   const [assignmentPlan, setAssignmentPlan] = useState<AutoAssignmentPlanItem[] | null>(null);
+  const queryClient = useQueryClient();
+
+  const makeAssignmentsMutation = useMutation({
+    mutationFn: async ({ plan }: { plan: AutoAssignmentPlanItem[] }) => {
+      await makeAssignmentsFromPlan(plan);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["all-apps-rows"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["all-reviewers-rows"],
+      });
+      queryClient.invalidateQueries({
+        predicate: (q) =>
+          q.queryKey.includes("assignments") ||
+          q.queryKey.includes("assignment"),
+      });
+      throwSuccessToast("Assignments successfully created from plan!");
+      setShowPreviewDialog(false);
+    },
+    onError: (err) => {
+      throwErrorToast("Failed to make assignments!");
+      console.error(err);
+    }
+  })
 
   const calculatePlanMutation = useMutation({
     mutationFn: async ({ exempt }: { exempt: ReviewCapableUser[] }) => {
@@ -90,7 +117,7 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
                           key={idx}
                           className={item.skipped ? "bg-yellow-50" : ""}
                         >
-                          <td className="px-4 py-2 align-top flex tems-center justify-center">
+                          <td className="px-4 py-2 align-top flex items-center justify-center">
                             {item.skipped ? <TriangleAlertIcon className="text-amber-500 size-5" /> : <CheckIcon className="text-green-400 size-5" />}
                           </td>
                           <td className="px-4 py-2 align-top">{item.applicantName}</td>
@@ -110,12 +137,13 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
                   <Button
                     variant="outline"
                     onClick={() => setShowPreviewDialog(false)}
+                    disabled={makeAssignmentsMutation.isPending}
                   >
                     Cancel
                   </Button>
                   <Button
-                    onClick={() => throwErrorToast("not implemented yet!")}
-                    disabled={assignmentPlan.every(p => p.skipped)}
+                    onClick={() => makeAssignmentsMutation.mutate({ plan: assignmentPlan })}
+                    disabled={makeAssignmentsMutation.isPending || assignmentPlan.every(p => p.skipped)}
                   >
                     Confirm Assignments
                   </Button>
