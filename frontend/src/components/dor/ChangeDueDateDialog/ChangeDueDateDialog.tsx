@@ -132,10 +132,7 @@ export default function ChangeDueDateDialog({
         </div>
         <p className="text-sm font-bold text-muted-foreground">
           Due date is in{" "}
-          {date
-            .toLocaleTimeString("en-US", { timeZoneName: "short" })
-            .split(" ")
-            .pop()}
+          {Intl.DateTimeFormat().resolvedOptions().timeZone}
         </p>
 
         <DialogFooter>
