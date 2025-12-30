@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ApplicationForm } from "@/types/formBuilderTypes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { useUpdateApplicationFormDueDate } from "@/hooks/useApplicationForm";
@@ -36,6 +36,12 @@ export default function ChangeDueDateDialog({
     useUpdateApplicationFormDueDate();
   const [date, setDate] = useState<Date>(form.dueDate.toDate());
   const [popoverOpen, setPopoverOpen] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setDate(form.dueDate.toDate());
+    }
+  }, [open, form.dueDate]);
 
   const handleSubmit = () => {
     updateDueDate(
