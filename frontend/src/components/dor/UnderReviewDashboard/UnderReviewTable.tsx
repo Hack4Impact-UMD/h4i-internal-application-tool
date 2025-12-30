@@ -45,6 +45,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { displayReviewStatus } from "@/utils/display";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
+import { AutoAssignButton } from "./AutoAssignButton";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -92,6 +93,9 @@ export default function SuperReviewerApplicationsTable({
         queryKey: ["all-apps-rows"],
       });
       queryClient.invalidateQueries({
+        queryKey: ["all-reviewers-rows"],
+      });
+      queryClient.invalidateQueries({
         predicate: (q) =>
           q.queryKey.includes("assignments") ||
           q.queryKey.includes("assignment"),
@@ -124,6 +128,9 @@ export default function SuperReviewerApplicationsTable({
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["all-apps-rows"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["all-reviewers-rows"],
       });
       queryClient.invalidateQueries({
         predicate: (q) =>
@@ -477,13 +484,15 @@ export default function SuperReviewerApplicationsTable({
               )}
           </SelectContent>
         </Select>
-        <Button
-          className="ml-auto"
-          variant="outline"
-          onClick={handleCopyEmails}
-        >
-          <ClipboardIcon /> Copy {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant emails
-        </Button>
+        <div className="ml-auto flex gap-2">
+          <AutoAssignButton formId={formId} />
+          <Button
+            variant="outline"
+            onClick={handleCopyEmails}
+          >
+            <ClipboardIcon /> Copy {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant emails
+          </Button>
+        </div>
       </div>
       <DataTable
         columns={cols}

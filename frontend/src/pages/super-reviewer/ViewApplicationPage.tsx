@@ -2,12 +2,11 @@ import Section from "@/components/form/Section";
 import Loading from "@/components/Loading";
 import ApplicantRolePill from "@/components/role-pill/RolePill";
 import Spinner from "@/components/Spinner";
-import { Button } from "@/components/ui/button";
 import { useApplicant } from "@/hooks/useApplicants";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import { useApplicationResponse } from "@/hooks/useApplicationResponses";
 import { ApplicationForm, ApplicationResponse } from "@/types/types";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -63,7 +62,6 @@ export default function ViewApplicationPage() {
     isPending: formPending,
     error: formError,
   } = useApplicationForm(formId);
-  const navigate = useNavigate();
 
   if (responsePending || formPending) return <Loading />;
   if (responseError)
@@ -113,12 +111,6 @@ export default function ViewApplicationPage() {
               />
             </div>
           ))}
-        <Button
-          className="rounded-full"
-          onClick={() => navigate("/apply/status")}
-        >
-          Back to Application Status
-        </Button>
       </div>
     </div>
   );
