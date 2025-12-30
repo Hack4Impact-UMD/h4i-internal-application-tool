@@ -25,6 +25,7 @@ import { useState } from "react";
 import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { TooltipContent, Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import ChangeDueDateDialog from "@/components/dor/ChangeDueDateDialog/ChangeDueDateDialog";
 
 export default function AdminHome() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function AdminHome() {
   const { user, token } = useAuth();
   const [selectedForm, setSelectedForm] = useState<ApplicationForm>();
   const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
+  const [showDueDateDialog, setShowDueDateDialog] = useState(false);
   const [formsLocked, setFormsLocked] = useState(true);
 
   const { mutate: setFormActiveStatus, isPending: activePending } =
@@ -199,7 +201,7 @@ export default function AdminHome() {
                           className="cursor-pointer"
                           onClick={() => {
                             setSelectedForm(form)
-                            setShowDuplicateDialog(true)
+                            setShowDueDateDialog(true)
                           }}
                         >
                           Change due date
@@ -278,11 +280,18 @@ export default function AdminHome() {
             </div>
           </div>
           {selectedForm && (
-            <DuplicateFormDialog
-              open={showDuplicateDialog}
-              form={selectedForm}
-              onOpenChange={setShowDuplicateDialog}
-            />
+            <>
+              <DuplicateFormDialog
+                open={showDuplicateDialog}
+                form={selectedForm}
+                onOpenChange={setShowDuplicateDialog}
+              />
+              <ChangeDueDateDialog
+                open={showDueDateDialog}
+                form={selectedForm}
+                onOpenChange={setShowDueDateDialog}
+              />
+            </>
           )}
         </>
       )}
