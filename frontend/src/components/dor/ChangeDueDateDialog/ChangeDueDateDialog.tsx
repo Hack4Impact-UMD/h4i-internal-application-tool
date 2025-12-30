@@ -93,6 +93,8 @@ export default function ChangeDueDateDialog({
                 <Calendar
                   mode="single"
                   selected={date}
+                  defaultMonth={date}
+                  hidden={{ before: new Date() }}
                   onSelect={(newDate) => {
                     if (newDate) setDate(newDate);
                     setPopoverOpen(false);
