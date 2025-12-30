@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -97,5 +98,17 @@ export async function setApplicationFormActiveStatus(formId: string, active: boo
 
   await updateDoc(docRef, {
     isActive: active,
+  } as Partial<ApplicationForm>);
+}
+
+export async function setApplicationFormDueDate(formId: string, dueDate: Date) {
+  const forms = collection(
+    db,
+    APPLICATION_FORMS_COLLECTION,
+  ) as CollectionReference<ApplicationForm>;
+  const docRef = doc(forms, formId);
+
+  await updateDoc(docRef, {
+    dueDate: Timestamp.fromDate(dueDate),
   } as Partial<ApplicationForm>);
 }

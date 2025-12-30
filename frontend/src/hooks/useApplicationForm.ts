@@ -6,6 +6,7 @@ import {
   getApplicationForm,
   getApplicationFormForResponseId,
   createApplicationForm,
+  setApplicationFormDueDate,
 } from "../services/applicationFormsService";
 
 export function useAllApplicationForms() {
@@ -74,6 +75,18 @@ export const useDuplicateForm = () => {
     },
   });
 };
+
+export function useUpdateApplicationFormDueDate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ formId, dueDate }: { formId: string, dueDate: Date }) => {
+      await setApplicationFormDueDate(formId, dueDate);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["form"] });
+    }
+  })
+}
 
 export function useApplicationFormForResponseId(responseId?: string) {
   return useQuery<ApplicationForm>({

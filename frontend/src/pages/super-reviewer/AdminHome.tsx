@@ -5,7 +5,7 @@ import {
   useUploadApplicationForm,
 } from "@/hooks/useApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
-import { PermissionRole } from "@/types/types";
+import { ApplicationForm, PermissionRole } from "@/types/types";
 import { displayUserRoleName } from "@/utils/display";
 import { Link, useNavigate } from "react-router-dom";
 import { h4iApplicationForm } from "@/data/h4i-application-form";
@@ -18,21 +18,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EllipsisVertical, LockIcon, UnlockIcon } from "lucide-react";
+import { EllipsisVertical, LockIcon, MailIcon, MailOpenIcon, UnlockIcon } from "lucide-react";
 import { useUpdateApplicationFormActive } from "@/hooks/useUpdateApplicationFormActive";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import DuplicateFormDialog from "@/components/dor/DuplicateFormDialog/DuplicateFormDialog";
 import { useState } from "react";
 import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { TooltipContent, Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import ChangeDueDateDialog from "@/components/dor/ChangeDueDateDialog/ChangeDueDateDialog";
 
 export default function AdminHome() {
   const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
   const { user, token } = useAuth();
-  const [duplicateDialogOpenState, setDuplicateDialogOpenState] = useState<
-    Record<string, boolean>
-  >({});
+  const [selectedForm, setSelectedForm] = useState<ApplicationForm>();
+  const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
+  const [showDueDateDialog, setShowDueDateDialog] = useState(false);
   const [formsLocked, setFormsLocked] = useState(true);
 
   const { mutate: setFormActiveStatus, isPending: activePending } =
@@ -139,10 +140,25 @@ export default function AdminHome() {
                   to={`/admin/${route}/dashboard/${form.id}/${table}`}
                   className="grow flex gap-2 items-center"
                 >
+                  <Tooltip>
+                    <TooltipTrigger>
+                      {form.decisionsReleased ? (
+                        <MailOpenIcon className="size-4 text-blue" />
+                      ) : (
+                        <MailIcon className="size-4" />
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {form.decisionsReleased ? "Decisions Released" : "Decisions Not Released"}
+                    </TooltipContent>
+                  </Tooltip>
                   <span
                     className={`${!form.isActive ? "bg-muted" : "bg-lightblue"} px-2 py-1 text-sm rounded-full`}
                   >
-                    {form.isActive ? "Active" : "Inactive"}
+                    Due {Intl.DateTimeFormat("en-us", {
+                      dateStyle: "short",
+                      timeStyle: "short"
+                    }).format(form.dueDate.toDate())}
                   </span>
                   <span>
                     Semester: {form.semester} (ID:{" "}
@@ -160,47 +176,38 @@ export default function AdminHome() {
                       }
                     />
 
-                    <Dialog
-                      open={duplicateDialogOpenState[form.id] || false}
-                      onOpenChange={(isOpen) =>
-                        setDuplicateDialogOpenState((prev) => ({
-                          ...prev,
-                          [form.id]: isOpen,
-                        }))
-                      }
-                    >
-                      <DropdownMenu>
-                        <DropdownMenuTrigger disabled={formsLocked} asChild>
-                          <Button variant="outline">
-                            <EllipsisVertical className="size-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem>
-                            <Link to={`/admin/dor/form-builder/${form.id}`}>
-                              Edit form
-                            </Link>
-                          </DropdownMenuItem>
-                          <DialogTrigger asChild>
-                            <DropdownMenuItem
-                              className="cursor-pointer"
-                              onSelect={(e) => e.preventDefault()}
-                            >
-                              Duplicate form
-                            </DropdownMenuItem>
-                          </DialogTrigger>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      <DuplicateFormDialog
-                        form={form}
-                        onClose={() =>
-                          setDuplicateDialogOpenState((prev) => ({
-                            ...prev,
-                            [form.id]: false,
-                          }))
-                        }
-                      />
-                    </Dialog>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger disabled={formsLocked} asChild>
+                        <Button variant="outline">
+                          <EllipsisVertical className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>
+                          <Link to={`/admin/dor/form-builder/${form.id}`}>
+                            Edit form
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setSelectedForm(form)
+                            setShowDuplicateDialog(true)
+                          }}
+                        >
+                          Duplicate form
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setSelectedForm(form)
+                            setShowDueDateDialog(true)
+                          }}
+                        >
+                          Change due date
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </>
                 )}
               </span>
@@ -272,6 +279,20 @@ export default function AdminHome() {
               <UploadInterviewRubricDialog />
             </div>
           </div>
+          {selectedForm && (
+            <>
+              <DuplicateFormDialog
+                open={showDuplicateDialog}
+                form={selectedForm}
+                onOpenChange={setShowDuplicateDialog}
+              />
+              <ChangeDueDateDialog
+                open={showDueDateDialog}
+                form={selectedForm}
+                onOpenChange={setShowDueDateDialog}
+              />
+            </>
+          )}
         </>
       )}
     </div>
