@@ -27,19 +27,22 @@ export default function UploadReviewRubricDialog() {
   const handleUpload = async () => {
     if (!selectedFormId || !token) return;
 
-    uploadRubrics({
-      rubrics: APPLICATION_RUBRICS(selectedFormId),
-      token: (await token()) ?? "",
-    }, {
-      onSuccess: () => {
-        throwSuccessToast("Review rubrics uploaded successfully!");
-        setOpen(false);
+    uploadRubrics(
+      {
+        rubrics: APPLICATION_RUBRICS(selectedFormId),
+        token: (await token()) ?? "",
       },
-      onError: (err) => {
-        throwErrorToast("Failed to upload review rubrics");
-        console.error(err);
-      }
-    });
+      {
+        onSuccess: () => {
+          throwSuccessToast("Review rubrics uploaded successfully!");
+          setOpen(false);
+        },
+        onError: (err) => {
+          throwErrorToast("Failed to upload review rubrics");
+          console.error(err);
+        },
+      },
+    );
   };
 
   const handleOpenChange = (isOpen: boolean) => {

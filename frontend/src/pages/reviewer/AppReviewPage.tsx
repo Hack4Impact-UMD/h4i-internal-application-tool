@@ -431,7 +431,7 @@ const AppReviewPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )?.questions ?? []
                   }
-                  onChangeResponse={() => { }}
+                  onChangeResponse={() => {}}
                   disabledRoles={form.disabledRoles ?? []}
                 />
               </div>

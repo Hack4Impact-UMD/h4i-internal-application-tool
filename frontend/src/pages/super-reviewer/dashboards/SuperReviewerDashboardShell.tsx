@@ -35,7 +35,13 @@ import {
   rejectUndecidedApplicantsForForm,
 } from "@/services/statusService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { RadioIcon, ShieldIcon, StopCircleIcon, ChevronDownIcon, CheckIcon } from "lucide-react";
+import {
+  RadioIcon,
+  ShieldIcon,
+  StopCircleIcon,
+  ChevronDownIcon,
+  CheckIcon,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { Outlet, useParams, useLocation, NavLink } from "react-router-dom";
 
@@ -105,31 +111,64 @@ export default function SuperReviewerDashboardShell() {
 
   const base = `/admin/dor/dashboard/${formId}`;
 
-  const applicationsRoutes = useMemo(() => ([
-    { path: `${base}/all`, label: "All Applications", category: "Applications" },
-    { path: `${base}/qualified`, label: "Qualified", category: "Applications" },
-    { path: `${base}/acceptance-confirmation`, label: "Confirmations", category: "Applications" },
-  ]), [base]);
+  const applicationsRoutes = useMemo(
+    () => [
+      {
+        path: `${base}/all`,
+        label: "All Applications",
+        category: "Applications",
+      },
+      {
+        path: `${base}/qualified`,
+        label: "Qualified",
+        category: "Applications",
+      },
+      {
+        path: `${base}/acceptance-confirmation`,
+        label: "Confirmations",
+        category: "Applications",
+      },
+    ],
+    [base],
+  );
 
-  const assignmentsRoutes = useMemo(() => ([
-    { path: `${base}/assigned-reviews`, label: "Assigned Reviews", category: "My Assignments" },
-    { path: `${base}/assigned-interviews`, label: "Assigned Interviews", category: "My Assignments" },
-  ]), [base]);
+  const assignmentsRoutes = useMemo(
+    () => [
+      {
+        path: `${base}/assigned-reviews`,
+        label: "Assigned Reviews",
+        category: "My Assignments",
+      },
+      {
+        path: `${base}/assigned-interviews`,
+        label: "Assigned Interviews",
+        category: "My Assignments",
+      },
+    ],
+    [base],
+  );
 
-  const usersRoutes = useMemo(() => ([
-    { path: `${base}/reviewers`, label: "Reviewers", category: "Users" },
-    { path: `${base}/interviewers`, label: "Interviewers", category: "Users" },
-    { path: `${base}/board`, label: "Board", category: "Users" },
-  ]), [base]);
+  const usersRoutes = useMemo(
+    () => [
+      { path: `${base}/reviewers`, label: "Reviewers", category: "Users" },
+      {
+        path: `${base}/interviewers`,
+        label: "Interviewers",
+        category: "Users",
+      },
+      { path: `${base}/board`, label: "Board", category: "Users" },
+    ],
+    [base],
+  );
 
   const allRoutes = useMemo(
     () => [...applicationsRoutes, ...assignmentsRoutes, ...usersRoutes],
-    [applicationsRoutes, assignmentsRoutes, usersRoutes]
+    [applicationsRoutes, assignmentsRoutes, usersRoutes],
   );
 
   const currentPage = useMemo(
-    () => allRoutes.find(r => r.path === location.pathname),
-    [allRoutes, location.pathname]
+    () => allRoutes.find((r) => r.path === location.pathname),
+    [allRoutes, location.pathname],
   );
 
   return (
@@ -139,7 +178,11 @@ export default function SuperReviewerDashboardShell() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant={applicationsRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                variant={
+                  applicationsRoutes.some((r) => isActiveRoute(r.path))
+                    ? "default"
+                    : "outline"
+                }
                 className="gap-1"
               >
                 Applications
@@ -157,7 +200,9 @@ export default function SuperReviewerDashboardShell() {
                     }
                   >
                     <span>{route.label}</span>
-                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                    {isActiveRoute(route.path) && (
+                      <CheckIcon className="h-4 w-4" />
+                    )}
                   </NavLink>
                 </DropdownMenuItem>
               ))}
@@ -167,7 +212,11 @@ export default function SuperReviewerDashboardShell() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant={assignmentsRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                variant={
+                  assignmentsRoutes.some((r) => isActiveRoute(r.path))
+                    ? "default"
+                    : "outline"
+                }
                 className="gap-1"
               >
                 My Assignments
@@ -185,7 +234,9 @@ export default function SuperReviewerDashboardShell() {
                     }
                   >
                     <span>{route.label}</span>
-                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                    {isActiveRoute(route.path) && (
+                      <CheckIcon className="h-4 w-4" />
+                    )}
                   </NavLink>
                 </DropdownMenuItem>
               ))}
@@ -195,7 +246,11 @@ export default function SuperReviewerDashboardShell() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant={usersRoutes.some((r) => isActiveRoute(r.path)) ? "default" : "outline"}
+                variant={
+                  usersRoutes.some((r) => isActiveRoute(r.path))
+                    ? "default"
+                    : "outline"
+                }
                 className="gap-1"
               >
                 Users
@@ -213,7 +268,9 @@ export default function SuperReviewerDashboardShell() {
                     }
                   >
                     <span>{route.label}</span>
-                    {isActiveRoute(route.path) && <CheckIcon className="h-4 w-4" />}
+                    {isActiveRoute(route.path) && (
+                      <CheckIcon className="h-4 w-4" />
+                    )}
                   </NavLink>
                 </DropdownMenuItem>
               ))}
@@ -305,7 +362,7 @@ export default function SuperReviewerDashboardShell() {
             placeholder="Search"
           />
         </div>
-        
+
         {currentPage && (
           <div className="text-sm text-muted-foreground px-1">
             <span className="font-medium">{currentPage.category}</span>

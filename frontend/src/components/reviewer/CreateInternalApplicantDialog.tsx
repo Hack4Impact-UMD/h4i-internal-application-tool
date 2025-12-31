@@ -33,7 +33,7 @@ export default function CreateInternalApplicantDialog() {
   const {
     data: appForm,
     isPending: isLoadingForm,
-    error: formError
+    error: formError,
   } = useActiveForm();
 
   const { token } = useAuth();
@@ -48,12 +48,14 @@ export default function CreateInternalApplicantDialog() {
     if (!open) reset();
   }, [open, reset]);
 
-  const isValid = useMemo(() =>
-    firstName.trim() !== "" &&
-    lastName.trim() !== "" &&
-    rolesApplied.length > 0 &&
-    !!appForm
-    , [firstName, lastName, rolesApplied, appForm]);
+  const isValid = useMemo(
+    () =>
+      firstName.trim() !== "" &&
+      lastName.trim() !== "" &&
+      rolesApplied.length > 0 &&
+      !!appForm,
+    [firstName, lastName, rolesApplied, appForm],
+  );
 
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -73,7 +75,7 @@ export default function CreateInternalApplicantDialog() {
       const sectionResponses = generateSectionResponses(
         appForm.sections,
         rolesApplied,
-        appForm.id
+        appForm.id,
       );
 
       return createInternalApplicant(
@@ -82,18 +84,22 @@ export default function CreateInternalApplicantDialog() {
         appForm.id,
         rolesApplied,
         sectionResponses,
-        tok
+        tok,
       );
     },
     onSuccess: (data) => {
       throwSuccessToast(
-        `Created user ${data.user.firstName} ${data.user.lastName} with Qualified status!`
+        `Created user ${data.user.firstName} ${data.user.lastName} with Qualified status!`,
       );
 
       // backend route creates new user, response, and status objects
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      queryClient.invalidateQueries({ queryKey: ["responses", "form", appForm!.id] });
-      queryClient.invalidateQueries({ queryKey: ["status", data.applicationResponse.id] });
+      queryClient.invalidateQueries({
+        queryKey: ["responses", "form", appForm!.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["status", data.applicationResponse.id],
+      });
       queryClient.invalidateQueries({ queryKey: ["qualified-apps-rows"] });
       queryClient.invalidateQueries({ queryKey: ["all-apps-rows"] });
 
@@ -101,8 +107,8 @@ export default function CreateInternalApplicantDialog() {
     },
     onError: (error) => {
       throwErrorToast(`Failed to create internal applicant: ${error}`);
-    }
-  })
+    },
+  });
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -121,11 +127,15 @@ export default function CreateInternalApplicantDialog() {
         <DialogHeader>
           <DialogTitle>Create an Internal Applicant</DialogTitle>
           <DialogDescription>
-            Enter the details of the internal applicant below. A dummy applicant and response will be created and viewable as a typical applicant.
+            Enter the details of the internal applicant below. A dummy applicant
+            and response will be created and viewable as a typical applicant.
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-full overflow-x-hidden">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 max-w-full overflow-x-hidden"
+        >
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <label htmlFor="firstName" className="text-sm font-medium">
@@ -152,9 +162,7 @@ export default function CreateInternalApplicantDialog() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">
-                Application Form
-              </label>
+              <label className="text-sm font-medium">Application Form</label>
               <div className="px-3 py-2 border rounded-md bg-muted/50 text-sm">
                 {isLoadingForm ? (
                   <p>Loading...</p>
@@ -180,7 +188,7 @@ export default function CreateInternalApplicantDialog() {
                   onValueChange={(v) => setRolesApplied(v as ApplicantRole[])}
                 >
                   {Object.values(ApplicantRole)
-                    .filter(value => value !== ApplicantRole.Bootcamp)
+                    .filter((value) => value !== ApplicantRole.Bootcamp)
                     .map((role) => (
                       <ToggleGroupItem
                         key={role}
@@ -200,11 +208,18 @@ export default function CreateInternalApplicantDialog() {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={submitMutation.isPending}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={submitMutation.isPending}
+              >
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={!isValid || submitMutation.isPending}>
+            <Button
+              type="submit"
+              disabled={!isValid || submitMutation.isPending}
+            >
               {submitMutation.isPending ? "Creating..." : "Submit"}
             </Button>
           </DialogFooter>

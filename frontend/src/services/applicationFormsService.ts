@@ -89,7 +89,10 @@ export async function setFormDecisionRelease(
   } as Partial<ApplicationForm>);
 }
 
-export async function setApplicationFormActiveStatus(formId: string, active: boolean) {
+export async function setApplicationFormActiveStatus(
+  formId: string,
+  active: boolean,
+) {
   const forms = collection(
     db,
     APPLICATION_FORMS_COLLECTION,

@@ -24,7 +24,10 @@ const defaultMessages: WeightedMessage[] = [
   { message: "first ever gaming coffee chat", weight: 5 },
   { message: "Always pixel farming at Looneys", weight: 1 },
   { message: "Turns out the dinosaurs aren't extinct", weight: 1 },
-  { message: "👋 everyone, it's time to take a new randomcoffee 🎉", weight: 1 },
+  {
+    message: "👋 everyone, it's time to take a new randomcoffee 🎉",
+    weight: 1,
+  },
 ];
 
 export const loggedInMessages: WeightedMessage[] = [

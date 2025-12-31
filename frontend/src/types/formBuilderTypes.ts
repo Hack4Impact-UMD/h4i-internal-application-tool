@@ -30,7 +30,7 @@ export interface ApplicationForm {
   description: string;
   sections: ApplicationSection[];
   decisionsReleased: boolean;
-  disabledRoles?: ApplicantRole[] // list of disabled roles
+  disabledRoles?: ApplicantRole[]; // list of disabled roles
   decisionLetter?: {
     // decision letters split like this by Board at time of writing, but can be changed easily
     [ReviewStatus.Accepted]: {

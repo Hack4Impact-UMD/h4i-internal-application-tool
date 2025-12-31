@@ -191,7 +191,10 @@ export async function updateUserRoles(userIds: string[], role: PermissionRole) {
   await batch.commit();
 }
 
-export async function updateUserActiveStatus(userId: string, inactive: boolean) {
+export async function updateUserActiveStatus(
+  userId: string,
+  inactive: boolean,
+) {
   const users = collection(db, USER_COLLECTION);
   const userDoc = doc(users, userId);
   await updateDoc(userDoc, {
@@ -208,18 +211,21 @@ export async function deleteUsers(userIds: string[]) {
   await batch.commit();
 }
 
-export async function setReviewCapableUserRolePreferences(reviewerId: string, prefs: ApplicantRole[]) {
+export async function setReviewCapableUserRolePreferences(
+  reviewerId: string,
+  prefs: ApplicantRole[],
+) {
   const user = await getUserById(reviewerId);
   if (user.role === PermissionRole.Reviewer) {
     return await setReviewerRolePreferences(reviewerId, prefs);
   } else if (user.role === PermissionRole.Board) {
     return await setBoardApplicantRoles(reviewerId, prefs);
   } else if (user.role === PermissionRole.Applicant) {
-    throw new Error("Role preferences cannot be changed for applicants.")
+    throw new Error("Role preferences cannot be changed for applicants.");
   } else if (user.role === PermissionRole.SuperReviewer) {
-    throw new Error("Role preferences cannot be changed for super-reviewers.")
+    throw new Error("Role preferences cannot be changed for super-reviewers.");
   } else {
-    throw new Error("Role preferences cannot be changed for this user.")
+    throw new Error("Role preferences cannot be changed for this user.");
   }
 }
 

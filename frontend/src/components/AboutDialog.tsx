@@ -27,8 +27,8 @@ export default function AboutDialog() {
   const {
     data: remoteCommit,
     isPending: remoteCommitPending,
-    error: remoteCommitError
-  } = useRemoteCommit()
+    error: remoteCommitError,
+  } = useRemoteCommit();
 
   const [localCommitCopied, setLocalCommitCopied] = useState(false);
   const [remoteCommitCopied, setRemoteCommitCopied] = useState(false);
@@ -61,7 +61,7 @@ export default function AboutDialog() {
     setConfetti(true);
     if (confettiTimeout.current) clearTimeout(confettiTimeout.current);
     confettiTimeout.current = setTimeout(() => setConfetti(false), 3500);
-  }
+  };
 
   return (
     <DialogContent className="sm:max-w-md">
@@ -101,11 +101,13 @@ export default function AboutDialog() {
           <p className="font-medium">Latest deployed commit:</p>
           <div className="flex items-center gap-2">
             <p className="font-mono grow text-muted-foreground" title={commit}>
-              {remoteCommitPending ? "Loading..." :
-                remoteCommitError ? "Error" :
-                  remoteCommit === null ? "N/A" :
-                    remoteCommit.slice(0, 7)
-              }
+              {remoteCommitPending
+                ? "Loading..."
+                : remoteCommitError
+                  ? "Error"
+                  : remoteCommit === null
+                    ? "N/A"
+                    : remoteCommit.slice(0, 7)}
             </p>
             {remoteCommitCopied ? (
               <Button
@@ -160,8 +162,15 @@ export default function AboutDialog() {
           </div>
           <div className="flex items-center justify-center">
             {confetti && <ConfettiExplosion zIndex={1000} duration={3000} />}
-            <p className="text-sm text-muted-foreground cursor-pointer" onClick={handleEasterEgg}>
-              {confetti ? <span className="font-bold text-lg">Ramy says hi! 👋</span> : "Made with ❤️ by the Hack4Impact-UMD team"}
+            <p
+              className="text-sm text-muted-foreground cursor-pointer"
+              onClick={handleEasterEgg}
+            >
+              {confetti ? (
+                <span className="font-bold text-lg">Ramy says hi! 👋</span>
+              ) : (
+                "Made with ❤️ by the Hack4Impact-UMD team"
+              )}
             </p>
           </div>
         </div>

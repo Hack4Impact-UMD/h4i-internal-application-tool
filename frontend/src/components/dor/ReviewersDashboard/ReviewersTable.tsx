@@ -61,9 +61,14 @@ export default function ReviewersTable({
       reviewerId: string;
       pageIndex: number;
     }) => {
-      const prevRolePreferences = reviewingFor(await getReviewerById(reviewerId));
+      const prevRolePreferences = reviewingFor(
+        await getReviewerById(reviewerId),
+      );
       const newRolePreferences = [...prevRolePreferences, roleToAdd];
-      return await setReviewCapableUserRolePreferences(reviewerId, newRolePreferences);
+      return await setReviewCapableUserRolePreferences(
+        reviewerId,
+        newRolePreferences,
+      );
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["reviewers"] });
@@ -84,11 +89,16 @@ export default function ReviewersTable({
       reviewerId: string;
       pageIndex: number;
     }) => {
-      const prevRolePreferences = reviewingFor(await getReviewerById(reviewerId));
+      const prevRolePreferences = reviewingFor(
+        await getReviewerById(reviewerId),
+      );
       const newRolePreferences = prevRolePreferences.filter(
         (role) => role != roleToRemove,
       );
-      return await setReviewCapableUserRolePreferences(reviewerId, newRolePreferences);
+      return await setReviewCapableUserRolePreferences(
+        reviewerId,
+        newRolePreferences,
+      );
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["reviewers"] });
@@ -198,9 +208,9 @@ export default function ReviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/board/reviewer/" +
-                        formId +
-                        "/" +
-                        row.original.reviewer.id,
+                          formId +
+                          "/" +
+                          row.original.reviewer.id,
                       );
                     }}
                   >
@@ -212,7 +222,14 @@ export default function ReviewersTable({
           ),
         }),
       ] as ColumnDef<ReviewerRow>[],
-    [addRolePreferenceMutation, columnHelper, formId, navigate, pagination.pageIndex, removeRolePreferenceMutation],
+    [
+      addRolePreferenceMutation,
+      columnHelper,
+      formId,
+      navigate,
+      pagination.pageIndex,
+      removeRolePreferenceMutation,
+    ],
   );
 
   const {

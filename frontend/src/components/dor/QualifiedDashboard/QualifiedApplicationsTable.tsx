@@ -406,7 +406,13 @@ export default function QualifiedApplicationsTable({
       return;
     }
 
-    const filteredEmails = new Set(rows.filter(r => statusFilter === "all" || r.status?.status === statusFilter).map(r => r.email));
+    const filteredEmails = new Set(
+      rows
+        .filter(
+          (r) => statusFilter === "all" || r.status?.status === statusFilter,
+        )
+        .map((r) => r.email),
+    );
     const text = [...filteredEmails].join(",");
 
     try {
@@ -416,8 +422,7 @@ export default function QualifiedApplicationsTable({
       console.log("Failed to copy emails: ", err);
       throwErrorToast("Failed to copy emails");
     }
-
-  }, [rows, statusFilter])
+  }, [rows, statusFilter]);
 
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Something went wrong: {error.message}</p>;
@@ -426,19 +431,20 @@ export default function QualifiedApplicationsTable({
     <div className="flex flex-col w-full gap-2">
       <div className="mt-2 flex items-center flex-row gap-2">
         <span className="">Status: </span>
-        <Select value={statusFilter} onValueChange={v => setStatusFilter(v as "all" | ReviewStatus)}>
+        <Select
+          value={statusFilter}
+          onValueChange={(v) => setStatusFilter(v as "all" | ReviewStatus)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All</SelectItem>
-            {
-              Object.values(ReviewStatus).map(s => (
-                <SelectItem value={s} key={s}>
-                  {displayReviewStatus(s)}
-                </SelectItem>
-              )
-              )}
+            {Object.values(ReviewStatus).map((s) => (
+              <SelectItem value={s} key={s}>
+                {displayReviewStatus(s)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Button
@@ -446,7 +452,9 @@ export default function QualifiedApplicationsTable({
           variant="outline"
           onClick={handleCopyEmails}
         >
-          <ClipboardIcon /> Copy {displayReviewStatus(statusFilter).toLocaleLowerCase()} <span className="italic">qualified</span> applicant emails
+          <ClipboardIcon /> Copy{" "}
+          {displayReviewStatus(statusFilter).toLocaleLowerCase()}{" "}
+          <span className="italic">qualified</span> applicant emails
         </Button>
       </div>
       <DataTable

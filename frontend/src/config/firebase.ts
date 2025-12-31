@@ -33,7 +33,6 @@ console.log(`Using base API URL at: ${API_URL}`);
 const app = initializeApp(firebaseConfig);
 
 declare global {
-
   var FIREBASE_APPCHECK_DEBUG_TOKEN: boolean | string | undefined;
 }
 

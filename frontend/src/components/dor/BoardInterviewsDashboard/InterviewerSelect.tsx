@@ -91,24 +91,21 @@ function InterviewerSearchPopover({
                 {interviewer.firstName} {interviewer.lastName}
               </p>
               <div className="flex flex-wrap gap-1">
-                {
-                  interviewer.role === PermissionRole.SuperReviewer ? (
-                    <span
-                      className={
-                        `text-xs bg-lightblue text-blue rounded-full px-2 py-1 text-center flex items-center max-w-fit justify-center`
-                      }
-                    >
-                      All Roles
-                    </span>
-                  ) : (
-                    reviewingFor(interviewer).map((role) => (
-                      <ApplicantRolePill
-                        key={role}
-                        role={role}
-                        className="text-xs"
-                      />)
-                    ))
-                }
+                {interviewer.role === PermissionRole.SuperReviewer ? (
+                  <span
+                    className={`text-xs bg-lightblue text-blue rounded-full px-2 py-1 text-center flex items-center max-w-fit justify-center`}
+                  >
+                    All Roles
+                  </span>
+                ) : (
+                  reviewingFor(interviewer).map((role) => (
+                    <ApplicantRolePill
+                      key={role}
+                      role={role}
+                      className="text-xs"
+                    />
+                  ))
+                )}
               </div>
             </CommandItem>
           ))}

@@ -35,7 +35,7 @@ export default function ExemptReviewersDialog({
   open,
   onOpenChange,
   onSubmit,
-  disabled = false
+  disabled = false,
 }: ExemptReviewersDialogProps) {
   const { data: reviewers, isPending, error } = useAllReviewers();
   const [reviewerSearch, setReviewerSearch] = useState("");
@@ -65,7 +65,9 @@ export default function ExemptReviewersDialog({
   }, []);
 
   const removeReviewer = useCallback((reviewerId: string) => {
-    setSelectedExemptReviewers((prev) => prev.filter((r) => r.id !== reviewerId));
+    setSelectedExemptReviewers((prev) =>
+      prev.filter((r) => r.id !== reviewerId),
+    );
   }, []);
 
   return (
@@ -164,10 +166,19 @@ export default function ExemptReviewersDialog({
         )}
 
         <DialogFooter>
-          <Button disabled={disabled} variant="secondary" onClick={() => onSubmit([])}>
+          <Button
+            disabled={disabled}
+            variant="secondary"
+            onClick={() => onSubmit([])}
+          >
             Skip
           </Button>
-          <Button disabled={disabled} onClick={() => onSubmit(selectedExemptReviewers)}>Next</Button>
+          <Button
+            disabled={disabled}
+            onClick={() => onSubmit(selectedExemptReviewers)}
+          >
+            Next
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

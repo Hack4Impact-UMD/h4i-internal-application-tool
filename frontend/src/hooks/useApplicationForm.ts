@@ -21,7 +21,7 @@ export function useApplicationForm(formId?: string, refetch: boolean = true) {
     queryKey: ["form", formId],
     queryFn: () => getApplicationForm(formId!),
     enabled: formId != undefined,
-    refetchOnWindowFocus: refetch
+    refetchOnWindowFocus: refetch,
   });
 }
 
@@ -58,14 +58,15 @@ export const useDuplicateForm = () => {
       token: string;
     }) => {
       const existingForms = await getAllForms();
-      if (existingForms.some(form => form.id === newFormId)) throw new Error("Form ID already exists");
+      if (existingForms.some((form) => form.id === newFormId))
+        throw new Error("Form ID already exists");
 
       const newForm: ApplicationForm = {
         ...originalForm,
         id: newFormId,
         semester: newFormSemester,
         isActive: false,
-        decisionsReleased: false
+        decisionsReleased: false,
       };
 
       return await createApplicationForm(newForm, token);
@@ -79,13 +80,19 @@ export const useDuplicateForm = () => {
 export function useUpdateApplicationFormDueDate() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ formId, dueDate }: { formId: string, dueDate: Date }) => {
+    mutationFn: async ({
+      formId,
+      dueDate,
+    }: {
+      formId: string;
+      dueDate: Date;
+    }) => {
       await setApplicationFormDueDate(formId, dueDate);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["form"] });
-    }
-  })
+    },
+  });
 }
 
 export function useApplicationFormForResponseId(responseId?: string) {

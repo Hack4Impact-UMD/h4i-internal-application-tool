@@ -56,16 +56,16 @@ export function useRows(assignments: InterviewAssignment[], formId: string) {
             score:
               interview && interview.submitted
                 ? {
-                  value: await calculateInterviewScore(interview).catch(
-                    (err) => {
-                      console.warn(
-                        `Failed to calculate score for interview ${assignment.id}: ${err}`,
-                      );
-                      return NaN;
-                    },
-                  ),
-                  outOf: 4, // NOTE: All scores are assumed to be out of 4
-                }
+                    value: await calculateInterviewScore(interview).catch(
+                      (err) => {
+                        console.warn(
+                          `Failed to calculate score for interview ${assignment.id}: ${err}`,
+                        );
+                        return NaN;
+                      },
+                    ),
+                    outOf: 4, // NOTE: All scores are assumed to be out of 4
+                  }
                 : undefined,
           };
 

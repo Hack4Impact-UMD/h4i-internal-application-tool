@@ -131,8 +131,7 @@ export default function ChangeDueDateDialog({
           </div>
         </div>
         <p className="text-sm font-bold text-muted-foreground">
-          Due date is in{" "}
-          {Intl.DateTimeFormat().resolvedOptions().timeZone}
+          Due date is in {Intl.DateTimeFormat().resolvedOptions().timeZone}
         </p>
 
         <DialogFooter>
