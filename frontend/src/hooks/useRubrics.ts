@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  getRoleRubricsForForm,
   getRoleRubricsForFormRole,
   uploadRubrics as uploadRubricsService,
 } from "@/services/rubricService";
@@ -21,6 +22,14 @@ export const useUploadRubrics = () => {
     },
   });
 };
+
+export function useRubricsForForm(formId?: string) {
+  return useQuery({
+    queryKey: ["rubrics", "form", formId],
+    enabled: !!formId,
+    queryFn: () => getRoleRubricsForForm(formId!),
+  });
+}
 
 export function useRubricsForFormRole(formId?: string, role?: ApplicantRole) {
   return useQuery({
