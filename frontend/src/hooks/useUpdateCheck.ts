@@ -31,6 +31,6 @@ export function useUpdateCheck() {
 export function useRemoteCommit() {
   return useQuery<string | null>({
     queryKey: ["commit", "remote"],
-    queryFn: getLatestDeployedCommit
-  })
+    queryFn: getLatestDeployedCommit,
+  });
 }

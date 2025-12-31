@@ -30,7 +30,7 @@ export default function FormBuilderPage() {
   const [compileError, setCompileError] = useState<string | null>(null);
   const [autoCompile, setAutoCompile] = useState(false);
 
-  const { formId } = useParams()
+  const { formId } = useParams();
   const { token } = useAuth();
   const {
     mutate: uploadForm,
@@ -79,20 +79,20 @@ export default function FormBuilderPage() {
 
   useEffect(() => {
     if (autoCompile) {
-      handleCompile()
+      handleCompile();
     }
-  }, [autoCompile, handleCompile])
+  }, [autoCompile, handleCompile]);
 
   const handleUploadForm = async () => {
     try {
       const parsedForm = {
         ...JSON.parse(jsonCode),
-        id: formId ?? ""
+        id: formId ?? "",
       } as ApplicationForm;
 
       const confirmed = window.confirm(
         `Are you sure you want to upload this application form?\n\n` +
-        `This will update the form with ID '${parsedForm.id}' in Firestore.`,
+          `This will update the form with ID '${parsedForm.id}' in Firestore.`,
       );
 
       if (!confirmed || !token) return;
@@ -143,7 +143,7 @@ export default function FormBuilderPage() {
   };
 
   if (!formId) {
-    return <p>Form ID not specified!</p>
+    return <p>Form ID not specified!</p>;
   }
 
   if (isLoadingForm) {
@@ -175,7 +175,11 @@ export default function FormBuilderPage() {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
               <span>Auto-compile</span>
-              <Switch checked={autoCompile} onCheckedChange={setAutoCompile} className="h-5" />
+              <Switch
+                checked={autoCompile}
+                onCheckedChange={setAutoCompile}
+                className="h-5"
+              />
             </div>
             <Button
               onClick={handleCompile}
@@ -201,7 +205,10 @@ export default function FormBuilderPage() {
         {formUploadError && (
           <p className="mt-2 text-sm text-red-600">{formUploadError.message}</p>
         )}
-        <ResizablePanelGroup direction="horizontal" className="flex-1 mt-2 min-h-0">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="flex-1 mt-2 min-h-0"
+        >
           <ResizablePanel defaultSize={50} minSize={30}>
             <CodeEditor
               value={jsonCode}
@@ -227,12 +234,19 @@ export default function FormBuilderPage() {
                 <div className="flex flex-col gap-2 p-2">
                   {previewForm?.decisionsReleased && (
                     <div className="bg-amber-100 border border-amber-600 text-amber-600 flex flex-row gap-2 p-2 rounded">
-                      <AlertTriangleIcon /> <span><strong>WARNING: </strong>This form has decisions released set to true!</span>
+                      <AlertTriangleIcon />{" "}
+                      <span>
+                        <strong>WARNING: </strong>This form has decisions
+                        released set to true!
+                      </span>
                     </div>
                   )}
                   {previewForm?.isActive && (
                     <div className="bg-amber-100 border border-amber-600 text-amber-600 flex flex-row gap-2 p-2 rounded">
-                      <AlertTriangleIcon /> <span><strong>WARNING: </strong>This form is active!</span>
+                      <AlertTriangleIcon />{" "}
+                      <span>
+                        <strong>WARNING: </strong>This form is active!
+                      </span>
                     </div>
                   )}
                 </div>
@@ -247,21 +261,23 @@ export default function FormBuilderPage() {
                           {previewForm.description}
                         </FormMarkdown>
                       </div>
-                      {previewForm.sections.map((section: ApplicationSection) => (
-                        <div
-                          key={section.sectionId}
-                          className="bg-white p-4 rounded-md shadow-sm border"
-                        >
-                          <Section
-                            section={section}
-                            responses={[]}
-                            responseId="preview"
-                            disabled={true}
-                            onChangeResponse={() => { }}
-                            disabledRoles={previewForm.disabledRoles ?? []}
-                          />
-                        </div>
-                      ))}
+                      {previewForm.sections.map(
+                        (section: ApplicationSection) => (
+                          <div
+                            key={section.sectionId}
+                            className="bg-white p-4 rounded-md shadow-sm border"
+                          >
+                            <Section
+                              section={section}
+                              responses={[]}
+                              responseId="preview"
+                              disabled={true}
+                              onChangeResponse={() => {}}
+                              disabledRoles={previewForm.disabledRoles ?? []}
+                            />
+                          </div>
+                        ),
+                      )}
                     </div>
                   ) : (
                     <div className="text-gray-500 text-center py-8 text-lg">

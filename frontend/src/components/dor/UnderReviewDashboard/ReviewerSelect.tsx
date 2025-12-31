@@ -122,24 +122,21 @@ export function ReviewerSearchPopover({
                     )}
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    {
-                      reviewer.role === PermissionRole.SuperReviewer ? (
-                        <span
-                          className={
-                            `text-xs bg-lightblue text-blue rounded-full px-2 py-1 text-center flex items-center max-w-fit justify-center`
-                          }
-                        >
-                          All Roles
-                        </span>
-                      ) : (
-                        reviewingFor(reviewer).map((role) => (
-                          <ApplicantRolePill
-                            key={role}
-                            role={role}
-                            className="text-xs"
-                          />)
-                        ))
-                    }
+                    {reviewer.role === PermissionRole.SuperReviewer ? (
+                      <span
+                        className={`text-xs bg-lightblue text-blue rounded-full px-2 py-1 text-center flex items-center max-w-fit justify-center`}
+                      >
+                        All Roles
+                      </span>
+                    ) : (
+                      reviewingFor(reviewer).map((role) => (
+                        <ApplicantRolePill
+                          key={role}
+                          role={role}
+                          className="text-xs"
+                        />
+                      ))
+                    )}
                   </div>
                 </CommandItem>
               );

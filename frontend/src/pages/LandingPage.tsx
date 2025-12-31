@@ -17,7 +17,9 @@ export default function LandingPage() {
   const [displayMessage, setDisplayMessage] = useState<string>("");
 
   useEffect(() => {
-    const sessionKey = user ? "landingMessageLoggedIn" : "landingMessageLoggedOut";
+    const sessionKey = user
+      ? "landingMessageLoggedIn"
+      : "landingMessageLoggedOut";
 
     const savedMessage = sessionStorage.getItem(sessionKey);
 
@@ -26,7 +28,7 @@ export default function LandingPage() {
     } else {
       const messages = user ? loggedInMessages : loggedOutMessages;
       const newMessage = pickWeightedMessage(messages);
-      
+
       setDisplayMessage(newMessage);
       sessionStorage.setItem(sessionKey, newMessage);
     }

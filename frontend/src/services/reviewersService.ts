@@ -9,11 +9,13 @@ import { and, collection, getDocs, or, query, where } from "firebase/firestore";
 import { getUserById } from "./userService";
 
 const USERS_COLLECTION = "users";
-const REVIEW_CAPABLE_ROLES = [PermissionRole.Reviewer, PermissionRole.SuperReviewer, PermissionRole.Board];
+const REVIEW_CAPABLE_ROLES = [
+  PermissionRole.Reviewer,
+  PermissionRole.SuperReviewer,
+  PermissionRole.Board,
+];
 
-export async function getReviewerById(
-  id: string,
-): Promise<ReviewCapableUser> {
+export async function getReviewerById(id: string): Promise<ReviewCapableUser> {
   const user = await getUserById(id);
   if (REVIEW_CAPABLE_ROLES.includes(user.role)) {
     return user as ReviewCapableUser;
@@ -29,18 +31,18 @@ export async function getRolePreferencesForReviewer(
   if (REVIEW_CAPABLE_ROLES.includes(user.role)) {
     return reviewingFor(user as ReviewCapableUser);
   } else {
-    throw new Error("User is not review capable")
+    throw new Error("User is not review capable");
   }
 }
 
 export async function getAllReviewers(): Promise<ReviewCapableUser[]> {
   const users = collection(db, USERS_COLLECTION);
-  const q = query(users,
-    where("role", "in", REVIEW_CAPABLE_ROLES),
-  );
+  const q = query(users, where("role", "in", REVIEW_CAPABLE_ROLES));
 
-  // NOTE: for some reason, if the inactive field does not exist, querying on it never matches. we need to filter here instead. 
-  return (await getDocs(q)).docs.map((d) => d.data() as ReviewCapableUser).filter(r => !r.inactive);
+  // NOTE: for some reason, if the inactive field does not exist, querying on it never matches. we need to filter here instead.
+  return (await getDocs(q)).docs
+    .map((d) => d.data() as ReviewCapableUser)
+    .filter((r) => !r.inactive);
 }
 
 export async function getReviewersForRole(
@@ -54,12 +56,14 @@ export async function getReviewersForRole(
       or(
         where("applicantRolePreferences", "array-contains", role),
         where("applicantRoles", "array-contains", role),
-        where("role", "==", PermissionRole.SuperReviewer)
-      )
+        where("role", "==", PermissionRole.SuperReviewer),
+      ),
     ),
   );
-  // NOTE: for some reason, if the inactive field does not exist, querying on it never matches. we need to filter here instead. 
-  return (await getDocs(q)).docs.map((d) => d.data() as ReviewCapableUser).filter(r => !r.inactive);
+  // NOTE: for some reason, if the inactive field does not exist, querying on it never matches. we need to filter here instead.
+  return (await getDocs(q)).docs
+    .map((d) => d.data() as ReviewCapableUser)
+    .filter((r) => !r.inactive);
 }
 
 export function reviewingFor(user: ReviewCapableUser) {
@@ -70,7 +74,7 @@ export function reviewingFor(user: ReviewCapableUser) {
   } else if (user.role === PermissionRole.SuperReviewer) {
     return Object.values(ApplicantRole); //NOTE: dor can review all roles
   } else {
-    return []
+    return [];
   }
 }
 

@@ -1,10 +1,7 @@
 import { useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
-import {
-  ApplicantRole,
-  ApplicationResponse,
-} from "@/types/types";
+import { ApplicantRole, ApplicationResponse } from "@/types/types";
 import {
   createColumnHelper,
   getPaginationRowModel,

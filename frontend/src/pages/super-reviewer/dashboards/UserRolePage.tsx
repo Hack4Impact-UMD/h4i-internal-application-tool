@@ -2,7 +2,11 @@ import UserTable from "@/components/admin/UserTable";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import Loading from "@/components/Loading";
 import { useUsers } from "@/hooks/useUsers";
-import { deleteUsers, updateUserActiveStatus, updateUserRoles } from "@/services/userService";
+import {
+  deleteUsers,
+  updateUserActiveStatus,
+  updateUserRoles,
+} from "@/services/userService";
 import { PermissionRole, UserProfile } from "@/types/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -13,16 +17,19 @@ export default function UserRolePage() {
   const { mutate: setUserActiveStatus } = useMutation({
     mutationFn: ({
       user,
-      inactive
+      inactive,
     }: {
-      user: UserProfile,
-      inactive: boolean
+      user: UserProfile;
+      inactive: boolean;
     }) => updateUserActiveStatus(user.id, inactive),
     onMutate: async ({ user, inactive }) => {
       await queryClient.cancelQueries({ queryKey: ["users", "all"] });
-      const prevUsers = queryClient.getQueryData<UserProfile[]>(["users", "all"]);
+      const prevUsers = queryClient.getQueryData<UserProfile[]>([
+        "users",
+        "all",
+      ]);
 
-      queryClient.setQueryData<UserProfile[]>(["users", "all"], old =>
+      queryClient.setQueryData<UserProfile[]>(["users", "all"], (old) =>
         old?.map((prevUser) => {
           if (prevUser.id === user.id) {
             return {
@@ -48,7 +55,7 @@ export default function UserRolePage() {
       queryClient.invalidateQueries({ queryKey: ["users", "all"] });
       queryClient.invalidateQueries({ queryKey: ["reviewers"] });
     },
-  })
+  });
 
   const { mutate: setUsersRoles } = useMutation({
     mutationFn: ({
@@ -130,7 +137,6 @@ export default function UserRolePage() {
 
   if (isPending) return <Loading />;
 
-
   return (
     <div className="p-4 w-full flex flex-col items-center bg-lightgray">
       <div className="w-full max-w-5xl bg-white p-4 rounded">
@@ -142,7 +148,9 @@ export default function UserRolePage() {
             users={users ?? []}
             setUserRoles={(users, role) => setUsersRoles({ users, role })}
             deleteUsers={(users) => bulkDeleteUsers(users)}
-            setActiveStatus={(user, inactive) => setUserActiveStatus({ user, inactive })}
+            setActiveStatus={(user, inactive) =>
+              setUserActiveStatus({ user, inactive })
+            }
           />
         )}
       </div>

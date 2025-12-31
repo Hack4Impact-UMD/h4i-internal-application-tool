@@ -26,7 +26,7 @@ function generateQuestionResponse(
     case QuestionType.LongAnswer: {
       const minWords = question.minimumWordCount || 0;
       const repetitions = minWords > 0 ? Math.ceil(minWords / 3) : 1;
-      
+
       baseResponse.response = Array(repetitions)
         .fill("Commit that code!")
         .join(" ");
@@ -81,9 +81,9 @@ export function generateSectionResponses(
     if (!required) continue;
 
     const questionResponses: QuestionResponse[] = section.questions
-      .filter(question => !question.optional)
-      .map(question =>
-        generateQuestionResponse(question, formId, rolesApplied)
+      .filter((question) => !question.optional)
+      .map((question) =>
+        generateQuestionResponse(question, formId, rolesApplied),
       );
 
     sectionResponses.push({

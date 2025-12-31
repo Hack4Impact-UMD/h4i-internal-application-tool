@@ -99,7 +99,7 @@ export async function getReviewAssignmentsForForm(formId: string) {
 }
 
 export async function batchAssignReviews(
-  assignments: AppReviewAssignment[]
+  assignments: AppReviewAssignment[],
 ): Promise<void> {
   const assignmentsCollection = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
 

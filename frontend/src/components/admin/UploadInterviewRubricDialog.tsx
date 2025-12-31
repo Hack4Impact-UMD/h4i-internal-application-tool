@@ -42,7 +42,7 @@ export default function UploadInterviewRubricDialog() {
           throwErrorToast("Failed to upload interview rubrics");
           console.error(err);
         },
-      }
+      },
     );
   };
 

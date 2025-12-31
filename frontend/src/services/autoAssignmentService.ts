@@ -1,5 +1,13 @@
-import { ApplicantRole, ApplicationReviewData, AppReviewAssignment, ReviewCapableUser } from "@/types/types";
-import { getReviewAssignmentsForForm, REVIEW_ASSIGNMENT_COLLECTION } from "./reviewAssignmentService";
+import {
+  ApplicantRole,
+  ApplicationReviewData,
+  AppReviewAssignment,
+  ReviewCapableUser,
+} from "@/types/types";
+import {
+  getReviewAssignmentsForForm,
+  REVIEW_ASSIGNMENT_COLLECTION,
+} from "./reviewAssignmentService";
 import { getAllReviewers } from "./reviewersService";
 import { getAllApplicationResponsesByFormId } from "./applicationResponsesService";
 import { getUserById } from "./userService";
@@ -17,12 +25,12 @@ export type AutoAssignmentPlanItem = {
     name: string;
     id: string;
     isExisting: boolean;
-  }
+  };
   reviewer2?: {
     name: string;
     id: string;
     isExisting: boolean;
-  }
+  };
   skipped: boolean;
   skipReason?: string;
 };
@@ -51,7 +59,7 @@ function buildReviewerWorkloadMap(
 
   for (const a of assignments) {
     const w = workloadMap.get(a.reviewerId);
-    if (!w) continue
+    if (!w) continue;
     w.currentAssignments += 1;
   }
 
@@ -68,7 +76,7 @@ function buildReviewerWorkloadMap(
 }
 
 function sortReviewersByPriority(
-  workloadMap: Map<string, ReviewerWorkload>
+  workloadMap: Map<string, ReviewerWorkload>,
 ): ReviewerWorkload[] {
   const reviewers = Array.from(workloadMap.values());
 
@@ -113,15 +121,24 @@ function assignUpToTwoReviewers(
   applicationResponseId: string,
   existingAssignments: AppReviewAssignment[], // expected .length <= 1
   workloadMap: Map<string, ReviewerWorkload>,
-  formId: string
+  formId: string,
 ): AutoAssignmentPlanItem {
-  const baseItem = { applicantName, applicantId, applicationResponseId, formId };
+  const baseItem = {
+    applicantName,
+    applicantId,
+    applicationResponseId,
+    formId,
+  };
 
   const existingReviewerId = existingAssignments[0]?.reviewerId;
 
   // skip if we don't have workload for existing reviewer (smth wrong)
   if (existingReviewerId && !workloadMap.has(existingReviewerId)) {
-    return { ...baseItem, skipped: true, skipReason: "Existing reviewer not found" };
+    return {
+      ...baseItem,
+      skipped: true,
+      skipReason: "Existing reviewer not found",
+    };
   }
 
   const needed = existingReviewerId ? 1 : 2;
@@ -137,14 +154,18 @@ function assignUpToTwoReviewers(
 
   // skip if we can't find enough reviewers
   if (picked.length < needed) {
-    const existing = existingReviewerId ? workloadMap.get(existingReviewerId)! : undefined;
+    const existing = existingReviewerId
+      ? workloadMap.get(existingReviewerId)!
+      : undefined;
 
     return {
       ...baseItem,
-      reviewer1: existing ? { name: existing.name, id: existing.reviewerId, isExisting: true } : undefined,
+      reviewer1: existing
+        ? { name: existing.name, id: existing.reviewerId, isExisting: true }
+        : undefined,
       skipped: true,
       skipReason: "Not enough reviewers available",
-    }
+    };
   }
 
   for (const r of picked) {
@@ -156,8 +177,16 @@ function assignUpToTwoReviewers(
     const existing = workloadMap.get(existingReviewerId)!;
     return {
       ...baseItem,
-      reviewer1: { name: existing.name, id: existing.reviewerId, isExisting: true },
-      reviewer2: { name: picked[0].name, id: picked[0].reviewerId, isExisting: false },
+      reviewer1: {
+        name: existing.name,
+        id: existing.reviewerId,
+        isExisting: true,
+      },
+      reviewer2: {
+        name: picked[0].name,
+        id: picked[0].reviewerId,
+        isExisting: false,
+      },
       skipped: false,
     };
   }
@@ -165,37 +194,50 @@ function assignUpToTwoReviewers(
   // build output otherwise
   return {
     ...baseItem,
-    reviewer1: { name: picked[0].name, id: picked[0].reviewerId, isExisting: false },
-    reviewer2: { name: picked[1].name, id: picked[1].reviewerId, isExisting: false },
+    reviewer1: {
+      name: picked[0].name,
+      id: picked[0].reviewerId,
+      isExisting: false,
+    },
+    reviewer2: {
+      name: picked[1].name,
+      id: picked[1].reviewerId,
+      isExisting: false,
+    },
     skipped: false,
   };
 }
 
 // auto-assignment algo for bootcamp
-// not performance oriented right now! should use a heap instead of O(n) sorts 
+// not performance oriented right now! should use a heap instead of O(n) sorts
 export async function calculateBootcampAssignmentPlan(
   formId: string,
-  exemptReviewers: ReviewCapableUser[]
+  exemptReviewers: ReviewCapableUser[],
 ): Promise<AutoAssignmentPlanItem[]> {
-  const [allApplications, allReviewers, assignments, reviewData] = await Promise.all([
-    getAllApplicationResponsesByFormId(formId),
-    getAllReviewers(),
-    getReviewAssignmentsForForm(formId),
-    getReviewDataForForm(formId)
-  ]);
+  const [allApplications, allReviewers, assignments, reviewData] =
+    await Promise.all([
+      getAllApplicationResponsesByFormId(formId),
+      getAllReviewers(),
+      getReviewAssignmentsForForm(formId),
+      getReviewDataForForm(formId),
+    ]);
 
-  const exemptSet = new Set(exemptReviewers.map(r => r.id))
-  const reviewers = allReviewers.filter(r => !exemptSet.has(r.id))
+  const exemptSet = new Set(exemptReviewers.map((r) => r.id));
+  const reviewers = allReviewers.filter((r) => !exemptSet.has(r.id));
 
   const bootcampApplications = allApplications.filter((app) =>
-    app.rolesApplied.includes(ApplicantRole.Bootcamp)
+    app.rolesApplied.includes(ApplicantRole.Bootcamp),
   );
 
-  const workloadMap = buildReviewerWorkloadMap(reviewers, assignments, reviewData);
+  const workloadMap = buildReviewerWorkloadMap(
+    reviewers,
+    assignments,
+    reviewData,
+  );
 
   const responseToAssignments = matchResponseToAssignments(
     assignments,
-    ApplicantRole.Bootcamp
+    ApplicantRole.Bootcamp,
   );
 
   // build list of application with its user's name and its assignments
@@ -213,11 +255,11 @@ export async function calculateBootcampAssignmentPlan(
         assignments: appAssignments,
         applicantName: `${applicantUser.firstName} ${applicantUser.lastName}`,
       };
-    })
+    }),
   );
 
   const needsReviewers = applicationsWithAssignments.filter(
-    (item) => item.assignments.length < 2
+    (item) => item.assignments.length < 2,
   );
 
   const plan: AutoAssignmentPlanItem[] = [];
@@ -229,7 +271,7 @@ export async function calculateBootcampAssignmentPlan(
       app.id,
       assignments,
       workloadMap,
-      formId
+      formId,
     );
     plan.push(planItem);
   }
@@ -238,7 +280,7 @@ export async function calculateBootcampAssignmentPlan(
 }
 
 export function planItemToAssignments(
-  item: AutoAssignmentPlanItem
+  item: AutoAssignmentPlanItem,
 ): AppReviewAssignment[] {
   const assignments: AppReviewAssignment[] = [];
 
@@ -270,7 +312,7 @@ export function planItemToAssignments(
 }
 
 export async function makeAssignmentsFromPlan(plan: AutoAssignmentPlanItem[]) {
-  const assignments = []
+  const assignments = [];
   for (const item of plan) {
     assignments.push(...planItemToAssignments(item));
   }
@@ -280,7 +322,12 @@ export async function makeAssignmentsFromPlan(plan: AutoAssignmentPlanItem[]) {
     const chunk = assignments.slice(i, i + CHUNK_SIZE);
 
     const batch = writeBatch(db);
-    chunk.forEach(assignment => batch.set(doc(collection(db, REVIEW_ASSIGNMENT_COLLECTION), assignment.id), assignment));
+    chunk.forEach((assignment) =>
+      batch.set(
+        doc(collection(db, REVIEW_ASSIGNMENT_COLLECTION), assignment.id),
+        assignment,
+      ),
+    );
     await batch.commit();
   }
-} 
+}

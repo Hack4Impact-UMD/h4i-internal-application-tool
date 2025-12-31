@@ -18,13 +18,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EllipsisVertical, LockIcon, MailIcon, MailOpenIcon, UnlockIcon } from "lucide-react";
+import {
+  EllipsisVertical,
+  LockIcon,
+  MailIcon,
+  MailOpenIcon,
+  UnlockIcon,
+} from "lucide-react";
 import { useUpdateApplicationFormActive } from "@/hooks/useUpdateApplicationFormActive";
 import DuplicateFormDialog from "@/components/dor/DuplicateFormDialog/DuplicateFormDialog";
 import { useState } from "react";
 import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import { TooltipContent, Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  TooltipContent,
+  Tooltip,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import ChangeDueDateDialog from "@/components/dor/ChangeDueDateDialog/ChangeDueDateDialog";
 
 export default function AdminHome() {
@@ -49,7 +59,7 @@ export default function AdminHome() {
   const handleUploadForm = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-      `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
+        `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
     );
 
     if (!confirmed || !token) return;
@@ -149,15 +159,18 @@ export default function AdminHome() {
                       )}
                     </TooltipTrigger>
                     <TooltipContent>
-                      {form.decisionsReleased ? "Decisions Released" : "Decisions Not Released"}
+                      {form.decisionsReleased
+                        ? "Decisions Released"
+                        : "Decisions Not Released"}
                     </TooltipContent>
                   </Tooltip>
                   <span
                     className={`${!form.isActive ? "bg-muted" : "bg-lightblue"} px-2 py-1 text-sm rounded-full`}
                   >
-                    Due {Intl.DateTimeFormat("en-us", {
+                    Due{" "}
+                    {Intl.DateTimeFormat("en-us", {
                       dateStyle: "short",
-                      timeStyle: "short"
+                      timeStyle: "short",
                     }).format(form.dueDate.toDate())}
                   </span>
                   <span>
@@ -191,8 +204,8 @@ export default function AdminHome() {
                         <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => {
-                            setSelectedForm(form)
-                            setShowDuplicateDialog(true)
+                            setSelectedForm(form);
+                            setShowDuplicateDialog(true);
                           }}
                         >
                           Duplicate form
@@ -200,8 +213,8 @@ export default function AdminHome() {
                         <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => {
-                            setSelectedForm(form)
-                            setShowDueDateDialog(true)
+                            setSelectedForm(form);
+                            setShowDueDateDialog(true);
                           }}
                         >
                           Change due date
@@ -251,11 +264,7 @@ export default function AdminHome() {
             <p className="font-bold">
               DISABLED: Use the form controls at the top of the page instead.
             </p>
-            <Button
-              className="mt-4"
-              onClick={handleUploadForm}
-              disabled={true}
-            >
+            <Button className="mt-4" onClick={handleUploadForm} disabled={true}>
               {isUploadingForm ? "Uploading..." : "Upload Form"}
             </Button>
             {formUploadData && (

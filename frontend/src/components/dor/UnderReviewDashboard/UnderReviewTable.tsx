@@ -42,7 +42,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { displayReviewStatus } from "@/utils/display";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 import { AutoAssignButton } from "./AutoAssignButton";
@@ -358,8 +364,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                        status: status,
-                      })
+                          status: status,
+                        })
                       : throwErrorToast("No status available!")
                   }
                 />
@@ -380,7 +386,7 @@ export default function SuperReviewerApplicationsTable({
             <SortableHeader column={column}>STATUS</SortableHeader>
           ),
           cell: ({ getValue }) => {
-            const status = getValue()
+            const status = getValue();
             return status ? displayReviewStatus(status) : "N/A";
           },
           filterFn: (row, columnId, filterValue) => {
@@ -450,7 +456,13 @@ export default function SuperReviewerApplicationsTable({
       return;
     }
 
-    const filteredEmails = new Set(rows.filter(r => statusFilter === "all" || r.status?.status === statusFilter).map(r => r.applicant.email));
+    const filteredEmails = new Set(
+      rows
+        .filter(
+          (r) => statusFilter === "all" || r.status?.status === statusFilter,
+        )
+        .map((r) => r.applicant.email),
+    );
     const text = [...filteredEmails].join(",");
 
     try {
@@ -469,28 +481,28 @@ export default function SuperReviewerApplicationsTable({
     <div className="flex flex-col w-full gap-2">
       <div className="mt-2 flex items-center flex-row gap-2">
         <span className="">Status: </span>
-        <Select value={statusFilter} onValueChange={v => setStatusFilter(v as "all" | ReviewStatus)}>
+        <Select
+          value={statusFilter}
+          onValueChange={(v) => setStatusFilter(v as "all" | ReviewStatus)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All</SelectItem>
-            {
-              Object.values(ReviewStatus).map(s => (
-                <SelectItem value={s} key={s}>
-                  {displayReviewStatus(s)}
-                </SelectItem>
-              )
-              )}
+            {Object.values(ReviewStatus).map((s) => (
+              <SelectItem value={s} key={s}>
+                {displayReviewStatus(s)}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <div className="ml-auto flex gap-2">
           <AutoAssignButton formId={formId} />
-          <Button
-            variant="outline"
-            onClick={handleCopyEmails}
-          >
-            <ClipboardIcon /> Copy {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant emails
+          <Button variant="outline" onClick={handleCopyEmails}>
+            <ClipboardIcon /> Copy{" "}
+            {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant
+            emails
           </Button>
         </div>
       </div>
@@ -512,8 +524,8 @@ export default function SuperReviewerApplicationsTable({
               },
               {
                 id: "status",
-                value: statusFilter
-              }
+                value: statusFilter,
+              },
             ],
           },
         }}

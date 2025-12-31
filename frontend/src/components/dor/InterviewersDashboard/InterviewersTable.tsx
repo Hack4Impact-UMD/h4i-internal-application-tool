@@ -197,9 +197,9 @@ export default function InterviewersTable({
                     onClick={() => {
                       navigate(
                         "/admin/board/interviewer/" +
-                        formId +
-                        "/" +
-                        row.original.interviewer.id,
+                          formId +
+                          "/" +
+                          row.original.interviewer.id,
                       );
                     }}
                   >

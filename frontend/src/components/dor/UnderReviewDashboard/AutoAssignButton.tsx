@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { calculateBootcampAssignmentPlan, AutoAssignmentPlanItem, makeAssignmentsFromPlan } from "@/services/autoAssignmentService";
+import {
+  calculateBootcampAssignmentPlan,
+  AutoAssignmentPlanItem,
+  makeAssignmentsFromPlan,
+} from "@/services/autoAssignmentService";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import {
   Dialog,
@@ -23,7 +27,9 @@ interface AutoAssignButtonProps {
 export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [showExemptDialog, setShowExemptDialog] = useState(false);
-  const [assignmentPlan, setAssignmentPlan] = useState<AutoAssignmentPlanItem[] | null>(null);
+  const [assignmentPlan, setAssignmentPlan] = useState<
+    AutoAssignmentPlanItem[] | null
+  >(null);
   const queryClient = useQueryClient();
 
   const makeAssignmentsMutation = useMutation({
@@ -48,8 +54,8 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
     onError: (err) => {
       throwErrorToast("Failed to make assignments!");
       console.error(err);
-    }
-  })
+    },
+  });
 
   const calculatePlanMutation = useMutation({
     mutationFn: async ({ exempt }: { exempt: ReviewCapableUser[] }) => {
@@ -73,7 +79,9 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
         onClick={() => setShowExemptDialog(true)}
         disabled={disabled || calculatePlanMutation.isPending}
       >
-        {calculatePlanMutation.isPending ? "Matching..." : "Auto-Assign Bootcamp Applicants"}
+        {calculatePlanMutation.isPending
+          ? "Matching..."
+          : "Auto-Assign Bootcamp Applicants"}
       </Button>
 
       <ExemptReviewersDialog
@@ -96,9 +104,9 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
             {assignmentPlan && (
               <>
                 <div className="text-sm text-muted-foreground">
-                  Possible assignments: {assignmentPlan.length} |
-                  Assigned: {assignmentPlan.filter(p => !p.skipped).length} |
-                  Skipped: {assignmentPlan.filter(p => p.skipped).length}
+                  Possible assignments: {assignmentPlan.length} | Assigned:{" "}
+                  {assignmentPlan.filter((p) => !p.skipped).length} | Skipped:{" "}
+                  {assignmentPlan.filter((p) => p.skipped).length}
                 </div>
 
                 <div className="border rounded-lg overflow-hidden">
@@ -118,13 +126,23 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
                           className={item.skipped ? "bg-yellow-50" : ""}
                         >
                           <td className="px-4 py-2 align-top flex items-center justify-center">
-                            {item.skipped ? <TriangleAlertIcon className="text-amber-500 size-5" /> : <CheckIcon className="text-green-400 size-5" />}
+                            {item.skipped ? (
+                              <TriangleAlertIcon className="text-amber-500 size-5" />
+                            ) : (
+                              <CheckIcon className="text-green-400 size-5" />
+                            )}
                           </td>
-                          <td className="px-4 py-2 align-top">{item.applicantName}</td>
-                          <td className={`px-4 py-2 align-top ${item.reviewer1 && !item.reviewer1.isExisting ? "bg-green-50" : ""}`}>
+                          <td className="px-4 py-2 align-top">
+                            {item.applicantName}
+                          </td>
+                          <td
+                            className={`px-4 py-2 align-top ${item.reviewer1 && !item.reviewer1.isExisting ? "bg-green-50" : ""}`}
+                          >
                             {item.reviewer1 ? item.reviewer1.name : "-"}
                           </td>
-                          <td className={`px-4 py-2 align-top ${item.reviewer2 && !item.reviewer2.isExisting ? "bg-green-50" : ""}`}>
+                          <td
+                            className={`px-4 py-2 align-top ${item.reviewer2 && !item.reviewer2.isExisting ? "bg-green-50" : ""}`}
+                          >
                             {item.reviewer2 ? item.reviewer2.name : "-"}
                           </td>
                         </tr>
@@ -142,8 +160,13 @@ export function AutoAssignButton({ formId, disabled }: AutoAssignButtonProps) {
                     Cancel
                   </Button>
                   <Button
-                    onClick={() => makeAssignmentsMutation.mutate({ plan: assignmentPlan })}
-                    disabled={makeAssignmentsMutation.isPending || assignmentPlan.every(p => p.skipped)}
+                    onClick={() =>
+                      makeAssignmentsMutation.mutate({ plan: assignmentPlan })
+                    }
+                    disabled={
+                      makeAssignmentsMutation.isPending ||
+                      assignmentPlan.every((p) => p.skipped)
+                    }
                   >
                     Confirm Assignments
                   </Button>

@@ -35,7 +35,10 @@ export type UserProfile =
   | BoardUserProfile
   | SuperReviewerUserProfile;
 
-export type ReviewCapableUser = ReviewerUserProfile | BoardUserProfile | SuperReviewerUserProfile;
+export type ReviewCapableUser =
+  | ReviewerUserProfile
+  | BoardUserProfile
+  | SuperReviewerUserProfile;
 
 export interface IUserProfile {
   id: string;

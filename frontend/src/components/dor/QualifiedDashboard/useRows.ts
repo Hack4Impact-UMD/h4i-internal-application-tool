@@ -53,9 +53,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             await Promise.all(
               assignments.map((a) => getUserById(a.interviewerId)),
             )
-          ).filter(
-            (u) => reviewCapable(u),
-          );
+          ).filter((u) => reviewCapable(u));
           // Get interview data for this application/role
           const interviews = await getInterviewDataForResponseRole(
             formId,
