@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import CodeEditor from "@/components/form/CodeEditor";
-import { RoleReviewRubric } from "@/types/types";
+import { ApplicantRole, RoleReviewRubric } from "@/types/types";
 import { useApplicationForm } from "@/hooks/useApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/Loading";
@@ -15,6 +15,50 @@ import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useRubricsForForm } from "@/hooks/useRubrics";
 import { useInterviewRubricsForForm } from "@/hooks/useInterviewRubrics";
+import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
+import { AlertTriangleIcon, CheckIcon } from "lucide-react";
+
+interface ValidationWarnings {
+  missingInForm: Array<{ role: ApplicantRole; scoreKey: string }>;
+  missingInRubric: Array<{ role: ApplicantRole; scoreWeight: string }>;
+}
+
+function ValidationWarningDisplay({ warnings }: {warnings: ValidationWarnings}) {
+  return (
+    <>
+      {warnings.missingInForm.length > 0 && (
+        <div className="bg-amber-100 border border-amber-600 text-amber-700 flex flex-row gap-2 p-2 rounded">
+          <AlertTriangleIcon />
+          <div>
+            <strong>WARNING:</strong> The following keys are in the rubrics but missing from the form:
+            <ul className="list-disc list-inside">
+              {warnings.missingInForm.map(({ role, scoreKey }, index) => (
+                <li key={index}>
+                  <strong>{role}:</strong> {scoreKey}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+      {warnings.missingInRubric.length > 0 && (
+        <div className="bg-amber-100 border border-amber-600 text-amber-700 flex flex-row gap-2 p-2 rounded">
+          <AlertTriangleIcon />
+          <div>
+            <strong>WARNING:</strong> The following weights are in the form but not used in any rubric:
+            <ul className="list-disc list-inside">
+              {warnings.missingInRubric.map(({ role, scoreWeight }, index) => (
+                <li key={index}>
+                  <strong>{role}:</strong> {scoreWeight}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 export default function RubricBuilderPage() {
   const [jsonCode, setJsonCode] = useState("[]");
@@ -22,6 +66,7 @@ export default function RubricBuilderPage() {
   const [compileError, setCompileError] = useState<string | null>(null);
   const [autoCompile, setAutoCompile] = useState(false);
   const [rubricType, setRubricType] = useState<"application" | "interview">("application");
+  const [validationWarnings, setValidationWarnings] = useState<ValidationWarnings | null>(null);
 
   const { formId } = useParams();
   const { token } = useAuth();
@@ -52,6 +97,76 @@ export default function RubricBuilderPage() {
       setJsonCode(formattedJson);
     }
   }, [applicationRubrics, interviewRubrics, rubricType]);
+
+  const validateScoreKeys = useCallback((rubrics: RoleReviewRubric[]): ValidationWarnings => {
+    if (!form) {
+      return { missingInForm: [], missingInRubric: [] };
+    }
+
+    const weights = rubricType === "application" ? form.scoreWeights : form.interviewScoreWeights;
+    if (!weights) {
+      return { missingInForm: [], missingInRubric: [] };
+    }
+
+    const missingInForm: Array<{ role: ApplicantRole; scoreKey: string }> = [];
+    const missingInRubric: Array<{ role: ApplicantRole; scoreWeight: string }> = [];
+
+    const allRoles = Object.keys(weights) as ApplicantRole[];
+
+    allRoles.forEach((role) => {
+      const roleWeights = weights[role];
+      if (!roleWeights) return;
+
+      // find relevant form weights and rubric keys for this role
+      const formScoreWeights = new Set(Object.keys(roleWeights));
+      const rubricScoreKeys = new Set<string>();
+      rubrics.forEach((rubric) => {
+        const appliesToRole = rubric.roles.length === 0 || rubric.roles.includes(role);
+        if (appliesToRole) {
+          rubric.rubricQuestions.forEach((question) => {
+            rubricScoreKeys.add(question.scoreKey);
+          });
+        }
+      });
+
+      // find rubric keys missing from form weights
+      rubricScoreKeys.forEach((scoreKey) => {
+        if (!formScoreWeights.has(scoreKey)) {
+          missingInForm.push({ role, scoreKey });
+        }
+      });
+
+      // find form weights missing from rubrics keys
+      formScoreWeights.forEach((scoreWeight) => {
+        if (!rubricScoreKeys.has(scoreWeight)) {
+          missingInRubric.push({ role, scoreWeight });
+        }
+      });
+    });
+
+    return { missingInForm, missingInRubric };
+  }, [form, rubricType]);
+
+  const handleCompile = useCallback(() => {
+    try {
+      const parsed = JSON.parse(jsonCode) as RoleReviewRubric[];
+      setPreviewRubrics(parsed);
+      setCompileError(null);
+
+      const warnings = validateScoreKeys(parsed);
+      setValidationWarnings(warnings);
+    } catch (error) {
+      console.error("Invalid JSON:", error);
+      setCompileError(error instanceof Error ? error.message : "Invalid JSON");
+      setValidationWarnings(null);
+    }
+  }, [formId, jsonCode, validateScoreKeys]);
+
+  useEffect(() => {
+    if (autoCompile) {
+      handleCompile();
+    }
+  }, [jsonCode, autoCompile]);
 
   if (!formId) {
     return <p>Form ID not specified!</p>
@@ -106,7 +221,7 @@ export default function RubricBuilderPage() {
               <Switch checked={autoCompile} onCheckedChange={setAutoCompile} className="h-5" />
             </div>
             <Button
-              onClick={() => {}}
+              onClick={handleCompile}
               className="bg-blue hover:bg-blue/80"
             >
               Compile
@@ -145,12 +260,23 @@ export default function RubricBuilderPage() {
                   </div>
                 )}
                 <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
-                  {previewRubrics.length > 0 ? (
-                    <div className="space-y-6">
-                      {/* TODO: Map over previewRubrics and display RoleRubric components */}
-                      <div className="text-gray-500 text-center py-8 text-lg">
-                        Rubric preview will appear here
-                      </div>
+                  {previewRubrics ? (
+                    <div className="space-y-4">
+                      {validationWarnings && (
+                          <ValidationWarningDisplay warnings={validationWarnings} />
+                      )}
+
+                      {previewRubrics.map((rubric) => (
+                        <RoleRubric
+                          key={rubric.id}
+                          rubric={rubric}
+                          role={rubric.roles.length > 0 ? rubric.roles[0] : ApplicantRole.Bootcamp}
+                          onScoreChange={() => {}}
+                          onCommentChange={() => {}}
+                          disabled={true}
+                          form={form}
+                        />
+                      ))}
                     </div>
                   ) : (
                     <div className="text-gray-500 text-center py-8 text-lg">
