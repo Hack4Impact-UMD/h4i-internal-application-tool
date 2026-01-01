@@ -19,13 +19,14 @@ import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
 import { AlertTriangleIcon } from "lucide-react";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
+import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 
 interface ValidationWarnings {
   missingInForm: Array<{ role: ApplicantRole; scoreKey: string }>;
   missingInRubric: Array<{ role: ApplicantRole; scoreWeight: string }>;
 }
 
-function ValidationWarningDisplay({ warnings }: {warnings: ValidationWarnings}) {
+function ValidationWarningDisplay({ warnings }: { warnings: ValidationWarnings }) {
   return (
     <>
       {warnings.missingInForm.length > 0 && (
@@ -36,7 +37,7 @@ function ValidationWarningDisplay({ warnings }: {warnings: ValidationWarnings}) 
             <ul className="list-disc list-inside">
               {warnings.missingInForm.map(({ role, scoreKey }, index) => (
                 <li key={index}>
-                  <strong>{role}:</strong> {scoreKey}
+                  <strong>{displayApplicantRoleNameNoEmoji(role)}:</strong> {scoreKey}
                 </li>
               ))}
             </ul>
@@ -51,7 +52,7 @@ function ValidationWarningDisplay({ warnings }: {warnings: ValidationWarnings}) 
             <ul className="list-disc list-inside">
               {warnings.missingInRubric.map(({ role, scoreWeight }, index) => (
                 <li key={index}>
-                  <strong>{role}:</strong> {scoreWeight}
+                  <strong>{displayApplicantRoleNameNoEmoji(role)}:</strong> {scoreWeight}
                 </li>
               ))}
             </ul>
@@ -168,48 +169,57 @@ export default function RubricBuilderPage() {
   }, [jsonCode, validateScoreKeys]);
 
   const handleUpload = useCallback(async () => {
-    try {
-      const parsedRubrics = JSON.parse(jsonCode) as RoleReviewRubric[];
+    const parsedRubrics = JSON.parse(jsonCode) as RoleReviewRubric[];
 
-      let confirmMessage = `This will upload ${parsedRubrics.length} ${rubricType} rubric(s) for form '${formId}'.\n\n`;
+    let confirmMessage = `This will upload ${parsedRubrics.length} ${rubricType} rubric(s) for form '${formId}'.\n\n`;
 
-      if (validationWarnings && (validationWarnings.missingInForm.length || validationWarnings.missingInRubric.length)) {
-        confirmMessage += "WARNING: Mismatch detected between form weights and keys. Review changes and change forms if necessary.\n\n";
-      }
-
-      confirmMessage += "Do you want to continue?";
-
-      const confirmed = window.confirm(confirmMessage);
-      if (!confirmed) return;
-
-      const rubricIdSet = new Set<string>();
-      let duplicates = false;
-
-      parsedRubrics.forEach((rubric) => {
-        if (rubricIdSet.has(rubric.id)) {
-          throwErrorToast("Duplicate rubric ID: " + rubric.id);
-          duplicates = true;
-          return;
-        } else {
-          rubricIdSet.add(rubric.id);
-        }
-      });
-
-      if (duplicates) return;
-
-      if (rubricType === "application") {
-        await uploadRubricsMutation.mutateAsync({ rubrics: parsedRubrics, token: (await token()) ?? "" });
-      } else {
-        await uploadInterviewRubricsMutation.mutateAsync({ interviewRubrics: parsedRubrics, token: (await token()) ?? "" });
-      }
-
-      throwSuccessToast(`Successfully uploaded ${parsedRubrics.length} rubric(s)!`);
-    } catch (error) {
-      console.error("Upload error:", error);
-      throwErrorToast("Failed to upload form!");
+    if (validationWarnings && (validationWarnings.missingInForm.length || validationWarnings.missingInRubric.length)) {
+      confirmMessage += "WARNING: Mismatch detected between form weights and keys. Review changes and change forms if necessary.\n\n";
     }
 
-  }, [jsonCode, token, formId, rubricType, validationWarnings]);
+    confirmMessage += "Do you want to continue?";
+
+    const confirmed = window.confirm(confirmMessage);
+    if (!confirmed) return;
+
+    const rubricIdSet = new Set<string>();
+    let duplicates = false;
+
+    parsedRubrics.forEach((rubric) => {
+      if (rubricIdSet.has(rubric.id)) {
+        throwErrorToast("Duplicate rubric ID: " + rubric.id);
+        duplicates = true;
+        return;
+      } else {
+        rubricIdSet.add(rubric.id);
+      }
+    });
+
+    if (duplicates) return;
+
+    if (rubricType === "application") {
+      uploadRubricsMutation.mutate({ rubrics: parsedRubrics, token: (await token()) ?? "" }, {
+        onSuccess: () => {
+          throwSuccessToast(`Successfully uploaded ${parsedRubrics.length} rubric(s)!`);
+        },
+        onError: (error) => {
+          console.error("Upload error:", error);
+          throwErrorToast("Failed to upload rubrics!");
+        }
+      });
+    } else {
+      uploadInterviewRubricsMutation.mutate({ interviewRubrics: parsedRubrics, token: (await token()) ?? "" }, {
+        onSuccess: () => {
+          throwSuccessToast(`Successfully uploaded ${parsedRubrics.length} rubric(s)!`);
+        },
+        onError: (error) => {
+          console.error("Upload error:", error);
+          throwErrorToast("Failed to upload rubrics!");
+        }
+      });
+    }
+
+  }, [jsonCode, rubricType, formId, validationWarnings, uploadRubricsMutation, token, uploadInterviewRubricsMutation]);
 
   useEffect(() => {
     if (autoCompile) {
@@ -314,7 +324,7 @@ export default function RubricBuilderPage() {
                   {previewRubrics ? (
                     <div className="space-y-4">
                       {validationWarnings && (
-                          <ValidationWarningDisplay warnings={validationWarnings} />
+                        <ValidationWarningDisplay warnings={validationWarnings} />
                       )}
 
                       {previewRubrics.map((rubric) => (
@@ -322,8 +332,8 @@ export default function RubricBuilderPage() {
                           key={rubric.id}
                           rubric={rubric}
                           role={rubric.roles.length > 0 ? rubric.roles[0] : ApplicantRole.Bootcamp}
-                          onScoreChange={() => {}}
-                          onCommentChange={() => {}}
+                          onScoreChange={() => { }}
+                          onCommentChange={() => { }}
                           disabled={true}
                           form={form}
                         />

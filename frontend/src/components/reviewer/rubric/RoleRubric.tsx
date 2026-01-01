@@ -75,7 +75,7 @@ export default function RoleRubric({
       <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
       <Textarea
         disabled={disabled}
-        className="disabled:opacity-100"
+        className="disabled:opacity-100 min-h-64"
         defaultValue={
           reviewData
             ? reviewData.reviewerNotes[rubric.id]
