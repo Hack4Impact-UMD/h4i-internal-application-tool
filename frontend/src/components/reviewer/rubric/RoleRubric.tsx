@@ -59,7 +59,7 @@ export default function RoleRubric({
                 ? form?.scoreWeights[role]?.[q.scoreKey]
                 : interviewData
                   ? form?.interviewScoreWeights[role]?.[q.scoreKey]
-                  : 0
+                  : undefined
             }
             value={
               reviewData
