@@ -13,10 +13,12 @@ import Loading from "@/components/Loading";
 import { useParams } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useRubricsForForm } from "@/hooks/useRubrics";
-import { useInterviewRubricsForForm } from "@/hooks/useInterviewRubrics";
+import { useRubricsForForm, useUploadRubrics } from "@/hooks/useRubrics";
+import { useInterviewRubricsForForm, useUploadInterviewRubrics } from "@/hooks/useInterviewRubrics";
 import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
-import { AlertTriangleIcon, CheckIcon } from "lucide-react";
+import { AlertTriangleIcon } from "lucide-react";
+import { throwErrorToast } from "@/components/toasts/ErrorToast";
+import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 
 interface ValidationWarnings {
   missingInForm: Array<{ role: ApplicantRole; scoreKey: string }>;
@@ -88,6 +90,9 @@ export default function RubricBuilderPage() {
     isPending: isLoadingIntRubrics,
     error: loadIntRubricsError,
   } = useInterviewRubricsForForm(formId);
+
+  const uploadRubricsMutation = useUploadRubrics();
+  const uploadInterviewRubricsMutation = useUploadInterviewRubrics();
 
   useEffect(() => {
     const rubrics = rubricType === "application" ? applicationRubrics : interviewRubrics;
@@ -162,6 +167,50 @@ export default function RubricBuilderPage() {
     }
   }, [formId, jsonCode, validateScoreKeys]);
 
+  const handleUpload = useCallback(async () => {
+    try {
+      const parsedRubrics = JSON.parse(jsonCode) as RoleReviewRubric[];
+
+      let confirmMessage = `This will upload ${parsedRubrics.length} ${rubricType} rubric(s) for form '${formId}'.\n\n`;
+
+      if (validationWarnings && (validationWarnings.missingInForm.length || validationWarnings.missingInRubric.length)) {
+        confirmMessage += "WARNING: Mismatch detected between form weights and keys. Review changes and change forms if necessary.\n\n";
+      }
+
+      confirmMessage += "Do you want to continue?";
+
+      const confirmed = window.confirm(confirmMessage);
+      if (!confirmed) return;
+
+      const rubricIdSet = new Set<string>();
+      let duplicates = false;
+
+      parsedRubrics.forEach((rubric) => {
+        if (rubricIdSet.has(rubric.id)) {
+          throwErrorToast("Duplicate rubric ID: " + rubric.id);
+          duplicates = true;
+          return;
+        } else {
+          rubricIdSet.add(rubric.id);
+        }
+      });
+
+      if (duplicates) return;
+
+      if (rubricType === "application") {
+        await uploadRubricsMutation.mutateAsync({ rubrics: parsedRubrics, token: (await token()) ?? "" });
+      } else {
+        await uploadInterviewRubricsMutation.mutateAsync({ interviewRubrics: parsedRubrics, token: (await token()) ?? "" });
+      }
+
+      throwSuccessToast(`Successfully uploaded ${parsedRubrics.length} rubric(s)!`);
+    } catch (error) {
+      console.error("Upload error:", error);
+      throwErrorToast("Failed to upload form!");
+    }
+
+  }, [jsonCode, token, formId, rubricType, validationWarnings]);
+
   useEffect(() => {
     if (autoCompile) {
       handleCompile();
@@ -227,11 +276,13 @@ export default function RubricBuilderPage() {
               Compile
             </Button>
             <Button
-              onClick={() => {}}
-              disabled={false}
+              onClick={handleUpload}
+              disabled={uploadRubricsMutation.isPending || uploadInterviewRubricsMutation.isPending}
               className="bg-green-600 hover:bg-green-700"
             >
-              Upload Rubrics
+              {(uploadRubricsMutation.isPending || uploadInterviewRubricsMutation.isPending)
+                ? "Uploading..."
+                : "Upload Rubrics"}
             </Button>
           </div>
         </div>
