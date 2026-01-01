@@ -165,7 +165,7 @@ export default function RubricBuilderPage() {
       setCompileError(error instanceof Error ? error.message : "Invalid JSON");
       setValidationWarnings(null);
     }
-  }, [formId, jsonCode, validateScoreKeys]);
+  }, [jsonCode, validateScoreKeys]);
 
   const handleUpload = useCallback(async () => {
     try {
@@ -215,7 +215,7 @@ export default function RubricBuilderPage() {
     if (autoCompile) {
       handleCompile();
     }
-  }, [jsonCode, autoCompile]);
+  }, [jsonCode, autoCompile, handleCompile]);
 
   if (!formId) {
     return <p>Form ID not specified!</p>
