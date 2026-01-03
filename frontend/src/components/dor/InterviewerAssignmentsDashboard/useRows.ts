@@ -1,3 +1,4 @@
+import { getApplicationForm } from "@/services/applicationFormsService";
 import { getInterviewDataForAssignment } from "@/services/interviewDataService";
 import { getUserById } from "@/services/userService";
 import {
@@ -34,6 +35,7 @@ export function useRows(assignments: InterviewAssignment[], formId: string) {
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
+      const form = await getApplicationForm(formId);
       return Promise.all(
         assignments.map(async (assignment, index) => {
           const [applicant, interview] = await Promise.all([
@@ -56,16 +58,9 @@ export function useRows(assignments: InterviewAssignment[], formId: string) {
             score:
               interview && interview.submitted
                 ? {
-                    value: await calculateInterviewScore(interview).catch(
-                      (err) => {
-                        console.warn(
-                          `Failed to calculate score for ${applicant.id}: ${err}`,
-                        );
-                        return NaN;
-                      },
-                    ),
-                    outOf: 4, // NOTE: All scores are assumed to be out of 4
-                  }
+                  value: calculateInterviewScore(interview, form),
+                  outOf: 4, // NOTE: All scores are assumed to be out of 4
+                }
                 : undefined,
           };
 

@@ -1,20 +1,16 @@
 import { throwWarningToast } from "@/components/toasts/WarningToast";
-import { getApplicationForm } from "@/services/applicationFormsService";
 import {
   ApplicationForm,
   ApplicationInterviewData,
   ApplicationReviewData,
 } from "@/types/types";
 
-export async function calculateReviewScore(
+export function calculateReviewScore(
   review: ApplicationReviewData,
-): Promise<number> {
+  form: ApplicationForm
+): number {
   const scores = Object.keys(review.applicantScores);
   if (scores.length === 0) return 0;
-
-  const form: ApplicationForm = await getApplicationForm(
-    review.applicationFormId,
-  );
 
   if (!form.scoreWeights) {
     throwWarningToast(
@@ -34,17 +30,12 @@ export async function calculateReviewScore(
   return calculateScore(weightsForRole, review.applicantScores);
 }
 
-export async function calculateInterviewScore(
+export function calculateInterviewScore(
   interview: ApplicationInterviewData,
-): Promise<number> {
+  form: ApplicationForm
+): number {
   const scores = Object.keys(interview.interviewScores);
   if (scores.length === 0) return 0;
-
-  const form: ApplicationForm = await getApplicationForm(
-    interview.applicationFormId,
-  );
-
-  console.log("this is running");
 
   if (!form.interviewScoreWeights) {
     throwWarningToast(

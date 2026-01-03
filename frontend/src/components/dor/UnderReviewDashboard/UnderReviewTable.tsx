@@ -20,7 +20,7 @@ import {
   assignReview,
   removeReviewAssignment,
 } from "@/services/reviewAssignmentService";
-import { EllipsisVertical, ClipboardIcon, AlertTriangle } from "lucide-react";
+import { EllipsisVertical, ClipboardIcon, AlertTriangle, UserCheckIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { throwSuccessToast } from "../../toasts/SuccessToast";
 import { throwErrorToast } from "../../toasts/ErrorToast";
@@ -232,11 +232,21 @@ export default function SuperReviewerApplicationsTable({
           cell: ({ getValue, row }) => {
             const previouslyApplied =
               row.original.applicant.previouslyAppliedCount ?? 0;
+            const internal = row.original.applicant.internal;
 
             return (
-              <span className="flex items-center">
+              <span className="flex items-center gap-1">
                 <span>{getValue()}</span>
-
+                {internal && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <UserCheckIcon className="text-blue size-4" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Internal Applicant
+                    </TooltipContent>
+                  </Tooltip>
+                )}
                 {previouslyApplied > 0 && (
                   <Tooltip>
                     <TooltipTrigger>
@@ -364,8 +374,8 @@ export default function SuperReviewerApplicationsTable({
                   onClick={() =>
                     status
                       ? toggleQualifiedMutation.mutate({
-                          status: status,
-                        })
+                        status: status,
+                      })
                       : throwErrorToast("No status available!")
                   }
                 />

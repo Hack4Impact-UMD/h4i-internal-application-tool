@@ -23,6 +23,9 @@ export async function getApplicationForm(
   const forms = collection(db, APPLICATION_FORMS_COLLECTION);
   const form = await getDoc(doc(forms, formId));
 
+  if (!form.exists())
+    throw new Error(`Application form with ID ${formId} does not exist`);
+
   return form.data() as ApplicationForm;
 }
 

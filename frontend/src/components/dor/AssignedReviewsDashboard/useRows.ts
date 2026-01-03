@@ -1,3 +1,4 @@
+import { getApplicationForm } from "@/services/applicationFormsService";
 import { getReviewDataForAssignment } from "@/services/reviewDataService";
 import { reviewCapable } from "@/services/reviewersService";
 import { getUserById } from "@/services/userService";
@@ -34,6 +35,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
+      const form = await getApplicationForm(formId);
       return Promise.all(
         assignments.map(async (assignment, index) => {
           const [reviewer, review] = await Promise.all([
@@ -56,14 +58,9 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             score:
               review && review.submitted
                 ? {
-                    value: await calculateReviewScore(review).catch((err) => {
-                      console.warn(
-                        `Failed to calculate score for review ${assignment.id}: ${err}`,
-                      );
-                      return NaN;
-                    }),
-                    outOf: 4, // NOTE: All scores are assumed to be out of 4
-                  }
+                  value: calculateReviewScore(review, form),
+                  outOf: 4, // NOTE: All scores are assumed to be out of 4
+                }
                 : undefined,
           };
 
