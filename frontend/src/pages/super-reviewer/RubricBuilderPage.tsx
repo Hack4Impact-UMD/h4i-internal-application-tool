@@ -122,7 +122,7 @@ export default function RubricBuilderPage() {
       console.error("Invalid JSON:", error);
       setCompileError(error instanceof Error ? error.message : "Invalid JSON");
     }
-  }, [jsonCode, rubricType]);
+  }, [jsonCode, rubricType, formId, form]);
 
   const handleUpload = useCallback(async () => {
     const parsedRubrics = (JSON.parse(jsonCode) as RoleReviewRubric[]).map(rubric => ({
@@ -178,7 +178,7 @@ export default function RubricBuilderPage() {
       });
     }
 
-  }, [jsonCode, rubricType, validationWarnings, uploadRubricsMutation, token, uploadInterviewRubricsMutation]);
+  }, [jsonCode, rubricType, formId, validationWarnings, uploadRubricsMutation, token, uploadInterviewRubricsMutation]);
 
   useEffect(() => {
     if (autoCompile) {
