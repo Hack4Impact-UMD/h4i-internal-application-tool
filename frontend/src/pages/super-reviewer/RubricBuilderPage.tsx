@@ -105,7 +105,7 @@ export default function RubricBuilderPage() {
     }
   }, [applicationRubrics, interviewRubrics, rubricType]);
 
-  const handleCompile = useCallback(async () => {
+  const handleCompile = useCallback(() => {
     try {
       const parsed = (JSON.parse(jsonCode) as RoleReviewRubric[]).map(rubric => ({
         ...rubric,
@@ -114,8 +114,8 @@ export default function RubricBuilderPage() {
       setPreviewRubrics(parsed);
       setCompileError(null);
 
-      if (formId) {
-        const warnings = await validateRubricScoreKeys(parsed, formId, rubricType === "interview");
+      if (form) {
+        const warnings = validateRubricScoreKeys(parsed, form, rubricType === "interview");
         setValidationWarnings(warnings);
       }
     } catch (error) {

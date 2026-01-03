@@ -1,5 +1,5 @@
 import { API_URL, db } from "@/config/firebase";
-import { ApplicantRole, RoleReviewRubric } from "@/types/types";
+import { ApplicantRole, ApplicationForm, RoleReviewRubric } from "@/types/types";
 import axios from "axios";
 import {
   collection,
@@ -10,7 +10,6 @@ import {
   where,
 } from "firebase/firestore";
 import { getAppCheckToken } from "./appCheckService";
-import { getApplicationForm } from "./applicationFormsService";
 
 export const RUBRIC_COLLECTION = "rubrics";
 
@@ -62,13 +61,11 @@ export async function uploadRubrics(
   });
 }
 
-export async function validateRubricScoreKeys(
+export function validateRubricScoreKeys(
   rubrics: RoleReviewRubric[],
-  formId: string,
+  form: ApplicationForm,
   isInterview: boolean = false,
-): Promise<RubricValidationWarnings> {
-  const form = await getApplicationForm(formId);
-
+): RubricValidationWarnings {
   const weights = isInterview ? form.interviewScoreWeights : form.scoreWeights;
   if (!weights) {
     return { missingInForm: [], missingInRubric: [] };
