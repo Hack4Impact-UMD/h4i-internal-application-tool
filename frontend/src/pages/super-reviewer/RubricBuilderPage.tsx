@@ -20,13 +20,9 @@ import { AlertTriangleIcon } from "lucide-react";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
+import { validateRubricScoreKeys, RubricValidationWarnings } from "@/services/rubricService";
 
-interface ValidationWarnings {
-  missingInForm: Array<{ role: ApplicantRole; scoreKey: string }>;
-  missingInRubric: Array<{ role: ApplicantRole; scoreWeight: string }>;
-}
-
-function ValidationWarningDisplay({ warnings }: { warnings: ValidationWarnings }) {
+function ValidationWarningDisplay({ warnings }: { warnings: RubricValidationWarnings }) {
   return (
     <>
       {warnings.missingInForm.length > 0 && (
@@ -69,7 +65,7 @@ export default function RubricBuilderPage() {
   const [compileError, setCompileError] = useState<string | null>(null);
   const [autoCompile, setAutoCompile] = useState(false);
   const [rubricType, setRubricType] = useState<"application" | "interview">("application");
-  const [validationWarnings, setValidationWarnings] = useState<ValidationWarnings | null>(null);
+  const [validationWarnings, setValidationWarnings] = useState<RubricValidationWarnings | null>(null);
 
   const { formId } = useParams();
   const { token } = useAuth();
@@ -99,77 +95,40 @@ export default function RubricBuilderPage() {
     const rubrics = rubricType === "application" ? applicationRubrics : interviewRubrics;
 
     if (rubrics) {
-      const formattedJson = JSON.stringify(rubrics, null, 2);
+      const rubricsWithCorrectedId = rubrics.map(rubric => ({
+        ...rubric,
+        formId: formId ?? "",
+      }));
+
+      const formattedJson = JSON.stringify(rubricsWithCorrectedId, null, 2);
       setJsonCode(formattedJson);
     }
   }, [applicationRubrics, interviewRubrics, rubricType]);
 
-  const validateScoreKeys = useCallback((rubrics: RoleReviewRubric[]): ValidationWarnings => {
-    if (!form) {
-      return { missingInForm: [], missingInRubric: [] };
-    }
-
-    const weights = rubricType === "application" ? form.scoreWeights : form.interviewScoreWeights;
-    if (!weights) {
-      return { missingInForm: [], missingInRubric: [] };
-    }
-
-    const missingInForm: Array<{ role: ApplicantRole; scoreKey: string }> = [];
-    const missingInRubric: Array<{ role: ApplicantRole; scoreWeight: string }> = [];
-
-    const allRoles = Object.keys(weights) as ApplicantRole[];
-
-    allRoles.forEach((role) => {
-      const roleWeights = weights[role];
-      if (!roleWeights) return;
-
-      // find relevant form weights and rubric keys for this role
-      const formScoreWeights = new Set(Object.keys(roleWeights));
-      const rubricScoreKeys = new Set<string>();
-      rubrics.forEach((rubric) => {
-        const appliesToRole = rubric.roles.length === 0 || rubric.roles.includes(role);
-        if (appliesToRole) {
-          rubric.rubricQuestions.forEach((question) => {
-            rubricScoreKeys.add(question.scoreKey);
-          });
-        }
-      });
-
-      // find rubric keys missing from form weights
-      rubricScoreKeys.forEach((scoreKey) => {
-        if (!formScoreWeights.has(scoreKey)) {
-          missingInForm.push({ role, scoreKey });
-        }
-      });
-
-      // find form weights missing from rubrics keys
-      formScoreWeights.forEach((scoreWeight) => {
-        if (!rubricScoreKeys.has(scoreWeight)) {
-          missingInRubric.push({ role, scoreWeight });
-        }
-      });
-    });
-
-    return { missingInForm, missingInRubric };
-  }, [form, rubricType]);
-
-  const handleCompile = useCallback(() => {
+  const handleCompile = useCallback(async () => {
     try {
-      const parsed = JSON.parse(jsonCode) as RoleReviewRubric[];
+      const parsed = (JSON.parse(jsonCode) as RoleReviewRubric[]).map(rubric => ({
+        ...rubric,
+        formId: formId ?? "",
+      }));
       setPreviewRubrics(parsed);
       setCompileError(null);
 
-      const warnings = validateScoreKeys(parsed);
-      setValidationWarnings(warnings);
+      if (formId) {
+        const warnings = await validateRubricScoreKeys(parsed, formId, rubricType === "interview");
+        setValidationWarnings(warnings);
+      }
     } catch (error) {
       console.error("Invalid JSON:", error);
       setCompileError(error instanceof Error ? error.message : "Invalid JSON");
-      setValidationWarnings(null);
     }
-  }, [jsonCode, validateScoreKeys]);
+  }, [jsonCode, rubricType]);
 
   const handleUpload = useCallback(async () => {
-    const parsedRubrics = JSON.parse(jsonCode) as RoleReviewRubric[];
+    const parsedRubrics = (JSON.parse(jsonCode) as RoleReviewRubric[]).map(rubric => ({
+      ...rubric,
+      formId: formId ?? "",
+    }));
 
     let confirmMessage = `This will upload ${parsedRubrics.length} ${rubricType} rubric(s) for form '${formId}'.\n\n`;
 
@@ -219,7 +178,7 @@ export default function RubricBuilderPage() {
       });
     }
 
-  }, [jsonCode, rubricType, formId, validationWarnings, uploadRubricsMutation, token, uploadInterviewRubricsMutation]);
+  }, [jsonCode, rubricType, validationWarnings, uploadRubricsMutation, token, uploadInterviewRubricsMutation]);
 
   useEffect(() => {
     if (autoCompile) {
