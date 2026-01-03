@@ -28,13 +28,12 @@ import {
   useUpdateInterviewData,
 } from "@/hooks/useInterviewData";
 import { useInterviewRubricsForFormRole } from "@/hooks/useInterviewRubrics";
-import { useInterviewScore } from "@/hooks/useInterviewScore";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CheckIcon, CircleAlertIcon } from "lucide-react";
+import { CheckIcon, CircleAlertIcon, UserCheckIcon } from "lucide-react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -51,6 +50,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { calculateInterviewScore } from "@/utils/scores";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -97,33 +97,43 @@ function UserHeader({
         {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
         {displayApplicantRoleName(role)} Interview
       </h1>
-      <span>
-        {interviewData.submitted ? (
-          <span>
-            <CheckIcon className="inline size-5" /> Submitted{" "}
-            {user?.role === PermissionRole.SuperReviewer ? (
-              reviewerPending ? (
-                <p>by ...</p>
-              ) : reviewerError ? (
-                <p>by (failed to load reviewer) </p>
-              ) : (
-                <>
-                  by{" "}
-                  <strong>
-                    {reviewer.firstName} {reviewer.lastName}
-                  </strong>
-                </>
-              )
-            ) : (
-              <></>
-            )}
-          </span>
-        ) : lastSave ? (
-          `Last saved ${new Date(lastSave).toLocaleTimeString()}`
-        ) : (
-          `Not saved`
+      <div className="items-center flex flex-row gap-2">
+        {applicant.isInternal && (
+          <div className="flex bg-blue text-blue-100 font-bold text-sm flex-row gap-1 rounded-full py-0 px-2 border border-blue items-center">
+            <UserCheckIcon className="size-4" />
+            <span>
+              INTERNAL
+            </span>
+          </div>
         )}
-      </span>
+        <span>
+          {interviewData.submitted ? (
+            <span>
+              <CheckIcon className="inline size-5" /> Submitted{" "}
+              {user?.role === PermissionRole.SuperReviewer ? (
+                reviewerPending ? (
+                  <p>by ...</p>
+                ) : reviewerError ? (
+                  <p>by (failed to load reviewer) </p>
+                ) : (
+                  <>
+                    by{" "}
+                    <strong>
+                      {reviewer.firstName} {reviewer.lastName}
+                    </strong>
+                  </>
+                )
+              ) : (
+                <></>
+              )}
+            </span>
+          ) : lastSave ? (
+            `Last saved ${new Date(lastSave).toLocaleTimeString()}`
+          ) : (
+            `Not saved`
+          )}
+        </span>
+      </div>
     </div>
   );
 }
@@ -168,11 +178,7 @@ const InterviewPage: React.FC = () => {
     error: interviewRubricsError,
   } = useInterviewRubricsForFormRole(form?.id, interviewData?.forRole);
 
-  const {
-    data: interviewScore,
-    isFetching: interviewScorePending,
-    error: interviewScoreError,
-  } = useInterviewScore(interviewData!);
+  const interviewScore = useMemo(() => (form && interviewData) ? calculateInterviewScore(interviewData, form) : undefined, [form, interviewData])
 
   const [localNotes, setLocalNotes] = useState<
     Record<string, string> | undefined
@@ -339,10 +345,8 @@ const InterviewPage: React.FC = () => {
           lastSave={lastSave}
         />
 
-        {interviewScorePending ? (
-          <Spinner className="mr-4" />
-        ) : interviewScoreError ? (
-          `Failed to calculate score: ${interviewScoreError.message}`
+        {interviewScore === undefined ? (
+          `Failed to calculate score!`
         ) : (
           <span className="text-lg text-blue w-72 mr-2">
             Interview Score:{" "}
@@ -427,7 +431,7 @@ const InterviewPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )?.questions ?? []
                   }
-                  onChangeResponse={() => {}}
+                  onChangeResponse={() => { }}
                   disabledRoles={form.disabledRoles ?? []}
                 />
               </div>

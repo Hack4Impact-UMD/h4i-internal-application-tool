@@ -33,6 +33,7 @@ import {
   EllipsisVertical,
   AlertTriangle,
   ClipboardIcon,
+  UserCheckIcon,
 } from "lucide-react";
 import {
   Tooltip,
@@ -207,14 +208,25 @@ export default function QualifiedApplicationsTable({
             <SortableHeader column={column}>NAME</SortableHeader>
           ),
           cell: ({ getValue, row }) => {
+            const internal = row.original.internal
             return (
-              <span className="flex items-center">
+              <span className="flex items-center gap-1">
                 <span>{getValue()}</span>
+                {internal && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <UserCheckIcon className="text-blue size-4" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Internal Applicant
+                    </TooltipContent>
+                  </Tooltip>
+                )}
                 <Tooltip>
                   <TooltipTrigger>
-                    <Clipboard
-                      className="hover:bg-lightgray p-1 rounded cursor-pointer text-blue"
-                      size={24}
+                    <Button
+                      variant={"outline"}
+                      className="p-0 size-6"
                       onClick={async () => {
                         try {
                           await navigator.clipboard.writeText(
@@ -229,7 +241,11 @@ export default function QualifiedApplicationsTable({
                           throwErrorToast(`Failed to add email to clipboard.`);
                         }
                       }}
-                    />
+                    >
+                      <Clipboard
+                        className=" rounded cursor-pointer text-blue"
+                      />
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent>Copy Applicant Email</TooltipContent>
                 </Tooltip>

@@ -1,4 +1,5 @@
 import { getApplicantById } from "@/services/applicantService";
+import { getApplicationForm } from "@/services/applicationFormsService";
 import { getPreviouslyAppliedCount } from "@/services/previouslyAppliedService";
 import { getReviewAssignmentsForApplication } from "@/services/reviewAssignmentService";
 import { getReviewDataForResponseRole } from "@/services/reviewDataService";
@@ -10,7 +11,7 @@ import {
   ApplicationResponse,
   ApplicationReviewData,
   InternalApplicationStatus,
-  ReviewerUserProfile,
+  ReviewCapableUser,
 } from "@/types/types";
 import { calculateReviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
@@ -24,6 +25,7 @@ export type ApplicationRow = {
     id: string;
     email: string;
     previouslyAppliedCount: number;
+    internal: boolean;
   };
   responseId: string;
   role: ApplicantRole;
@@ -35,7 +37,7 @@ export type ApplicationRow = {
     reviewData: ApplicationReviewData[];
   };
   reviewers: {
-    assigned: ReviewerUserProfile[];
+    assigned: ReviewCapableUser[];
   };
   assignments: AppReviewAssignment[];
   status: InternalApplicationStatus | undefined;
@@ -46,6 +48,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
     queryKey: ["all-apps-rows", applications.map((a) => a.id).sort(), formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
+      const form = await getApplicationForm(formId);
       return Promise.all(
         applications.map(async (app, index) => {
           const role = app.rolesApplied[0];
@@ -61,15 +64,12 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
           const avgScore =
             completedReviews == 0
               ? 0
-              : (
-                  await Promise.all(
-                    reviews
-                      .filter((r) => r.submitted)
-                      .map(
-                        async (r) =>
-                          await calculateReviewScore(r).catch(() => NaN),
-                      ),
-                  )
+              :
+              reviews
+                .filter((r) => r.submitted)
+                .map(
+                  (r) =>
+                    calculateReviewScore(r, form),
                 ).reduce((acc, v) => acc + v, 0) / completedReviews;
           let status: InternalApplicationStatus | undefined;
 
@@ -94,6 +94,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
               name: `${user.firstName} ${user.lastName}`,
               email: user.email,
               previouslyAppliedCount: numPreviouslyApplied,
+              internal: user.isInternal ?? false
             },
             responseId: app.id,
             role: role, //These have already been expanded into their separate roles
@@ -110,7 +111,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
                   async (assignment) =>
                     (await getUserById(
                       assignment.reviewerId,
-                    )) as ReviewerUserProfile,
+                    )) as ReviewCapableUser,
                 ),
               ),
             },

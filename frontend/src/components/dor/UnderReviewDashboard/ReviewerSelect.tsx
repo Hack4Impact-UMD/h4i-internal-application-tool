@@ -23,7 +23,6 @@ import {
   ApplicationReviewData,
   PermissionRole,
   ReviewCapableUser,
-  ReviewerUserProfile,
 } from "@/types/types";
 import { useQueries } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
@@ -32,11 +31,11 @@ import { useParams } from "react-router-dom";
 type ReviewerSelectProps = {
   onAdd: (reviewer: ReviewCapableUser) => void;
   onDelete: (
-    reviewer: ReviewerUserProfile,
+    reviewer: ReviewCapableUser,
     assignment: AppReviewAssignment,
   ) => void;
   role: ApplicantRole;
-  reviewers: ReviewerUserProfile[];
+  reviewers: ReviewCapableUser[];
   assignments: AppReviewAssignment[];
   responseId: string;
   disabled?: boolean;
@@ -160,7 +159,7 @@ export function ReviewerSelect({
   const [showPopover, setShowPopover] = useState(false);
 
   const complete = useCallback(
-    (reviewer: ReviewerUserProfile) => {
+    (reviewer: ReviewCapableUser) => {
       return reviews.find(
         (review) =>
           review.submitted &&

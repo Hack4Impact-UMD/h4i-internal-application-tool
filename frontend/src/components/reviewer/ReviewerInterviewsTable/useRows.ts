@@ -1,4 +1,5 @@
 import { getApplicantById } from "@/services/applicantService";
+import { getApplicationForm } from "@/services/applicationFormsService";
 import { getInterviewDataForAssignment } from "@/services/interviewDataService";
 import {
   ApplicantRole,
@@ -30,6 +31,7 @@ export function useRows(
     queryKey: ["all-interview-assignments", formId],
     placeholderData: (prev) => prev,
     queryFn: async () => {
+      const form = await getApplicationForm(formId);
       return Promise.all(
         interviewAssignments.map(async (assignment, index) => {
           const applicant = await getApplicantById(assignment.applicantId);
@@ -44,9 +46,9 @@ export function useRows(
             interviewReviewData: reviewData,
             score: reviewData
               ? {
-                  value: await calculateInterviewScore(reviewData),
-                  outOf: 4,
-                }
+                value: calculateInterviewScore(reviewData, form),
+                outOf: 4,
+              }
               : undefined,
           };
 

@@ -1,4 +1,5 @@
 import { getApplicantById } from "@/services/applicantService";
+import { getApplicationForm } from "@/services/applicationFormsService";
 import { getInterviewAssignmentsForApplication } from "@/services/interviewAssignmentService";
 import { getInterviewDataForResponseRole } from "@/services/interviewDataService";
 import { reviewCapable } from "@/services/reviewersService";
@@ -30,6 +31,7 @@ export type QualifiedAppRow = {
   responseId: string;
   interviews: ApplicationInterviewData[];
   status?: InternalApplicationStatus;
+  internal: boolean
 };
 
 export function useRows(applications: ApplicationResponse[], formId: string) {
@@ -41,6 +43,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
+      const form = await getApplicationForm(formId);
       return Promise.all(
         applications.map(async (app, index) => {
           const user = await getApplicantById(app.userId);
@@ -66,7 +69,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
           if (submittedInterviews.length > 0) {
             const scores = await Promise.all(
               submittedInterviews.map(
-                async (i) => await calculateInterviewScore(i),
+                (i) => calculateInterviewScore(i, form),
               ),
             );
             averageScore =
@@ -88,7 +91,8 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             responseId: app.id,
             interviews,
             status,
-          } as QualifiedAppRow;
+            internal: user.isInternal ?? false
+          };
         }),
       );
     },

@@ -8,6 +8,7 @@ import {
 import { calculateReviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
 import { getPreviouslyAppliedCount } from "@/services/previouslyAppliedService";
+import { getApplicationForm } from "@/services/applicationFormsService";
 
 export type AssignmentRow = {
   index: number;
@@ -34,6 +35,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
+      const form = await getApplicationForm(formId);
       return Promise.all(
         assignments.map(async (assignment, index) => {
           console.log(
@@ -80,15 +82,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             score: {
               value:
                 review && review.submitted
-                  ? await calculateReviewScore(review).catch((e) => {
-                      console.error(
-                        "Score calculation failed for review: ",
-                        review,
-                      );
-                      console.error(e);
-                      return NaN;
-                    })
-                  : undefined,
+                  ? calculateReviewScore(review, form) : undefined,
               outOf: 4, // NOTE: All scores are assummed to be out of 4
             },
           };

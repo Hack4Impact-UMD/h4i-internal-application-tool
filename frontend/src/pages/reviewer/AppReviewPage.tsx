@@ -11,7 +11,6 @@ import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { Button } from "@/components/ui/button";
 import { useRubricsForFormRole } from "@/hooks/useRubrics";
 import RoleRubric from "@/components/reviewer/rubric/RoleRubric";
-import { useReviewScore } from "@/hooks/useReviewScore";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import {
@@ -32,7 +31,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { ApplicationReviewData, PermissionRole } from "@/types/types";
-import { CheckIcon, CircleAlertIcon } from "lucide-react";
+import { CheckIcon, CircleAlertIcon, UserCheckIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -48,6 +47,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { calculateReviewScore } from "@/utils/scores";
 
 type UserHeaderProps = {
   applicantId: string;
@@ -94,33 +94,43 @@ function UserHeader({
         {applicant.firstName} {applicant.lastName}'s {form.semester}{" "}
         {displayApplicantRoleNameNoEmoji(role)} Application
       </h1>
-      <span>
-        {reviewData.submitted ? (
-          <span>
-            <CheckIcon className="inline size-5" /> Submitted{" "}
-            {user?.role === PermissionRole.SuperReviewer ? (
-              reviewerPending ? (
-                <p>by ...</p>
-              ) : reviewerError ? (
-                <p>by (failed to load reviewer) </p>
-              ) : (
-                <>
-                  by{" "}
-                  <strong>
-                    {reviewer.firstName} {reviewer.lastName}
-                  </strong>
-                </>
-              )
-            ) : (
-              <></>
-            )}
-          </span>
-        ) : lastSave ? (
-          `Last saved ${new Date(lastSave).toLocaleTimeString()}`
-        ) : (
-          `Not saved`
+      <div className="items-center flex flex-row gap-2">
+        {applicant.isInternal && (
+          <div className="flex bg-blue text-blue-100 font-bold text-sm flex-row gap-1 rounded-full py-0 px-2 border border-blue items-center">
+            <UserCheckIcon className="size-4" />
+            <span>
+              INTERNAL
+            </span>
+          </div>
         )}
-      </span>
+        <span>
+          {reviewData.submitted ? (
+            <span>
+              <CheckIcon className="inline size-5" /> Submitted{" "}
+              {user?.role === PermissionRole.SuperReviewer ? (
+                reviewerPending ? (
+                  <p>by ...</p>
+                ) : reviewerError ? (
+                  <p>by (failed to load reviewer) </p>
+                ) : (
+                  <>
+                    by{" "}
+                    <strong>
+                      {reviewer.firstName} {reviewer.lastName}
+                    </strong>
+                  </>
+                )
+              ) : (
+                <></>
+              )}
+            </span>
+          ) : lastSave ? (
+            `Last saved ${new Date(lastSave).toLocaleTimeString()}`
+          ) : (
+            `Not saved`
+          )}
+        </span>
+      </div>
     </div>
   );
 }
@@ -163,11 +173,7 @@ const AppReviewPage: React.FC = () => {
     error: rubricsError,
   } = useRubricsForFormRole(form?.id, reviewData?.forRole);
 
-  const {
-    data: score,
-    isFetching: scorePending,
-    error: scoreError,
-  } = useReviewScore(reviewData!);
+  const score = useMemo(() => (reviewData && form) ? calculateReviewScore(reviewData, form) : undefined, [reviewData, form])
 
   const [localNotes, setLocalNotes] = useState<
     Record<string, string> | undefined
@@ -341,10 +347,8 @@ const AppReviewPage: React.FC = () => {
           lastSave={lastSave}
         />
 
-        {scorePending ? (
-          <Spinner className="mr-4" />
-        ) : scoreError ? (
-          `Failed to calculate score: ${scoreError.message}`
+        {score === undefined ? (
+          `Failed to calculate score!`
         ) : (
           <span className="text-lg text-blue w-64 mr-2">
             Review Score:{" "}
@@ -431,7 +435,7 @@ const AppReviewPage: React.FC = () => {
                       (r) => r.sectionId == s.sectionId,
                     )?.questions ?? []
                   }
-                  onChangeResponse={() => {}}
+                  onChangeResponse={() => { }}
                   disabledRoles={form.disabledRoles ?? []}
                 />
               </div>
