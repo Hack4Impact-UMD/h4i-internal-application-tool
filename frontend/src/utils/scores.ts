@@ -37,8 +37,6 @@ export function calculateInterviewScore(
   const scores = Object.keys(interview.interviewScores);
   if (scores.length === 0) return 0;
 
-  console.log("this is running");
-
   if (!form.interviewScoreWeights) {
     throwWarningToast(
       "Form does not have interview weights, falling back to average scoring!",
