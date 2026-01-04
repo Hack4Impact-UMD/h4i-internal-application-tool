@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  getRoleInterviewRubricsForForm,
   getRoleInterviewRubricsForFormRole,
   uploadInterviewRubrics as uploadInterviewRubricsService,
 } from "@/services/interviewRubricService";
@@ -21,6 +22,14 @@ export const useUploadInterviewRubrics = () => {
     },
   });
 };
+
+export function useInterviewRubricsForForm(formId?: string) {
+  return useQuery({
+    queryKey: ["interview-rubrics", "form", formId],
+    enabled: !!formId,
+    queryFn: () => getRoleInterviewRubricsForForm(formId!),
+  });
+}
 
 export function useInterviewRubricsForFormRole(
   formId?: string,

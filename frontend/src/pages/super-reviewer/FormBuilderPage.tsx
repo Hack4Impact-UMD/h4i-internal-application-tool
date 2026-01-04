@@ -171,7 +171,14 @@ export default function FormBuilderPage() {
     <div className="p-4 w-full flex flex-col items-center h-[calc(100vh-4rem)] overflow-hidden">
       <div className="w-full max-w-8xl h-full flex flex-col">
         <div className="flex justify-between items-center flex-shrink-0">
-          <h1 className="font-bold text-2xl">Form Builder</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="font-bold text-2xl">Form Builder</h1>
+            {previewForm && (
+              <span className="text-muted-foreground text-sm">
+                - {previewForm.id}
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
               <span>Auto-compile</span>

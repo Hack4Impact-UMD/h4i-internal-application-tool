@@ -111,6 +111,9 @@ const FormValidationPage = lazy(() =>
 const FormBuilderPage = lazy(
   () => import("./pages/super-reviewer/FormBuilderPage"),
 );
+const RubricBuilderPage = lazy(
+  () => import("./pages/super-reviewer/RubricBuilderPage"),
+);
 const SuperReviewerInterviewersDashboard = lazy(
   () =>
     import(
@@ -363,6 +366,17 @@ function App() {
                         requireRoles={[PermissionRole.SuperReviewer]}
                       >
                         <FormBuilderPage />
+                      </RequireAuth>
+                    }
+                  />
+
+                  <Route
+                    path="dor/rubric-builder/:formId"
+                    element={
+                      <RequireAuth
+                        requireRoles={[PermissionRole.SuperReviewer]}
+                      >
+                        <RubricBuilderPage />
                       </RequireAuth>
                     }
                   />

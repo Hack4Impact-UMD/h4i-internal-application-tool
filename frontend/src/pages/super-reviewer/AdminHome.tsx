@@ -201,6 +201,11 @@ export default function AdminHome() {
                             Edit form
                           </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link to={`/admin/dor/rubric-builder/${form.id}`}>
+                            Edit rubrics
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => {
