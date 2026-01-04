@@ -210,13 +210,6 @@ export default function SuperReviewerApplicationsTable({
   const cols = useMemo(
     () =>
       [
-        columnHelper.accessor("index", {
-          id: "number",
-          header: ({ column }) => {
-            return <SortableHeader column={column}>S. NO</SortableHeader>;
-          },
-          cell: ({ getValue }) => getValue(),
-        }),
         columnHelper.accessor("dateSubmitted", {
           id: "date-submitted",
           header: ({ column }) => {
@@ -317,7 +310,7 @@ export default function SuperReviewerApplicationsTable({
           id: "assigned-reviews",
           header: ({ column }) => {
             return (
-              <SortableHeader column={column}>REV. COMPLETE</SortableHeader>
+              <SortableHeader column={column}>REVIEWED</SortableHeader>
             );
           },
           cell: ({ getValue, row }) => {
