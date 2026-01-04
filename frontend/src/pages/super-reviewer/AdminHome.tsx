@@ -1,14 +1,10 @@
 import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
-import {
-  useAllApplicationForms,
-  useUploadApplicationForm,
-} from "@/hooks/useApplicationForm";
+import { useAllApplicationForms } from "@/hooks/useApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
 import { ApplicationForm, PermissionRole } from "@/types/types";
 import { displayUserRoleName } from "@/utils/display";
 import { Link, useNavigate } from "react-router-dom";
-import { h4iApplicationForm } from "@/data/h4i-application-form";
 import UploadReviewRubricDialog from "@/components/admin/UploadReviewRubricDialog";
 import UploadInterviewRubricDialog from "@/components/admin/UploadInterviewRubricDialog";
 import { Switch } from "@/components/ui/switch";
@@ -29,7 +25,6 @@ import { useUpdateApplicationFormActive } from "@/hooks/useUpdateApplicationForm
 import DuplicateFormDialog from "@/components/dor/DuplicateFormDialog/DuplicateFormDialog";
 import { useState } from "react";
 import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
-import { throwErrorToast } from "@/components/toasts/ErrorToast";
 import {
   TooltipContent,
   Tooltip,
@@ -40,7 +35,7 @@ import ChangeDueDateDialog from "@/components/dor/ChangeDueDateDialog/ChangeDueD
 export default function AdminHome() {
   const navigate = useNavigate();
   const { data: forms, isPending, error } = useAllApplicationForms();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const [selectedForm, setSelectedForm] = useState<ApplicationForm>();
   const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
   const [showDueDateDialog, setShowDueDateDialog] = useState(false);
@@ -48,50 +43,6 @@ export default function AdminHome() {
 
   const { mutate: setFormActiveStatus, isPending: activePending } =
     useUpdateApplicationFormActive();
-
-  const {
-    mutate: uploadForm,
-    isPending: isUploadingForm,
-    error: formUploadError,
-    data: formUploadData,
-  } = useUploadApplicationForm();
-
-  const handleUploadForm = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to upload the Fall 2025 application form?\n\n" +
-        `This will create a new form with ID '${h4iApplicationForm.id}' in Firestore with all the new interview questions and scoring weights.`,
-    );
-
-    if (!confirmed || !token) return;
-
-    const sectionIdSet = new Set<string>();
-    const questionIdSet = new Set<string>();
-    let duplicates = false;
-
-    h4iApplicationForm.sections.forEach((s) => {
-      if (sectionIdSet.has(s.sectionId)) {
-        throwErrorToast("Duplicate section ID: " + s.sectionId);
-        duplicates = true;
-        return;
-      } else {
-        sectionIdSet.add(s.sectionId);
-      }
-
-      s.questions.forEach((q) => {
-        if (questionIdSet.has(q.questionId)) {
-          throwErrorToast("Duplicate question ID: " + q.questionId);
-          duplicates = true;
-          return;
-        } else {
-          questionIdSet.add(q.questionId);
-        }
-      });
-    });
-
-    if (duplicates) return;
-
-    uploadForm({ form: h4iApplicationForm, token: (await token()) ?? "" });
-  };
 
   if (!user) return <Loading />;
 
@@ -247,41 +198,6 @@ export default function AdminHome() {
               </Button>
               <CreateInternalApplicantDialog />
             </div>
-          </div>
-          <div className="max-w-5xl w-full p-4 bg-white rounded-md">
-            <h1 className="text-xl">Or Manage Forms </h1>
-            <p className="text-muted-foreground">
-              Validate your form before uploading to Firestore or build
-              application forms with a live editor.
-            </p>
-            <div className="mt-4 flex gap-2">
-              <Button onClick={() => navigate("/admin/dor/forms")}>
-                Form Validator
-              </Button>
-            </div>
-          </div>
-          {/* TEMPORARY SECTION - Remove after form upload is complete */}
-          <div className="max-w-5xl w-full p-4 bg-white rounded-md">
-            <h1 className="text-xl">Upload H4I Application Form</h1>
-            <p className="text-muted-foreground">
-              Upload the new Hack4Impact application form to Firestore.
-            </p>
-            <p className="font-bold">
-              DISABLED: Use the form controls at the top of the page instead.
-            </p>
-            <Button className="mt-4" onClick={handleUploadForm} disabled={true}>
-              {isUploadingForm ? "Uploading..." : "Upload Form"}
-            </Button>
-            {formUploadData && (
-              <p className="mt-2 text-sm text-green-600">
-                Success! Form uploaded with ID: {formUploadData.formId}
-              </p>
-            )}
-            {formUploadError && (
-              <p className="mt-2 text-sm text-red-600">
-                {formUploadError.message}
-              </p>
-            )}
           </div>
           <div className="max-w-5xl w-full p-4 bg-white rounded-md">
             <h1 className="text-xl">Upload Application Rubrics</h1>
