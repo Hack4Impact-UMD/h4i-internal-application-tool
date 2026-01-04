@@ -103,7 +103,7 @@ export default function RubricBuilderPage() {
       const formattedJson = JSON.stringify(rubricsWithCorrectedId, null, 2);
       setJsonCode(formattedJson);
     }
-  }, [applicationRubrics, interviewRubrics, rubricType]);
+  }, [applicationRubrics, formId, interviewRubrics, rubricType]);
 
   const handleCompile = useCallback(() => {
     try {
