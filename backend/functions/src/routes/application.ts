@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
 import { ApplicationResponse, ApplicationResponseInput, ApplicationResponseSchema, ApplicationStatus, appResponseFormSchema, QuestionResponse, QuestionType } from "../models/appResponse";
@@ -281,9 +281,11 @@ router.post("/forms", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])
   try {
     const formData = req.body as ApplicationForm;
     const formsCollection = db.collection(APPLICATION_FORMS_COLLECTION) as CollectionReference<ApplicationForm>;
+    const responsesCollection = db.collection(APPLICATION_RESPONSE_COLLECTION) as CollectionReference<ApplicationResponse>;
 
     const existingFormDoc = await formsCollection.doc(formData.id).get();
-    if (existingFormDoc.exists) {
+    const existingResponses = (await responsesCollection.get()).docs.length > 0
+    if (existingFormDoc.exists && existingResponses) {
       const existingForm = existingFormDoc.data() as ApplicationForm;
       const existingSectionIds = existingForm.sections.map(s => s.sectionId);
       const newSectionIds = formData.sections.map(s => s.sectionId);
