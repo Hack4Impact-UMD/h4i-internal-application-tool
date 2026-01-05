@@ -284,7 +284,8 @@ router.post("/forms", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer])
     const responsesCollection = db.collection(APPLICATION_RESPONSE_COLLECTION) as CollectionReference<ApplicationResponse>;
 
     const existingFormDoc = await formsCollection.doc(formData.id).get();
-    const existingResponses = (await responsesCollection.get()).docs.length > 0
+    const existingResponses = (await responsesCollection.where("applicationFormId", "==", formData.id).get()).docs.length > 0
+
     if (existingFormDoc.exists && existingResponses) {
       const existingForm = existingFormDoc.data() as ApplicationForm;
       const existingSectionIds = existingForm.sections.map(s => s.sectionId);
