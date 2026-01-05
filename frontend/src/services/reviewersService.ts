@@ -68,9 +68,9 @@ export async function getReviewersForRole(
 
 export function reviewingFor(user: ReviewCapableUser) {
   if (user.role === PermissionRole.Reviewer) {
-    return user.applicantRolePreferences;
+    return user.applicantRolePreferences ?? [];
   } else if (user.role === PermissionRole.Board) {
-    return user.applicantRoles;
+    return user.applicantRoles ?? [];
   } else if (user.role === PermissionRole.SuperReviewer) {
     return Object.values(ApplicantRole); //NOTE: dor can review all roles
   } else {
