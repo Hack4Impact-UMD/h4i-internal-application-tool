@@ -1,4 +1,4 @@
-import { Router, Request, Response, response } from "express";
+import { Router, Request, Response } from "express";
 import { db } from "../index";
 import { validateSchema } from "../middleware/validation";
 import { ApplicationResponse, ApplicationResponseInput, ApplicationResponseSchema, ApplicationStatus, appResponseFormSchema, QuestionResponse, QuestionType } from "../models/appResponse";
