@@ -337,6 +337,7 @@ router.post("/rubrics", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer
 
     // Fail fast on duplicate IDs in the payload
     const seen = new Set<string>();
+    const formIds = new Set<string>();
     for (const r of rubrics) {
       if (!r?.id) {
         return res.status(400).send("Each rubric must have a non-empty 'id'.");
@@ -345,17 +346,28 @@ router.post("/rubrics", [isAuthenticated, hasRoles([PermissionRole.SuperReviewer
         return res.status(400).send(`Duplicate rubric id in payload: ${r.id}`);
       }
       seen.add(r.id);
+      formIds.add(r.formId);
     }
 
+    if (formIds.size > 1) {
+      return res.status(400).send(`Cannot upload rubrics from multiple forms: ${[...formIds]}`);
+    } else if (formIds.size === 0) {
+      return res.status(400).send("No form IDs specified!");
+    }
+
+    const formId = [...formIds][0];
+
     const rubricsCollection = db.collection(RUBRICS_COLLECTION) as CollectionReference<RoleReviewRubric>;
-    const batch = db.batch();
+    const existingRubricsForForm = (await db.collection(RUBRICS_COLLECTION).where("formId", "==", formId).get()).docs;
 
-    rubrics.forEach(rubric => {
-      const docRef = rubricsCollection.doc(rubric.id);
-      batch.set(docRef, rubric);
-    });
+    await db.runTransaction(async (transaction) => {
+      existingRubricsForForm.forEach(existing => transaction.delete(rubricsCollection.doc(existing.id)))
 
-    await batch.commit();
+      rubrics.forEach(rubric => {
+        const docRef = rubricsCollection.doc(rubric.id);
+        transaction.set(docRef, rubric);
+      });
+    })
 
     logger.info(`Successfully uploaded ${rubrics.length} rubrics.`);
     return res.status(201).json({ status: "success", count: rubrics.length });
@@ -374,6 +386,7 @@ router.post("/interview-rubrics", [isAuthenticated, hasRoles([PermissionRole.Sup
 
     // Fail fast on duplicate IDs in the payload
     const seen = new Set<string>();
+    const formIds = new Set<string>();
     for (const r of rubrics) {
       if (!r?.id) {
         return res.status(400).send("Each rubric must have a non-empty 'id'.");
@@ -382,17 +395,28 @@ router.post("/interview-rubrics", [isAuthenticated, hasRoles([PermissionRole.Sup
         return res.status(400).send(`Duplicate rubric id in payload: ${r.id}`);
       }
       seen.add(r.id);
+      formIds.add(r.formId);
     }
 
+    if (formIds.size > 1) {
+      return res.status(400).send(`Cannot upload rubrics from multiple forms: ${[...formIds]}`);
+    } else if (formIds.size === 0) {
+      return res.status(400).send("No form IDs specified!");
+    }
+
+    const formId = [...formIds][0];
+
     const rubricsCollection = db.collection(INTERVIEW_RUBRICS_COLLECTION) as CollectionReference<RoleReviewRubric>;
-    const batch = db.batch();
+    const existingRubricsForForm = (await db.collection(INTERVIEW_RUBRICS_COLLECTION).where("formId", "==", formId).get()).docs;
 
-    rubrics.forEach(rubric => {
-      const docRef = rubricsCollection.doc(rubric.id);
-      batch.set(docRef, rubric);
-    });
+    await db.runTransaction(async (transaction) => {
+      existingRubricsForForm.forEach(existing => transaction.delete(rubricsCollection.doc(existing.id)))
 
-    await batch.commit();
+      rubrics.forEach(rubric => {
+        const docRef = rubricsCollection.doc(rubric.id);
+        transaction.set(docRef, rubric);
+      });
+    })
 
     logger.info(`Successfully uploaded ${rubrics.length} rubrics.`);
     return res.status(201).json({ status: "success", count: rubrics.length });
