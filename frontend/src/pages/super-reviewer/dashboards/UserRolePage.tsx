@@ -66,7 +66,7 @@ export default function UserRolePage() {
       role: PermissionRole;
     }) => {
       return updateUserRoles(
-        users.map((u) => u.id),
+        users,
         role,
       );
     },
