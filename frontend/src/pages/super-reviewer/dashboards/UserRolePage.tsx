@@ -71,7 +71,7 @@ export default function UserRolePage() {
       );
     },
     onMutate: async ({ users, role }) => {
-      await queryClient.cancelQueries({ queryKey: ["users", "all"] });
+      await queryClient.cancelQueries({ queryKey: ["users"] });
       const prevUsers = queryClient.getQueryData(["users", "all"]);
       const uids = new Set(users.map((u) => u.id));
 
@@ -98,7 +98,7 @@ export default function UserRolePage() {
       queryClient.setQueryData(["users", "all"], ctx?.prevUsers);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["users", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 
@@ -107,7 +107,7 @@ export default function UserRolePage() {
       return deleteUsers(users.map((u) => u.id));
     },
     onMutate: async (users) => {
-      await queryClient.cancelQueries({ queryKey: ["users", "all"] });
+      await queryClient.cancelQueries({ queryKey: ["users"] });
       const prevUsers = queryClient.getQueryData(["users", "all"]);
       const uids = users.map((u) => u.id);
 
@@ -131,7 +131,7 @@ export default function UserRolePage() {
       queryClient.setQueryData(["users", "all"], ctx?.prevUsers);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["users", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 
