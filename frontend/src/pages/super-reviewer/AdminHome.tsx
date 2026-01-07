@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useUpdateApplicationFormActive } from "@/hooks/useUpdateApplicationFormActive";
 import DuplicateFormDialog from "@/components/dor/DuplicateFormDialog/DuplicateFormDialog";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import CreateInternalApplicantDialog from "@/components/reviewer/CreateInternalApplicantDialog";
 import {
   TooltipContent,
@@ -43,6 +43,12 @@ export default function AdminHome() {
 
   const { mutate: setFormActiveStatus, isPending: activePending } =
     useUpdateApplicationFormActive();
+
+  const sortedForms = useMemo(
+    () => forms?.sort((a, b) => -a.semester.localeCompare(b.semester))
+      ?.sort((a, b) => b.dueDate.toMillis() - a.dueDate.toMillis()) ?? [],
+    [forms]
+  )
 
   if (!user) return <Loading />;
 
@@ -91,7 +97,7 @@ export default function AdminHome() {
         </div>
 
         <ul className="flex flex-col gap-2 mt-4">
-          {forms.map((form) => {
+          {sortedForms.map((form) => {
             return (
               <span
                 className="border border-gray-300 p-2 rounded-md flex flex-row gap-2 items-center"
