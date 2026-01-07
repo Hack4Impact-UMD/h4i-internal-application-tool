@@ -193,6 +193,16 @@ export async function updateUserRoles(users: UserProfile[], role: PermissionRole
       }
     }
 
+    // if the user is being set to a board, update their role preferences
+    // to be [] if they are not already set
+    if (role === PermissionRole.Board) {
+      if (!(user as BoardUserProfile).applicantRoles) {
+        batch.update(doc(usersCollection, user.id), {
+          applicantRoles: [],
+        })
+      }
+    }
+
     batch.update(doc(usersCollection, user.id), {
       role: role,
     })
