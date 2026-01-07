@@ -178,15 +178,35 @@ export async function updateUserRole(userId: string, role: PermissionRole) {
   });
 }
 
-export async function updateUserRoles(userIds: string[], role: PermissionRole) {
+export async function updateUserRoles(users: UserProfile[], role: PermissionRole) {
   const batch = writeBatch(db);
-  const users = collection(db, USER_COLLECTION);
+  const usersCollection = collection(db, USER_COLLECTION);
 
-  userIds.forEach((id) =>
-    batch.update(doc(users, id), {
+  users.forEach((user) => {
+    // if the user is being set to a reviewer, update their role preferences
+    // to be all roles if they are not already set
+    if (role === PermissionRole.Reviewer) {
+      if (!(user as ReviewerUserProfile).applicantRolePreferences) {
+        batch.update(doc(usersCollection, user.id), {
+          applicantRolePreferences: Object.values(ApplicantRole),
+        });
+      }
+    }
+
+    // if the user is being set to a board, update their role preferences
+    // to be [] if they are not already set
+    if (role === PermissionRole.Board) {
+      if (!(user as BoardUserProfile).applicantRoles) {
+        batch.update(doc(usersCollection, user.id), {
+          applicantRoles: [],
+        });
+      }
+    }
+
+    batch.update(doc(usersCollection, user.id), {
       role: role,
-    }),
-  );
+    });
+  });
 
   await batch.commit();
 }
