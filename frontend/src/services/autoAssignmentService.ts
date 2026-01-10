@@ -1,6 +1,7 @@
 import {
   ApplicantRole,
   ApplicationReviewData,
+  ApplicationStatus,
   AppReviewAssignment,
   ReviewCapableUser,
 } from "@/types/types";
@@ -225,8 +226,9 @@ export async function calculateBootcampAssignmentPlan(
   const exemptSet = new Set(exemptReviewers.map((r) => r.id));
   const reviewers = allReviewers.filter((r) => !exemptSet.has(r.id));
 
-  const bootcampApplications = allApplications.filter((app) =>
-    app.rolesApplied.includes(ApplicantRole.Bootcamp),
+  const consideredApplications = allApplications.filter((app) =>
+    app.rolesApplied.includes(ApplicantRole.Bootcamp) &&
+    (app.status === ApplicationStatus.Submitted || app.status === ApplicationStatus.UnderReview)
   );
 
   const workloadMap = buildReviewerWorkloadMap(
@@ -242,7 +244,7 @@ export async function calculateBootcampAssignmentPlan(
 
   // build list of application with its user's name and its assignments
   const applicationsWithAssignments = await Promise.all(
-    bootcampApplications.map(async (app) => {
+    consideredApplications.map(async (app) => {
       const appAssignments = responseToAssignments.get(app.id) ?? [];
 
       const applicantUser = await getUserById(app.userId);
