@@ -9,7 +9,7 @@ import {
   createColumnHelper,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { createReviewData } from "@/services/reviewDataService";
@@ -47,6 +47,40 @@ export default function ReviewerApplicationsTable({
     pageIndex: 0,
     pageSize: rowCount,
   });
+
+  const handleReview = useCallback(async (
+    appReviewData: ApplicationReviewData | undefined,
+    applicantId: string,
+    responseId: string,
+    role: ApplicantRole,
+  ) => {
+    const form = await getApplicationForm(formId);
+    if (appReviewData) {
+      // there's an existing review, edit it
+      navigate(
+        `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
+      );
+    } else {
+      const review = {
+        applicantScores: {},
+        applicantId: applicantId,
+        applicationFormId: formId,
+        applicationResponseId: responseId,
+        forRole: role,
+        reviewStatus: ReviewStatus.NotReviewed,
+        reviewerId: user!.id,
+        reviewerNotes: {},
+        submitted: false,
+      };
+
+      console.log(review);
+
+      const newReview = await createReviewData(review);
+      navigate(
+        `/admin/review/f/${newReview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newReview.id}`,
+      );
+    }
+  }, [formId, navigate, user])
 
   const columnHelper = createColumnHelper<AssignmentRow>();
   const cols = useMemo(
@@ -166,54 +200,21 @@ export default function ReviewerApplicationsTable({
             const isReviewData = (v: unknown): v is ApplicationReviewData =>
               typeof v === "object" && v !== null && "submitted" in v;
 
-            if (filterValue == "all") return true;
-            else if (filterValue == "pending")
+            if (filterValue === "all") return true;
+            else if (filterValue === "pending")
               return (
                 !isReviewData(value) ||
                 (isReviewData(value) && value.submitted === false)
               );
-            else if (filterValue == "completed")
+            else if (filterValue === "reviewed")
               return isReviewData(value) && value.submitted === true;
             else return true;
           },
         }),
       ] as ColumnDef<AssignmentRow>[],
-    [columnHelper],
+    [columnHelper, handleReview],
   );
 
-  async function handleReview(
-    appReviewData: ApplicationReviewData | undefined,
-    applicantId: string,
-    responseId: string,
-    role: ApplicantRole,
-  ) {
-    const form = await getApplicationForm(formId);
-    if (appReviewData) {
-      // there's an existing review, edit it
-      navigate(
-        `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
-      );
-    } else {
-      const review = {
-        applicantScores: {},
-        applicantId: applicantId,
-        applicationFormId: formId,
-        applicationResponseId: responseId,
-        forRole: role,
-        reviewStatus: ReviewStatus.NotReviewed,
-        reviewerId: user!.id,
-        reviewerNotes: {},
-        submitted: false,
-      };
-
-      console.log(review);
-
-      const newReview = await createReviewData(review);
-      navigate(
-        `/admin/review/f/${newReview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newReview.id}`,
-      );
-    }
-  }
 
   const { data: rows, isPending, error } = useRows(assignments, formId);
 
