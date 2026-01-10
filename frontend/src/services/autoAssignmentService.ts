@@ -12,8 +12,8 @@ import { getAllReviewers } from "./reviewersService";
 import { getAllApplicationResponsesByFormId } from "./applicationResponsesService";
 import { getUserById } from "./userService";
 import { v4 as uuidv4 } from "uuid";
-import { getReviewDataForForm } from "./reviewDataService";
-import { collection, doc, writeBatch } from "firebase/firestore";
+import { getReviewDataForForm, REVIEW_DATA_COLLECTION } from "./reviewDataService";
+import { collection, doc, getDocs, query, runTransaction, where, writeBatch } from "firebase/firestore";
 import { db } from "@/config/firebase";
 
 export type AutoAssignmentPlanItem = {
@@ -329,5 +329,36 @@ export async function makeAssignmentsFromPlan(plan: AutoAssignmentPlanItem[]) {
       ),
     );
     await batch.commit();
+  }
+}
+
+export async function deleteReviewAssignmentsAndDataForForm(formId: string) {
+  const reviewAssignmentsCollection = collection(db, REVIEW_ASSIGNMENT_COLLECTION);
+  const reviewDataCollection = collection(db, REVIEW_DATA_COLLECTION);
+
+  const assignmentsQuery = query(reviewAssignmentsCollection, where("formId", "==", formId));
+  const dataQuery = query(reviewDataCollection, where("applicationFormId", "==", formId));
+
+  const assignments = await getDocs(assignmentsQuery)
+  const reviewData = await getDocs(dataQuery)
+
+  const forms = new Set<string>();
+
+  assignments.forEach(doc => {
+    const assignment = doc.data() as AppReviewAssignment
+    forms.add(assignment.formId);
+  })
+  reviewData.forEach(doc => {
+    const review = doc.data() as ApplicationReviewData
+    forms.add(review.applicationFormId);
+  })
+
+  if (confirm(`This will delete ${reviewData.docs.length} review data docs and ${assignments.docs.length} assignment docs. Forms impacted: ${[...forms]}`)) {
+    await runTransaction(db, async (transaction) => {
+      assignments.forEach(doc => transaction.delete(doc.ref))
+      reviewData.forEach(doc => transaction.delete(doc.ref))
+    })
+  } else {
+    throw new Error("Cancelled");
   }
 }
