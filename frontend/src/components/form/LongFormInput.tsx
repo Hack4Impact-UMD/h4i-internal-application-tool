@@ -65,16 +65,20 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
       ) : (
         <></>
       )}
-      <Textarea
-        className={twMerge(
-          "p-2 h-32 w-full rounded-md border-2 disabled:opacity-100 disabled:bg-[#f3f4f6] disabled:cursor-not-allowed",
-        )}
-        required={isRequired}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
-        placeholder={placeholderText}
-      ></Textarea>
+      {disabled ? (
+        <span className="p-2 min-h-32 h-fit w-full rounded-md border-2 bg-[#f3f4f6]">{value}</span>
+      ) : (
+        <Textarea
+          className={twMerge(
+            "p-2 min-h-32 h-fit w-full rounded-md border-2 disabled:opacity-100 disabled:bg-[#f3f4f6] disabled:cursor-not-allowed",
+          )}
+          required={isRequired}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          placeholder={placeholderText}
+        ></Textarea>
+      )}
       <p className="text-xs mt-1 font-light">
         {wordCount} word{wordCount != 1 && "s"}
       </p>
