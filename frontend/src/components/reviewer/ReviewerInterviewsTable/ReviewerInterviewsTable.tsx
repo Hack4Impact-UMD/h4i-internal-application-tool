@@ -8,7 +8,7 @@ import {
   createColumnHelper,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -40,6 +40,36 @@ export default function ReviewerInterviewsTable({
     pageIndex: 0,
     pageSize: rowCount,
   });
+
+  const handleInterview = useCallback(async (
+    appInterviewData: ApplicationInterviewData | undefined,
+    applicantId: string,
+    responseId: string,
+    role: ApplicantRole,
+  ) => {
+    if (appInterviewData) {
+      // there's an existing interview, edit it
+      navigate(
+        `/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
+      );
+    } else {
+      const interview: Omit<ApplicationInterviewData, "id"> = {
+        interviewScores: {},
+        applicantId: applicantId,
+        applicationFormId: formId,
+        applicationResponseId: responseId,
+        forRole: role,
+        interviewerId: user!.id,
+        interviewerNotes: {},
+        submitted: false,
+      };
+
+      const newinterview = await createInterviewData(interview);
+      navigate(
+        `/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${newinterview.id}`,
+      );
+    }
+  }, [formId, navigate, user]);
 
   const columnHelper = createColumnHelper<InterviewAssignmentRow>();
   const cols = useMemo(
@@ -138,45 +168,16 @@ export default function ReviewerInterviewsTable({
 
             if (filterValue == "all") return true;
             else if (filterValue == "pending")
-              return isInterviewData(value) && value.submitted === false;
+              return !isInterviewData(value) || value.submitted === false;
             else if (filterValue == "completed")
               return isInterviewData(value) && value.submitted === true;
             else return true;
           },
         }),
       ] as ColumnDef<InterviewAssignmentRow>[],
-    [columnHelper],
+    [columnHelper, handleInterview],
   );
 
-  async function handleInterview(
-    appInterviewData: ApplicationInterviewData | undefined,
-    applicantId: string,
-    responseId: string,
-    role: ApplicantRole,
-  ) {
-    if (appInterviewData) {
-      // there's an existing interview, edit it
-      navigate(
-        `/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
-      );
-    } else {
-      const interview: Omit<ApplicationInterviewData, "id"> = {
-        interviewScores: {},
-        applicantId: applicantId,
-        applicationFormId: formId,
-        applicationResponseId: responseId,
-        forRole: role,
-        interviewerId: user!.id,
-        interviewerNotes: {},
-        submitted: false,
-      };
-
-      const newinterview = await createInterviewData(interview);
-      navigate(
-        `/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${newinterview.id}`,
-      );
-    }
-  }
 
   const { data: rows, isPending, error } = useRows(assignments, formId);
 
