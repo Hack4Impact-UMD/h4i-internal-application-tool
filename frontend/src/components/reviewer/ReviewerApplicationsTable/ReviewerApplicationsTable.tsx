@@ -103,7 +103,7 @@ export default function ReviewerApplicationsTable({
               row.original.applicant.previouslyAppliedCount ?? 0;
 
             return (
-              <span className="flex items-center">
+              <span className="flex items-center gap-1">
                 <span>{getValue()}</span>
 
                 {previouslyApplied > 0 && (
