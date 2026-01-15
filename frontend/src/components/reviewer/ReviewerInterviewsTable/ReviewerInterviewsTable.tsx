@@ -176,7 +176,7 @@ export default function ReviewerInterviewsTable({
                   variant="outline"
                   className="border-2 rounded-full"
                 >
-                  Interview
+                  Score
                 </Button>
               );
             }

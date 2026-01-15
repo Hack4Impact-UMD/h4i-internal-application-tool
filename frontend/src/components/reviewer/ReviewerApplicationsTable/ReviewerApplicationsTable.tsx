@@ -187,7 +187,7 @@ export default function ReviewerApplicationsTable({
                   variant="outline"
                   className="border-2 rounded-full"
                 >
-                  Review
+                  Score
                 </Button>
               );
             }
