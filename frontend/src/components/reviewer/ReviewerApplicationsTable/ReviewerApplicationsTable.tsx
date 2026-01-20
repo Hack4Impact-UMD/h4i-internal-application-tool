@@ -104,7 +104,7 @@ export default function ReviewerApplicationsTable({
               row.original.applicant.previouslyAppliedCount ?? 0;
 
             return (
-              <span className="flex items-center">
+              <span className="flex items-center gap-1">
                 <span>{getValue()}</span>
 
                 {previouslyApplied > 0 && (
@@ -195,7 +195,7 @@ export default function ReviewerApplicationsTable({
                   variant="outline"
                   className="border-2 rounded-full"
                 >
-                  Review
+                  Score
                 </Button>
               );
             }

@@ -17,6 +17,12 @@ import { InterviewAssignmentRow, useRows } from "./useRows";
 import { createInterviewData } from "@/services/interviewDataService";
 import SortableHeader from "@/components/tables/SortableHeader";
 import { useNavigate } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { UserCheckIcon } from "lucide-react";
 
 type ReviewerApplicationsTableProps = {
   assignments: InterviewAssignment[];
@@ -87,6 +93,25 @@ export default function ReviewerInterviewsTable({
           header: ({ column }) => {
             return <SortableHeader column={column}>APPLICANT</SortableHeader>;
           },
+          cell: ({ getValue, row }) => {
+            const internal = row.original.applicant.isInternal;
+            
+            return (
+              <span className="flex items-center gap-1">
+                <span>{getValue()}</span>
+                {internal && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <UserCheckIcon className="text-blue size-4" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Internal Applicant
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </span>
+            )
+          },
         }),
         columnHelper.accessor("role", {
           id: "role",
@@ -151,7 +176,7 @@ export default function ReviewerInterviewsTable({
                   variant="outline"
                   className="border-2 rounded-full"
                 >
-                  Interview
+                  Score
                 </Button>
               );
             }
