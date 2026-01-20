@@ -24,6 +24,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { displayTimestamp } from "@/utils/dates";
 
 type ReviewerApplicationsTableProps = {
   assignments: AppReviewAssignment[];
@@ -123,6 +124,13 @@ export default function ReviewerApplicationsTable({
               </span>
             );
           },
+        }),
+        columnHelper.accessor("dateSubmitted", {
+          id: "date-submitted",
+          header: ({ column }) => {
+            return <SortableHeader column={column}>DATE SUB.</SortableHeader>;
+          },
+          cell: ({ getValue }) => displayTimestamp(getValue()),
         }),
         columnHelper.accessor("role", {
           id: "role",

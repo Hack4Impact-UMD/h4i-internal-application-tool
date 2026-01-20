@@ -9,6 +9,8 @@ import { calculateReviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
 import { getPreviouslyAppliedCount } from "@/services/previouslyAppliedService";
 import { getApplicationForm } from "@/services/applicationFormsService";
+import { getApplicationResponseById } from "@/services/applicationResponsesService";
+import { Timestamp } from "firebase/firestore";
 
 export type AssignmentRow = {
   index: number;
@@ -18,6 +20,7 @@ export type AssignmentRow = {
     previouslyAppliedCount: number;
   };
   responseId: string;
+  dateSubmitted?: Timestamp;
   role: ApplicantRole;
   review?: ApplicationReviewData;
   score: {
@@ -63,6 +66,12 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             },
           );
 
+          const response = await getApplicationResponseById(assignment.applicationResponseId).catch(e => {
+            console.error("Failed to fetch application response for assignment", assignment)
+            console.error(e)
+            return undefined;
+          });
+
           console.log("Successfully loaded row for assignemnt:", assignment);
 
           const numPreviouslyApplied = await getPreviouslyAppliedCount(
@@ -79,6 +88,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             responseId: assignment.applicationResponseId,
             role: assignment.forRole,
             review: review,
+            dateSubmitted: response?.dateSubmitted,
             score: {
               value:
                 review && review.submitted
