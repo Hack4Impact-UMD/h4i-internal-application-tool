@@ -44,22 +44,12 @@ function DecisionPage() {
     error: formError,
   } = useApplicationFormForResponseId(responseId);
 
-  if (!user || !responseId || !role) return <ErrorPage />;
-
-  if (statusPending || formPending) {
-    return <Loading />;
-  }
-
-  if (statusError || formError) {
-    return <ErrorPage />;
-  }
-
-  if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
-    return <NotFoundPage />;
-  }
-
   const confirmDecisionMutation = useMutation({
     mutationFn: async (status: "accepted" | "denied") => {
+      if (!user || !form || !appStatus || !responseId) {
+        throw new Error("Missing required data to confirm decision");
+      } 
+
       const decisionLetterStatus: DecisionLetterStatus = {
         status,
         userId: user?.id,
@@ -85,6 +75,16 @@ function DecisionPage() {
       throwErrorToast("Error while registering decision: " + error);
     },
   });
+  
+  if (!user || !responseId || !role) return <ErrorPage />;
+
+  if (statusPending || formPending) return <Loading />
+
+  if (statusError || formError) return <ErrorPage />;
+
+  if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
+    return <NotFoundPage />;
+  }
 
   const roleKey = appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
 
@@ -128,10 +128,16 @@ function DecisionPage() {
         </div>
         {form.isActive && appStatus.status === ReviewStatus.Accepted && (
           <div className="flex justify-end mt-10 gap-3">
-            <Button onClick={() => confirmDecisionMutation.mutate("denied")}>
+            <Button 
+              onClick={() => confirmDecisionMutation.mutate("denied")}
+              disabled={confirmDecisionMutation.isPending}
+              >
               Deny
             </Button>
-            <Button onClick={() => confirmDecisionMutation.mutate("accepted")}>
+            <Button 
+              onClick={() => confirmDecisionMutation.mutate("accepted")}
+              disabled={confirmDecisionMutation.isPending}
+            >
               Accept
             </Button>
           </div>
