@@ -113,11 +113,11 @@ router.post(
 	  const internalStatus = statusDocs.docs[0].data();
 
 	  if (internalStatus.status !== "accepted") {
-		logger.warn(`User ${userId} attempted to confirm but was not accepted under: ${internalStatusId}.`);
+		logger.warn(`User ${userId} attempted to confirm but was not accepted. Status ID: ${internalStatusId}.`);
 		return res.status(403).send("You cannot confirm because you were not accepted.");
 	  }
 
-	  //  Create ConfirmationStatus document
+	  // Create ConfirmationStatus document
 	  const confirmationId = `${responseId}_${userId}`;
 	  const docRef = decisionStatusCollection.doc(confirmationId);
 

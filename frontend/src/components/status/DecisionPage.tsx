@@ -17,6 +17,7 @@ import { createDecisionConfirmation } from "@/services/decisionConfirmationServi
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../toasts/ErrorToast";
 import { Button } from "../ui/button";
+import { useMutation } from "@tanstack/react-query";
 
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
@@ -57,44 +58,45 @@ function DecisionPage() {
     return <NotFoundPage />;
   }
 
-  // compute a single key for Bootcamp vs. team
-  const roleKey =
-    appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
-  // pick the right letter based on status, reusing the same lookup for Accepted & Waitlisted
-  const decisionLetterText =
-    appStatus.status === ReviewStatus.Accepted ||
-    appStatus.status === ReviewStatus.Waitlisted
-      ? form?.decisionLetter?.[appStatus.status]?.[roleKey]
-      : form?.decisionLetter?.[ReviewStatus.Denied];
-  // guard against missing content
-  if (!decisionLetterText) {
-    return <NotFoundPage />;
-  }
-
-  const handleConfirmDecision = async (status: "accepted" | "denied") => {
-    try {
+  const confirmDecisionMutation = useMutation({
+    mutationFn: async (status: "accepted" | "denied") => {
       const decisionLetterStatus: DecisionLetterStatus = {
-        status: status,
+        status,
         userId: user?.id,
         formId: form?.id,
         responseId,
         internalStatusId: appStatus.id,
       };
 
-      await createDecisionConfirmation(
+      return createDecisionConfirmation(
         decisionLetterStatus,
         (await token()) ?? "",
       );
+    },
+    onSuccess: (_, status) => {
       throwSuccessToast(
         status === "accepted"
           ? "Decision to join confirmed!"
           : "Decision to not join confirmed.",
       );
-    } catch (error) {
+    },
+    onError: (error) => {
       console.log(error);
-      throwErrorToast("Error while registering decision.");
-    }
-  };
+      throwErrorToast("Error while registering decision: " + error);
+    },
+  });
+
+  const roleKey = appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
+
+  const decisionLetterText =
+    appStatus.status === ReviewStatus.Accepted ||
+    appStatus.status === ReviewStatus.Waitlisted
+      ? form?.decisionLetter?.[appStatus.status]?.[roleKey]
+      : form?.decisionLetter?.[ReviewStatus.Denied];
+
+  if (!decisionLetterText) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>
@@ -124,12 +126,16 @@ function DecisionPage() {
           )}
           <FormMarkdown>{decisionLetterText}</FormMarkdown>
         </div>
-        <div className="flex justify-end mt-10 gap-3">
-          <Button onClick={() => handleConfirmDecision("denied")}>Deny</Button>
-          <Button onClick={() => handleConfirmDecision("accepted")}>
-            Accept
-          </Button>
-        </div>
+        {form.isActive && appStatus.status === ReviewStatus.Accepted && (
+          <div className="flex justify-end mt-10 gap-3">
+            <Button onClick={() => confirmDecisionMutation.mutate("denied")}>
+              Deny
+            </Button>
+            <Button onClick={() => confirmDecisionMutation.mutate("accepted")}>
+              Accept
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );
