@@ -66,7 +66,9 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
         <></>
       )}
       {disabled ? (
-        <span className="p-2 min-h-32 h-fit w-full rounded-md border-2 bg-[#f3f4f6]">{value}</span>
+        <span className="p-2 min-h-32 h-fit w-full rounded-md border-2 bg-[#f3f4f6] whitespace-pre-wrap">
+          {value}
+        </span>
       ) : (
         <Textarea
           className={twMerge(

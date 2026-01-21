@@ -49,39 +49,42 @@ export default function ReviewerApplicationsTable({
     pageSize: rowCount,
   });
 
-  const handleReview = useCallback(async (
-    appReviewData: ApplicationReviewData | undefined,
-    applicantId: string,
-    responseId: string,
-    role: ApplicantRole,
-  ) => {
-    const form = await getApplicationForm(formId);
-    if (appReviewData) {
-      // there's an existing review, edit it
-      navigate(
-        `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
-      );
-    } else {
-      const review = {
-        applicantScores: {},
-        applicantId: applicantId,
-        applicationFormId: formId,
-        applicationResponseId: responseId,
-        forRole: role,
-        reviewStatus: ReviewStatus.NotReviewed,
-        reviewerId: user!.id,
-        reviewerNotes: {},
-        submitted: false,
-      };
+  const handleReview = useCallback(
+    async (
+      appReviewData: ApplicationReviewData | undefined,
+      applicantId: string,
+      responseId: string,
+      role: ApplicantRole,
+    ) => {
+      const form = await getApplicationForm(formId);
+      if (appReviewData) {
+        // there's an existing review, edit it
+        navigate(
+          `/admin/review/f/${appReviewData.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${appReviewData.id}`,
+        );
+      } else {
+        const review = {
+          applicantScores: {},
+          applicantId: applicantId,
+          applicationFormId: formId,
+          applicationResponseId: responseId,
+          forRole: role,
+          reviewStatus: ReviewStatus.NotReviewed,
+          reviewerId: user!.id,
+          reviewerNotes: {},
+          submitted: false,
+        };
 
-      console.log(review);
+        console.log(review);
 
-      const newReview = await createReviewData(review);
-      navigate(
-        `/admin/review/f/${newReview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newReview.id}`,
-      );
-    }
-  }, [formId, navigate, user])
+        const newReview = await createReviewData(review);
+        navigate(
+          `/admin/review/f/${newReview.applicationFormId}/${responseId}/${form.sections[0].sectionId}/${newReview.id}`,
+        );
+      }
+    },
+    [formId, navigate, user],
+  );
 
   const columnHelper = createColumnHelper<AssignmentRow>();
   const cols = useMemo(
@@ -155,6 +158,11 @@ export default function ReviewerApplicationsTable({
                 : `N/A`;
             }
           },
+          sortingFn: (a, b) => {
+            return (
+              (a.original.score?.value ?? 0) - (b.original.score?.value ?? 0)
+            );
+          },
         }),
         columnHelper.accessor("review", {
           id: "review-status",
@@ -200,6 +208,19 @@ export default function ReviewerApplicationsTable({
               );
             }
           },
+          sortingFn: (a, b) => {
+            const reviewA = a.original.review;
+            const reviewB = b.original.review;
+
+            // Determine status: 2 = complete, 1 = in progress, 0 = not started
+            const getStatus = (review: ApplicationReviewData | undefined) => {
+              if (!review) return 0; // not started
+              if (review.submitted) return 2; // complete
+              return 1; // in progress
+            };
+
+            return getStatus(reviewA) - getStatus(reviewB);
+          },
           filterFn: (row, columnId, filterValue) => {
             const value = row.getValue(columnId) as
               | ApplicationReviewData
@@ -222,7 +243,6 @@ export default function ReviewerApplicationsTable({
       ] as ColumnDef<AssignmentRow>[],
     [columnHelper, handleReview],
   );
-
 
   const { data: rows, isPending, error } = useRows(assignments, formId);
 

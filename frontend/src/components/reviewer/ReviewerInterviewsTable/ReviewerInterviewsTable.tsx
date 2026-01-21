@@ -47,35 +47,38 @@ export default function ReviewerInterviewsTable({
     pageSize: rowCount,
   });
 
-  const handleInterview = useCallback(async (
-    appInterviewData: ApplicationInterviewData | undefined,
-    applicantId: string,
-    responseId: string,
-    role: ApplicantRole,
-  ) => {
-    if (appInterviewData) {
-      // there's an existing interview, edit it
-      navigate(
-        `/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
-      );
-    } else {
-      const interview: Omit<ApplicationInterviewData, "id"> = {
-        interviewScores: {},
-        applicantId: applicantId,
-        applicationFormId: formId,
-        applicationResponseId: responseId,
-        forRole: role,
-        interviewerId: user!.id,
-        interviewerNotes: {},
-        submitted: false,
-      };
+  const handleInterview = useCallback(
+    async (
+      appInterviewData: ApplicationInterviewData | undefined,
+      applicantId: string,
+      responseId: string,
+      role: ApplicantRole,
+    ) => {
+      if (appInterviewData) {
+        // there's an existing interview, edit it
+        navigate(
+          `/admin/interview/f/${appInterviewData.applicationFormId}/${responseId}/${appInterviewData.id}`,
+        );
+      } else {
+        const interview: Omit<ApplicationInterviewData, "id"> = {
+          interviewScores: {},
+          applicantId: applicantId,
+          applicationFormId: formId,
+          applicationResponseId: responseId,
+          forRole: role,
+          interviewerId: user!.id,
+          interviewerNotes: {},
+          submitted: false,
+        };
 
-      const newinterview = await createInterviewData(interview);
-      navigate(
-        `/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${newinterview.id}`,
-      );
-    }
-  }, [formId, navigate, user]);
+        const newinterview = await createInterviewData(interview);
+        navigate(
+          `/admin/interview/f/${newinterview.applicationFormId}/${responseId}/${newinterview.id}`,
+        );
+      }
+    },
+    [formId, navigate, user],
+  );
 
   const columnHelper = createColumnHelper<InterviewAssignmentRow>();
   const cols = useMemo(
@@ -95,7 +98,7 @@ export default function ReviewerInterviewsTable({
           },
           cell: ({ getValue, row }) => {
             const internal = row.original.applicant.isInternal;
-            
+
             return (
               <span className="flex items-center gap-1">
                 <span>{getValue()}</span>
@@ -104,13 +107,11 @@ export default function ReviewerInterviewsTable({
                     <TooltipTrigger>
                       <UserCheckIcon className="text-blue size-4" />
                     </TooltipTrigger>
-                    <TooltipContent>
-                      Internal Applicant
-                    </TooltipContent>
+                    <TooltipContent>Internal Applicant</TooltipContent>
                   </Tooltip>
                 )}
               </span>
-            )
+            );
           },
         }),
         columnHelper.accessor("role", {
@@ -135,6 +136,11 @@ export default function ReviewerInterviewsTable({
                 ? `${score.value}/${score.outOf}`
                 : `N/A`;
             }
+          },
+          sortingFn: (a, b) => {
+            return (
+              (a.original.score?.value ?? 0) - (b.original.score?.value ?? 0)
+            );
           },
         }),
         columnHelper.accessor("interviewReviewData", {
@@ -181,6 +187,21 @@ export default function ReviewerInterviewsTable({
               );
             }
           },
+          sortingFn: (a, b) => {
+            const reviewA = a.original.interviewReviewData;
+            const reviewB = b.original.interviewReviewData;
+
+            // Determine status: 2 = complete, 1 = in progress, 0 = not started
+            const getStatus = (
+              review: ApplicationInterviewData | undefined,
+            ) => {
+              if (!review) return 0; // not started
+              if (review.submitted) return 2; // complete
+              return 1; // in progress
+            };
+
+            return getStatus(reviewA) - getStatus(reviewB);
+          },
           filterFn: (row, columnId, filterValue) => {
             const value = row.getValue(columnId) as
               | ApplicationInterviewData
@@ -202,7 +223,6 @@ export default function ReviewerInterviewsTable({
       ] as ColumnDef<InterviewAssignmentRow>[],
     [columnHelper, handleInterview],
   );
-
 
   const { data: rows, isPending, error } = useRows(assignments, formId);
 
