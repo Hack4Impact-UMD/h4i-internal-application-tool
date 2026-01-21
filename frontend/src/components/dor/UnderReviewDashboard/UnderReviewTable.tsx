@@ -52,7 +52,6 @@ import {
 import { displayReviewStatus } from "@/utils/display";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 import { AutoAssignButton } from "./AutoAssignButton";
-import { deleteReviewAssignmentsAndDataForForm } from "@/services/autoAssignmentService";
 
 type SuperReviewerApplicationsTableProps = {
   applications: ApplicationResponse[];
