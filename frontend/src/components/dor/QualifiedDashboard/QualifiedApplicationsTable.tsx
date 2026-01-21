@@ -391,6 +391,16 @@ export default function QualifiedApplicationsTable({
                     className="cursor-pointer"
                     onClick={() => {
                       navigate(
+                        "/admin/board/reviews/" + row.original.responseId,
+                      );
+                    }}
+                  >
+                    View Reviews
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate(
                         "/admin/board/interviews/" + row.original.responseId,
                       );
                     }}

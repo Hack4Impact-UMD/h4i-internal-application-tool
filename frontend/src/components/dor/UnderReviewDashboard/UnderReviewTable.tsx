@@ -202,29 +202,29 @@ export default function SuperReviewerApplicationsTable({
     },
   });
 
-  const deleteAllReviewsMutation = useMutation({
-    mutationFn: async () => await deleteReviewAssignmentsAndDataForForm(formId),
-    onSuccess: () => {
-      throwSuccessToast("Successfully deleted all review data and assignments for this form!")
-    },
-    onError: (err) => {
-      throwErrorToast("failed")
-      console.error(err)
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["all-apps-rows"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["all-reviewers-rows"],
-      });
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          q.queryKey.includes("assignments") ||
-          q.queryKey.includes("assignment"),
-      });
-    }
-  })
+  // const deleteAllReviewsMutation = useMutation({
+  //   mutationFn: async () => await deleteReviewAssignmentsAndDataForForm(formId),
+  //   onSuccess: () => {
+  //     throwSuccessToast("Successfully deleted all review data and assignments for this form!")
+  //   },
+  //   onError: (err) => {
+  //     throwErrorToast("failed")
+  //     console.error(err)
+  //   },
+  //   onSettled: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["all-apps-rows"],
+  //     });
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["all-reviewers-rows"],
+  //     });
+  //     queryClient.invalidateQueries({
+  //       predicate: (q) =>
+  //         q.queryKey.includes("assignments") ||
+  //         q.queryKey.includes("assignment"),
+  //     });
+  //   }
+  // })
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -526,13 +526,6 @@ export default function SuperReviewerApplicationsTable({
           </SelectContent>
         </Select>
         <div className="ml-auto flex gap-2">
-          <Button
-            variant={"destructive"}
-            onClick={() => deleteAllReviewsMutation.mutate()}
-            disabled={deleteAllReviewsMutation.isPending}
-          >
-            Delete All Review Data For Form
-          </Button>
           <AutoAssignButton formId={formId} />
           <Button variant="outline" onClick={handleCopyEmails}>
             <ClipboardIcon /> Copy{" "}

@@ -66,7 +66,7 @@ service cloud.firestore {
     }
 
     match /review-assignments/{assignment_id} {
-      allow read: if isSuperReviewer() || (isReviewer() && hasID(resource.data.reviewerId));
+      allow read: if isSuperReviewer() || isBoard() || (isReviewer() && hasID(resource.data.reviewerId));
       allow write: if isSuperReviewer();
     }
 
@@ -78,7 +78,7 @@ service cloud.firestore {
     }
 
     match /review-data/{review_id} {
-      allow read: if (isReviewer() && hasID(resource.data.reviewerId)) || isSuperReviewer();
+      allow read: if (isReviewer() && hasID(resource.data.reviewerId)) || isBoard() || isSuperReviewer();
       allow create: if isReviewer() && hasID(request.resource.data.reviewerId) && isActive();
       allow update: if isReviewer() && hasID(request.resource.data.reviewerId) && isActive();
       allow delete: if isSuperReviewer() || hasID(resource.data.reviewerId);
