@@ -72,8 +72,8 @@ export default function BoardDashboardShell() {
           {applicationsRoutes.map((route) => (
             <NavLink key={route.path} to={route.path}>
               {({ isActive }) => (
-                <Button variant={isActive ? "default" : "outline"}>
-                  {route.label}
+                <Button asChild variant={isActive ? "default" : "outline"}>
+                  <a>{route.label}</a>
                 </Button>
               )}
             </NavLink>
