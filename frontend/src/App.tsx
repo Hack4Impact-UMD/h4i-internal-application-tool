@@ -79,6 +79,9 @@ const AppRevisitPage = lazy(() => import("./pages/applicant/AppRevisitPage"));
 const BoardInterviewsDashboard = lazy(
   () => import("./pages/board/BoardInterviewsDashboard"),
 );
+const BoardAllApplicationsDashboard = lazy(
+  () => import("./pages/board/BoardAllApplicationsDashboard"),
+);
 const QualifiedApplicationsDashboard = lazy(
   () =>
     import("./pages/super-reviewer/dashboards/QualifiedApplicationsDashboard"),
@@ -396,6 +399,10 @@ function App() {
                       </RequireAuth>
                     }
                   >
+                    <Route
+                      path="all"
+                      element={<BoardAllApplicationsDashboard />}
+                    />
                     <Route
                       path="interviews"
                       element={<BoardInterviewsDashboard />}
