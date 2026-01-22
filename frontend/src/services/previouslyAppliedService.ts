@@ -1,3 +1,4 @@
+import { ApplicationStatus } from "@/types/types";
 import { getApplicationResponseAndSemester } from "./applicationResponseAndSemesterService";
 
 /***
@@ -12,7 +13,7 @@ export async function getPreviouslyAppliedCount(
   const inactiveFormIds = new Set<string>();
 
   for (const response of responses) {
-    if (!response.active) {
+    if (!response.active && response.status != ApplicationStatus.InProgress) {
       inactiveFormIds.add(response.applicationFormId);
     }
   }
