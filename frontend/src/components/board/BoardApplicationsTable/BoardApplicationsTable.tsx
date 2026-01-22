@@ -145,7 +145,7 @@ export default function BoardApplicationsTable({
                   review.forRole === role,
               );
             };
-            
+
             if (reviewers.length === 0) {
               return "N/A";
             }
@@ -155,11 +155,10 @@ export default function BoardApplicationsTable({
                 {reviewers.map((reviewer) => (
                   <div
                     key={reviewer.id}
-                    className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${
-                      complete(reviewer.id)
-                        ? "bg-green-200 text-green-800 border-green-100"
-                        : "bg-muted"
-                    }`}
+                    className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(reviewer.id)
+                      ? "bg-green-200 text-green-800 border-green-100"
+                      : "bg-muted"
+                      }`}
                   >
                     <span className="text-sm">
                       {reviewer.firstName} {reviewer.lastName}
@@ -278,6 +277,16 @@ export default function BoardApplicationsTable({
                     }}
                   >
                     View Reviews
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => {
+                      navigate(
+                        "/admin/board/interviews/" + row.original.responseId,
+                      );
+                    }}
+                  >
+                    View Interviews
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className="cursor-pointer"

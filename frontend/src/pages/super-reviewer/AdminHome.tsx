@@ -63,7 +63,7 @@ export default function AdminHome() {
     user.role === PermissionRole.Reviewer
       ? "apps"
       : user.role === PermissionRole.Board
-        ? "interviews"
+        ? "all"
         : "all";
 
   if (isPending) return <Loading />;
