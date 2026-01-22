@@ -102,7 +102,7 @@ export default function BoardInterviewsDashboard() {
 
   return (
     <div>
-      <div className="overflow-x-scroll flex flex-row gap-2 items-center min-h-28 justify-stretch mt-8 no-scrollbar">
+      <div className="overflow-x-scroll flex flex-row gap-2 items-center min-h-28 justify-stretch mt-4 no-scrollbar">
         <Button
           className={`h-28 min-w-40 text-white p-4 flex flex-col items-start 
 					${roleFilter == "all" ? "bg-[#4A280D] hover:bg-[#4A280D]/90 text-[#F1D5C4]" : "bg-[#F1D5C4] hover:bg-[#F1D5C4]/90 text-[#4A280D]"}`}

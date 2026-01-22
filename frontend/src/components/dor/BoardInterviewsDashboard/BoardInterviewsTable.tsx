@@ -133,12 +133,6 @@ export default function BoardInterviewsTable({
   const cols = useMemo(
     () =>
       [
-        columnHelper.accessor("index", {
-          id: "number",
-          header: ({ column }) => (
-            <SortableHeader column={column}>S. NO</SortableHeader>
-          ),
-        }),
         columnHelper.accessor("dateSubmitted", {
           id: "date-submitted",
           header: ({ column }) => {
