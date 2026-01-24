@@ -8,11 +8,12 @@ import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface RichTextareaProps {
-  value: string;
+  value?: string;
   onChange: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  defaultValue?: string;
   onWordCountChange?: (count: number) => void;
 }
 
@@ -20,6 +21,7 @@ function RichTextarea({
   value,
   onChange,
   placeholder = "",
+  defaultValue = "",
   disabled = false,
   className,
   onWordCountChange,
@@ -32,7 +34,7 @@ function RichTextarea({
       CharacterCount,
       Markdown,
     ],
-    content: value,
+    content: value || defaultValue,
     editorProps: {
       attributes: {
         class: "outline-none min-h-[inherit] h-full",
@@ -51,7 +53,7 @@ function RichTextarea({
 
   useEffect(() => {
     if (editor && value !== editor.getMarkdown()) {
-      editor.commands.setContent(value, { emitUpdate: false, contentType: "markdown" });
+      editor.commands.setContent(value || defaultValue, { emitUpdate: false, contentType: "markdown" });
     }
   }, [value, editor]);
 
@@ -71,7 +73,8 @@ function RichTextarea({
     <EditorContent
       editor={editor}
       className={cn(
-        "prose prose-sm max-w-none",
+        "prose prose-sm max-w-none leading-tight",
+        "prose-headings:mt-0 prose-headings:mb-0 prose-p:my-0",
         "p-2 min-h-32 w-full rounded-md border-2 bg-white",
         "focus-within:ring-2 focus-within:ring-ring focus-within:border-ring",
         "transition-[color,box-shadow]",

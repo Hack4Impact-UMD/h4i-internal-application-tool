@@ -13,6 +13,14 @@ import App from "./App.tsx";
 //     <RouterProvider router={router}></RouterProvider>
 //   </StrictMode>,
 // );
+//
+
+if (import.meta.env.MODE === "development") {
+  const { scan } = await import('react-scan');
+  scan({
+    enabled: true
+  });
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

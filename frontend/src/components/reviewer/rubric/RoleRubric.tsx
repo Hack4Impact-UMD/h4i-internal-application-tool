@@ -8,7 +8,8 @@ import {
 import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { RubricQuestion } from "./RubricQuestion";
 import FormMarkdown from "@/components/form/FormMarkdown";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextarea } from "@/components/ui/rich-textarea";
+import { useMemo } from "react";
 
 type RoleRubricProps = {
   rubric: RoleReviewRubric;
@@ -31,6 +32,11 @@ export default function RoleRubric({
   disabled = false,
   form = undefined,
 }: RoleRubricProps) {
+
+  const description = useMemo(() => (
+    <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
+  ), [rubric.commentsDescription]);
+
   return (
     <div className="bg-white rounded-md border border-gray-200 p-4 flex flex-col gap-2">
       <h1 className="font-bold text-xl">
@@ -72,10 +78,10 @@ export default function RoleRubric({
         ))}
       </div>
       <h2 className="text-lg">Review Comments</h2>
-      <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
-      <Textarea
+      {description}
+      <RichTextarea
         disabled={disabled}
-        className="disabled:opacity-100 min-h-64"
+        className="disabled:opacity-100 min-h-64 prose-lg"
         defaultValue={
           reviewData
             ? reviewData.reviewerNotes[rubric.id]
@@ -83,8 +89,8 @@ export default function RoleRubric({
               ? interviewData.interviewerNotes[rubric.id]
               : ""
         }
-        onChange={(e) => onCommentChange(rubric.id, e.target.value)}
-      ></Textarea>
+        onChange={(e) => onCommentChange(rubric.id, e)}
+      />
     </div>
   );
 }

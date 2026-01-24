@@ -1,8 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { Textarea } from "../ui/textarea";
 import FormMarkdown from "./FormMarkdown";
-import { RichTextarea } from "../ui/rich-textarea";
 
 interface LongFormInputProps {
   question: string;
@@ -31,7 +30,11 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
   errorMessage,
   placeholderText = "",
 }) => {
-  const [wordCount, setWordCount] = useState(0);
+  const wordCount = useMemo(() => {
+    const words = value.trim().split(" ");
+    if (words.length == 1 && words[0] == "") return 0;
+    return words.length;
+  }, [value]);
 
   return (
     <main
@@ -62,17 +65,22 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
       ) : (
         <></>
       )}
-      <RichTextarea
-        className={twMerge(
-          "p-2 min-h-32 h-fit w-full rounded-md border-2 disabled:opacity-100 disabled:bg-[#f3f4f6] disabled:cursor-not-allowed text-base py-0",
-        )}
-        // required={isRequired}
-        value={value}
-        onChange={(e) => onChange(e)}
-        disabled={disabled}
-        placeholder={placeholderText}
-        onWordCountChange={count => setWordCount(count)}
-      />
+      {disabled ? (
+        <span className="p-2 min-h-32 h-fit w-full rounded-md border-2 bg-[#f3f4f6] whitespace-pre-wrap">
+          {value}
+        </span>
+      ) : (
+        <Textarea
+          className={twMerge(
+            "p-2 min-h-32 h-fit w-full rounded-md border-2 disabled:opacity-100 disabled:bg-[#f3f4f6] disabled:cursor-not-allowed",
+          )}
+          required={isRequired}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          placeholder={placeholderText}
+        ></Textarea>
+      )}
       <p className="text-xs mt-1 font-light">
         {wordCount} word{wordCount != 1 && "s"}
       </p>

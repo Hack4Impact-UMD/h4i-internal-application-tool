@@ -300,6 +300,42 @@ const AppReviewPage: React.FC = () => {
     [form?.sections, response?.rolesApplied],
   );
 
+  const visibleForm = useMemo(() => (
+    response && form && visibleSections.map((s) => (
+      <div
+        ref={(el) => {
+          sectionRefs.current.set(s.sectionId, el);
+        }}
+        className="shadow border border-gray-200 bg-white rounded-md p-4"
+        key={s.sectionId}
+      >
+        <Section
+          responseId={response.id}
+          key={s.sectionId}
+          disabled={true}
+          section={s}
+          responses={
+            response.sectionResponses.find(
+              (r) => r.sectionId == s.sectionId,
+            )?.questions ?? []
+          }
+          onChangeResponse={() => { }}
+          disabledRoles={form.disabledRoles ?? []}
+        />
+      </div>
+    ))
+  ), [form, response, visibleSections])
+
+  const header = useMemo(() => (
+    reviewData && response && form && <UserHeader
+      reviewData={reviewData}
+      applicantId={response.userId}
+      form={form}
+      role={reviewData.forRole}
+      lastSave={lastSave}
+    />
+  ), [form, lastSave, response, reviewData])
+
   if (
     formLoading ||
     responseLoading ||
@@ -339,14 +375,7 @@ const AppReviewPage: React.FC = () => {
         </CommandList>
       </CommandDialog>
       <div className="flex flex-row w-full py-2 px-4 items-center rounded border border-blue-300 bg-blue-100 text-blue">
-        <UserHeader
-          reviewData={reviewData}
-          applicantId={response.userId}
-          form={form}
-          role={reviewData.forRole}
-          lastSave={lastSave}
-        />
-
+        {header}
         {score === undefined ? (
           `Failed to calculate score!`
         ) : (
@@ -417,29 +446,7 @@ const AppReviewPage: React.FC = () => {
                 to jump to a section
               </p>
             </div>
-            {visibleSections.map((s) => (
-              <div
-                ref={(el) => {
-                  sectionRefs.current.set(s.sectionId, el);
-                }}
-                className="shadow border border-gray-200 bg-white rounded-md p-4"
-                key={s.sectionId}
-              >
-                <Section
-                  responseId={response.id}
-                  key={s.sectionId}
-                  disabled={true}
-                  section={s}
-                  responses={
-                    response.sectionResponses.find(
-                      (r) => r.sectionId == s.sectionId,
-                    )?.questions ?? []
-                  }
-                  onChangeResponse={() => { }}
-                  disabledRoles={form.disabledRoles ?? []}
-                />
-              </div>
-            ))}
+            {visibleForm}
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
