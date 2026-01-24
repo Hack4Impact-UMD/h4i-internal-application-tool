@@ -300,7 +300,7 @@ const AppReviewPage: React.FC = () => {
     [form?.sections, response?.rolesApplied],
   );
 
-  const visibleForm = useMemo(() => (
+  const renderedForm = useMemo(() => (
     response && form && visibleSections.map((s) => (
       <div
         ref={(el) => {
@@ -446,7 +446,7 @@ const AppReviewPage: React.FC = () => {
                 to jump to a section
               </p>
             </div>
-            {visibleForm}
+            {renderedForm}
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
