@@ -13,7 +13,6 @@ interface RichTextareaProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-  defaultValue?: string;
   onWordCountChange?: (count: number) => void;
 }
 
@@ -21,7 +20,6 @@ function RichTextarea({
   value,
   onChange,
   placeholder = "",
-  defaultValue = "",
   disabled = false,
   className,
   onWordCountChange,
@@ -34,7 +32,7 @@ function RichTextarea({
       CharacterCount,
       Markdown,
     ],
-    content: value || defaultValue,
+    content: value,
     editorProps: {
       attributes: {
         class: "outline-none min-h-[inherit] h-full",
@@ -53,7 +51,7 @@ function RichTextarea({
 
   useEffect(() => {
     if (editor && value !== editor.getMarkdown()) {
-      editor.commands.setContent(value || defaultValue, { emitUpdate: false, contentType: "markdown" });
+      editor.commands.setContent(value ?? "", { emitUpdate: false, contentType: "markdown" });
     }
   }, [value, editor]);
 
