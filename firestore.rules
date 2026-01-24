@@ -106,9 +106,9 @@ service cloud.firestore {
       allow write: if isSuperReviewer();
     }
 
-    match /decision-status/{user_id} {
-      allow read: if isSuperReviewer();
-      allow write: if ((hasID(user_id)) && isApplicant()) || isSuperReviewer();
+    match /decision-status/{response_id_user_id} {
+      allow read: if isSuperReviewer() || hasID(resource.data.userId);
+      allow write: if ((hasID(request.resource.data.userId)) && isApplicant()) || isSuperReviewer();
     }
     
     // by default, all documents should be inaccessible to reads and writes
