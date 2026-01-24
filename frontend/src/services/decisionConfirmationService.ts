@@ -30,6 +30,7 @@ export async function createDecisionConfirmation(
 }
 
 export async function getDecisionConfirmationForResponseRole(
+  userId: string,
   responseId: string,
 ) {
   const confirmationCollection = collection(
@@ -38,13 +39,14 @@ export async function getDecisionConfirmationForResponseRole(
   ) as CollectionReference<DecisionLetterStatus>;
   const q = query(
     confirmationCollection,
+    where("userId", "==", userId),
     where("responseId", "==", responseId),
   );
 
   const resp = (await getDocs(q)).docs.map((d) => d.data());
 
   if (resp.length > 0) return resp[0];
-  else return undefined;
+  else return null;
 }
 
 export async function getAllDecisionConfirmationsByFormId(

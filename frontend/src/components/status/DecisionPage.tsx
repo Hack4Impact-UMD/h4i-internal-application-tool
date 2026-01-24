@@ -6,7 +6,7 @@ import {
 } from "@/types/types";
 import { useParams } from "react-router-dom";
 import { useMyApplicationStatus } from "@/hooks/useApplicationStatus";
-import { displayApplicantRoleName } from "@/utils/display";
+import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import FormMarkdown from "../form/FormMarkdown";
 import ErrorPage from "@/pages/ErrorPage";
 import NotFoundPage from "@/pages/NotFoundPage";
@@ -17,6 +17,8 @@ import { createDecisionConfirmation } from "@/services/decisionConfirmationServi
 import { throwSuccessToast } from "../toasts/SuccessToast";
 import { throwErrorToast } from "../toasts/ErrorToast";
 import { Button } from "../ui/button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDecisionConfirmationForResponse } from "@/hooks/useDecisionConfirmation";
 
 const allowedStatuses: Set<string> = new Set([
   ReviewStatus.Accepted,
@@ -31,6 +33,8 @@ function DecisionPage() {
     role: ApplicantRole;
   }>();
 
+  const queryClient = useQueryClient();
+
   const {
     data: appStatus,
     isPending: statusPending,
@@ -43,93 +47,126 @@ function DecisionPage() {
     error: formError,
   } = useApplicationFormForResponseId(responseId);
 
-  if (!user || !responseId || !role) return <ErrorPage />;
+  const {
+    data: decisionConfirmation,
+    isPending: decisionPending,
+    error: decisionError,
+  } = useDecisionConfirmationForResponse(responseId);
 
-  if (statusPending || formPending) {
-    return <Loading />;
-  }
+  const confirmDecisionMutation = useMutation({
+    mutationFn: async (status: "accepted" | "denied") => {
+      if (!user || !form || !appStatus || !responseId) {
+        throw new Error("Missing required data to confirm decision");
+      }
 
-  if (statusError || formError) {
-    return <ErrorPage />;
-  }
-
-  if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
-    return <NotFoundPage />;
-  }
-
-  // compute a single key for Bootcamp vs. team
-  const roleKey =
-    appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
-  // pick the right letter based on status, reusing the same lookup for Accepted & Waitlisted
-  const decisionLetterText =
-    appStatus.status === ReviewStatus.Accepted ||
-    appStatus.status === ReviewStatus.Waitlisted
-      ? form?.decisionLetter?.[appStatus.status]?.[roleKey]
-      : form?.decisionLetter?.[ReviewStatus.Denied];
-  // guard against missing content
-  if (!decisionLetterText) {
-    return <NotFoundPage />;
-  }
-
-  const handleConfirmDecision = async (status: "accepted" | "denied") => {
-    try {
       const decisionLetterStatus: DecisionLetterStatus = {
-        status: status,
+        status,
         userId: user?.id,
         formId: form?.id,
         responseId,
         internalStatusId: appStatus.id,
       };
 
-      await createDecisionConfirmation(
+      return createDecisionConfirmation(
         decisionLetterStatus,
         (await token()) ?? "",
       );
+    },
+    onSuccess: (_, status) => {
       throwSuccessToast(
         status === "accepted"
           ? "Decision to join confirmed!"
           : "Decision to not join confirmed.",
       );
-    } catch (error) {
-      console.log(error);
-      throwErrorToast("Error while registering decision.");
-    }
-  };
+      queryClient.invalidateQueries({
+        queryKey: ["decision-confirmation", "response", responseId],
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+      throwErrorToast("Error while registering decision: " + error.message);
+    },
+  });
+
+  if (!user || !responseId || !role) return <ErrorPage />;
+
+  if (statusPending || formPending || decisionPending) return <Loading />
+
+  if (statusError || formError || decisionError) return <ErrorPage />;
+
+  if (!appStatus.released || !allowedStatuses.has(appStatus.status)) {
+    return <NotFoundPage />;
+  }
+
+  const roleKey = appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
+
+  const decisionLetterText =
+    appStatus.status === ReviewStatus.Accepted ||
+      appStatus.status === ReviewStatus.Waitlisted
+      ? form?.decisionLetter?.[appStatus.status]?.[roleKey]
+      : form?.decisionLetter?.[ReviewStatus.Denied];
+
+  if (!decisionLetterText) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>
-      <div className="mt-5 mx-auto max-w-5xl w-full px-5 py-5 font-sans leading-relaxed">
+      <div className="mt-5 mx-auto max-w-5xl w-full px-5 py-5 font-sans leading-relaxed bg-white rounded">
         <div className="flex gap-2 flex-col sm:flex-row items-start justify-between mb-5">
           <div className="flex flex-col">
             <h2 className="text-blue text-2xl">
               Your Hack4Impact-UMD {form.semester}
               <br></br>
-              {displayApplicantRoleName(role as ApplicantRole)} Application
+              {displayApplicantRoleNameNoEmoji(role as ApplicantRole)} Application
             </h2>
           </div>
         </div>
-        <div className="font-[Karla] text-sm font-normal leading-tight text-justify [text-justify:inter-word]">
+        <div className="font-[Karla] text-base font-normal leading-tight text-justify [text-justify:inter-word]">
           <p>
             Dear {user.firstName} {user.lastName},
           </p>
           <br></br>
-          {appStatus.status === ReviewStatus.Accepted && (
-            <ConfettiExplosion
-              className="justify-self-center self-start"
-              force={0.8}
-              duration={3000}
-              particleCount={250}
-              width={1600}
-            />
+          {appStatus.status === ReviewStatus.Accepted && !decisionConfirmation && (
+            <div className="flex items-center justify-center w-full">
+              <ConfettiExplosion
+                className="justify-self-center self-start"
+                force={0.8}
+                duration={3000}
+                particleCount={250}
+                width={1600}
+              />
+            </div>
           )}
-          <FormMarkdown>{decisionLetterText}</FormMarkdown>
+          <FormMarkdown className="text-base text-black">{decisionLetterText}</FormMarkdown>
         </div>
-        <div className="flex justify-end mt-10 gap-3">
-          <Button onClick={() => handleConfirmDecision("denied")}>Deny</Button>
-          <Button onClick={() => handleConfirmDecision("accepted")}>
-            Accept
-          </Button>
-        </div>
+        {form.isActive && appStatus.status === ReviewStatus.Accepted && (
+          <div className="flex justify-end mt-10 gap-3">
+            {decisionConfirmation ? (
+              <p className="text-lg font-semibold">
+                {decisionConfirmation.status === "accepted"
+                  ? "Offer accepted 🥳"
+                  : "Offer declined"}
+              </p>
+            ) : (
+              <>
+                <Button
+                  onClick={() => confirmDecisionMutation.mutate("accepted")}
+                  disabled={confirmDecisionMutation.isPending}
+                >
+                  Accept your offer to join 🥳
+                </Button>
+                <Button
+                  onClick={() => confirmDecisionMutation.mutate("denied")}
+                  disabled={confirmDecisionMutation.isPending}
+                  variant={"destructive"}
+                >
+                  Decline your offer to join
+                </Button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </>
   );
