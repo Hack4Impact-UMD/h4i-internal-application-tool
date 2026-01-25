@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { Textarea } from "../ui/textarea";
 import FormMarkdown from "./FormMarkdown";
@@ -89,4 +89,4 @@ const LongFormInput: React.FC<LongFormInputProps> = ({
   );
 };
 
-export default LongFormInput;
+export default memo(LongFormInput);

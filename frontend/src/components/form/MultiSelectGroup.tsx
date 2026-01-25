@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import OptionButton from "./OptionButton";
 import { twMerge } from "tailwind-merge";
 import FormMarkdown from "./FormMarkdown";
@@ -77,4 +77,4 @@ const MultiSelectGroup: React.FC<MultiSelectGroupProps> = ({
   );
 };
 
-export default MultiSelectGroup;
+export default memo(MultiSelectGroup);

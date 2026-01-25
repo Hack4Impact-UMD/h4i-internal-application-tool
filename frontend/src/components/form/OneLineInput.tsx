@@ -1,3 +1,4 @@
+import React, { memo } from "react";
 import { twMerge } from "tailwind-merge";
 import { Input } from "../ui/input";
 import FormMarkdown from "./FormMarkdown";
@@ -58,4 +59,4 @@ const OneLineInput: React.FC<OneLineInputProps> = ({
   );
 };
 
-export default OneLineInput;
+export default memo(OneLineInput);

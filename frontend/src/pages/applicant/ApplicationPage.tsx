@@ -3,7 +3,7 @@ import Section from "../../components/form/Section";
 import Timeline from "../../components/status/Timeline"; // Import Timeline component
 import useForm from "../../hooks/useForm";
 import { Button } from "../../components/ui/button";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 
 const ApplicationPage: React.FC = () => {
@@ -21,6 +21,7 @@ const ApplicationPage: React.FC = () => {
     previousSection,
     nextSection,
     save,
+    setSelectedRoles,
   } = useForm();
 
   const timelineItems = useMemo(
@@ -49,6 +50,20 @@ const ApplicationPage: React.FC = () => {
     );
   }, [response, currentSection]);
 
+  // Memoize disabledRoles to prevent new array reference on each render
+  const disabledRoles = useMemo(
+    () => form?.disabledRoles ?? [],
+    [form?.disabledRoles],
+  );
+
+  const handleResponseChange = useCallback(
+    (questionId: string, value: string | string[]) => {
+      if (currentSection)
+        updateQuestionResponse(currentSection.sectionId, questionId, value);
+    },
+    [currentSection, updateQuestionResponse],
+  );
+
   if (!form) return <p>Failed to fetch form...</p>;
   if (!response) return <p>Failed to fetch response...</p>;
 
@@ -57,13 +72,6 @@ const ApplicationPage: React.FC = () => {
       <div>Section not found. Please navigate back to the application.</div>
     );
   }
-
-  const handleResponseChange = (
-    questionId: string,
-    value: string | string[],
-  ) => {
-    updateQuestionResponse(currentSection.sectionId, questionId, value);
-  };
 
   const handleNext = async () => {
     const currentIndex = availableSections.findIndex(
@@ -114,7 +122,8 @@ const ApplicationPage: React.FC = () => {
             section={currentSection}
             responses={responses}
             onChangeResponse={handleResponseChange}
-            disabledRoles={form.disabledRoles ?? []}
+            onRoleSelect={setSelectedRoles}
+            disabledRoles={disabledRoles}
           />
 
           <div className="flex gap-1 mt-4">
