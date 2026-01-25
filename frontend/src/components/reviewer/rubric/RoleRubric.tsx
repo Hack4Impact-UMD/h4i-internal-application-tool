@@ -8,7 +8,8 @@ import {
 import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
 import { RubricQuestion } from "./RubricQuestion";
 import FormMarkdown from "@/components/form/FormMarkdown";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextarea } from "@/components/ui/rich-textarea";
+import { useMemo } from "react";
 
 type RoleRubricProps = {
   rubric: RoleReviewRubric;
@@ -31,6 +32,43 @@ export default function RoleRubric({
   disabled = false,
   form = undefined,
 }: RoleRubricProps) {
+
+  const description = useMemo(() => (
+    <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
+  ), [rubric.commentsDescription]);
+
+  const weights = useMemo(() => reviewData
+    ? form?.scoreWeights[role]
+    : interviewData
+      ? form?.interviewScoreWeights[role]
+      : undefined,
+    [form?.interviewScoreWeights, form?.scoreWeights, interviewData, reviewData, role]
+  )
+  const scoreValues = useMemo(() =>
+    reviewData
+      ? reviewData.applicantScores
+      : interviewData
+        ? interviewData.interviewScores
+        : undefined
+    , [interviewData, reviewData])
+
+  const questions = useMemo(() => (
+    rubric.rubricQuestions.map((q) => (
+      <RubricQuestion
+        disabled={disabled}
+        key={q.scoreKey}
+        question={q}
+        onChange={onScoreChange}
+        weight={
+          weights?.[q.scoreKey]
+        }
+        value={
+          scoreValues?.[q.scoreKey] ?? 0
+        }
+      />
+    ))
+  ), [disabled, onScoreChange, rubric.rubricQuestions, scoreValues, weights])
+
   return (
     <div className="bg-white rounded-md border border-gray-200 p-4 flex flex-col gap-2">
       <h1 className="font-bold text-xl">
@@ -48,43 +86,22 @@ export default function RoleRubric({
         </span>
       )}
       <div className="flex flex-col gap-2">
-        {rubric.rubricQuestions.map((q) => (
-          <RubricQuestion
-            disabled={disabled}
-            key={q.scoreKey}
-            question={q}
-            onChange={onScoreChange}
-            weight={
-              reviewData
-                ? form?.scoreWeights[role]?.[q.scoreKey]
-                : interviewData
-                  ? form?.interviewScoreWeights[role]?.[q.scoreKey]
-                  : undefined
-            }
-            value={
-              reviewData
-                ? reviewData.applicantScores[q.scoreKey]
-                : interviewData
-                  ? interviewData.interviewScores[q.scoreKey]
-                  : 0
-            }
-          />
-        ))}
+        {questions}
       </div>
       <h2 className="text-lg">Review Comments</h2>
-      <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
-      <Textarea
+      {description}
+      <RichTextarea
         disabled={disabled}
-        className="disabled:opacity-100 min-h-64"
-        defaultValue={
+        className="disabled:opacity-100 min-h-64 prose-lg"
+        value={
           reviewData
             ? reviewData.reviewerNotes[rubric.id]
             : interviewData
               ? interviewData.interviewerNotes[rubric.id]
               : ""
         }
-        onChange={(e) => onCommentChange(rubric.id, e.target.value)}
-      ></Textarea>
+        onChange={(e) => onCommentChange(rubric.id, e)}
+      />
     </div>
   );
 }
