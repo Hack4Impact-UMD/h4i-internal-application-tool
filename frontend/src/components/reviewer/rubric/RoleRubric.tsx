@@ -6,7 +6,7 @@ import {
   RoleReviewRubric,
 } from "@/types/types";
 import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
-import { RubricQuestion } from "./RubricQuestion";
+import RubricQuestion from "./RubricQuestion";
 import FormMarkdown from "@/components/form/FormMarkdown";
 import { RichTextarea } from "@/components/ui/rich-textarea";
 import { useMemo } from "react";
