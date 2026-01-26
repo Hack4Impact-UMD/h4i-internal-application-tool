@@ -19,7 +19,7 @@ const Timeline = (props: TimelineProps) => {
 
   const handleStepClick = (index: number) => {
     if (index <= props.maxStepReached && props.onStepClick) {
-      props.onStepClick(index, props.items[index]);
+      props.onStepClick(props.currentStep + index - 1, props.items[props.currentStep + index - 1]);
     }
   };
 
@@ -59,13 +59,12 @@ const Timeline = (props: TimelineProps) => {
               }}
             >
               <div
-                className={`w-12 h-12 mx-auto mb-2 flex items-center justify-center rounded-full border-4 transition-colors duration-300 ${
-                  isCompleted
+                className={`w-12 h-12 mx-auto mb-2 flex items-center justify-center rounded-full border-4 transition-colors duration-300 ${isCompleted
+                  ? "bg-[#2969C4] text-white border-[#2969C4]"
+                  : isActive
                     ? "bg-[#2969C4] text-white border-[#2969C4]"
-                    : isActive
-                      ? "bg-[#2969C4] text-white border-[#2969C4]"
-                      : "bg-white text-gray-500 border-gray-300"
-                }`}
+                    : "bg-white text-gray-500 border-gray-300"
+                  }`}
               >
                 {isCompleted ? (
                   <svg
@@ -88,9 +87,8 @@ const Timeline = (props: TimelineProps) => {
                 )}
               </div>
               <p
-                className={`uppercase ${
-                  isUnlocked ? "text-gray-800 font-semibold" : "text-gray-400"
-                } whitespace-nowrap`}
+                className={`uppercase ${isUnlocked ? "text-gray-800 font-semibold" : "text-gray-400"
+                  } whitespace-nowrap`}
               >
                 {item.label}
               </p>
