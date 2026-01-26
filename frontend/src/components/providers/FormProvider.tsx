@@ -100,7 +100,7 @@ export default function FormProvider() {
     return () => {
       clearTimeout(ref);
     };
-  }, [response, save]);
+  }, [response]);
 
   const sections = useMemo(() => {
     if (!data) return [];
