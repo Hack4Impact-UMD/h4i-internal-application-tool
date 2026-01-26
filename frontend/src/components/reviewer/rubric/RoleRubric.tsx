@@ -80,7 +80,7 @@ export default function RoleRubric({
       {rubric.detailLink && (
         <span>
           Details:{" "}
-          <a href={rubric.detailLink} target="_black" rel="noopener noreferrer">
+          <a href={rubric.detailLink} target="_blank" rel="noopener noreferrer">
             {rubric.detailLink}
           </a>
         </span>
