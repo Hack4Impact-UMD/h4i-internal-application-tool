@@ -16,10 +16,12 @@ type TimelineProps = {
 const Timeline = (props: TimelineProps) => {
   const [visibleItems, setVisibleItems] = useState(props.items.slice(0, 4));
   const [progressIndex, setProgressIndex] = useState(0);
+  const [startIndex, setStartIndex] = useState(0);
 
   const handleStepClick = (index: number) => {
     if (index <= props.maxStepReached && props.onStepClick) {
-      props.onStepClick(props.currentStep + index - 1, props.items[props.currentStep + index - 1]);
+      const idx = startIndex + index;
+      props.onStepClick(idx, props.items[idx]);
     }
   };
 
@@ -38,6 +40,7 @@ const Timeline = (props: TimelineProps) => {
 
     setProgressIndex(props.currentStep - start);
     setVisibleItems(props.items.slice(start, end));
+    setStartIndex(start);
   }, [props.currentStep, props.items]);
 
   return (
