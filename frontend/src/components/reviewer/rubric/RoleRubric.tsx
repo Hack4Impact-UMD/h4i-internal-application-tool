@@ -6,7 +6,7 @@ import {
   RoleReviewRubric,
 } from "@/types/types";
 import { displayApplicantRoleNameNoEmoji } from "@/utils/display";
-import { RubricQuestion } from "./RubricQuestion";
+import RubricQuestion from "./RubricQuestion";
 import FormMarkdown from "@/components/form/FormMarkdown";
 import { RichTextarea } from "@/components/ui/rich-textarea";
 import { useMemo } from "react";
@@ -80,7 +80,7 @@ export default function RoleRubric({
       {rubric.detailLink && (
         <span>
           Details:{" "}
-          <a href={rubric.detailLink} target="_black" rel="noopener noreferrer">
+          <a href={rubric.detailLink} target="_blank" rel="noopener noreferrer">
             {rubric.detailLink}
           </a>
         </span>

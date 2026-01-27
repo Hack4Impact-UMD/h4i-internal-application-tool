@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface OptionButtonProps {
@@ -104,4 +104,4 @@ const OptionButton: React.FC<OptionButtonProps> = ({
   );
 };
 
-export default OptionButton;
+export default memo(OptionButton);

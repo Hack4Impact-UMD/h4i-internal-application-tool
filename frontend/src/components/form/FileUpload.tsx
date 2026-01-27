@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { memo, useState } from "react";
 import { DownloadIcon } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -43,7 +43,7 @@ function useStorageFileMetadata(path: string) {
   });
 }
 
-export default function FileUpload(props: FileUploadProps) {
+function FileUpload(props: FileUploadProps) {
   const { data: fileMetadata, isPending } = useStorageFileMetadata(props.value);
   const [uploadProgess, setUploadProgess] = useState(0);
   const { user } = useAuth();
@@ -211,3 +211,5 @@ export default function FileUpload(props: FileUploadProps) {
     </div>
   );
 }
+
+export default memo(FileUpload);

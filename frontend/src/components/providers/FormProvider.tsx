@@ -2,7 +2,7 @@ import { Navigate, Outlet, useParams } from "react-router-dom";
 import { FormContext } from "../../contexts/formContext";
 import { useMyApplicationResponseAndForm } from "../../hooks/useApplicationResponses";
 import Loading from "../Loading";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   ApplicantRole,
   ApplicationResponse,
@@ -37,9 +37,9 @@ export default function FormProvider() {
     setResponse((old) =>
       old
         ? {
-            ...old,
-            rolesApplied: selectedRoles,
-          }
+          ...old,
+          rolesApplied: selectedRoles,
+        }
         : old,
     );
   }, [selectedRoles]);
@@ -77,17 +77,25 @@ export default function FormProvider() {
 
   const SAVE_DEBOUNCE_SEC = 2;
 
+  const save = useCallback(async () => {
+    try {
+      if (response) await saveMutation.mutateAsync(response);
+    } catch (err) {
+      console.error("Save failed!");
+      console.error(err);
+      throwErrorToast("Failed to save your application!");
+    }
+    await queryClient.invalidateQueries({
+      predicate: (q) =>
+        q.queryKey.includes("responses") ||
+        q.queryKey.includes("responses-and-semester"),
+    });
+  }, [response, saveMutation, queryClient]);
+
   useEffect(() => {
     const ref = setTimeout(() => {
       save();
     }, SAVE_DEBOUNCE_SEC * 1000);
-
-    // if (response) {
-    //   setResponse({
-    //     ...response,
-    //     dateSubmitted: Timestamp.now()
-    //   })
-    // }
 
     return () => {
       clearTimeout(ref);
@@ -107,22 +115,8 @@ export default function FormProvider() {
       .map((s) => s.sectionId);
   }, [selectedRoles, data]);
 
-  if (isPending) return <Loading />;
-  if (error) return <p>Something went wrong: {error.message}</p>;
-  const { form, response: dbResponse } = data;
-
-  //NOTE: not sure if it's a good idea to put this here, this component might need to be reused
-  //in a case where in-progress apps are allowed. But for now, this is the best way to prevent
-  //editing apps that are complete!
-  if (dbResponse.status != ApplicationStatus.InProgress)
-    return <Navigate to="/apply/status" />;
-
-  function updateQuestionResponse(
-    sectionId: string,
-    questionId: string,
-    resp: string | string[],
-  ) {
-    if (response) {
+  const updateQuestionResponse = useCallback(
+    (sectionId: string, questionId: string, resp: string | string[]) => {
       setResponse((prev) => {
         if (!prev) return prev;
         return {
@@ -141,53 +135,66 @@ export default function FormProvider() {
           }),
         };
       });
-    }
-  }
+    },
+    [],
+  );
 
-  async function save() {
-    try {
-      if (response) await saveMutation.mutateAsync(response);
-    } catch (err) {
-      console.error("Save failed!");
-      console.error(err);
-      throwErrorToast("Failed to save your application!");
+  const nextSection = useCallback(() => {
+    const idx = sections.findIndex((s) => s == sectionId);
+    if (idx >= 0 && idx + 1 < sections.length) {
+      return sections[idx + 1];
+    } else {
+      return sectionId ?? "";
     }
-    await queryClient.invalidateQueries({
-      predicate: (q) =>
-        q.queryKey.includes("responses") ||
-        q.queryKey.includes("responses-and-semester"),
-    });
-  }
+  }, [sections, sectionId]);
+
+  const previousSection = useCallback(() => {
+    const idx = sections.findIndex((s) => s == sectionId);
+    if (idx >= 1) {
+      return sections[idx - 1];
+    } else {
+      return sectionId ?? "";
+    }
+  }, [sections, sectionId]);
+
+  const contextValue = useMemo(
+    () => ({
+      form: data?.form,
+      response: response,
+      updateQuestionResponse,
+      save,
+      selectedRoles,
+      setSelectedRoles,
+      availableSections: sections,
+      currentSection: sectionId,
+      nextSection,
+      previousSection,
+    }),
+    [
+      data?.form,
+      response,
+      updateQuestionResponse,
+      save,
+      selectedRoles,
+      sections,
+      sectionId,
+      nextSection,
+      previousSection,
+    ],
+  );
+
+  if (isPending) return <Loading />;
+  if (error) return <p>Something went wrong: {error.message}</p>;
+  const { response: dbResponse } = data;
+
+  //NOTE: not sure if it's a good idea to put this here, this component might need to be reused
+  //in a case where in-progress apps are allowed. But for now, this is the best way to prevent
+  //editing apps that are complete!
+  if (dbResponse.status != ApplicationStatus.InProgress)
+    return <Navigate to="/apply/status" />;
 
   return (
-    <FormContext.Provider
-      value={{
-        form: form,
-        response: response,
-        updateQuestionResponse: updateQuestionResponse,
-        save: save,
-        selectedRoles: selectedRoles,
-        setSelectedRoles: setSelectedRoles,
-        availableSections: sections,
-        currentSection: sectionId,
-        nextSection: () => {
-          const idx = sections.findIndex((s) => s == sectionId);
-          if (idx >= 0 && idx + 1 < sections.length) {
-            return sections[idx + 1];
-          } else {
-            return sectionId ?? "";
-          }
-        },
-        previousSection: () => {
-          const idx = sections.findIndex((s) => s == sectionId);
-          if (idx >= 1) {
-            return sections[idx - 1];
-          } else {
-            return sectionId ?? "";
-          }
-        },
-      }}
-    >
+    <FormContext.Provider value={contextValue}>
       <div className="w-full flex flex-row p-2 items-center justify-center">
         <div className="w-full max-w-3xl flex flex-row items-center">
           <div className="grow">

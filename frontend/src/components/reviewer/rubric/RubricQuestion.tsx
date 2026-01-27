@@ -1,7 +1,7 @@
 import FormMarkdown from "@/components/form/FormMarkdown";
 import { ReviewRubricQuestion } from "@/types/types";
 import { RubricScoreButton } from "./RubricScoreButton";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import {
@@ -19,7 +19,7 @@ type RubricQuestionProps = {
   weight?: number;
 };
 
-export function RubricQuestion({
+function RubricQuestion({
   question,
   onChange,
   value,
@@ -78,3 +78,5 @@ export function RubricQuestion({
     </div>
   );
 }
+
+export default memo(RubricQuestion);
