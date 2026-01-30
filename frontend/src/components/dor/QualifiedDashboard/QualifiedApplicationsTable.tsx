@@ -208,7 +208,7 @@ export default function QualifiedApplicationsTable({
             <SortableHeader column={column}>NAME</SortableHeader>
           ),
           cell: ({ getValue, row }) => {
-            const internal = row.original.internal
+            const internal = row.original.internal;
             return (
               <span className="flex items-center gap-1">
                 <span>{getValue()}</span>
@@ -217,9 +217,7 @@ export default function QualifiedApplicationsTable({
                     <TooltipTrigger>
                       <UserCheckIcon className="text-blue size-4" />
                     </TooltipTrigger>
-                    <TooltipContent>
-                      Internal Applicant
-                    </TooltipContent>
+                    <TooltipContent>Internal Applicant</TooltipContent>
                   </Tooltip>
                 )}
                 <Tooltip>
@@ -242,9 +240,7 @@ export default function QualifiedApplicationsTable({
                         }
                       }}
                     >
-                      <Clipboard
-                        className=" rounded cursor-pointer text-blue"
-                      />
+                      <Clipboard className=" rounded cursor-pointer text-blue" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Copy Applicant Email</TooltipContent>

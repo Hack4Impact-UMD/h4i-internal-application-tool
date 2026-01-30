@@ -1,5 +1,9 @@
 import { API_URL, db } from "@/config/firebase";
-import { ApplicantRole, ApplicationForm, RoleReviewRubric } from "@/types/types";
+import {
+  ApplicantRole,
+  ApplicationForm,
+  RoleReviewRubric,
+} from "@/types/types";
 import axios from "axios";
 import {
   collection,
@@ -72,7 +76,8 @@ export function validateRubricScoreKeys(
   }
 
   const missingInForm: Array<{ role: ApplicantRole; scoreKey: string }> = [];
-  const missingInRubric: Array<{ role: ApplicantRole; scoreWeight: string }> = [];
+  const missingInRubric: Array<{ role: ApplicantRole; scoreWeight: string }> =
+    [];
 
   const allRoles = Object.keys(weights) as ApplicantRole[];
 
@@ -84,7 +89,8 @@ export function validateRubricScoreKeys(
     const formScoreWeights = new Set(Object.keys(roleWeights));
     const rubricScoreKeys = new Set<string>();
     rubrics.forEach((rubric) => {
-      const appliesToRole = rubric.roles.length === 0 || rubric.roles.includes(role);
+      const appliesToRole =
+        rubric.roles.length === 0 || rubric.roles.includes(role);
       if (appliesToRole) {
         rubric.rubricQuestions.forEach((question) => {
           rubricScoreKeys.add(question.scoreKey);

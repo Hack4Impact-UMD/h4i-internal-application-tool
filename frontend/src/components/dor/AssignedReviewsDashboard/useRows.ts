@@ -58,9 +58,9 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             score:
               review && review.submitted
                 ? {
-                  value: calculateReviewScore(review, form),
-                  outOf: 4, // NOTE: All scores are assumed to be out of 4
-                }
+                    value: calculateReviewScore(review, form),
+                    outOf: 4, // NOTE: All scores are assumed to be out of 4
+                  }
                 : undefined,
           };
 

@@ -22,6 +22,11 @@ import { useParams } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
 import { AlertTriangleIcon } from "lucide-react";
 
+const decisionLetterVariants = ["accepted", "waitlist"] as const;
+const noop = () => {};
+const capitalize = (str: string) =>
+  str.substring(0, 1).toUpperCase() + str.substring(1);
+
 export default function FormBuilderPage() {
   const [jsonCode, setJsonCode] = useState(() =>
     JSON.stringify(h4iApplicationForm, null, 2),
@@ -238,6 +243,7 @@ export default function FormBuilderPage() {
                     <p className="text-sm font-bold">{compileError}</p>
                   </div>
                 )}
+
                 <div className="flex flex-col gap-2 p-2">
                   {previewForm?.decisionsReleased && (
                     <div className="bg-amber-100 border border-amber-600 text-amber-600 flex flex-row gap-2 p-2 rounded">
@@ -260,6 +266,36 @@ export default function FormBuilderPage() {
                 <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
                   {previewForm ? (
                     <div className="space-y-6">
+                      {decisionLetterVariants.map((variant) => (
+                        <>
+                          <div className="bg-white p-4 rounded-md sadow-sm border">
+                            <h1 className="text-lg font-bold mb-2">
+                              Team {capitalize(variant)} Letter
+                            </h1>
+                            <FormMarkdown>
+                              {previewForm.decisionLetter?.[variant].team ??
+                                "N/A"}
+                            </FormMarkdown>
+                          </div>
+                          <div className="bg-white p-4 rounded-md sadow-sm border">
+                            <h1 className="text-lg font-bold mb-2">
+                              Bootcamp {capitalize(variant)} Letter
+                            </h1>
+                            <FormMarkdown>
+                              {previewForm.decisionLetter?.[variant].bootcamp ??
+                                "N/A"}
+                            </FormMarkdown>
+                          </div>
+                        </>
+                      ))}
+                      <div className="bg-white p-4 rounded-md sadow-sm border">
+                        <h1 className="text-lg font-bold mb-2">
+                          Denied Letter
+                        </h1>
+                        <FormMarkdown>
+                          {previewForm.decisionLetter?.denied ?? "N/A"}
+                        </FormMarkdown>
+                      </div>
                       <div className="bg-white p-4 rounded-md shadow-sm border">
                         <h2 className="text-2xl font-bold mb-2">
                           {previewForm.semester}
@@ -279,7 +315,7 @@ export default function FormBuilderPage() {
                               responses={[]}
                               responseId="preview"
                               disabled={true}
-                              onChangeResponse={() => {}}
+                              onChangeResponse={noop}
                               disabledRoles={previewForm.disabledRoles ?? []}
                             />
                           </div>

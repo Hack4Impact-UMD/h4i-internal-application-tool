@@ -101,9 +101,7 @@ function UserHeader({
         {applicant.isInternal && (
           <div className="flex bg-blue text-blue-100 font-bold text-sm flex-row gap-1 rounded-full py-0 px-2 border border-blue items-center">
             <UserCheckIcon className="size-4" />
-            <span>
-              INTERNAL
-            </span>
+            <span>INTERNAL</span>
           </div>
         )}
         <span>
@@ -178,7 +176,13 @@ const InterviewPage: React.FC = () => {
     error: interviewRubricsError,
   } = useInterviewRubricsForFormRole(form?.id, interviewData?.forRole);
 
-  const interviewScore = useMemo(() => (form && interviewData) ? calculateInterviewScore(interviewData, form) : undefined, [form, interviewData])
+  const interviewScore = useMemo(
+    () =>
+      form && interviewData
+        ? calculateInterviewScore(interviewData, form)
+        : undefined,
+    [form, interviewData],
+  );
 
   const [localNotes, setLocalNotes] = useState<
     Record<string, string> | undefined
@@ -297,41 +301,50 @@ const InterviewPage: React.FC = () => {
     setCommandPaletteOpen(false);
   };
 
-  const renderedForm = useMemo(() => (
-    response && form && visibleSections.map((s) => (
-      <div
-        ref={(el) => {
-          sectionRefs.current.set(s.sectionId, el);
-        }}
-        className="shadow border border-gray-200 bg-white rounded-md p-4"
-        key={s.sectionId}
-      >
-        <Section
-          responseId={response.id}
+  const renderedForm = useMemo(
+    () =>
+      response &&
+      form &&
+      visibleSections.map((s) => (
+        <div
+          ref={(el) => {
+            sectionRefs.current.set(s.sectionId, el);
+          }}
+          className="shadow border border-gray-200 bg-white rounded-md p-4"
           key={s.sectionId}
-          disabled={true}
-          section={s}
-          responses={
-            response.sectionResponses.find(
-              (r) => r.sectionId == s.sectionId,
-            )?.questions ?? []
-          }
-          onChangeResponse={() => { }}
-          disabledRoles={form.disabledRoles ?? []}
-        />
-      </div>
-    ))
-  ), [form, response, visibleSections])
+        >
+          <Section
+            responseId={response.id}
+            key={s.sectionId}
+            disabled={true}
+            section={s}
+            responses={
+              response.sectionResponses.find((r) => r.sectionId == s.sectionId)
+                ?.questions ?? []
+            }
+            onChangeResponse={() => {}}
+            disabledRoles={form.disabledRoles ?? []}
+          />
+        </div>
+      )),
+    [form, response, visibleSections],
+  );
 
-  const header = useMemo(() => (
-    interviewData && response && form && <UserHeader
-      interviewData={interviewData}
-      applicantId={response.userId}
-      form={form}
-      role={interviewData.forRole}
-      lastSave={lastSave}
-    />
-  ), [form, lastSave, response, interviewData])
+  const header = useMemo(
+    () =>
+      interviewData &&
+      response &&
+      form && (
+        <UserHeader
+          interviewData={interviewData}
+          applicantId={response.userId}
+          form={form}
+          role={interviewData.forRole}
+          lastSave={lastSave}
+        />
+      ),
+    [form, lastSave, response, interviewData],
+  );
 
   if (
     formLoading ||

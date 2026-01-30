@@ -7,7 +7,7 @@ import {
 
 export function calculateReviewScore(
   review: ApplicationReviewData,
-  form: ApplicationForm
+  form: ApplicationForm,
 ): number {
   const scores = Object.keys(review.applicantScores);
   if (scores.length === 0) return 0;
@@ -32,7 +32,7 @@ export function calculateReviewScore(
 
 export function calculateInterviewScore(
   interview: ApplicationInterviewData,
-  form: ApplicationForm
+  form: ApplicationForm,
 ): number {
   const scores = Object.keys(interview.interviewScores);
   if (scores.length === 0) return 0;

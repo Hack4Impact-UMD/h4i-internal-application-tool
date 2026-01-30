@@ -16,9 +16,9 @@ import App from "./App.tsx";
 //
 
 if (import.meta.env.MODE === "development") {
-  const { scan } = await import('react-scan');
+  const { scan } = await import("react-scan");
   scan({
-    enabled: true
+    enabled: true,
   });
 }
 

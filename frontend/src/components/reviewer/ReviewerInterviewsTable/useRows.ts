@@ -46,9 +46,9 @@ export function useRows(
             interviewReviewData: reviewData,
             score: reviewData
               ? {
-                value: calculateInterviewScore(reviewData, form),
-                outOf: 4,
-              }
+                  value: calculateInterviewScore(reviewData, form),
+                  outOf: 4,
+                }
               : undefined,
           };
 

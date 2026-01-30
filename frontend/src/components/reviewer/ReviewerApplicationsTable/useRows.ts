@@ -66,9 +66,14 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             },
           );
 
-          const response = await getApplicationResponseById(assignment.applicationResponseId).catch(e => {
-            console.error("Failed to fetch application response for assignment", assignment)
-            console.error(e)
+          const response = await getApplicationResponseById(
+            assignment.applicationResponseId,
+          ).catch((e) => {
+            console.error(
+              "Failed to fetch application response for assignment",
+              assignment,
+            );
+            console.error(e);
             return undefined;
           });
 
@@ -92,7 +97,8 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             score: {
               value:
                 review && review.submitted
-                  ? calculateReviewScore(review, form) : undefined,
+                  ? calculateReviewScore(review, form)
+                  : undefined,
               outOf: 4, // NOTE: All scores are assummed to be out of 4
             },
           };
