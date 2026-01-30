@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -23,7 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { AlertTriangleIcon } from "lucide-react";
 
 const decisionLetterVariants = ["accepted", "waitlist"] as const;
-const noop = () => {};
+const noop = () => { };
 const capitalize = (str: string) =>
   str.substring(0, 1).toUpperCase() + str.substring(1);
 
@@ -97,7 +97,7 @@ export default function FormBuilderPage() {
 
       const confirmed = window.confirm(
         `Are you sure you want to upload this application form?\n\n` +
-          `This will update the form with ID '${parsedForm.id}' in Firestore.`,
+        `This will update the form with ID '${parsedForm.id}' in Firestore.`,
       );
 
       if (!confirmed || !token) return;
@@ -267,8 +267,8 @@ export default function FormBuilderPage() {
                   {previewForm ? (
                     <div className="space-y-6">
                       {decisionLetterVariants.map((variant) => (
-                        <>
-                          <div className="bg-white p-4 rounded-md sadow-sm border">
+                        <Fragment key={variant}>
+                          <div className="bg-white p-4 rounded-md shadow-sm border">
                             <h1 className="text-lg font-bold mb-2">
                               Team {capitalize(variant)} Letter
                             </h1>
@@ -277,7 +277,7 @@ export default function FormBuilderPage() {
                                 "N/A"}
                             </FormMarkdown>
                           </div>
-                          <div className="bg-white p-4 rounded-md sadow-sm border">
+                          <div className="bg-white p-4 rounded-md shadow-sm border">
                             <h1 className="text-lg font-bold mb-2">
                               Bootcamp {capitalize(variant)} Letter
                             </h1>
@@ -286,9 +286,9 @@ export default function FormBuilderPage() {
                                 "N/A"}
                             </FormMarkdown>
                           </div>
-                        </>
+                        </Fragment>
                       ))}
-                      <div className="bg-white p-4 rounded-md sadow-sm border">
+                      <div className="bg-white p-4 rounded-md shadow-sm border">
                         <h1 className="text-lg font-bold mb-2">
                           Denied Letter
                         </h1>
