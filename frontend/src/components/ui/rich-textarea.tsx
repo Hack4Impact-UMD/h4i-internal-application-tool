@@ -51,7 +51,10 @@ function RichTextarea({
 
   useEffect(() => {
     if (editor && value !== editor.getMarkdown()) {
-      editor.commands.setContent(value ?? "", { emitUpdate: false, contentType: "markdown" });
+      editor.commands.setContent(value ?? "", {
+        emitUpdate: false,
+        contentType: "markdown",
+      });
     }
   }, [value, editor]);
 

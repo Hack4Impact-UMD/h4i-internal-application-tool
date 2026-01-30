@@ -37,9 +37,9 @@ export default function FormProvider() {
     setResponse((old) =>
       old
         ? {
-          ...old,
-          rolesApplied: selectedRoles,
-        }
+            ...old,
+            rolesApplied: selectedRoles,
+          }
         : old,
     );
   }, [selectedRoles]);

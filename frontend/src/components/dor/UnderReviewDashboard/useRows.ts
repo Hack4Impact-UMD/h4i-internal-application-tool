@@ -64,13 +64,10 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
           const avgScore =
             completedReviews == 0
               ? 0
-              :
-              reviews
-                .filter((r) => r.submitted)
-                .map(
-                  (r) =>
-                    calculateReviewScore(r, form),
-                ).reduce((acc, v) => acc + v, 0) / completedReviews;
+              : reviews
+                  .filter((r) => r.submitted)
+                  .map((r) => calculateReviewScore(r, form))
+                  .reduce((acc, v) => acc + v, 0) / completedReviews;
           let status: InternalApplicationStatus | undefined;
 
           try {
@@ -94,7 +91,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
               name: `${user.firstName} ${user.lastName}`,
               email: user.email,
               previouslyAppliedCount: numPreviouslyApplied,
-              internal: user.isInternal ?? false
+              internal: user.isInternal ?? false,
             },
             responseId: app.id,
             role: role, //These have already been expanded into their separate roles

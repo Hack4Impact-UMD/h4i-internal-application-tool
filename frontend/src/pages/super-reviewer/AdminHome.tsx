@@ -45,10 +45,12 @@ export default function AdminHome() {
     useUpdateApplicationFormActive();
 
   const sortedForms = useMemo(
-    () => forms?.sort((a, b) => -a.semester.localeCompare(b.semester))
-      ?.sort((a, b) => b.dueDate.toMillis() - a.dueDate.toMillis()) ?? [],
-    [forms]
-  )
+    () =>
+      forms
+        ?.sort((a, b) => -a.semester.localeCompare(b.semester))
+        ?.sort((a, b) => b.dueDate.toMillis() - a.dueDate.toMillis()) ?? [],
+    [forms],
+  );
 
   if (!user) return <Loading />;
 

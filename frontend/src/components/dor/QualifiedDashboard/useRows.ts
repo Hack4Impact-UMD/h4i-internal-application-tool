@@ -31,7 +31,7 @@ export type QualifiedAppRow = {
   responseId: string;
   interviews: ApplicationInterviewData[];
   status?: InternalApplicationStatus;
-  internal: boolean
+  internal: boolean;
 };
 
 export function useRows(applications: ApplicationResponse[], formId: string) {
@@ -68,9 +68,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
           let averageScore: number | null = null;
           if (submittedInterviews.length > 0) {
             const scores = await Promise.all(
-              submittedInterviews.map(
-                (i) => calculateInterviewScore(i, form),
-              ),
+              submittedInterviews.map((i) => calculateInterviewScore(i, form)),
             );
             averageScore =
               scores.reduce((acc, v) => acc + v, 0) / scores.length;
@@ -91,7 +89,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             responseId: app.id,
             interviews,
             status,
-            internal: user.isInternal ?? false
+            internal: user.isInternal ?? false,
           };
         }),
       );

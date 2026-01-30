@@ -58,9 +58,9 @@ export function useRows(assignments: InterviewAssignment[], formId: string) {
             score:
               interview && interview.submitted
                 ? {
-                  value: calculateInterviewScore(interview, form),
-                  outOf: 4, // NOTE: All scores are assumed to be out of 4
-                }
+                    value: calculateInterviewScore(interview, form),
+                    outOf: 4, // NOTE: All scores are assumed to be out of 4
+                  }
                 : undefined,
           };
 

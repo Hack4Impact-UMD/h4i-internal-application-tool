@@ -20,7 +20,7 @@ export function useAllDecisionConfirmationsForForm(formId: string | undefined) {
 export function useDecisionConfirmationForResponse(
   responseId: string | undefined,
 ) {
-  const { user } = useAuth()
+  const { user } = useAuth();
   return useQuery<DecisionLetterStatus | null>({
     queryKey: ["decision-confirmation", "response", responseId],
     enabled: !!responseId && !!user,

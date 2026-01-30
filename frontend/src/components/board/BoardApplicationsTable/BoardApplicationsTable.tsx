@@ -24,7 +24,10 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import SortableHeader from "../../tables/SortableHeader";
-import { ApplicationRow, useRows } from "../../dor/UnderReviewDashboard/useRows";
+import {
+  ApplicationRow,
+  useRows,
+} from "../../dor/UnderReviewDashboard/useRows";
 import { displayTimestamp } from "@/utils/dates";
 import {
   Tooltip,
@@ -155,10 +158,11 @@ export default function BoardApplicationsTable({
                 {reviewers.map((reviewer) => (
                   <div
                     key={reviewer.id}
-                    className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${complete(reviewer.id)
-                      ? "bg-green-200 text-green-800 border-green-100"
-                      : "bg-muted"
-                      }`}
+                    className={`rounded-full border h-7 px-2 py-1 text-sm flex flex-row gap-1 items-center ${
+                      complete(reviewer.id)
+                        ? "bg-green-200 text-green-800 border-green-100"
+                        : "bg-muted"
+                    }`}
                   >
                     <span className="text-sm">
                       {reviewer.firstName} {reviewer.lastName}

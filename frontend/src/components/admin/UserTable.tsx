@@ -70,9 +70,9 @@ export default function UserTable({
           <DialogTitle>Confirm User Deletion</DialogTitle>
           <DialogDescription>
             <span className="text-destructive font-bold">
-              This action cannot be undone! Deleting users may
-              cause unforeseen issues with other data types. Are you
-              ABSOLUTELY sure you know what you're doing?
+              This action cannot be undone! Deleting users may cause unforeseen
+              issues with other data types. Are you ABSOLUTELY sure you know
+              what you're doing?
             </span>{" "}
             The following users will be permanently deleted:
           </DialogDescription>

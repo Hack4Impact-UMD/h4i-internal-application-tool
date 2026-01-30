@@ -178,7 +178,10 @@ export async function updateUserRole(userId: string, role: PermissionRole) {
   });
 }
 
-export async function updateUserRoles(users: UserProfile[], role: PermissionRole) {
+export async function updateUserRoles(
+  users: UserProfile[],
+  role: PermissionRole,
+) {
   const batch = writeBatch(db);
   const usersCollection = collection(db, USER_COLLECTION);
 

@@ -35,7 +35,7 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
     ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
-      const form = await getApplicationForm(formId)
+      const form = await getApplicationForm(formId);
       return Promise.all(
         assignments.map(async (assignment, index) => {
           const [applicant, review] = await Promise.all([
@@ -58,9 +58,9 @@ export function useRows(assignments: AppReviewAssignment[], formId: string) {
             score:
               review && review.submitted
                 ? {
-                  value: calculateReviewScore(review, form),
-                  outOf: 4, // NOTE: All scores are assumed to be out of 4
-                }
+                    value: calculateReviewScore(review, form),
+                    outOf: 4, // NOTE: All scores are assumed to be out of 4
+                  }
                 : undefined,
           };
 

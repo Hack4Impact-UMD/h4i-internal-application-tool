@@ -90,7 +90,7 @@ function DecisionPage() {
 
   if (!user || !responseId || !role) return <ErrorPage />;
 
-  if (statusPending || formPending || decisionPending) return <Loading />
+  if (statusPending || formPending || decisionPending) return <Loading />;
 
   if (statusError || formError || decisionError) return <ErrorPage />;
 
@@ -98,11 +98,12 @@ function DecisionPage() {
     return <NotFoundPage />;
   }
 
-  const roleKey = appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
+  const roleKey =
+    appStatus.role === ApplicantRole.Bootcamp ? ApplicantRole.Bootcamp : "team";
 
   const decisionLetterText =
     appStatus.status === ReviewStatus.Accepted ||
-      appStatus.status === ReviewStatus.Waitlisted
+    appStatus.status === ReviewStatus.Waitlisted
       ? form?.decisionLetter?.[appStatus.status]?.[roleKey]
       : form?.decisionLetter?.[ReviewStatus.Denied];
 
@@ -118,7 +119,8 @@ function DecisionPage() {
             <h2 className="text-blue text-2xl">
               Your Hack4Impact-UMD {form.semester}
               <br></br>
-              {displayApplicantRoleNameNoEmoji(role as ApplicantRole)} Application
+              {displayApplicantRoleNameNoEmoji(role as ApplicantRole)}{" "}
+              Application
             </h2>
           </div>
         </div>
@@ -127,18 +129,21 @@ function DecisionPage() {
             Dear {user.firstName} {user.lastName},
           </p>
           <br></br>
-          {appStatus.status === ReviewStatus.Accepted && !decisionConfirmation && (
-            <div className="flex items-center justify-center w-full">
-              <ConfettiExplosion
-                className="justify-self-center self-start"
-                force={0.8}
-                duration={3000}
-                particleCount={250}
-                width={1600}
-              />
-            </div>
-          )}
-          <FormMarkdown className="text-base text-black">{decisionLetterText}</FormMarkdown>
+          {appStatus.status === ReviewStatus.Accepted &&
+            !decisionConfirmation && (
+              <div className="flex items-center justify-center w-full">
+                <ConfettiExplosion
+                  className="justify-self-center self-start"
+                  force={0.8}
+                  duration={3000}
+                  particleCount={250}
+                  width={1600}
+                />
+              </div>
+            )}
+          <FormMarkdown className="text-base text-black">
+            {decisionLetterText}
+          </FormMarkdown>
         </div>
         {form.isActive && appStatus.status === ReviewStatus.Accepted && (
           <div className="flex justify-end mt-10 gap-3">

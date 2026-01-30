@@ -32,42 +32,50 @@ export default function RoleRubric({
   disabled = false,
   form = undefined,
 }: RoleRubricProps) {
+  const description = useMemo(
+    () => <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>,
+    [rubric.commentsDescription],
+  );
 
-  const description = useMemo(() => (
-    <FormMarkdown>{rubric.commentsDescription}</FormMarkdown>
-  ), [rubric.commentsDescription]);
+  const weights = useMemo(
+    () =>
+      reviewData
+        ? form?.scoreWeights[role]
+        : interviewData
+          ? form?.interviewScoreWeights[role]
+          : undefined,
+    [
+      form?.interviewScoreWeights,
+      form?.scoreWeights,
+      interviewData,
+      reviewData,
+      role,
+    ],
+  );
+  const scoreValues = useMemo(
+    () =>
+      reviewData
+        ? reviewData.applicantScores
+        : interviewData
+          ? interviewData.interviewScores
+          : undefined,
+    [interviewData, reviewData],
+  );
 
-  const weights = useMemo(() => reviewData
-    ? form?.scoreWeights[role]
-    : interviewData
-      ? form?.interviewScoreWeights[role]
-      : undefined,
-    [form?.interviewScoreWeights, form?.scoreWeights, interviewData, reviewData, role]
-  )
-  const scoreValues = useMemo(() =>
-    reviewData
-      ? reviewData.applicantScores
-      : interviewData
-        ? interviewData.interviewScores
-        : undefined
-    , [interviewData, reviewData])
-
-  const questions = useMemo(() => (
-    rubric.rubricQuestions.map((q) => (
-      <RubricQuestion
-        disabled={disabled}
-        key={q.scoreKey}
-        question={q}
-        onChange={onScoreChange}
-        weight={
-          weights?.[q.scoreKey]
-        }
-        value={
-          scoreValues?.[q.scoreKey] ?? 0
-        }
-      />
-    ))
-  ), [disabled, onScoreChange, rubric.rubricQuestions, scoreValues, weights])
+  const questions = useMemo(
+    () =>
+      rubric.rubricQuestions.map((q) => (
+        <RubricQuestion
+          disabled={disabled}
+          key={q.scoreKey}
+          question={q}
+          onChange={onScoreChange}
+          weight={weights?.[q.scoreKey]}
+          value={scoreValues?.[q.scoreKey] ?? 0}
+        />
+      )),
+    [disabled, onScoreChange, rubric.rubricQuestions, scoreValues, weights],
+  );
 
   return (
     <div className="bg-white rounded-md border border-gray-200 p-4 flex flex-col gap-2">
@@ -85,9 +93,7 @@ export default function RoleRubric({
           </a>
         </span>
       )}
-      <div className="flex flex-col gap-2">
-        {questions}
-      </div>
+      <div className="flex flex-col gap-2">{questions}</div>
       <h2 className="text-lg">Review Comments</h2>
       {description}
       <RichTextarea

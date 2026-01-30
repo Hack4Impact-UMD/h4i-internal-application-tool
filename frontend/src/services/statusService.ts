@@ -144,7 +144,7 @@ export async function getQualifiedStatusesForFormRoles(
   formId: string,
   roles: ApplicantRole[],
 ) {
-  if (roles.length === 0) return []
+  if (roles.length === 0) return [];
   try {
     const statusCollection = collection(db, STATUS_COLLECTION);
     const q = query(

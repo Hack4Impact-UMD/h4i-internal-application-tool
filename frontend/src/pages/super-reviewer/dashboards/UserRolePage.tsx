@@ -65,10 +65,7 @@ export default function UserRolePage() {
       users: UserProfile[];
       role: PermissionRole;
     }) => {
-      return updateUserRoles(
-        users,
-        role,
-      );
+      return updateUserRoles(users, role);
     },
     onMutate: async ({ users, role }) => {
       await queryClient.cancelQueries({ queryKey: ["users"] });
