@@ -22,12 +22,14 @@ const defaultMessages: WeightedMessage[] = [
   { message: "this week, imma see hita 5 times for h4i", weight: 5 },
   { message: "ayyy you (show and) tell em, @Steven Ha!! 🗣️🗣️🗣️", weight: 5 },
   { message: "first ever gaming coffee chat", weight: 5 },
-  { message: "Always pixel farming at Looneys", weight: 1 },
+  { message: "Always pixel farming at Looneys", weight: 5 },
   { message: "Turns out the dinosaurs aren't extinct", weight: 1 },
   {
     message: "👋 everyone, it's time to take a new randomcoffee 🎉",
     weight: 1,
   },
+  { message: "Building Software for Social Good", weight: 25 },
+  { message: "https://www.youtube.com/shorts/65eGmmvS_OE", weight: 1 },
 ];
 
 export const loggedInMessages: WeightedMessage[] = [
