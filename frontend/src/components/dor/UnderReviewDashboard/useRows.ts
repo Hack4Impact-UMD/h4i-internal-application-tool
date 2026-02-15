@@ -33,6 +33,7 @@ export type ApplicationRow = {
     assigned: number;
     completed: number;
     averageScore: number;
+    individualScores: number[];
     assignments: AppReviewAssignment[];
     reviewData: ApplicationReviewData[];
   };
@@ -61,13 +62,13 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
           const assignments = allAssignments.filter((a) => a.forRole === role);
 
           const completedReviews = reviews.filter((r) => r.submitted).length;
+          const individualScores = reviews
+            .filter((r) => r.submitted)
+            .map((r) => calculateReviewScore(r, form));
           const avgScore =
             completedReviews == 0
               ? 0
-              : reviews
-                  .filter((r) => r.submitted)
-                  .map((r) => calculateReviewScore(r, form))
-                  .reduce((acc, v) => acc + v, 0) / completedReviews;
+              : individualScores.reduce((acc, v) => acc + v, 0) / completedReviews;
           let status: InternalApplicationStatus | undefined;
 
           try {
@@ -100,6 +101,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
               completed: reviews.filter((r) => r.submitted).length,
               assignments: assignments,
               averageScore: avgScore,
+              individualScores: individualScores,
               reviewData: reviews,
             },
             reviewers: {

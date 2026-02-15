@@ -28,6 +28,7 @@ export type QualifiedAppRow = {
   };
   assignments: InterviewAssignment[];
   averageScore: number | null;
+  individualScores: number[]; 
   responseId: string;
   interviews: ApplicationInterviewData[];
   status?: InternalApplicationStatus;
@@ -64,15 +65,19 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             app.rolesApplied[0],
           );
           const submittedInterviews = interviews.filter((i) => i.submitted);
-          // Calculate average score
-          let averageScore: number | null = null;
-          if (submittedInterviews.length > 0) {
-            const scores = await Promise.all(
-              submittedInterviews.map((i) => calculateInterviewScore(i, form)),
-            );
-            averageScore =
-              scores.reduce((acc, v) => acc + v, 0) / scores.length;
-          }
+          const individualScores =
+            submittedInterviews.length > 0
+              ? await Promise.all(
+                  submittedInterviews.map((i) =>
+                    calculateInterviewScore(i, form),
+                  ),
+                )
+              : [];
+          const averageScore =
+            individualScores.length > 0
+              ? individualScores.reduce((acc, v) => acc + v, 0) /
+                individualScores.length
+              : null;
           const status = await getApplicationStatusForResponseRole(
             app.id,
             app.rolesApplied[0],
@@ -86,6 +91,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             interviewers: { assigned: assignedInterviewers },
             assignments,
             averageScore,
+            individualScores,
             responseId: app.id,
             interviews,
             status,
