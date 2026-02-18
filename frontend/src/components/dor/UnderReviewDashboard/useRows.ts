@@ -12,6 +12,7 @@ import {
   ApplicationReviewData,
   InternalApplicationStatus,
   ReviewCapableUser,
+  CsvRow,
 } from "@/types/types";
 import { calculateReviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
@@ -40,7 +41,6 @@ export type ApplicationRow = {
   reviewers: {
     assigned: ReviewCapableUser[];
   };
-  assignments: AppReviewAssignment[];
   status: InternalApplicationStatus | undefined;
 };
 
@@ -114,7 +114,6 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
                 ),
               ),
             },
-            assignments: assignments,
             status: status,
           };
 
@@ -122,5 +121,56 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
         }),
       );
     },
+  });
+}
+
+export function flattenRows(
+  rows: ApplicationRow[],
+  role: ApplicantRole,
+): CsvRow[] {
+  const filteredRows = rows.filter((row) => row.role === role);
+
+  if (filteredRows.length === 0) return [];
+
+  const sampleReview = filteredRows
+    .flatMap((r) => r.reviews.reviewData.filter((rd) => rd.submitted))
+    .find((r) => r !== undefined);
+
+  const scoreKeys = sampleReview
+    ? Object.keys(sampleReview.applicantScores).sort()
+    : [];
+  const noteKeys = sampleReview
+    ? Object.keys(sampleReview.reviewerNotes).sort()
+    : [];
+
+  return filteredRows.map((row) => {
+    const flat: CsvRow = {
+      Name: row.applicant.name,
+      Role: row.role,
+      "Average Review Score": row.reviews.averageScore,
+    };
+
+    const submittedReviews = row.reviews.reviewData.filter((r) => r.submitted);
+
+    for (let i = 0; i < 2; i++) {
+      const review = submittedReviews[i];
+      const n = i + 1;
+
+      if (review && row.reviews.individualScores[i] !== undefined) {
+        flat[`Review ${n} - Overall Score`] = row.reviews.individualScores[i];
+        scoreKeys.forEach((key) => {
+          flat[`Review ${n} - ${key}`] = review.applicantScores[key] ?? "";
+        });
+        noteKeys.forEach((key) => {
+          flat[`Review ${n} Notes - ${key}`] = review.reviewerNotes[key] ?? "";
+        });
+      } else {
+        flat[`Review ${n} - Overall Score`] = "";
+        scoreKeys.forEach((key) => { flat[`Review ${n} - ${key}`] = ""; });
+        noteKeys.forEach((key) => { flat[`Review ${n} Notes - ${key}`] = ""; });
+      }
+    }
+
+    return flat;
   });
 }

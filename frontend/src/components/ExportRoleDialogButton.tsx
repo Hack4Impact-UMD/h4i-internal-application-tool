@@ -9,18 +9,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { ApplicantRole } from "@/types/types";
+import { ApplicantRole, CsvRow } from "@/types/types";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import { throwErrorToast } from "./toasts/ErrorToast";
 import { displayApplicantRoleName } from "@/utils/display";
 
-type Primitive = string | number | boolean | undefined | null;
-type FlatRecord = Record<string, Primitive>;
-
 interface ExportRoleDialogButtonProps {
-  onExport: (role: ApplicantRole) => FlatRecord[];
+  onExport: (role: ApplicantRole) => CsvRow[];
   filenamePrefix: string;
-  className?: string;
 }
 
 export function ExportRoleDialogButton({
@@ -35,7 +31,7 @@ export function ExportRoleDialogButton({
       const data = onExport(role);
 
       if (data.length === 0) {
-        throwErrorToast(`No ${role} applicants to export!`);
+        throwErrorToast(`No ${displayApplicantRoleName(role)} applicants to export!`);
         return;
       }
 

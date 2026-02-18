@@ -181,3 +181,5 @@ export type ReviewRubricQuestion = {
   maxValue?: number; // assume 4
   minValue?: number; // assume 0
 };
+
+export type CsvRow = Record<string, string | number | boolean | null | undefined>;

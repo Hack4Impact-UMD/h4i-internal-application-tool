@@ -14,6 +14,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "../../DataTable";
 import { Button } from "../../ui/button";
+import { ExportRoleDialogButton } from "@/components/ExportRoleDialogButton";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getReviewDataForAssignment } from "@/services/reviewDataService";
 import {
@@ -39,7 +40,7 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import SortableHeader from "../../tables/SortableHeader";
-import { ApplicationRow, useRows } from "./useRows";
+import { ApplicationRow, flattenRows, useRows } from "./useRows";
 import { ReviewerSelect } from "./ReviewerSelect";
 import { displayTimestamp } from "@/utils/dates";
 import {
@@ -316,7 +317,7 @@ export default function SuperReviewerApplicationsTable({
                     role: role,
                   })
                 }
-                assignments={row.original.assignments}
+                assignments={row.original.reviews.assignments}
                 onDelete={(_reviewer, assignment) =>
                   removeReviewerMutation.mutate({
                     pageIndex: pagination.pageIndex,
@@ -527,6 +528,10 @@ export default function SuperReviewerApplicationsTable({
         </Select>
         <div className="ml-auto flex gap-2">
           <AutoAssignButton formId={formId} />
+          <ExportRoleDialogButton
+            onExport={(role) => flattenRows(rows ?? [], role)}
+            filenamePrefix="under-review"
+          />
           <Button variant="outline" onClick={handleCopyEmails}>
             <ClipboardIcon /> Copy{" "}
             {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant
