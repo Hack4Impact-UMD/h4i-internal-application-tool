@@ -26,6 +26,7 @@ import {
 import SortableHeader from "../../tables/SortableHeader";
 import {
   ApplicationRow,
+  flattenRows,
   useRows,
 } from "../../dor/UnderReviewDashboard/useRows";
 import { displayTimestamp } from "@/utils/dates";
@@ -44,6 +45,7 @@ import {
 import { displayReviewStatus } from "@/utils/display";
 import { throwWarningToast } from "@/components/toasts/WarningToast";
 import { EllipsisVertical } from "lucide-react";
+import { ExportRoleDialogButton } from "@/components/ExportRoleDialogButton";
 
 type BoardApplicationsTableProps = {
   applications: ApplicationResponse[];
@@ -361,6 +363,10 @@ export default function BoardApplicationsTable({
           </SelectContent>
         </Select>
         <div className="ml-auto flex gap-2">
+          <ExportRoleDialogButton
+            onExport={(role) => flattenRows(rows ?? [], role)}
+            filenamePrefix="all-applications"
+          />
           <Button variant="outline" onClick={handleCopyEmails}>
             <ClipboardIcon /> Copy{" "}
             {displayReviewStatus(statusFilter).toLocaleLowerCase()} applicant

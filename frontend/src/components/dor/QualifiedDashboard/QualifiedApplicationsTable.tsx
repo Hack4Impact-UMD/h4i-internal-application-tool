@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
+import { ExportRoleDialogButton } from "@/components/ExportRoleDialogButton";
 import {
   ApplicantRole,
   ApplicationResponse,
@@ -17,7 +18,7 @@ import RolePill from "@/components/role-pill/RolePill";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { throwSuccessToast } from "@/components/toasts/SuccessToast";
 import { throwErrorToast } from "@/components/toasts/ErrorToast";
-import { QualifiedAppRow, useRows } from "./useRows";
+import { QualifiedAppRow, flattenRows, useRows } from "./useRows";
 import SortableHeader from "@/components/tables/SortableHeader";
 import { updateApplicationStatus } from "@/services/statusService";
 import {
@@ -469,15 +470,17 @@ export default function QualifiedApplicationsTable({
             ))}
           </SelectContent>
         </Select>
-        <Button
-          className="ml-auto"
-          variant="outline"
-          onClick={handleCopyEmails}
-        >
-          <ClipboardIcon /> Copy{" "}
-          {displayReviewStatus(statusFilter).toLocaleLowerCase()}{" "}
-          <span className="italic">qualified</span> applicant emails
-        </Button>
+        <div className="ml-auto flex gap-2">
+          <ExportRoleDialogButton
+            onExport={(role) => flattenRows(rows ?? [], role)}
+            filenamePrefix="qualified"
+          />
+          <Button variant="outline" onClick={handleCopyEmails}>
+            <ClipboardIcon /> Copy{" "}
+            {displayReviewStatus(statusFilter).toLocaleLowerCase()}{" "}
+            <span className="italic">qualified</span> applicant emails
+          </Button>
+        </div>
       </div>
       <DataTable
         columns={cols}

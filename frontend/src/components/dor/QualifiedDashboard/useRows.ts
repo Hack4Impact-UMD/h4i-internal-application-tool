@@ -12,6 +12,7 @@ import {
   InterviewAssignment,
   InternalApplicationStatus,
   ReviewCapableUser,
+  CsvRow,
 } from "@/types/types";
 import { calculateInterviewScore } from "@/utils/scores";
 import { useQuery } from "@tanstack/react-query";
@@ -28,6 +29,7 @@ export type QualifiedAppRow = {
   };
   assignments: InterviewAssignment[];
   averageScore: number | null;
+  individualScores: number[]; 
   responseId: string;
   interviews: ApplicationInterviewData[];
   status?: InternalApplicationStatus;
@@ -64,15 +66,19 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             app.rolesApplied[0],
           );
           const submittedInterviews = interviews.filter((i) => i.submitted);
-          // Calculate average score
-          let averageScore: number | null = null;
-          if (submittedInterviews.length > 0) {
-            const scores = await Promise.all(
-              submittedInterviews.map((i) => calculateInterviewScore(i, form)),
-            );
-            averageScore =
-              scores.reduce((acc, v) => acc + v, 0) / scores.length;
-          }
+          const individualScores =
+            submittedInterviews.length > 0
+              ? await Promise.all(
+                  submittedInterviews.map((i) =>
+                    calculateInterviewScore(i, form),
+                  ),
+                )
+              : [];
+          const averageScore =
+            individualScores.length > 0
+              ? individualScores.reduce((acc, v) => acc + v, 0) /
+                individualScores.length
+              : null;
           const status = await getApplicationStatusForResponseRole(
             app.id,
             app.rolesApplied[0],
@@ -86,6 +92,7 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
             interviewers: { assigned: assignedInterviewers },
             assignments,
             averageScore,
+            individualScores,
             responseId: app.id,
             interviews,
             status,
@@ -95,5 +102,56 @@ export function useRows(applications: ApplicationResponse[], formId: string) {
       );
     },
     refetchOnWindowFocus: true,
+  });
+}
+
+export function flattenRows(
+  rows: QualifiedAppRow[],
+  role: ApplicantRole,
+): CsvRow[] {
+  const filteredRows = rows.filter((row) => row.role === role);
+
+  if (filteredRows.length === 0) return [];
+
+  const sampleInterview = filteredRows
+    .flatMap((r) => r.interviews.filter((i) => i.submitted))
+    .find((i) => i !== undefined);
+
+  const scoreKeys = sampleInterview
+    ? Object.keys(sampleInterview.interviewScores).sort()
+    : [];
+  const noteKeys = sampleInterview
+    ? Object.keys(sampleInterview.interviewerNotes).sort()
+    : [];
+
+  return filteredRows.map((row) => {
+    const flat: CsvRow = {
+      Name: row.name,
+      Role: row.role,
+      "Average Interview Score": row.averageScore ?? "",
+    };
+
+    const submittedInterviews = row.interviews.filter((i) => i.submitted);
+
+    for (let i = 0; i < 2; i++) {
+      const interview = submittedInterviews[i];
+      const n = i + 1;
+
+      if (interview && row.individualScores[i] !== undefined) {
+        flat[`Interview ${n} - Overall Score`] = row.individualScores[i];
+        scoreKeys.forEach((key) => {
+          flat[`Interview ${n} - ${key}`] = interview.interviewScores[key] ?? "";
+        });
+        noteKeys.forEach((key) => {
+          flat[`Interview ${n} Notes - ${key}`] = interview.interviewerNotes[key] ?? "";
+        });
+      } else {
+        flat[`Interview ${n} - Overall Score`] = "";
+        scoreKeys.forEach((key) => { flat[`Interview ${n} - ${key}`] = ""; });
+        noteKeys.forEach((key) => { flat[`Interview ${n} Notes - ${key}`] = ""; });
+      }
+    }
+
+    return flat;
   });
 }
