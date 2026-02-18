@@ -17,6 +17,7 @@ import { displayApplicantRoleName } from "@/utils/display";
 interface ExportRoleDialogButtonProps {
   onExport: (role: ApplicantRole) => CsvRow[];
   filenamePrefix: string;
+  className?: string;
 }
 
 export function ExportRoleDialogButton({
